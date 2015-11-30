@@ -108,7 +108,11 @@ class Grid(object):
             aligned_to_axis = self._add_axis(axis_number, input_axis)
             self.aligned_to_coord = self.aligned_to_coord and aligned_to_axis
 
-        if not self.aligned_to_coord:
+        self.dir_intervals = []
+        if self.aligned_to_coord:
+            for axis in range(3):
+                self.dir_intervals.append(self.axes[axis].dir_interval)
+        else:
             print('WARNING: The cube is not aligned with coordinate system.')
 
     def _add_axis(self, axis_number, input_axis):
@@ -123,6 +127,7 @@ class GridAxis(object):
         self.label = label
         self.point_count = None
         self.intervals = []  # xyz
+        self.dir_interval = None  # Interval in its 'own' direction
 
     def set_point_count(self, point_count):
 
@@ -138,8 +143,9 @@ class GridAxis(object):
 
         for direction, interval in enumerate(intervals):
             self.intervals.append(float(interval))
-
-            if AXES[direction] != self.label and float(interval) != 0:
+            if AXES[direction] == self.label:
+                self.dir_interval = float(interval)
+            elif float(interval) != 0:
                 aligned_to_coord_axis = False
 
         if not aligned_to_coord_axis:
