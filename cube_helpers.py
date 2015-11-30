@@ -1,6 +1,7 @@
 import ipdb
 import numpy as np
 from operator import attrgetter
+from scipy.ndimage.morphology import distance_transform_edt as scipy_edt
 
 AXES = ['x', 'y', 'z']
 
@@ -47,6 +48,18 @@ class Cube(object):
                             .format(len(self.field), points_on_axes))
 
         self.field.resize(points_on_axes)
+
+    def distance_transform(self, isovalue):
+        """This should only be applied to the electron density cube."""
+
+        if not self.grid.aligned_to_coord:
+            raise GridError('Distance transform not implemented with cube not '
+                            'aligned with the coordinate system.')
+
+        # Select isosurface and its interior as a 3D solid of 0s.
+        select_iso = lambda x: 1 if x < isovalue else 0
+        field = np.vectorize(select_iso)(self.field)
+        return scipy_edt(field, sampling=self.grid.dir_intervals)
 
 
 class Atom(object):
