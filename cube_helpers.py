@@ -1,0 +1,150 @@
+import ipdb
+import numpy as np
+from operator import attrgetter
+
+AXES = ['x', 'y', 'z']
+
+
+class GridError(Exception):
+    pass
+
+
+class Cube(object):
+
+    def __init__(self, cube_fn):
+
+        with open(cube_fn, 'r') as f:
+
+            self.gaussian_input = f.readline().rstrip('\n')
+            self.cube_title = f.readline().rstrip('\n')
+            self.atom_count, *origin_coords = f.readline().split()
+            self.atom_count = int(self.atom_count)
+
+            self.grid = Grid([f.readline().split() for i in range(3)])
+            self.grid.origin_coords = [float(coord) for coord in origin_coords]
+
+            self.atoms = []
+
+            for label in range(self.atom_count):
+                atom_temp = f.readline().split()
+                for index in range(4):
+                    atom_temp[index+1] = float(atom_temp[index+1])
+
+                self.atoms.append(Atom(int(label)+1, int(atom_temp[0]),
+                                  atom_temp[1], atom_temp[2:]))
+
+            # This may be unfeasible for very large cubes
+            self.field = f.read().split()
+
+        self.field = np.array(list(map(float, self.field)))
+        points_on_axes = [attrgetter('point_count')(elem) for elem
+                          in self.grid.axes]
+
+        if len(self.field) != np.prod(points_on_axes):
+            raise GridError('The number of points in the cube {0} is not equal'
+                            ' to the product of number of points in the XYZ '
+                            'directions given in the cube header: {1}.'
+                            .format(len(self.field), points_on_axes))
+
+        self.field.resize(points_on_axes)
+
+
+class Atom(object):
+
+    # http://www.science.co.il/PTelements.asp
+    periodic = [('H', 'Hydrogen'),
+                ('He', 'Helium'),
+                ('Li', 'Lithium'),
+                ('Be', 'Beryllium'),
+                ('B', 'Boron'),
+                ('C', 'Carbon'),
+                ('N', 'Nitrogen'),
+                ('O', 'Oxygen'),
+                ('F', 'Fluorine'),
+                ('Ne', 'Neon'),
+                ('Na', 'Sodium'),
+                ('Mg', 'Magnesium'),
+                ('Al', 'Aluminum'),
+                ('Si', 'Silicon'),
+                ('P', 'Phosphorus'),
+                ('S', 'Sulfur'),
+                ('Cl', 'Chlorine'),
+                ('Ar', 'Argon')]
+
+    def __init__(self, label, atomic_no, charge=None, coords=None):
+        self.label = label
+        self.atomic_no = atomic_no
+        try:
+            self.identity = Atom.periodic[atomic_no-1][0]
+        except IndexError:
+            print('WARNING: Element of atomic number {0} not implemented. '
+                  'Setting its identity to atomic number'.format(atomic_no))
+            self.identity = str(atomic_no)
+
+        self.charge = charge
+        self.coords = coords
+
+    def __str__(self):
+        return 'Atom ' + str(self.label) + ' (' + self.identity + ')'
+
+    def __repr__(self):
+        return str(self)
+
+
+class Grid(object):
+
+    def __init__(self, grid_input):
+
+        self.origin_coords = None
+
+        if np.shape(grid_input) != (3, 4):
+            raise GridError('Incorrect grid formatting. Expected a list of '
+                            'shape 3x4, instead got: ' + str(grid_input))
+
+        self.axes = [GridAxis(label) for label in AXES]
+        self.aligned_to_coord = True
+
+        for axis_number, input_axis in enumerate(grid_input):
+            aligned_to_axis = self._add_axis(axis_number, input_axis)
+            self.aligned_to_coord = self.aligned_to_coord and aligned_to_axis
+
+        if not self.aligned_to_coord:
+            print('WARNING: The cube is not aligned with coordinate system.')
+
+    def _add_axis(self, axis_number, input_axis):
+        axis_to_set = self.axes[axis_number]
+        axis_to_set.set_point_count(input_axis.pop(0))
+        return axis_to_set.set_intervals(input_axis)
+
+
+class GridAxis(object):
+
+    def __init__(self, label):
+        self.label = label
+        self.point_count = None
+        self.intervals = []  # xyz
+
+    def set_point_count(self, point_count):
+
+        if int(point_count) != float(point_count):
+            raise GridError('Number of points in direction {0} is not an '
+                            'integer: {1}'.format(self.label, point_count))
+
+        self.point_count = int(point_count)
+
+    def set_intervals(self, intervals):
+
+        aligned_to_coord_axis = True
+
+        for direction, interval in enumerate(intervals):
+            self.intervals.append(float(interval))
+
+            if AXES[direction] != self.label and float(interval) != 0:
+                aligned_to_coord_axis = False
+
+        if not aligned_to_coord_axis:
+            print('INFO: Cube axis {0} is not aligned to its coordinate'
+                  ' axis: The intervals are: {1}'.format(self.label,
+                                                         intervals))
+
+        return aligned_to_coord_axis
