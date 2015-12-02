@@ -18,7 +18,10 @@ class Cube(object):
 
             self.gaussian_input = f.readline().rstrip('\n')
             self.cube_title = f.readline().rstrip('\n')
-            self.atom_count, *origin_coords = f.readline().split()
+            self.atom_count, *origin_coords, nval = f.readline().split()
+            if float(nval) != 1:
+                raise GridError('NVal in the cube is different than 1. Not '
+                                'sure what it means in practice.')
             self.atom_count = int(self.atom_count)
 
             self.grid = Grid([f.readline().split() for i in range(3)])
