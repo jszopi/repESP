@@ -31,8 +31,9 @@ class Cube(object):
                 for index in range(4):
                     atom_temp[index+1] = float(atom_temp[index+1])
 
-                self.atoms.append(Atom(int(label)+1, int(atom_temp[0]),
-                                  atom_temp[1], atom_temp[2:]))
+                new_atom = Atom(int(label)+1, int(atom_temp[0]), atom_temp[1],
+                                atom_temp[2:])
+                self.atoms.append(new_atom)
 
             # This may be unfeasible for very large cubes
             self.field = f.read().split()
