@@ -43,16 +43,14 @@ class Cube(object):
             self.field = f.read().split()
 
         self.field = np.array(list(map(float, self.field)))
-        points_on_axes = [attrgetter('point_count')(elem) for elem
-                          in self.grid.axes]
 
-        if len(self.field) != np.prod(points_on_axes):
+        if len(self.field) != np.prod(self.grid.points_on_axes):
             raise GridError('The number of points in the cube {0} is not equal'
                             ' to the product of number of points in the XYZ '
                             'directions given in the cube header: {1}.'
-                            .format(len(self.field), points_on_axes))
+                            .format(len(self.field), self.grid.points_on_axes))
 
-        self.field.resize(points_on_axes)
+        self.field.resize(self.grid.points_on_axes)
 
     def distance_transform(self, isovalue):
         """This should only be applied to the electron density cube."""
@@ -132,6 +130,8 @@ class Grid(object):
                 self.dir_intervals.append(self.axes[axis].dir_interval)
         else:
             print('WARNING: The cube is not aligned with coordinate system.')
+
+        self.points_on_axes = [axis.point_count for axis in self.axes]
 
     def _add_axis(self, axis_number, input_axis):
         axis_to_set = self.axes[axis_number]
