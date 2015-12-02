@@ -25,7 +25,8 @@ class Cube(object):
             self.grid.origin_coords = [float(coord) for coord in origin_coords]
 
             self.atoms = []
-
+            # The atoms will be added to the list in the order of occurence in
+            # the input, which is assumed to correspond to Gaussian labels.
             for label in range(self.atom_count):
                 atom_temp = f.readline().split()
                 for index in range(4):
