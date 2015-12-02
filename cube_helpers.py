@@ -31,8 +31,8 @@ class Cube(object):
                 for index in range(4):
                     atom_temp[index+1] = float(atom_temp[index+1])
 
-                new_atom = Atom(int(label)+1, int(atom_temp[0]), atom_temp[1],
-                                atom_temp[2:])
+                new_atom = Atom(int(label)+1, int(atom_temp[0]), atom_temp[2:])
+                new_atom.charges['cube'] = atom_temp[1]
                 self.atoms.append(new_atom)
 
             # This may be unfeasible for very large cubes
@@ -85,7 +85,7 @@ class Atom(object):
                 ('Cl', 'Chlorine'),
                 ('Ar', 'Argon')]
 
-    def __init__(self, label, atomic_no, charge=None, coords=None):
+    def __init__(self, label, atomic_no, coords=None):
         self.label = label
         self.atomic_no = atomic_no
         try:
@@ -95,7 +95,7 @@ class Atom(object):
                   'Setting its identity to atomic number'.format(atomic_no))
             self.identity = str(atomic_no)
 
-        self.charge = charge
+        self.charges = {}
         self.coords = coords
 
     def __str__(self):
