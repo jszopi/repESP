@@ -10,10 +10,6 @@ esp_type_in_log = {
 esp_charges = esp_type_in_log.values()
 
 
-class NotImplementedError(Exception):
-    pass
-
-
 class InputFortmatError(Exception):
     pass
 
