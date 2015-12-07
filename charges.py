@@ -1,6 +1,8 @@
 import ipdb
 from cube_helpers import Atom, Cube
 
+esp_charges = ['mk', 'chelp', 'chelpg']
+
 
 class NotImplementedError(Exception):
     pass
@@ -10,30 +12,31 @@ class InputFortmatError(Exception):
     pass
 
 
-def mulliken(filename, atoms):
-    """Updates the atom lists with Mulliken charges.
+def get_charges(charge_type, filename, atoms):
+    """Update the atom lists with charges
 
-    The charges should be given by a Gaussian output file (.log or
-    .out). In the future, checkpoint and formatted checkpoint
-    formats may be supported.
+    Only charges calculated directly by Gaussian are currently supported. The
+    charges should be given in a Gaussian output file (.log or .out). In the
+    future, checkpoint and formatted checkpoint formats will be supported.
     """
     if filename[-4:] in ['.log', '.out']:
-        _mulliken_from_log(filename, atoms)
+        _charges_from_log(charge_type, filename, atoms)
     else:
         raise NotImplementedError('File extension {0} not supported.'
                                   .format(filename[-4]))
 
 
-def _mulliken_from_log(filename, atoms):
-    """Updates the atom lists with Mulliken charges
+def _charges_from_log(charge_type, filename, atoms):
+    """Update the atom lists with charges from Gaussian output
 
-    Note that if the output file contains information about Mulliken
-    charges in more than one place, only the last one will be used.
-    Also, the atom list is assumed to be in order.
+    Note that if the output file contains information about charges in more
+    than one place, only the last one will be used. Also, the atom list is
+    assumed to be in order.
     """
     with open(filename, 'r') as f:
-        _goto_last_mulliken_in_log(f)
+        _goto_occurence_in_log(charge_type, f, -1)
         charges = []
+
         for i, atom in enumerate(atoms):
             label, letter, charge = f.readline().split()
             # Check if the atom identities agree between atom list and input
@@ -45,29 +48,40 @@ def _mulliken_from_log(filename, atoms):
 
         # Check if the atom list terminates after as many atoms as expected
         next_line = f.readline()
-        if next_line[:24] != ' Sum of Mulliken charges':
-            raise InputFortmatError('Expected end of Mulliken charges ( \'Sum '
-                                    'of Mulliken charges\'), instead got: ' +
-                                    next_line)
+        if next_line[:8] != ' Sum of ':
+            raise InputFortmatError('Expected end of charges ( \'Sum of ...\')'
+                                    ', instead got: ' + next_line)
 
         for atom, charge in zip(atoms, charges):
-            atom.charges['mulliken'] = float(charge)
+            atom.charges[charge_type] = float(charge)
 
 
-def _goto_last_mulliken_in_log(file_object):
-    """Go to the last Mulliken charges output in a log file.
+def _goto_occurence_in_log(charge_type, file_object, occurence):
+    """Go to the selected occurence of input about charges in a log file.
 
-    Based on:
+    Occurence is the index to a list containing all occurences, so should be 0
+    for the first occurence and -1 for the last. Code based on:
     http://stackoverflow.com/a/620492
     """
     offset = 0
-    start = 0
+    result = []
 
     for line in file_object:
         offset += len(line)
-        if line.rstrip('\n') == ' Mulliken charges:':
-            start = offset
+        if line.rstrip('\n') == _charge_section_header_in_log(charge_type):
+            result.append(offset)
 
-    file_object.seek(start)
-    # Skip the unnecessary line
-    file_object.readline()
+    if result:
+        file_object.seek(result[occurence])
+        # Skip an unnecessary line
+        file_object.readline()
+    else:
+        raise InputFortmatError('Output about charge type \'{0}\' not found.')
+
+
+def _charge_section_header_in_log(charge_type):
+    if charge_type == 'mulliken':
+        name = 'Mulliken'
+    if charge_type in esp_charges:
+        name = 'ESP'
+    return ' ' + name + ' charges:'
