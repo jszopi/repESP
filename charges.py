@@ -75,13 +75,13 @@ def _goto_occurence_in_log(charge_type, file_object, occurence):
         if line == _charge_section_header_in_log(charge_type):
             result.append(offset)
 
-    if result:
-        file_object.seek(result[occurence])
-        # Skip an unnecessary line
-        file_object.readline()
-    else:
+    if not result:
         raise InputFortmatError("Output about charge type '{0}' not found."
                                 .format(charge_type))
+
+    file_object.seek(result[occurence])
+    # Skip an unnecessary line
+    file_object.readline()
 
 
 def _charge_section_header_in_log(charge_type):
