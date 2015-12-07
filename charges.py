@@ -14,15 +14,15 @@ class InputFortmatError(Exception):
     pass
 
 
-def get_charges(charge_type, filename, atoms):
-    """Update the atom lists with charges
+def get_charges(charge_type, filename, molecule):
+    """Update the molecule with charges
 
     Only charges calculated directly by Gaussian are currently supported. The
     charges should be given in a Gaussian output file (.log or .out). In the
     future, checkpoint and formatted checkpoint formats will be supported.
     """
     if filename[-4:] in ['.log', '.out']:
-        _charges_from_log(charge_type, filename, atoms)
+        _charges_from_log(charge_type, filename, molecule)
     elif filename[-4:] in ['.chk', '.fchk']:
         raise NotImplementedError('File extension {0} currently not supported.'
                                   .format(filename[-4]))
@@ -31,8 +31,8 @@ def get_charges(charge_type, filename, atoms):
                                   .format(filename[-4]))
 
 
-def _charges_from_log(charge_type, filename, atoms):
-    """Update the atom lists with charges from Gaussian output
+def _charges_from_log(charge_type, filename, molecule):
+    """Update the molecule with charges from Gaussian output
 
     Note that if the output file contains information about charges in more
     than one place, only the last one will be used. Also, the atom list is
@@ -42,7 +42,7 @@ def _charges_from_log(charge_type, filename, atoms):
         _goto_occurence_in_log(charge_type, f, -1)
         charges = []
 
-        for i, atom in enumerate(atoms):
+        for i, atom in enumerate(molecule):
             label, letter, charge = f.readline().split()
             # Check if the atom identities agree between atom list and input
             if letter != atom.identity:
@@ -57,7 +57,7 @@ def _charges_from_log(charge_type, filename, atoms):
             raise InputFortmatError('Expected end of charges ( \'Sum of ...\')'
                                     ', instead got: ' + next_line)
 
-        for atom, charge in zip(atoms, charges):
+        for atom, charge in zip(molecule, charges):
             atom.charges[charge_type] = float(charge)
 
 

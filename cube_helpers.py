@@ -32,9 +32,9 @@ class Cube(object):
             grid = Grid([f.readline().split() for i in range(3)])
             grid.origin_coords = [float(coord) for coord in origin_coords]
 
-            self.atoms = []
-            # The atoms will be added to the list in the order of occurence in
-            # the input, which is assumed to correspond to Gaussian labels.
+            self.molecule = Molecule()
+            # The atoms will be added to the Molecule in the order of occurence
+            # in the input, which is assumed to correspond to Gaussian labels.
             for label in range(self.atom_count):
                 atom_temp = f.readline().split()
                 for index in range(4):
@@ -42,7 +42,7 @@ class Cube(object):
 
                 new_atom = Atom(int(label)+1, int(atom_temp[0]), atom_temp[2:])
                 new_atom.charges['cube'] = atom_temp[1]
-                self.atoms.append(new_atom)
+                self.molecule.append(new_atom)
 
             # This may be unfeasible for very large cubes
             field = f.read().split()
@@ -166,7 +166,7 @@ class Field(object):
         field = np.vectorize(select_iso)(self.values)
         return scipy_edt(field, sampling=self.grid.dir_intervals)
 
-    def write_cube(self, output_fn, grid, atom_list, charge_type=None):
+    def write_cube(self, output_fn, grid, molecule, charge_type=None):
         """Write the field as a Gaussian cube file.
 
         Raises FileExistsError when the file exists.
@@ -176,11 +176,11 @@ class Field(object):
             f.write(' Cube file for field of type {0}.\n'.format(
                 self.field_type))
             f.write(' {0:4}   {1: .6f}   {2: .6f}   {3: .6f}    1\n'.format(
-                len(atom_list), *grid.origin_coords))
+                len(molecule), *grid.origin_coords))
             for axis in grid.axes:
                 f.write(' {0:4}   {1: .6f}   {2: .6f}   {3: .6f}\n'.format(
                     axis.point_count, *axis.intervals))
-            for atom in atom_list:
+            for atom in molecule:
                 if charge_type is None:
                     charge = atom.atomic_no
                 else:
