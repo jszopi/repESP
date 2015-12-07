@@ -12,12 +12,16 @@ class GridError(Exception):
 
 class Cube(object):
 
-    def __init__(self, cube_fn):
+    title_to_type = {
+        ' Electrostatic pot': 'esp',
+        ' Electron density ': 'ed',
+        }
 
+    def __init__(self, cube_fn):
         with open(cube_fn, 'r') as f:
 
             self.gaussian_input = f.readline().rstrip('\n')
-            self.cube_title = f.readline().rstrip('\n')
+            self.title = f.readline().rstrip('\n')
             self.atom_count, *origin_coords, nval = f.readline().split()
             if float(nval) != 1:
                 raise GridError('NVal in the cube is different than 1. Not '
@@ -41,6 +45,12 @@ class Cube(object):
 
             # This may be unfeasible for very large cubes
             self.field = f.read().split()
+
+        try:
+            self.cube_type = Cube.title_to_type[self.title[:18]]
+        except KeyError:
+            raise NotImplementedError("Cube title '" + self.title + "' is not "
+                                      "associated with a known cube type.")
 
         self.field = np.array(list(map(float, self.field)))
 
