@@ -124,6 +124,11 @@ class Field(object):
     def distance_transform(self, isovalue):
         """This should only be applied to the electron density cube."""
 
+        if self.field_type != 'ed':
+            print("WARNING: Distance transform should only be applied to "
+                  "electron density fields, attempted on field type: '{0}'."
+                  .format(self.field_type))
+
         if not self.grid.aligned_to_coord:
             raise GridError('Distance transform not implemented for grid not '
                             'aligned with the coordinate system.')
