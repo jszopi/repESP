@@ -44,7 +44,7 @@ class Cube(object):
                 self.atoms.append(new_atom)
 
             # This may be unfeasible for very large cubes
-            self.field = f.read().split()
+            field = f.read().split()
 
         try:
             self.cube_type = Cube.title_to_type[self.title[:18]]
@@ -52,15 +52,19 @@ class Cube(object):
             raise NotImplementedError("Cube title '" + self.title + "' is not "
                                       "associated with a known cube type.")
 
-        self.field = np.array(list(map(float, self.field)))
+        self.field = Cube.field_from_raw(field, self.grid)
 
-        if len(self.field) != np.prod(self.grid.points_on_axes):
+    @staticmethod
+    def field_from_raw(raw_field, grid):
+        field = np.array(list(map(float, raw_field)))
+        if len(field) != np.prod(grid.points_on_axes):
             raise GridError('The number of points in the cube {0} is not equal'
                             ' to the product of number of points in the XYZ '
                             'directions given in the cube header: {1}.'
-                            .format(len(self.field), self.grid.points_on_axes))
+                            .format(len(field), grid.points_on_axes))
 
-        self.field.resize(self.grid.points_on_axes)
+        field.resize(grid.points_on_axes)
+        return field
 
     def distance_transform(self, isovalue):
         """This should only be applied to the electron density cube."""
