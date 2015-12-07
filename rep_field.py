@@ -1,6 +1,7 @@
 import ipdb
 import numpy as np
 from scipy.spatial.distance import euclidean
+from cube_helpers import Field
 
 
 def reproduce_field(atom_list, charge_type, grid):
@@ -19,5 +20,6 @@ def reproduce_field(atom_list, charge_type, grid):
 
     field = np.array(field)
     field.resize(grid.points_on_axes)
+    field = Field(field, grid, 'rep_esp')
 
     return field
