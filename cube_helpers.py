@@ -2,6 +2,7 @@ import ipdb
 import numpy as np
 from operator import attrgetter
 from scipy.ndimage.morphology import distance_transform_edt as scipy_edt
+from scipy.spatial.distance import euclidean
 
 AXES = ['x', 'y', 'z']
 
@@ -119,6 +120,26 @@ class Molecule(list):
 
     def __init__(self, *args):
         list.__init__(self, *args)
+
+    def rep_field(self, charge_type, grid):
+        field = []
+        for ix in range(grid.axes[0].point_count):
+            x = grid.origin_coords[0] + ix*grid.dir_intervals[0]
+            for iy in range(grid.axes[1].point_count):
+                y = grid.origin_coords[1] + iy*grid.dir_intervals[1]
+                for iz in range(grid.axes[2].point_count):
+                    z = grid.origin_coords[2] + iz*grid.dir_intervals[2]
+                    value = 0
+                    for atom in self:
+                        value += atom.charges[charge_type]/euclidean(
+                            [x, y, z], atom.coords)
+                    field.append(value)
+
+        field = np.array(field)
+        field.resize(grid.points_on_axes)
+        field = Field(field, grid, 'rep_esp')
+
+        return field
 
 
 class Field(object):
