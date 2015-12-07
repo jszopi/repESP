@@ -21,8 +21,11 @@ def get_charges(charge_type, filename, atoms):
     """
     if filename[-4:] in ['.log', '.out']:
         _charges_from_log(charge_type, filename, atoms)
+    elif filename[-4:] in ['.chk', '.fchk']:
+        raise NotImplementedError('File extension {0} currently not supported.'
+                                  .format(filename[-4]))
     else:
-        raise NotImplementedError('File extension {0} not supported.'
+        raise NotImplementedError('File extension {0} is not supported.'
                                   .format(filename[-4]))
 
 
