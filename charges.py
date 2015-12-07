@@ -3,6 +3,12 @@ from cube_helpers import Atom, Cube
 
 esp_charges = ['mk', 'chelp', 'chelpg']
 
+esp_type_in_log = {
+    ' Merz-Kollman atomic radii used.': 'mk',
+    ' Francl (CHELP) atomic radii used.': 'chelp',
+    ' Breneman (CHELPG) radii used.': 'chelpg',
+    }
+
 
 class NotImplementedError(Exception):
     pass
@@ -68,12 +74,27 @@ def _goto_occurence_in_log(charge_type, file_object, occurence):
     """
     offset = 0
     result = []
+    esp_types = []
 
     for line in file_object:
         offset += len(line)
         line = line.rstrip('\n')
+        # All ESP charges are added here, as they cannot be distinguished just
+        # by the header
         if line == _charge_section_header_in_log(charge_type):
             result.append(offset)
+        # The information about the type of ESP charges is gathered separately
+        if charge_type in esp_charges and line in esp_type_in_log:
+            esp_types.append(esp_type_in_log[line])
+
+    if charge_type in esp_charges:
+        # Verify if all ESP charge output has been recognized correctly
+        if len(esp_types) != len(result):
+            raise InputFortmatError('Information about the type of some '
+                                    'ESP charges was not recognized.')
+        # Filter only the requested ESP charge type
+        result = [elem for i, elem in enumerate(result) if
+                  esp_types[i] == charge_type]
 
     if not result:
         raise InputFortmatError("Output about charge type '{0}' not found."
