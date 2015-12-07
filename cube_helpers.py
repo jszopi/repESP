@@ -28,8 +28,8 @@ class Cube(object):
                                 'sure what it means in practice.')
             self.atom_count = int(self.atom_count)
 
-            self.grid = Grid([f.readline().split() for i in range(3)])
-            self.grid.origin_coords = [float(coord) for coord in origin_coords]
+            grid = Grid([f.readline().split() for i in range(3)])
+            grid.origin_coords = [float(coord) for coord in origin_coords]
 
             self.atoms = []
             # The atoms will be added to the list in the order of occurence in
@@ -52,7 +52,7 @@ class Cube(object):
             raise NotImplementedError("Cube title '" + self.title + "' is not "
                                       "associated with a known cube type.")
 
-        self.field = Field(Cube.field_from_raw(field, self.grid), self.grid,
+        self.field = Field(Cube.field_from_raw(field, grid), grid,
                            self.cube_type)
 
     @staticmethod
