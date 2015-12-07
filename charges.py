@@ -62,9 +62,9 @@ def _charges_from_log(charge_type, filename, atoms):
 def _goto_occurence_in_log(charge_type, file_object, occurence):
     """Go to the selected occurence of input about charges in a log file.
 
-    Occurence is the index to a list containing all occurences, so should be 0
-    for the first occurence and -1 for the last. Code based on:
-    http://stackoverflow.com/a/620492
+    Occurence is the index to a list containing all occurences of the given
+    charge type, so should be 0 for the first occurence and -1 for the last.
+    Code based on: http://stackoverflow.com/a/620492
     """
     offset = 0
     result = []
