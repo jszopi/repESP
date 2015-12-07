@@ -79,7 +79,14 @@ def _goto_occurence_in_log(charge_type, file_object, occurence):
         raise InputFortmatError("Output about charge type '{0}' not found."
                                 .format(charge_type))
 
-    file_object.seek(result[occurence])
+    try:
+        file_object.seek(result[occurence])
+    except IndexError:
+        raise IndexError(
+            "Cannot find occurence '{0}' in a list of recognized pieces of "
+            "output about charges, whose length is {1}.".format(occurence,
+                                                                len(result)))
+
     # Skip an unnecessary line
     file_object.readline()
 
