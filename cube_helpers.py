@@ -225,6 +225,9 @@ class Grid(object):
 
         self.points_on_axes = [axis.point_count for axis in self.axes]
 
+    def __eq__(self, other):
+        return self.__dict__ == other.__dict__
+
     def _add_axis(self, axis_number, input_axis):
         axis_to_set = self.axes[axis_number]
         axis_to_set.set_point_count(input_axis.pop(0))
@@ -238,6 +241,9 @@ class GridAxis(object):
         self.point_count = None
         self.intervals = []  # xyz
         self.dir_interval = None  # Interval in its 'own' direction
+
+    def __eq__(self, other):
+        return self.__dict__ == other.__dict__
 
     def set_point_count(self, point_count):
 
