@@ -100,8 +100,12 @@ class Atom(object):
         self.charges = {}
         self.coords = coords
 
+    def print_with_charge(self, charge_type):
+        print(self, ', charge: {0: .4f}'.format(self.charges[charge_type]),
+              sep='')
+
     def __str__(self):
-        return 'Atom ' + str(self.label) + ' (' + self.identity + ')'
+        return 'Atom {0:2}:  {1:2}'.format(self.label, self.identity)
 
     def __repr__(self):
         return str(self)
