@@ -71,7 +71,8 @@ def _goto_occurence_in_log(charge_type, file_object, occurence):
 
     for line in file_object:
         offset += len(line)
-        if line.rstrip('\n') == _charge_section_header_in_log(charge_type):
+        line = line.rstrip('\n')
+        if line == _charge_section_header_in_log(charge_type):
             result.append(offset)
 
     if result:
