@@ -114,6 +114,13 @@ class Atom(object):
         return str(self)
 
 
+class Molecule(list):
+    """A list of atoms with extra functionalities."""
+
+    def __init__(self, *args):
+        list.__init__(self, *args)
+
+
 class Field(object):
 
     def __init__(self, values, grid, field_type):
