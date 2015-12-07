@@ -52,7 +52,8 @@ class Cube(object):
             raise NotImplementedError("Cube title '" + self.title + "' is not "
                                       "associated with a known cube type.")
 
-        self.field = Cube.field_from_raw(field, self.grid)
+        self.field = Field(Cube.field_from_raw(field, self.grid), self.grid,
+                           self.cube_type)
 
     @staticmethod
     def field_from_raw(raw_field, grid):
@@ -123,6 +124,14 @@ class Atom(object):
 
     def __repr__(self):
         return str(self)
+
+
+class Field(object):
+
+    def __init__(self, values, grid, field_type):
+        self.values = values
+        self.grid = grid
+        self.field_type = field_type
 
 
 class Grid(object):
