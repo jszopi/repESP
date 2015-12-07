@@ -79,12 +79,16 @@ def _goto_occurence_in_log(charge_type, file_object, occurence):
         # Skip an unnecessary line
         file_object.readline()
     else:
-        raise InputFortmatError('Output about charge type \'{0}\' not found.')
+        raise InputFortmatError("Output about charge type '{0}' not found."
+                                .format(charge_type))
 
 
 def _charge_section_header_in_log(charge_type):
     if charge_type == 'mulliken':
         name = 'Mulliken'
-    if charge_type in esp_charges:
+    elif charge_type in esp_charges:
         name = 'ESP'
+    else:
+        raise NotImplementedError("Charge type '{0}' is not implemented."
+                                  .format(charge_type))
     return ' ' + name + ' charges:'
