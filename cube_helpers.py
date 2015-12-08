@@ -164,7 +164,8 @@ class Field(object):
         # Select isosurface and its interior as a 3D solid of 0s.
         select_iso = lambda x: 1 if x < isovalue else 0
         field = np.vectorize(select_iso)(self.values)
-        return scipy_edt(field, sampling=self.grid.dir_intervals)
+        dist = scipy_edt(field, sampling=self.grid.dir_intervals)
+        return Field(dist, self.grid, 'ed_dist')
 
     def write_cube(self, output_fn, molecule, charge_type=None):
         """Write the field as a Gaussian cube file.
