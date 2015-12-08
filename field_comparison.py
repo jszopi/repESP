@@ -22,6 +22,7 @@ def difference(field1, field2, relative=False, absolute=False):
     return Field(values, field1.grid, name)
 
 
-def _check_grids(field1, field2):
-    if field1.grid != field2.grid:
-        raise GridError('Grids of the fields to be compared do not match.')
+def _check_grids(field1, *fields):
+    for field in fields:
+        if field1.grid != field.grid:
+            raise GridError('Grids of the fields to be compared do not match.')
