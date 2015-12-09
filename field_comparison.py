@@ -4,6 +4,7 @@ import numpy as np
 import inspect
 from warnings import warn
 from cube_helpers import GridError, Field
+from operator import attrgetter
 
 
 def difference(field1, field2, relative=False, absolute=False):
@@ -26,12 +27,24 @@ def difference(field1, field2, relative=False, absolute=False):
 
 
 def _check_grids(field1, *fields):
+    """Check if field grids or array dimensions match."""
     if not len(fields):
         warn('No fields to be compared! As this is a helper function, the '
              'issue is likely due to the caller: ' + inspect.stack()[1][3])
+
+    attr_dict = {Field: 'grid', np.ndarray: 'shape'}
     for field in fields:
-        if field1.grid != field.grid:
-            raise GridError('Grids of the fields to be compared do not match.')
+        if type(field) != type(field1):
+            raise TypeError("Expected '{0}' objects to be compared, received "
+                            "'{1}'.".format(type(field1), type(field)))
+        else:
+            try:
+                attr = attr_dict[type(field)]
+            except KeyError:
+                raise TypeError("Checking dimensions of type '{0}' is not "
+                                "supported.".format(type(field)))
+            if attrgetter(attr)(field1) != attrgetter(attr)(field):
+                raise GridError('Grids of fields to be compared do not match.')
 
 
 def filter_by_dist(exclusion_dist, dist, *fields, assign_val=None):
