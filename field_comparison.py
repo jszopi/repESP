@@ -53,12 +53,13 @@ def filter_by_dist(exclusion_dist, dist, *fields, assign_val=None):
     # modularity was more important. Note that the arrays are traversed twice
     # if both this function and `skim' are called consecutively.
     _check_grids(dist, *fields)
-    fields = [field.values.copy() for field in fields]
-    dist = dist.values.copy()
     if 'dist' not in dist.field_type:
         raise TypeError("The field passed was of type '{0}' but one of the "
                         "'dist' types was expected.".format(dist.field_type))
 
+    fields = [field.values.copy() if type(field) is Field else field.copy() for
+              field in fields]
+    dist = dist.values.copy() if type(dist) is Field else dist.copy()
     for dist_elem, *field_elems in np.nditer([dist] + fields,
                                              op_flags=['readwrite']):
         if dist_elem <= exclusion_dist:
@@ -71,7 +72,8 @@ def filter_by_dist(exclusion_dist, dist, *fields, assign_val=None):
 
 def skim(rand_skim, *fields, assign_val=None):
     _check_grids(*fields)
-    fields = [field.values.copy() for field in fields]
+    fields = [field.values.copy() if type(field) is Field else field.copy() for
+              field in fields]
     # Numpy array iteration with nditer has a convenient write mode, but it
     # would affect the input arrays, so copies were made earlier.
     for field_elems in np.nditer(fields, op_flags=['readwrite']):
