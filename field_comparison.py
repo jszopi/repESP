@@ -42,7 +42,10 @@ def filter_by_dist(exclusion_dist, dist, *fields, assign_val=None):
     _check_grids(dist, *fields)
     fields = [field.values.copy() for field in fields]
     dist = dist.values.copy()
-    # Should also check if the distance field is of type 'dist'.
+    if 'dist' not in dist.field_type:
+        raise TypeError("The field passed was of type '{0}' but one of the "
+                        "'dist' types was expected.".format(dist.field_type))
+
     for dist_elem, *field_elems in np.nditer([dist] + fields,
                                              op_flags=['readwrite']):
         if dist_elem <= exclusion_dist:
