@@ -81,34 +81,31 @@ def plot3d(esp_field, diff, dist, exclusion_dist=0, rand_skim=0.02):
 
 
 def _flatten_no_nans(ndarray_input):
-    """Flatten ndarray and remove None elemenents."""
+    """Flatten ndarray and remove None elements."""
     return [elem for elem in ndarray_input if elem is not None]
 
 
 def filter_by_dist(exclusion_dist, dist, *fields, assign_val=None):
-    """Filter the datapoints in input fields by their distances.
+    """Filter the data points in input fields by their distances.
 
-    This function takes any number of field-like objects which describe
-    datapoints corresponding between the fields. The `dist` object specifies
-    their distances from something, e.g. an electron density isosurface. This
-    function will filter out the values of all datapoints, whose distances are
-    smaller than a threshold value, will be filtered or actually replaced by a
-    placeholder value `assign_val`. The input objects are not affected, as new
-    np.ndarrays are returned.
-
+    This function takes any number of field-like objects, whose data points
+    correspond to each other between the fields. The `dist` object specifies
+    their distance transform, e.g. from an electron density isosurface. All
+    data points, whose distances are smaller or equal a threshold value, will
+    be filtered out (actually, replaced with a special value `assign_val`). The
+    input objects are not affected, as new ndarrays are returned.
 
     Parameters
     ----------
     exclusion_dist : float
-        Datapoints at distances smaller or equal this number will be filtered.
+        data points at distances smaller or equal this number will be filtered.
     dist : Field or np.ndarray
-        The Field or ndarrays specifying distance of each datapoint. This
-        object also gets filtered.
+        The object specifying distance of each data point (distance transform).
+        The data points in this object also get filtered.
     *fields : Field or np.ndarray
-        The Fields or ndarrays containing the datapoints to be filtered by
-        distance.
+        The objects containing the data points to be filtered by distance.
     assign_val : Optional
-        The datapoints within the exclusion distance will be replaced by this
+        The data points within the exclusion distance will be replaced by this
         value. Defaults to None.
 
     Returns
@@ -123,27 +120,26 @@ def filter_by_dist(exclusion_dist, dist, *fields, assign_val=None):
 
 
 def skim(rand_skim, *fields, assign_val=None):
-    """Skim the number of datapoints in input fields.
+    """Skim the number of data points in input fields.
 
-    This function takes any number of field-like objects which describe
-    datapoints corresponding between the fields. This function will randomly
-    remove some of the datapoints (the corresponding points between the
-    different fields) and retain a fraction of all datapoints given by the
-    `rand_skim` argument. The datapoints are not actually removed but replaced
-    with placeholder values `assign_val`. The input objects are not affected,
-    as new np.ndarrays are returned.
+    This function takes any number of field-like objects, whose data points
+    correspond to each other between the fields. This function will randomly
+    remove some of the corresponding data points and retain a fraction of all
+    data points given by the `rand_skim` argument. The data points are not
+    actually removed but replaced with a special value `assign_val`. The input
+    objects are not affected, as new ndarrays are returned.
 
-    This function is useful for reducing the number of datapoints in a 3D plot,
-    whose interactivity or clarity would otherwise be affected.
+    This function is useful for reducing the number of data points in a 3D
+    plot, whose interactivity or clarity would otherwise be compromised.
 
     Parameters
     ----------
     rand_skim : float
-        A number between 0 and 1. The fraction of datapoints to be retained.
+        A number between 0 and 1. The fraction of data points to be retained.
     *fields : Field or np.ndarray
-        The Fields or ndarrays containing the datapoints to be skimmed.
+        The objects containing the data points to be skimmed.
     assign_val : Optional
-        The datapoints to be removed will be replaced by this value. Defaults
+        The data points to be removed will be replaced by this value. Defaults
         to None.
 
     Returns
@@ -157,14 +153,15 @@ def skim(rand_skim, *fields, assign_val=None):
 
 
 def _iterate_fields(condition, assign_val, *fields):
-    """Iterate and remove corresponding elements of ndarrays
+    """Iterate and remove corresponding elements in ndarrays.
 
-    This function takes any number of field-like objects which describe
-    datapoints corresponding between the fields. It will remove the
-    corresponding datapoints from all the fields depending whether they satisfy
-    the passed `condition` function. The datapoints are not actually removed
-    but replaced with placeholder values `assign_val`. The input objects are
-    not affected, as new np.ndarrays are returned.
+    This function takes any number of field-like objects, whose data points
+    correspond to each other between the fields. It will remove the
+    corresponding data points from all the fields depending on whether the list
+    of corresponding data points satisfies the passed `condition` function. The
+    data points are not actually removed but replaced with a special value
+    `assign_val`. The input objects are not affected, as new ndarrays are
+    returned.
 
     Parameters
     ----------
@@ -173,9 +170,9 @@ def _iterate_fields(condition, assign_val, *fields):
         iterated fields and return a boolean value stating whether the list
         satisfies the condition.
     assign_val
-        The datapoints to be removed will be replaced by this value.
+        The data points to be removed will be replaced by this value.
     *fields : Field or np.ndarray
-        The fields containing the datapoints to be iterated.
+        The fields containing the data points to be iterated through.
 
     Returns
     -------
