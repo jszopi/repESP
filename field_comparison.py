@@ -34,18 +34,32 @@ def _check_grids(field1, *fields):
             raise GridError('Grids of the fields to be compared do not match.')
 
 
-def filter_by_dist(dist, *fields, exclusion_dist=-1, rand_skim=1,
-                   assign_val=None):
+def filter_by_dist(exclusion_dist, dist, *fields, assign_val=None):
+    # Note the code repetition from the `skim' function. The logic is somewhat
+    # different here so I wasn't sure how I could generalize and decided that
+    # modularity was more important. Note that the arrays are traversed twice
+    # if both this function and `skim' are called consecutively.
     _check_grids(dist, *fields)
     fields = [field.values.copy() for field in fields]
     dist = dist.values.copy()
-    # Numpy array iteration with nditer has a convenient write mode, but it
-    # would affect the input arrays, so copies were made earlier.
+    # Should also check if the distance field is of type 'dist'.
     for dist_elem, *field_elems in np.nditer([dist] + fields,
                                              op_flags=['readwrite']):
-        if dist_elem <= exclusion_dist or random.random() > rand_skim:
+        if dist_elem <= exclusion_dist:
             dist_elem[...] = assign_val
             for field_elem in field_elems:
                 field_elem[...] = assign_val
-    # Return all the input fields as a list
+    # Return all the input fields, including distance fields, as a list
     return [dist] + fields
+
+
+def skim(rand_skim, *fields, assign_val=None):
+    _check_grids(*fields)
+    fields = [field.values.copy() for field in fields]
+    # Numpy array iteration with nditer has a convenient write mode, but it
+    # would affect the input arrays, so copies were made earlier.
+    for field_elems in np.nditer(fields, op_flags=['readwrite']):
+        if random.random() > rand_skim:
+            for field_elem in field_elems:
+                field_elem[...] = assign_val
+    return fields
