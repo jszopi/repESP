@@ -6,6 +6,9 @@ from warnings import warn
 from cube_helpers import GridError, Field
 from operator import attrgetter
 
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+
 
 def difference(field1, field2, relative=False, absolute=False):
     _check_grids(field1, field2)
@@ -45,6 +48,41 @@ def _check_grids(field1, *fields):
                                 "supported.".format(type(field)))
             if attrgetter(attr)(field1) != attrgetter(attr)(field):
                 raise GridError('Grids of fields to be compared do not match.')
+
+
+def plot3d(esp_field, diff, dist, exclusion_dist=0, rand_skim=0.02):
+    _check_grids(esp_field, diff, dist)
+    if esp_field.field_type != 'esp':
+        raise TypeError("The field passed was of type '{0}' but 'esp' was "
+                        "expected.".format(esp_field.field_type))
+    if 'diff' not in diff.field_type:
+        raise TypeError("The field passed was of type '{0}' but one of the "
+                        "'diff' types was expected.".format(diff.field_type))
+    if 'dist' not in dist.field_type:
+        raise TypeError("The field passed was of type '{0}' but one of the "
+                        "'dist' types was expected.".format(dist.field_type))
+
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+
+    ax.set_xlabel('Distance ' + dist.field_type)
+    ax.set_ylabel('ESP value')
+    ax.set_zlabel('ESP ' + diff.field_type)
+
+    dist, esp_field, diff = skim(rand_skim, dist, esp_field, diff)
+    dist, esp_field, diff = filter_by_dist(exclusion_dist, dist, esp_field,
+                                           diff)
+    # Flatten and remove NANs
+    dist, esp_field, diff = map(_flatten_no_nans, (dist, esp_field, diff))
+
+    ax.scatter(dist, esp_field, diff)
+    plt.show()
+    plt.close()
+
+
+def _flatten_no_nans(ndarray_input):
+    """Flatten ndarray and remove None elemenents."""
+    return [elem for elem in ndarray_input if elem is not None]
 
 
 def filter_by_dist(exclusion_dist, dist, *fields, assign_val=None):
