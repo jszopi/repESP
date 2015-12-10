@@ -45,7 +45,7 @@ def _charges_from_log(charge_type, filename, molecule):
         charges = []
 
         for i, atom in enumerate(molecule):
-            label, letter, charge = f.readline().split()
+            label, letter, charge = _log_charge_line(f.readline())
             # Check if the atom identities agree between atom list and input
             if letter != atom.identity:
                 raise InputFortmatError(
@@ -132,10 +132,7 @@ def _charges_from_sumviz(filename, molecule):
         charges = []
 
         for i, atom in enumerate(molecule):
-            letter_and_label, charge, *other = f.readline().split()
-            # These should actually be a regex for letters and numbers
-            letter = letter_and_label[0]
-            label = letter_and_label[1]
+            label, letter, charge = _sumviz_charge_line(f.readline())
             # Check if the atom identities agree between atom list and input
             if letter != atom.identity:
                 raise InputFortmatError(
@@ -151,3 +148,15 @@ def _charges_from_sumviz(filename, molecule):
 
         for atom, charge in zip(molecule, charges):
             atom.charges['aim'] = float(charge)
+
+
+def _log_charge_line(line):
+    return line.split()
+
+
+def _sumviz_charge_line(line):
+    letter_and_label, charge, *other = line.split()
+    # These should actually be a regex for letters and numbers
+    letter = letter_and_label[0]
+    label = letter_and_label[1]
+    return label, letter, charge
