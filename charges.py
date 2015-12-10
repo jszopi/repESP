@@ -185,11 +185,18 @@ def _get_charges_from_lines(file_object, input_type, molecule):
                 "Reading charges from an input file of type '{0} 'is not "
                 "supported.".format(input_type))
 
+        # Check if the labels are in order
+        if label is not None and label != i + 1:
+            raise InputFormatError(
+                "Charge section is not given in order of Gaussian labels. This"
+                " may be a feature of the program which generated the charges "
+                "output but is not supported in this program.")
         # Check if the atom identities agree between atom list and input
         if letter != atom.identity:
             raise InputFormatError(
                 'Atom {0} in atom list is given as {1} but input file '
                 'expected {2}'.format(int(label)+1, atom.identity, letter))
+
         charges.append(charge)
 
     # Check if the atom list terminates after as many atoms as expected from
