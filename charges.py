@@ -13,7 +13,7 @@ esp_charges = esp_type_in_log.values()
 # First 8 characters of the line following charge output in various input files
 charge_termination_line = {
     'sumviz': '--------',
-    'log': ' Sum of ',
+    'log': (' Sum of ', ' =======')
     }
 
 
@@ -48,7 +48,8 @@ def _get_charges(charge_type, filename, input_type, molecule):
     """Update the molecule with charges."""
     with open(filename, 'r') as file_object:
         globals()['_goto_in_' + input_type](charge_type, file_object)
-        charges = _get_charges_from_lines(file_object, input_type, molecule)
+        charges = _get_charges_from_lines(charge_type, file_object,
+                                          input_type, molecule)
         _update_molecule_with_charges(molecule, charges, charge_type)
 
 
@@ -68,7 +69,7 @@ def _goto_in_log(charge_type, file_object, occurence=-1):
         line = line.rstrip('\n')
         # All ESP charges are added here, as they cannot be distinguished just
         # by the header
-        if line == _charge_section_header_in_log(charge_type):
+        if line.rstrip() == _charge_section_header_in_log(charge_type):
             result.append(offset)
         # The information about the type of ESP charges is gathered separately
         if charge_type in esp_charges and line in esp_type_in_log:
@@ -95,8 +96,12 @@ def _goto_in_log(charge_type, file_object, occurence=-1):
             "output about charges, whose length is {1}.".format(occurence,
                                                                 len(result)))
 
-    # Skip an unnecessary line
-    file_object.readline()
+    # Skip unnecessary lines
+    lines_count = 1
+    if charge_type == 'nbo':
+        lines_count = 5
+    for counter in range(lines_count):
+        file_object.readline()
 
 
 def _goto_in_sumviz(charge_type, file_object):
@@ -112,6 +117,8 @@ def _charge_section_header_in_log(charge_type):
         return ' Mulliken charges:'
     elif charge_type in esp_charges:
         return ' ESP charges:'
+    elif charge_type == 'nbo':
+        return ' Summary of Natural Population Analysis:'
     else:
         raise NotImplementedError("Charge type '{0}' is not implemented."
                                   .format(charge_type))
@@ -122,14 +129,17 @@ def _update_molecule_with_charges(molecule, charges, charge_type):
         atom.charges[charge_type] = charge
 
 
-def _log_charge_line(line):
-    label, letter, charge = line.split()
+def _log_charge_line(line, charge_type):
+    if charge_type == 'nbo':
+        letter, label, charge, *other = line.split()
+    else:
+        label, letter, charge = line.split()
     label = int(label)
     charge = float(charge)
     return label, letter, charge
 
 
-def _sumviz_charge_line(line):
+def _sumviz_charge_line(line, charge_type):
     letter_and_label, charge, *other = line.split()
     # These should actually be a regex for letters and numbers
     letter = letter_and_label[0]
@@ -138,7 +148,7 @@ def _sumviz_charge_line(line):
     return label, letter, charge
 
 
-def _get_charges_from_lines(file_object, input_type, molecule):
+def _get_charges_from_lines(charge_type, file_object, input_type, molecule):
     """Extract charges from the charges section in output
 
     Parameters
@@ -174,7 +184,8 @@ def _get_charges_from_lines(file_object, input_type, molecule):
         try:
             # Input type-specific extraction performed by specialist function
             label, letter, charge = globals()[
-                '_' + input_type + '_charge_line'](file_object.readline())
+                '_' + input_type + '_charge_line'](file_object.readline(),
+                                                   charge_type)
         except KeyError:
             raise NotImplementedError(
                 "Reading charges from an input file of type '{0} 'is not "
@@ -197,7 +208,9 @@ def _get_charges_from_lines(file_object, input_type, molecule):
     # Check if the atom list terminates after as many atoms as expected from
     # the Molecule object given
     next_line = file_object.readline()
-    if next_line[:8] != charge_termination_line[input_type]:
+    # Kludged, in fact charge_termination_line depends on both file and charge
+    # types.
+    if next_line[:8] not in charge_termination_line[input_type]:
         raise InputFormatError(
             "Expected end of charges ('{0}'), instead got: '{1}'".format(
                 charge_termination_line[input_type], next_line[:8]))
