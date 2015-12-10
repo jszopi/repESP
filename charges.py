@@ -140,6 +140,36 @@ def _sumviz_charge_line(line):
 
 
 def _get_charges_from_lines(file_object, input_type, molecule):
+    """Extract charges from the charges section in output
+
+    Parameters
+    ----------
+    file_object : File
+        The file from which the charges are to be extracted. The file is
+        expected to be set to the position of the start of charges section,
+        e.g. with the _goto_occurence_in_log helper.
+    input_type : str
+        Currently implemented is reading lines from Gaussian ('log') and AIM
+        ('sumviz') output files.
+    molecule : Molecule
+        The molecule to which the charges relate. Note that the molecule will
+        not be updated with the charges, this must be done separately by the
+        caller.
+
+    Returns
+    -------
+    List[float]
+        List of charges in order of occurence in output file.
+
+    Raises
+    ------
+    NotImplementedError
+        Raised when an unsupported input file type is requested.
+    InputFormatError
+        Raised when the order of atoms is not as expected from the Molecule or
+        the length of the charges section is different than expected.
+
+    """
     charges = []
     for i, atom in enumerate(molecule):
         try:
@@ -158,7 +188,8 @@ def _get_charges_from_lines(file_object, input_type, molecule):
                 'expected {2}'.format(int(label)+1, atom.identity, letter))
         charges.append(charge)
 
-    # Check if the atom list terminates after as many atoms as expected
+    # Check if the atom list terminates after as many atoms as expected from
+    # the Molecule object given
     next_line = file_object.readline()
     if next_line[:8] != charge_termination_line[input_type]:
         raise InputFortmatError('Expected end of charges ( \'----------\')'
