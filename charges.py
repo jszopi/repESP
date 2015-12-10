@@ -10,6 +10,13 @@ esp_type_in_log = {
 esp_charges = esp_type_in_log.values()
 
 
+# First 8 characters of the line following charge output in various input files
+charge_termination_line = {
+    'sumviz': '--------',
+    'log': ' Sum of ',
+    }
+
+
 class InputFortmatError(Exception):
     pass
 
@@ -42,22 +49,7 @@ def _charges_from_log(charge_type, filename, molecule):
     """
     with open(filename, 'r') as f:
         _goto_occurence_in_log(charge_type, f, -1)
-        charges = []
-
-        for i, atom in enumerate(molecule):
-            label, letter, charge = _log_charge_line(f.readline())
-            # Check if the atom identities agree between atom list and input
-            if letter != atom.identity:
-                raise InputFortmatError(
-                    'Atom {0} in atom list is given as {1} but input file '
-                    'expected {2}'.format(int(label)+1, atom.identity, letter))
-            charges.append(charge)
-
-        # Check if the atom list terminates after as many atoms as expected
-        next_line = f.readline()
-        if next_line[:8] != ' Sum of ':
-            raise InputFortmatError('Expected end of charges ( \'Sum of ...\')'
-                                    ', instead got: ' + next_line)
+        charges = _get_charges_from_lines(f, 'log', molecule)
 
         for atom, charge in zip(molecule, charges):
             atom.charges[charge_type] = float(charge)
@@ -122,30 +114,15 @@ def _charge_section_header_in_log(charge_type):
 
 
 def _charges_from_sumviz(filename, molecule):
-    # This is a kludge, note the code repetition from _charges_from_log
+    """Update the molecule with charges from AIMAll output."""
     with open(filename, 'r') as f:
         while f.readline().rstrip('\n') != 'Some Atomic Properties:':
             pass
+        # Skip irrelevant lines
         for i in range(9):
             f.readline()
 
-        charges = []
-
-        for i, atom in enumerate(molecule):
-            label, letter, charge = _sumviz_charge_line(f.readline())
-            # Check if the atom identities agree between atom list and input
-            if letter != atom.identity:
-                raise InputFortmatError(
-                    'Atom {0} in atom list is given as {1} but input file '
-                    'expected {2}'.format(int(label)+1, atom.identity, letter))
-            charges.append(charge)
-
-        # Check if the atom list terminates after as many atoms as expected
-        next_line = f.readline()
-        if next_line[:8] != '--------':
-            raise InputFortmatError('Expected end of charges ( \'----------\')'
-                                    ', instead got: ' + next_line)
-
+        charges = _get_charges_from_lines(f, 'sumviz', molecule)
         for atom, charge in zip(molecule, charges):
             atom.charges['aim'] = float(charge)
 
@@ -160,3 +137,24 @@ def _sumviz_charge_line(line):
     letter = letter_and_label[0]
     label = letter_and_label[1]
     return label, letter, charge
+
+
+def _get_charges_from_lines(file_object, input_type, molecule):
+    charges = []
+    for i, atom in enumerate(molecule):
+        label, letter, charge = globals()['_' + input_type + '_charge_line'](
+            file_object.readline())
+        # Check if the atom identities agree between atom list and input
+        if letter != atom.identity:
+            raise InputFortmatError(
+                'Atom {0} in atom list is given as {1} but input file '
+                'expected {2}'.format(int(label)+1, atom.identity, letter))
+        charges.append(charge)
+
+    # Check if the atom list terminates after as many atoms as expected
+    next_line = file_object.readline()
+    if next_line[:8] != charge_termination_line[input_type]:
+        raise InputFortmatError('Expected end of charges ( \'----------\')'
+                                ', instead got: ' + next_line)
+
+    return charges
