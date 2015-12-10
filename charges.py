@@ -109,13 +109,12 @@ def _goto_in_sumviz(charge_type, file_object):
 
 def _charge_section_header_in_log(charge_type):
     if charge_type == 'mulliken':
-        name = 'Mulliken'
+        return ' Mulliken charges:'
     elif charge_type in esp_charges:
-        name = 'ESP'
+        return ' ESP charges:'
     else:
         raise NotImplementedError("Charge type '{0}' is not implemented."
                                   .format(charge_type))
-    return ' ' + name + ' charges:'
 
 
 def _update_molecule_with_charges(molecule, charges, charge_type):
