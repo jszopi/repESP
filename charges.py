@@ -26,6 +26,8 @@ def get_charges(charge_type, filename, molecule):
     elif filename[-4:] in ['.chk', '.fchk']:
         raise NotImplementedError('File extension {0} currently not supported.'
                                   .format(filename[-4]))
+    elif filename[-7:] == '.sumviz' and charge_type == 'aim':
+        _charges_from_sumviz(filename, molecule)
     else:
         raise NotImplementedError('File extension {0} is not supported.'
                                   .format(filename[-4]))
@@ -117,3 +119,35 @@ def _charge_section_header_in_log(charge_type):
         raise NotImplementedError("Charge type '{0}' is not implemented."
                                   .format(charge_type))
     return ' ' + name + ' charges:'
+
+
+def _charges_from_sumviz(filename, molecule):
+    # This is a kludge, note the code repetition from _charges_from_log
+    with open(filename, 'r') as f:
+        while f.readline().rstrip('\n') != 'Some Atomic Properties:':
+            pass
+        for i in range(9):
+            f.readline()
+
+        charges = []
+
+        for i, atom in enumerate(molecule):
+            letter_and_label, charge, *other = f.readline().split()
+            # These should actually be a regex for letters and numbers
+            letter = letter_and_label[0]
+            label = letter_and_label[1]
+            # Check if the atom identities agree between atom list and input
+            if letter != atom.identity:
+                raise InputFortmatError(
+                    'Atom {0} in atom list is given as {1} but input file '
+                    'expected {2}'.format(int(label)+1, atom.identity, letter))
+            charges.append(charge)
+
+        # Check if the atom list terminates after as many atoms as expected
+        next_line = f.readline()
+        if next_line[:8] != '--------':
+            raise InputFortmatError('Expected end of charges ( \'----------\')'
+                                    ', instead got: ' + next_line)
+
+        for atom, charge in zip(molecule, charges):
+            atom.charges['aim'] = float(charge)
