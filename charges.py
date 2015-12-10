@@ -46,11 +46,11 @@ def _get_charges(charge_type, filename, input_type, molecule):
         _update_molecule_with_charges(molecule, charges, charge_type)
 
 
-def _goto_in_log(charge_type, file_object, occurence=-1):
-    """Go to the selected occurence of input about charges in a log file.
+def _goto_in_log(charge_type, file_object, occurrence=-1):
+    """Go to the selected occurrence of input about charges in a log file.
 
-    Occurence is the index to a list containing all occurences of the given
-    charge type, so should be 0 for the first occurence and -1 for the last.
+    Occurrence is the index to a list containing all occurrences of the given
+    charge type, so should be 0 for the first occurrence and -1 for the last.
     Code based on: http://stackoverflow.com/a/620492
     """
     offset = 0
@@ -82,11 +82,11 @@ def _goto_in_log(charge_type, file_object, occurence=-1):
                                .format(charge_type))
 
     try:
-        file_object.seek(result[occurence])
+        file_object.seek(result[occurrence])
     except IndexError:
         raise IndexError(
-            "Cannot find occurence '{0}' in a list of recognized pieces of "
-            "output about charges, whose length is {1}.".format(occurence,
+            "Cannot find occurrence '{0}' in a list of recognized pieces of "
+            "output about charges, whose length is {1}.".format(occurrence,
                                                                 len(result)))
 
     # Skip unnecessary lines
@@ -176,7 +176,7 @@ def _get_charges_from_lines(charge_type, file_object, input_type, molecule):
     Returns
     -------
     List[float]
-        List of charges in order of occurence in output file.
+        List of charges in order of occurrence in output file.
 
     Raises
     ------
