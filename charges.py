@@ -203,7 +203,8 @@ def _get_charges_from_lines(file_object, input_type, molecule):
     # the Molecule object given
     next_line = file_object.readline()
     if next_line[:8] != charge_termination_line[input_type]:
-        raise InputFormatError('Expected end of charges ( \'----------\')'
-                               ', instead got: ' + next_line)
+        raise InputFormatError(
+            "Expected end of charges ('{0}'), instead got: '{1}'".format(
+                charge_termination_line[input_type], next_line[:8]))
 
     return charges
