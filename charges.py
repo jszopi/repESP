@@ -21,47 +21,38 @@ class InputFormatError(Exception):
     pass
 
 
-def get_charges(charge_type, filename, molecule):
+def update_with_charges(charge_type, filename, molecule):
     """Update the molecule with charges
 
     Only charges calculated directly by Gaussian are currently supported. The
     charges should be given in a Gaussian output file (.log or .out). In the
     future, checkpoint and formatted checkpoint formats will be supported.
+
+    Note that if Gaussian output file contains information about charges in
+    more than one place, only the last one will be used. Also, the atom list is
+    assumed to be in order.
     """
     if filename[-4:] in ['.log', '.out']:
-        _charges_from_log(charge_type, filename, molecule)
+        _get_charges(charge_type, filename, 'log', molecule)
+    elif filename[-7:] == '.sumviz' and charge_type == 'aim':
+        _get_charges('aim', filename, 'sumviz', molecule)
     elif filename[-4:] in ['.chk', '.fchk']:
         raise NotImplementedError('File extension {0} currently not supported.'
                                   .format(filename[-4]))
-    elif filename[-7:] == '.sumviz' and charge_type == 'aim':
-        _charges_from_sumviz(filename, molecule)
     else:
         raise NotImplementedError('File extension {0} is not supported.'
                                   .format(filename[-4]))
 
 
-def _charges_from_log(charge_type, filename, molecule):
-    """Update the molecule with charges from Gaussian output
-
-    Note that if the output file contains information about charges in more
-    than one place, only the last one will be used. Also, the atom list is
-    assumed to be in order.
-    """
-    with open(filename, 'r') as f:
-        _goto_occurence_in_log(charge_type, f, -1)
-        charges = _get_charges_from_lines(f, 'log', molecule)
+def _get_charges(charge_type, filename, input_type, molecule):
+    """Update the molecule with charges."""
+    with open(filename, 'r') as file_object:
+        globals()['_goto_in_' + input_type](charge_type, file_object)
+        charges = _get_charges_from_lines(file_object, input_type, molecule)
         _update_molecule_with_charges(molecule, charges, charge_type)
 
 
-def _charges_from_sumviz(filename, molecule):
-    """Update the molecule with charges from AIMAll output."""
-    with open(filename, 'r') as f:
-        _goto_in_sumviz(f)
-        charges = _get_charges_from_lines(f, 'sumviz', molecule)
-        _update_molecule_with_charges(molecule, charges, 'aim')
-
-
-def _goto_occurence_in_log(charge_type, file_object, occurence):
+def _goto_in_log(charge_type, file_object, occurence=-1):
     """Go to the selected occurence of input about charges in a log file.
 
     Occurence is the index to a list containing all occurences of the given
@@ -108,7 +99,7 @@ def _goto_occurence_in_log(charge_type, file_object, occurence):
     file_object.readline()
 
 
-def _goto_in_sumviz(file_object):
+def _goto_in_sumviz(charge_type, file_object):
     while file_object.readline().rstrip('\n') != 'Some Atomic Properties:':
         pass
     # Skip irrelevant lines
@@ -156,7 +147,7 @@ def _get_charges_from_lines(file_object, input_type, molecule):
     file_object : File
         The file from which the charges are to be extracted. The file is
         expected to be set to the position of the start of charges section,
-        e.g. with the _goto_occurence_in_log helper.
+        e.g. with the _goto_in_log helper.
     input_type : str
         Currently implemented is reading lines from Gaussian ('log') and AIM
         ('sumviz') output files.
