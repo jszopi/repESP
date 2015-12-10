@@ -142,8 +142,15 @@ def _sumviz_charge_line(line):
 def _get_charges_from_lines(file_object, input_type, molecule):
     charges = []
     for i, atom in enumerate(molecule):
-        label, letter, charge = globals()['_' + input_type + '_charge_line'](
-            file_object.readline())
+        try:
+            # Input type-specific extraction performed by specialist function
+            label, letter, charge = globals()[
+                '_' + input_type + '_charge_line'](file_object.readline())
+        except KeyError:
+            raise NotImplementedError(
+                "Reading charges from an input file of type '{0} 'is not "
+                "supported.".format(input_type))
+
         # Check if the atom identities agree between atom list and input
         if letter != atom.identity:
             raise InputFortmatError(
