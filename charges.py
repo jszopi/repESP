@@ -114,14 +114,17 @@ def _charge_section_header_in_log(charge_type):
 def _charges_from_sumviz(filename, molecule):
     """Update the molecule with charges from AIMAll output."""
     with open(filename, 'r') as f:
-        while f.readline().rstrip('\n') != 'Some Atomic Properties:':
-            pass
-        # Skip irrelevant lines
-        for i in range(9):
-            f.readline()
-
+        _goto_in_sumviz(f)
         charges = _get_charges_from_lines(f, 'sumviz', molecule)
         _update_molecule_with_charges(molecule, charges, 'aim')
+
+
+def _goto_in_sumviz(file_object):
+    while file_object.readline().rstrip('\n') != 'Some Atomic Properties:':
+        pass
+    # Skip irrelevant lines
+    for i in range(9):
+        file_object.readline()
 
 
 def _update_molecule_with_charges(molecule, charges, charge_type):
