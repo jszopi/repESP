@@ -52,7 +52,7 @@ def _charges_from_log(charge_type, filename, molecule):
         charges = _get_charges_from_lines(f, 'log', molecule)
 
         for atom, charge in zip(molecule, charges):
-            atom.charges[charge_type] = float(charge)
+            atom.charges[charge_type] = charge
 
 
 def _goto_occurence_in_log(charge_type, file_object, occurence):
@@ -128,14 +128,18 @@ def _charges_from_sumviz(filename, molecule):
 
 
 def _log_charge_line(line):
-    return line.split()
+    label, letter, charge = line.split()
+    label = int(label)
+    charge = float(charge)
+    return label, letter, charge
 
 
 def _sumviz_charge_line(line):
     letter_and_label, charge, *other = line.split()
     # These should actually be a regex for letters and numbers
     letter = letter_and_label[0]
-    label = letter_and_label[1]
+    label = int(letter_and_label[1])
+    charge = float(charge)
     return label, letter, charge
 
 
