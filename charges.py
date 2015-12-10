@@ -53,6 +53,14 @@ def _charges_from_log(charge_type, filename, molecule):
         _update_molecule_with_charges(molecule, charges, charge_type)
 
 
+def _charges_from_sumviz(filename, molecule):
+    """Update the molecule with charges from AIMAll output."""
+    with open(filename, 'r') as f:
+        _goto_in_sumviz(f)
+        charges = _get_charges_from_lines(f, 'sumviz', molecule)
+        _update_molecule_with_charges(molecule, charges, 'aim')
+
+
 def _goto_occurence_in_log(charge_type, file_object, occurence):
     """Go to the selected occurence of input about charges in a log file.
 
@@ -100,6 +108,14 @@ def _goto_occurence_in_log(charge_type, file_object, occurence):
     file_object.readline()
 
 
+def _goto_in_sumviz(file_object):
+    while file_object.readline().rstrip('\n') != 'Some Atomic Properties:':
+        pass
+    # Skip irrelevant lines
+    for i in range(9):
+        file_object.readline()
+
+
 def _charge_section_header_in_log(charge_type):
     if charge_type == 'mulliken':
         name = 'Mulliken'
@@ -109,22 +125,6 @@ def _charge_section_header_in_log(charge_type):
         raise NotImplementedError("Charge type '{0}' is not implemented."
                                   .format(charge_type))
     return ' ' + name + ' charges:'
-
-
-def _charges_from_sumviz(filename, molecule):
-    """Update the molecule with charges from AIMAll output."""
-    with open(filename, 'r') as f:
-        _goto_in_sumviz(f)
-        charges = _get_charges_from_lines(f, 'sumviz', molecule)
-        _update_molecule_with_charges(molecule, charges, 'aim')
-
-
-def _goto_in_sumviz(file_object):
-    while file_object.readline().rstrip('\n') != 'Some Atomic Properties:':
-        pass
-    # Skip irrelevant lines
-    for i in range(9):
-        file_object.readline()
 
 
 def _update_molecule_with_charges(molecule, charges, charge_type):
