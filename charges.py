@@ -17,7 +17,7 @@ charge_termination_line = {
     }
 
 
-class InputFortmatError(Exception):
+class InputFormatError(Exception):
     pass
 
 
@@ -80,15 +80,15 @@ def _goto_occurence_in_log(charge_type, file_object, occurence):
     if charge_type in esp_charges:
         # Verify if all ESP charge output has been recognized correctly
         if len(esp_types) != len(result):
-            raise InputFortmatError('Information about the type of some '
-                                    'ESP charges was not recognized.')
+            raise InputFormatError('Information about the type of some '
+                                   'ESP charges was not recognized.')
         # Filter only the requested ESP charge type
         result = [elem for i, elem in enumerate(result) if
                   esp_types[i] == charge_type]
 
     if not result:
-        raise InputFortmatError("Output about charge type '{0}' not found."
-                                .format(charge_type))
+        raise InputFormatError("Output about charge type '{0}' not found."
+                               .format(charge_type))
 
     try:
         file_object.seek(result[occurence])
@@ -183,7 +183,7 @@ def _get_charges_from_lines(file_object, input_type, molecule):
 
         # Check if the atom identities agree between atom list and input
         if letter != atom.identity:
-            raise InputFortmatError(
+            raise InputFormatError(
                 'Atom {0} in atom list is given as {1} but input file '
                 'expected {2}'.format(int(label)+1, atom.identity, letter))
         charges.append(charge)
@@ -192,7 +192,7 @@ def _get_charges_from_lines(file_object, input_type, molecule):
     # the Molecule object given
     next_line = file_object.readline()
     if next_line[:8] != charge_termination_line[input_type]:
-        raise InputFortmatError('Expected end of charges ( \'----------\')'
-                                ', instead got: ' + next_line)
+        raise InputFormatError('Expected end of charges ( \'----------\')'
+                               ', instead got: ' + next_line)
 
     return charges
