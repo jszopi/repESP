@@ -10,13 +10,6 @@ esp_type_in_log = {
 esp_charges = esp_type_in_log.values()
 
 
-# First 8 characters of the line following charge output in various input files
-charge_termination_line = {
-    'sumviz': '--------',
-    'log': (' Sum of ', ' =======')
-    }
-
-
 class InputFormatError(Exception):
     pass
 
@@ -124,6 +117,21 @@ def _charge_section_header_in_log(charge_type):
                                   .format(charge_type))
 
 
+def _charge_termination_line(input_type, charge_type):
+    """Returns the first 8 characters of the charge section termination line"""
+    if input_type == 'log':
+        if charge_type == 'nbo':
+            return ' ======='
+        else:
+            return ' Sum of '
+    elif input_type == 'sumviz':
+        return '--------'
+    else:
+        raise NotImplementedError("Combination of input file type '{0}' and "
+                                  "charge type '{1}' is not implemented."
+                                  .format(input_type, charge_type))
+
+
 def _update_molecule_with_charges(molecule, charges, charge_type):
     for atom, charge in zip(molecule, charges):
         atom.charges[charge_type] = charge
@@ -208,11 +216,10 @@ def _get_charges_from_lines(charge_type, file_object, input_type, molecule):
     # Check if the atom list terminates after as many atoms as expected from
     # the Molecule object given
     next_line = file_object.readline()
-    # Kludged, in fact charge_termination_line depends on both file and charge
-    # types.
-    if next_line[:8] not in charge_termination_line[input_type]:
+    if next_line[:8] != _charge_termination_line(input_type, charge_type):
         raise InputFormatError(
             "Expected end of charges ('{0}'), instead got: '{1}'".format(
-                charge_termination_line[input_type], next_line[:8]))
+                _charge_termination_line(input_type, charge_type),
+                next_line[:8]))
 
     return charges
