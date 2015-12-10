@@ -50,9 +50,7 @@ def _charges_from_log(charge_type, filename, molecule):
     with open(filename, 'r') as f:
         _goto_occurence_in_log(charge_type, f, -1)
         charges = _get_charges_from_lines(f, 'log', molecule)
-
-        for atom, charge in zip(molecule, charges):
-            atom.charges[charge_type] = charge
+        _update_molecule_with_charges(molecule, charges, charge_type)
 
 
 def _goto_occurence_in_log(charge_type, file_object, occurence):
@@ -123,8 +121,12 @@ def _charges_from_sumviz(filename, molecule):
             f.readline()
 
         charges = _get_charges_from_lines(f, 'sumviz', molecule)
-        for atom, charge in zip(molecule, charges):
-            atom.charges['aim'] = float(charge)
+        _update_molecule_with_charges(molecule, charges, 'aim')
+
+
+def _update_molecule_with_charges(molecule, charges, charge_type):
+    for atom, charge in zip(molecule, charges):
+        atom.charges[charge_type] = charge
 
 
 def _log_charge_line(line):
