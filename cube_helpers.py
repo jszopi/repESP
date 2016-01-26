@@ -122,7 +122,10 @@ class Molecule(list):
         list.__init__(self, *args)
         # I think this shouldn't need to be inside a method but that didnt work
         Molecule._rep_esp_func.field_type = lambda field_func_args: ['rep_esp']*len(field_func_args[0])
+        Molecule._rep_esp_func.field_info = lambda field_func_args: field_func_args[0]
         Molecule._dist_func.field_type = lambda field_func_args: ['closest_atom', 'closest_atom_dist']
+        Molecule._dist_func.field_info = lambda field_func_args: ['own']*2
+        # Own implementation as opposed to Henkelman's
 
     def calc_field(self, grid, field_func, *field_func_args):
         """Calculate field values point-wise according to a function
@@ -174,10 +177,10 @@ class Molecule(list):
                             results = [[] for i in range(len(values))]
 
         fields = []
-        for result, field_type in zip(results, field_func.field_type(field_func_args)):
+        for result, field_type, field_info in zip(results, field_func.field_type(field_func_args), field_func.field_info(field_func_args)):
             field = np.array(result)
             field.resize(grid.points_on_axes)
-            fields.append(Field(field, grid, field_type))
+            fields.append(Field(field, grid, field_type, field_info))
 
         return fields
 
@@ -204,10 +207,11 @@ class Molecule(list):
 
 class Field(object):
 
-    def __init__(self, values, grid, field_type):
+    def __init__(self, values, grid, field_type, field_info=None):
         self.values = values
         self.grid = grid
         self.field_type = field_type
+        self.field_info = field_info
 
     def distance_transform(self, isovalue):
         """This should only be applied to the electron density cube."""
