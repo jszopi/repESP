@@ -54,7 +54,7 @@ class Cube(object):
                                       "associated with a known cube type.")
 
         self.field = Field(Cube.field_from_raw(field, grid), grid,
-                           self.cube_type)
+                           self.cube_type, 'input')
 
     @staticmethod
     def field_from_raw(raw_field, grid):
@@ -187,8 +187,9 @@ class Molecule(list):
             field_infos = field_func_args[0]
             func = self._rep_esp_func
         elif field_func == 'dist':
-            field_types = ['closest_atom', 'closest_atom_dist']
-            field_infos = ['own']*2
+            field_types = ['parent_atom', 'dist']
+            # Voronoi means closest-atom in molecular partitioning lingo
+            field_infos = ['Voronoi', 'own']*2
             # Own implementation as opposed to Henkelman's
             func = self._dist_func
         else:
@@ -241,7 +242,7 @@ class Field(object):
         select_iso = lambda x: 1 if x < isovalue else 0
         field = np.vectorize(select_iso)(self.values)
         dist = scipy_edt(field, sampling=self.grid.dir_intervals)
-        return Field(dist, self.grid, 'ed_dist')
+        return Field(dist, self.grid, 'dist', ['ed', isovalue])
 
     def write_cube(self, output_fn, molecule, charge_type=None):
         """Write the field as a Gaussian cube file.

@@ -14,19 +14,18 @@ def difference(field1, field2, relative=False, absolute=False):
     _check_grids(field1, field2)
     if absolute:
         func = lambda val1, val2: abs(val1 - val2)
-        name = 'abs_'
+        info = 'abs_'
     else:
         func = lambda val1, val2: val1 - val2
-        name = ''
+        info = ''
 
     if relative:
         func = lambda val1, val2: func(val1, val2)/val1
-        name += 'rel_'
+        info += 'rel_'
 
-    name += 'diff'
     values = np.vectorize(func)(field1.values, field2.values)
 
-    return Field(values, field1.grid, name)
+    return Field(values, field1.grid, 'diff', info)
 
 
 def _check_grids(field1, *fields):
