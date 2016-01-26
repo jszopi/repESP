@@ -120,26 +120,64 @@ class Molecule(list):
 
     def __init__(self, *args):
         list.__init__(self, *args)
+        # I think this shouldn't need to be inside a method but that didnt work
+        Molecule._rep_esp_func.field_type = lambda field_func_args: ['rep_esp']*len(field_func_args[0])
 
-    def rep_field(self, charge_type, grid):
-        field = []
+    def calc_field(self, grid, field_func, *field_func_args):
+        """Calculate field values point-wise according to a function
+
+        Note that this method returns as many fields as the calculation
+        function returns values. The function is selected from this class based
+        on a name description (through `getattr').
+        """
+        # PERFORMANCE CONSIDERATIONS
+        # Since this is likely critical code, it should probably be optimized,
+        # e.g. through preferring a numpy array over the intermediate Python
+        # list and then possibly mapping field_func onto array elements instead
+        # of iterating over it.
+        # To avoid loop overhead on each execution of this method (e.g. repESP
+        # field with different partial charges), this method could take many
+        # field_funcs as arguments and evaluate all of them. Then it would be
+        # up to the caller to collect all the functions to be evaluated and
+        # call this method only once. I'm not sure whether this would help the
+        # performance much though. Since the multiple field_funcs would be
+        # given as *args, the arguments to the field_func, which currently go
+        # as *args, should probably be incorporated into field_func. This would
+        # complicate the matter for the caller, which would have to create and
+        # pass a partial function.
+
+        field_func = getattr(self, '_' + field_func + '_func')
+
         for ix in range(grid.axes[0].point_count):
             x = grid.origin_coords[0] + ix*grid.dir_intervals[0]
             for iy in range(grid.axes[1].point_count):
                 y = grid.origin_coords[1] + iy*grid.dir_intervals[1]
                 for iz in range(grid.axes[2].point_count):
                     z = grid.origin_coords[2] + iz*grid.dir_intervals[2]
-                    value = 0
-                    for atom in self:
-                        value += atom.charges[charge_type]/euclidean(
-                            [x, y, z], atom.coords)
-                    field.append(value)
+                    values = field_func(x, y, z, *field_func_args)
+                    while True:
+                        try:
+                            for value, result in zip(values, results):
+                                result.append(value)
+                            break
+                        except NameError:
+                            results = [[] for i in range(len(values))]
 
-        field = np.array(field)
-        field.resize(grid.points_on_axes)
-        field = Field(field, grid, 'rep_esp')
+        fields = []
+        for result, field_type in zip(results, field_func.field_type(field_func_args)):
+            field = np.array(result)
+            field.resize(grid.points_on_axes)
+            fields.append(Field(field, grid, field_type))
 
-        return field
+        return fields
+
+    def _rep_esp_func(self, x, y, z, charge_type):
+        """Calculate ESP value at given point due to charges on atoms"""
+        value = 0
+        for atom in self:
+            value += atom.charges[charge_type]/euclidean([x, y, z],
+                                                         atom.coords)
+        return value,
 
 
 class Field(object):
