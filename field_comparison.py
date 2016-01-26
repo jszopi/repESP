@@ -119,6 +119,21 @@ def filter_by_dist(exclusion_dist, dist, *fields, assign_val=None):
     return _iterate_fields(condition, assign_val, *fields)
 
 
+def filter_by_atom(molecule, atom_label, method, *fields, assign_val=None):
+    # _iterate_fields will check grids anyway
+    grid = fields[0].grid
+    if method == 'dist':
+        closest_atom = molecule.calc_field(grid, 'dist')[0]
+    elif method == 'aim':
+        raise NotImplementedError("AIM basins are not yet implemented.")
+    else:
+        raise NotImplementedError("Method {0} is not implemented.".format(
+            method))
+    condition = lambda elems: elems[0] != atom_label
+    fields = [closest_atom] + list(fields)
+    return _iterate_fields(condition, assign_val, *fields)
+
+
 def skim(rand_skim, *fields, assign_val=None):
     """Skim the number of data points in input fields.
 
