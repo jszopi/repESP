@@ -132,27 +132,29 @@ class Molecule(list):
         on a name description (through `getattr').
         """
         # PERFORMANCE CONSIDERATIONS
-        # Since this is likely critical code, it should probably be optimized,
-        # e.g. through preferring a numpy array over the intermediate Python
-        # list and then possibly mapping field_func onto array elements instead
-        # of iterating over it.
-        # To avoid loop overhead on each execution of this method (e.g. repESP
-        # field with different partial charges), this method could take many
-        # field_funcs as arguments and evaluate all of them. Then it would be
-        # up to the caller to collect all the functions to be evaluated and
-        # call this method only once. I'm not sure whether this would help the
-        # performance much though. Since the multiple field_funcs would be
-        # given as *args, the arguments to the field_func, which currently go
-        # as *args, should probably be incorporated into field_func. This would
-        # complicate the matter for the caller, which would have to create and
-        # pass a partial function.
-
-        # Some straightforward optimization has been performed. The reason why
-        # this method expects a field_func returning more than one value is
+        # This will likely be a bottleneck and, while a mathematical trick to
+        # reduce the complexity from O(n*g^3) may exist, I don't know one.
+        # Still, this method be optimized but **only once its proven a
+        # bottleneck** by profiling.
+        # (1) Some straightforward optimization has been performed. The reason
+        # why this method expects a field_func returning more than one value is
         # that calling field_func only once prevents the reevaluation of some
         # common parts of its body. For _rep_esp_func and _dist_func, it is the
         # `euclidean' distance, and for the latter also the logic behind
         # choosing the closest atom.
+        # (2) However, `euclidean' still gets reevaluated for different calls
+        # of this method. It could be memoized as a distance field resulting
+        # from a new Molecule method. Since that would better operate on grid
+        # rather than coordinates, the loop in *this* method should iterate the
+        # grid indices and pass all the grid calculations to the distance
+        # method. TODO
+        # (3) np.array should be preferred over the intermediate list here
+        # (4) Then it may be worth mapping field_func onto array elements
+        # instead of iterating over it but that's a disputable topic:
+        # https://wiki.python.org/moin/PythonSpeed/PerformanceTips#Loops
+        # https://www.python.org/doc/essays/list2str/
+        # (5) Finally, iterating the grid has a good potential for
+        # parallelization.
 
         field_func = getattr(self, '_' + field_func + '_func')
 
