@@ -120,12 +120,6 @@ class Molecule(list):
 
     def __init__(self, *args):
         list.__init__(self, *args)
-        # I think this shouldn't need to be inside a method but that didnt work
-        Molecule._rep_esp_func.field_type = lambda field_func_args: ['rep_esp']*len(field_func_args[0])
-        Molecule._rep_esp_func.field_info = lambda field_func_args: field_func_args[0]
-        Molecule._dist_func.field_type = lambda field_func_args: ['closest_atom', 'closest_atom_dist']
-        Molecule._dist_func.field_info = lambda field_func_args: ['own']*2
-        # Own implementation as opposed to Henkelman's
 
     def calc_field(self, grid, field_func, *field_func_args):
         """Calculate field values point-wise according to a function
@@ -159,7 +153,8 @@ class Molecule(list):
         # (5) Finally, iterating the grid has a good potential for
         # parallelization.
 
-        field_func = getattr(self, '_' + field_func + '_func')
+        field_func, field_types, field_infos = self._field_func_helper(
+            field_func, *field_func_args)
 
         for ix in range(grid.axes[0].point_count):
             x = grid.origin_coords[0] + ix*grid.dir_intervals[0]
@@ -177,12 +172,29 @@ class Molecule(list):
                             results = [[] for i in range(len(values))]
 
         fields = []
-        for result, field_type, field_info in zip(results, field_func.field_type(field_func_args), field_func.field_info(field_func_args)):
+        for result, field_type, field_info in zip(results, field_types,
+                                                  field_infos):
             field = np.array(result)
             field.resize(grid.points_on_axes)
             fields.append(Field(field, grid, field_type, field_info))
 
         return fields
+
+    def _field_func_helper(self, field_func, *field_func_args):
+        # Any new field_func must leave details in here
+        if field_func == 'rep_esp':
+            field_types = ['rep_esp']*len(field_func_args[0])
+            field_infos = field_func_args[0]
+            func = self._rep_esp_func
+        elif field_func == 'dist':
+            field_types = ['closest_atom', 'closest_atom_dist']
+            field_infos = ['own']*2
+            # Own implementation as opposed to Henkelman's
+            func = self._dist_func
+        else:
+            raise NotImplementedError("The requested function is not "
+                                      "implemented: {0}".format(field_func))
+        return func, field_types, field_infos
 
     def _rep_esp_func(self, x, y, z, charge_types):
         """Calculate ESP value at given point due to charges on atoms"""
