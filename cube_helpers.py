@@ -147,16 +147,12 @@ class Molecule(list):
         # complicate the matter for the caller, which would have to create and
         # pass a partial function.
 
-        # The reason why this method expects a field_func returning more than
-        # one value is the _dist_func, which return two values. This is
-        # different from the second bullet point of performance optimization
-        # though: in this case it's clear, that splitting this function into
-        # two would not only add loop overhead but more importantly the cost of
-        # the field_func itself, which includes evaluation of euclidean. That
-        # said, _rep_esp_func also evaluates euclidean distance, and hence can
-        # be improved if this was only evaluated once for all the charges. This
-        # can be achieved by passing a list of charges and returning as many
-        # results --- TODO.
+        # Some straightforward optimization has been performed. The reason why
+        # this method expects a field_func returning more than one value is
+        # that calling field_func only once prevents the reevaluation of some
+        # common parts of its body. For _rep_esp_func and _dist_func, it is the
+        # `euclidean' distance, and for the latter also the logic behind
+        # choosing the closest atom.
 
         field_func = getattr(self, '_' + field_func + '_func')
 
@@ -183,13 +179,14 @@ class Molecule(list):
 
         return fields
 
-    def _rep_esp_func(self, x, y, z, charge_type):
+    def _rep_esp_func(self, x, y, z, charge_types):
         """Calculate ESP value at given point due to charges on atoms"""
-        value = 0
+        values = [0]*len(charge_types)
         for atom in self:
-            value += atom.charges[charge_type]/euclidean([x, y, z],
-                                                         atom.coords)
-        return value,
+            dist = euclidean([x, y, z], atom.coords)
+            for i, charge_type in enumerate(charge_types):
+                values[i] += atom.charges[charge_type]/dist
+        return values
 
     def _dist_func(self, x, y, z):
         """For a given point, find the closest atom and its distance"""
