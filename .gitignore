@@ -1,3 +1,5 @@
 __pycache__
-.*.swp
-.*.swo
+*.swp
+*.swo
+.DS_Store
+*.pyc
