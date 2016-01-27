@@ -44,7 +44,7 @@ class Cube(object):
                 new_atom.charges['cube'] = atom_temp[1]
                 self.molecule.append(new_atom)
 
-            # This may be unfeasible for very large cubes
+            # TODO: this may be unfeasible for very large cubes
             field = f.read().split()
 
         try:
@@ -72,6 +72,7 @@ class Cube(object):
 class Atom(object):
 
     # http://www.science.co.il/PTelements.asp
+    # TODO: this should be handled by a library
     periodic = [('H', 'Hydrogen'),
                 ('He', 'Helium'),
                 ('Li', 'Lithium'),
