@@ -1,4 +1,4 @@
-import unittest
+import my_unittest
 from repESP import cube_helpers
 
 # I'm not sure whether this should be here but it seems fine, it's only
@@ -6,7 +6,7 @@ from repESP import cube_helpers
 cube = cube_helpers.Cube("tests/test_mol_den.cub")
 
 
-class TestCube(unittest.TestCase):
+class TestCube(my_unittest.TestCase):
 
     def test_title(self):
         self.assertEqual(cube.title,
