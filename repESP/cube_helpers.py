@@ -1,4 +1,3 @@
-import ipdb
 import numpy as np
 from operator import attrgetter
 from scipy.ndimage.morphology import distance_transform_edt as scipy_edt

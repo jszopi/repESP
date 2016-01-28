@@ -1,4 +1,3 @@
-import ipdb
 from cube_helpers import Atom, Cube
 
 esp_type_in_log = {
