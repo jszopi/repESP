@@ -26,6 +26,15 @@ class TestGrid(my_unittest.TestCase):
     def test_origin_coords(self):
         self.assertListAlmostEqual(grid.origin_coords, [0.1, 0.2, 0.3])
 
+    def test_dir_intervals(self):
+        self.assertListAlmostEqual(grid.dir_intervals, [0.2, 0.3, 0.4])
+
+    def test_aligned(self):
+        self.assertTrue(grid.aligned_to_coord)
+
+    def test_points_on_axes(self):
+        self.assertListAlmostEqual(grid.points_on_axes, [3, 3, 3])
+
 
 class TestMolecule(my_unittest.TestCase):
 
@@ -37,3 +46,9 @@ class TestMolecule(my_unittest.TestCase):
 
     def test_coords(self):
         self.assertListAlmostEqual(atom.coords, [0.1, 0.2, 0.4])
+
+    def test_cube_charges(self):
+        self.assertAlmostEqual(atom.charges['cube'], 1)
+
+    def test_atom_count(self):
+        self.assertEqual(len(cube.molecule), 1)
