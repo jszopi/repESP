@@ -11,6 +11,7 @@ grid = cube.field.grid
 # separate test. That likely requires a custom test suite so that they're only
 # executed once and before the others.
 dist_field = cube.molecule.calc_field(grid, 'dist')
+repESP_field = cube.molecule.calc_field(grid, 'rep_esp', ['cube'])[0]
 # Values calculated with an independent ad-hoc script
 dist_result = [0.1, 0.3, 0.7, 0.316227766, 0.424264068, 0.761577310,
                0.608276253, 0.670820393, 0.921954445, 0.223606797, 0.360555127,
@@ -80,3 +81,16 @@ class TestDistField(my_unittest.TestCase):
 
     def test_atom_field_info(self):
         self.assertListEqual(dist_field[0].field_info, ['Voronoi', 'own'])
+
+
+class TestRepESPField(my_unittest.TestCase):
+
+    def test_values(self):
+        self.assertListAlmostEqual(list(repESP_field.values.flatten()),
+                                   [1/dist for dist in dist_result])
+
+    def test_field_type(self):
+        self.assertEqual(repESP_field.field_type, 'rep_esp')
+
+    def test_atom_field_info(self):
+        self.assertEqual(repESP_field.field_info, 'cube')
