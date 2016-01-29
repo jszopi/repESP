@@ -299,7 +299,7 @@ class Grid(object):
             for axis in range(3):
                 self.dir_intervals.append(self.axes[axis].dir_interval)
         else:
-            print('WARNING: The cube is not aligned with coordinate system.')
+            raise GridError('The cube is not aligned with coordinate system.')
 
         self.points_on_axes = [axis.point_count for axis in self.axes]
 
