@@ -3,7 +3,8 @@ from repESP import cube_helpers
 
 # I'm not sure whether this should be here but it seems fine, it's only
 # evaluated once and will be available to all the TestCases in this module
-cube = cube_helpers.Cube("tests/test_mol_den.cub")
+inp_cube_path = "tests/test_mol_den.cub"
+cube = cube_helpers.Cube(inp_cube_path)
 atom = cube.molecule[0]
 grid = cube.field.grid
 
