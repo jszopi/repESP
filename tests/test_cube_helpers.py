@@ -19,6 +19,16 @@ dist_result = [0.1, 0.3, 0.7, 0.316227766, 0.424264068, 0.761577310,
                0.7, 0.943398113, 0.412310562, 0.5, 0.806225774, 0.509901951,
                0.583095189, 0.860232526, 0.728010988, 0.781024967, 1.004987562]
 
+# Isovalue selected so that only two points fall above it
+ed_isoval = 7.01e-07
+edt_field = cube.field.distance_transform(ed_isoval)
+# This was calculated with the aforementioned script as the smaller elements of
+# the distance matrices from those two points.
+edt_result = [0.63245553, 0.63245553, 0.74833147, 0.36055512, 0.36055512,
+              0.53851648, 0.2, 0.2, 0.44721359, 0.6, 0.6, 0.72111025, 0.3, 0.3,
+              0.5, 0.0, 0.0, 0.4, 0.63245553, 0.63245553, 0.74833147,
+              0.36055512, 0.36055512, 0.53851648, 0.2, 0.2, 0.44721359]
+
 
 class TestCube(my_unittest.TestCase):
 
@@ -94,3 +104,17 @@ class TestRepESPField(my_unittest.TestCase):
 
     def test_atom_field_info(self):
         self.assertEqual(repESP_field.field_info, 'cube')
+
+
+class TestField(my_unittest.TestCase):
+
+    def test_edt_type(self):
+        self.assertEqual(edt_field.field_type, 'dist')
+
+    def test_edt_info(self):
+        self.assertEqual(edt_field.field_info[0], 'ed')
+        self.assertAlmostEqual(edt_field.field_info[1], ed_isoval)
+
+    def test_edt_values(self):
+        self.assertListAlmostEqual(list(edt_field.values.flatten()),
+                                   edt_result)
