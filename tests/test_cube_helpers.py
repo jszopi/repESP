@@ -60,7 +60,7 @@ class TestMolecule(my_unittest.TestCase):
         self.assertListAlmostEqual(atom.coords, [0.1, 0.2, 0.4])
 
     def test_cube_charges(self):
-        self.assertAlmostEqual(atom.charges['cube'], 1)
+        self.assertAlmostEqual(atom.charges['cube'], 0.9)
 
     def test_atom_count(self):
         self.assertEqual(len(cube.molecule), 1)
@@ -87,7 +87,7 @@ class TestRepESPField(my_unittest.TestCase):
 
     def test_values(self):
         self.assertListAlmostEqual(list(repESP_field.values.flatten()),
-                                   [1/dist for dist in dist_result])
+                                   [0.9/dist for dist in dist_result])
 
     def test_field_type(self):
         self.assertEqual(repESP_field.field_type, 'rep_esp')
