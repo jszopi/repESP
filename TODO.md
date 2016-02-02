@@ -1,16 +1,5 @@
 # Implement research ideas
 
-## AIM basins
-
-* Use the Henkelman's `bader` script but do not implement running it from the program yet.
-    This should be done together with running all the other programs to get charges, e.g. Gaussian.
-    Instead, assume that all the `BvAt*.cube` files are in the right directory.
-
-* Implement this as a function which reads in all the output files and yields a field with all the grid points set to the closest atom, just like the Voronoi transform.
-    Do not assume that `bader` assigns only one label to each point, there may be numerical issues there.
-
-* `bader` also implements Voronoi, so should compare if it agrees with my manual implementation.
-
 ## Analysis
 
 * 3D plots by basin
