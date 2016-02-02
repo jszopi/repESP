@@ -26,6 +26,14 @@ class Cube(object):
 
             self.gaussian_input = f.readline().rstrip('\n')
             self.title = f.readline().rstrip('\n')
+
+            try:
+                self.cube_type = Cube.title_to_type[self.title[:18]]
+            except KeyError:
+                raise NotImplementedError("Cube title '" + self.title + "' is "
+                                          "not associated with a known cube "
+                                          "type.")
+
             self.atom_count, *origin_coords, nval = f.readline().split()
             if float(nval) != 1:
                 raise GridError('NVal in the cube is different than 1. Not '
@@ -49,12 +57,6 @@ class Cube(object):
 
             # TODO: this may be unfeasible for very large cubes
             field = f.read().split()
-
-        try:
-            self.cube_type = Cube.title_to_type[self.title[:18]]
-        except KeyError:
-            raise NotImplementedError("Cube title '" + self.title + "' is not "
-                                      "associated with a known cube type.")
 
         self.field = Field(Cube.field_from_raw(field, grid), grid,
                            self.cube_type, 'input')
