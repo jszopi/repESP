@@ -4,6 +4,7 @@ import inspect
 from warnings import warn
 from cube_helpers import GridError, Field
 from operator import attrgetter
+import os
 
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
@@ -122,8 +123,14 @@ def filter_by_atom(molecule, atom_label, method, *fields, assign_val=None):
     grid = fields[0].grid
     if method == 'dist':
         closest_atom = molecule.calc_field(grid, 'dist')[0]
-    elif method == 'aim':
-        raise NotImplementedError("AIM basins are not yet implemented.")
+    elif method == 'qtaim':
+        # TODO: It's not a good idea to assume the location of those cubes.
+        # Currently, all the paths should be specified by the caller, i.e. the
+        # path should be one of the arguments of this function. However, in the
+        # future the issue of paths will be resolved in some smart way, so I'll
+        # leave it as it is now.
+        path = os.path.dirname(molecule.parent_cube.cube_fn) + '/'
+        closest_atom = molecule.extract_qtaim_basins(grid, path)
     else:
         raise NotImplementedError("Method {0} is not implemented.".format(
             method))
