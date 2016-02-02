@@ -35,7 +35,7 @@ class Cube(object):
             grid = Grid([f.readline().split() for i in range(3)])
             grid.origin_coords = [float(coord) for coord in origin_coords]
 
-            self.molecule = Molecule()
+            self.molecule = Molecule(self)
             # The atoms will be added to the Molecule in the order of occurence
             # in the input, which is assumed to correspond to Gaussian labels.
             for label in range(self.atom_count):
@@ -122,8 +122,9 @@ class Atom(object):
 class Molecule(list):
     """A list of atoms with extra functionalities."""
 
-    def __init__(self, *args):
+    def __init__(self, parent_cube, *args):
         list.__init__(self, *args)
+        self.parent_cube = parent_cube
 
     def calc_field(self, grid, field_func, *field_func_args):
         """Calculate field values point-wise according to a function
