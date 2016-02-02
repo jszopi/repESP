@@ -34,7 +34,15 @@ class Cube(object):
                                           "not associated with a known cube "
                                           "type.")
 
-            self.atom_count, *origin_coords, nval = f.readline().split()
+            line = f.readline().split()
+            if len(line) == 5:
+                self.atom_count, *origin_coords, nval = line
+            else:
+                raise InputFormatError(
+                    "Cube file incorrectly formatted! Expected five fields "
+                    "(atom count, 3*origin coordinates, NVal) on line 3, found"
+                    " {0}.".format(len(line)))
+
             if float(nval) != 1:
                 raise GridError('NVal in the cube is different than 1. Not '
                                 'sure what it means in practice.')
