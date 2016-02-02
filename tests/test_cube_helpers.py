@@ -127,7 +127,7 @@ class TestDistField(my_unittest.TestCase):
         self.assertEqual(dist_field[1].field_type, 'dist')
 
     def test_atom_field_info(self):
-        self.assertListEqual(dist_field[0].field_info, ['Voronoi', 'own'])
+        self.assertListEqual(dist_field[0].field_info, ['Voronoi'])
 
 
 class TestRepESPField(my_unittest.TestCase):

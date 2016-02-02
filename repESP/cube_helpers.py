@@ -209,8 +209,7 @@ class Molecule(list):
         elif field_func == 'dist':
             field_types = ['parent_atom', 'dist']
             # Voronoi means closest-atom in molecular partitioning lingo
-            field_infos = [['Voronoi', 'own']]*2
-            # Own implementation as opposed to Henkelman's
+            field_infos = [['Voronoi']]*2
             func = self._dist_func
         else:
             raise NotImplementedError("The requested function is not "
