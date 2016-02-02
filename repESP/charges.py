@@ -1,4 +1,4 @@
-from cube_helpers import Atom, Cube
+from cube_helpers import Atom, Cube, InputFormatError
 
 esp_type_in_log = {
     ' Merz-Kollman atomic radii used.': 'mk',
@@ -7,10 +7,6 @@ esp_type_in_log = {
     }
 
 esp_charges = esp_type_in_log.values()
-
-
-class InputFormatError(Exception):
-    pass
 
 
 def update_with_charges(charge_type, filename, molecule):

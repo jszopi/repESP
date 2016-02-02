@@ -10,6 +10,10 @@ class GridError(Exception):
     pass
 
 
+class InputFormatError(Exception):
+    pass
+
+
 class Cube(object):
 
     title_to_type = {
