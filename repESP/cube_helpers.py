@@ -24,6 +24,7 @@ class Cube(object):
         }
 
     def __init__(self, cube_fn):
+        self.cube_fn = cube_fn
         with open(cube_fn, 'r') as f:
 
             self.gaussian_input = f.readline().rstrip('\n')
