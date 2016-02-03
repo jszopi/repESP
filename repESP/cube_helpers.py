@@ -16,6 +16,12 @@ class InputFormatError(Exception):
     pass
 
 
+def _check_for_nans(values):
+    # http://stackoverflow.com/a/6736970
+    if np.isnan(np.sum(values.flat)):
+        raise InputFormatError("Values contain NANs!")
+
+
 class Cube(object):
 
     title_to_type = {
@@ -308,6 +314,7 @@ class Molecule(list):
 class Field(object):
 
     def __init__(self, values, grid, field_type, field_info=None):
+        _check_for_nans(values)
         self.values = values
         self.grid = grid
         self.field_type = field_type
