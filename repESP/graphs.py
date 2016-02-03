@@ -8,7 +8,7 @@ import field_comparison
 DIR_LABELS = ['x', 'y', 'z']
 
 
-def _plot_common(dimension):
+def _plot_common(dimension, title):
     """Set up plot of correct dimensionality and return related objects"""
     fig = plt.figure()
     if dimension == 3:
@@ -23,11 +23,14 @@ def _plot_common(dimension):
     if dimension == 2:
         ax.axhline(color='k', linestyle='--')
 
+    if title is not None:
+        plt.title(title)
+
     return fig, ax
 
 
 def plot(*fields, color=None, dist_field_filter=None, exclusion_dist=0,
-         rand_skim=0.01, save_to=None, axes_limits=None):
+         rand_skim=0.01, save_to=None, axes_limits=None, title=None):
 
     # Still plenty TODO:
     # For easy comparisons between plots:
@@ -44,7 +47,7 @@ def plot(*fields, color=None, dist_field_filter=None, exclusion_dist=0,
     field_comparison._check_grids(*fields_and_color)
     field_comparison._check_fields_for_nans(*fields_and_color)
 
-    fig, ax = _plot_common(len(fields))
+    fig, ax = _plot_common(len(fields), title)
     _set_axis_labels(ax, *fields)
 
     if dist_field_filter is not None:
