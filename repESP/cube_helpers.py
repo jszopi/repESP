@@ -313,6 +313,58 @@ class Field(object):
         self.field_type = field_type
         self.field_info = field_info
 
+    def lookup_name(self):
+        """Return free-form name
+
+        The main purpose will probably be labelling axes when plotting.
+        """
+        if self.field_type in ['esp', 'ed']:
+            if self.field_type == 'esp':
+                result = "ESP value"
+            elif self.field_type == 'ed':
+                result = "ED value"
+            if self.field_info[0] == 'input':
+                result += " from input cube file"
+
+        elif self.field_type == 'rep_esp':
+            result = "Reproduced ESP value"
+            if self.field_info[0]:
+                result += " from {0} charges".format(self.field_info[0]
+                                                     .upper())
+
+        elif self.field_type == 'dist':
+            result = "Distance"
+            if self.field_info[0] == 'ed':
+                result += " from ED isosurface {0}".format(self.field_info[1])
+            elif self.field_info[0] == 'Voronoi':
+                result += " from closest atom"
+            elif self.field_info[0] == 'Voronoi':
+                # This is not currently implemented
+                result += " from QTAIM atom"
+
+        elif self.field_type == 'diff':
+            result = "difference"
+            if 'abs' in self.field_info[0]:
+                result += 'absolute'
+            if 'rel' in self.field_info[0]:
+                result += 'relative'
+            result = result.capitalize()
+            if len(self.field_info[1]) == 2:
+                result += "between {0} and {1}".format(*self.field_info[1])
+
+        elif self.field_type == 'parent_atom':
+            result = "Parent atom"
+            if self.field_info[0] == 'Voronoi':
+                result += "of Voronoi basin"
+            elif self.field_info[0] == 'qtaim':
+                result += "of QTAIM basin"
+        else:
+            raise NotImplementedError("Free-form name not implemented for "
+                                      "Field of type '{0}' and info '{1}'"
+                                      .format(self.field_type,
+                                              self.field_info))
+        return result
+
     def distance_transform(self, isovalue):
         """This should only be applied to the electron density cube."""
 

@@ -9,16 +9,22 @@ import os
 
 def difference(field1, field2, relative=False, absolute=False):
     _check_grids(field1, field2)
+    # The first element contains information about whether the difference is
+    # relative or absolute, the second contains the free-form names of the
+    # compared fields.
+    info = [[], []]
     if absolute:
         func = lambda val1, val2: abs(val1 - val2)
-        info = 'abs_'
+        info[0].append('abs')
     else:
         func = lambda val1, val2: val1 - val2
-        info = ''
 
     if relative:
         func = lambda val1, val2: func(val1, val2)/val1
-        info += 'rel_'
+        info[0].append('rel')
+
+    info[1].append(field1.lookup_name())
+    info[1].append(field2.lookup_name())
 
     values = np.vectorize(func)(field1.values, field2.values)
 
