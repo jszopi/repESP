@@ -2,7 +2,7 @@ import random
 import numpy as np
 import inspect
 from warnings import warn
-from cube_helpers import GridError, Field
+from cube_helpers import GridError, Field, _check_for_nans
 from operator import attrgetter
 import os
 
@@ -29,6 +29,11 @@ def difference(field1, field2, relative=False, absolute=False):
     values = np.vectorize(func)(field1.values, field2.values)
 
     return Field(values, field1.grid, 'diff', info)
+
+
+def _check_fields_for_nans(*fields):
+    for field in fields:
+        _check_for_nans(field.values)
 
 
 def _check_grids(field1, *fields):
