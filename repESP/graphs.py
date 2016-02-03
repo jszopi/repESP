@@ -18,6 +18,11 @@ def _plot_common(dimension):
     else:
         raise NotImplementedError("Plotting of dimension {0} not implemented"
                                   .format(dimension))
+
+    # Add a horizontal line at 0 for 2D plots
+    if dimension == 2:
+        ax.axhline(color='k', linestyle='--')
+
     return fig, ax
 
 
@@ -26,7 +31,6 @@ def plot(*fields, color=None, dist_field_filter=None, exclusion_dist=0,
 
     # Still plenty TODO:
     # * Color bar legend!
-    # * For 2D plots draw a broken line at zero.
     # For easy comparisons between plots:
     # * Set ranges of axes. The axes should be created by the caller, perhaps
     #   using a function or class from this module, so it can be used as a
