@@ -9,7 +9,7 @@ DIR_LABELS = ['x', 'y', 'z']
 
 
 def _plot_common(dimension):
-    """Returns matplotlib axis"""
+    """Set up plot of correct dimensionality and return related objects"""
     fig = plt.figure()
     if dimension == 3:
         ax = fig.add_subplot(111, projection='3d')
@@ -74,11 +74,13 @@ def plot(*fields, color=None, dist_field_filter=None, exclusion_dist=0,
 
 
 def _set_axis_labels(ax, *fields):
+    """Set axis labels based on free-form names of Fields being plotted"""
     for field, dir_label in zip(fields, DIR_LABELS):
         getattr(ax, "set_" + dir_label + "label")(field.lookup_name())
 
 
 def _get_cmap(dimension, field_type):
+    """Return a color map based on plot dimensionality and field type"""
     if field_type == 'dist':
         if dimension != 3:
             # Shading by distance is more intuitive
