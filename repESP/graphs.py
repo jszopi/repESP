@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
+import os
 
 import field_comparison
 
@@ -94,6 +95,9 @@ def _save_or_display(save_to):
     if save_to is None:
         plt.show()
     else:
-        # TODO: Handle existing file
-        plt.savefig(save_to)
+        if os.path.isfile(save_to):
+            raise FileExistsError("File exists: " + save_to)
+        else:
+            # DPI may need to be increased
+            plt.savefig(save_to)
     plt.close()
