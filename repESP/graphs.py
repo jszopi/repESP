@@ -92,7 +92,8 @@ def _get_cmap(dimension, field_type):
     return plt.get_cmap('gnuplot2')
 
 
-def _save_or_display(save_to):
+def _save_or_display(save_to=None):
+    """Save the plot or display it if save_to is None"""
     if save_to is None:
         plt.show()
     else:
