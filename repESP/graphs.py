@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
+from matplotlib.backends.backend_pdf import PdfPages
 import os
 
 import field_comparison
@@ -95,7 +96,12 @@ def _save_or_display(save_to):
     if save_to is None:
         plt.show()
     else:
-        if os.path.isfile(save_to):
+        if type(save_to) is PdfPages:
+            # Need to check the type first, because it may be a file object if
+            # a pdf is to be created, see:
+            # http://matplotlib.org/faq/howto_faq.html#save-multiple-plots-to-one-pdf-file
+            plt.savefig(save_to, format="pdf")
+        elif os.path.isfile(save_to):
             raise FileExistsError("File exists: " + save_to)
         else:
             # DPI may need to be increased
