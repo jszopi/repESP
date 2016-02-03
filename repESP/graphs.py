@@ -27,13 +27,10 @@ def _plot_common(dimension):
 
 
 def plot(*fields, color=None, dist_field_filter=None, exclusion_dist=0,
-         rand_skim=0.01, save_to=None):
+         rand_skim=0.01, save_to=None, axes_limits=None):
 
     # Still plenty TODO:
     # For easy comparisons between plots:
-    # * Set ranges of axes. The axes should be created by the caller, perhaps
-    #   using a function or class from this module, so it can be used as a
-    #   parameter in calling this function for separate graphs.
     # * How to change color scale
 
     assert 2 <= len(fields) <= 3
@@ -74,7 +71,32 @@ def plot(*fields, color=None, dist_field_filter=None, exclusion_dist=0,
         fields = fields_and_color
         ax.scatter(*fields)
 
+    _set_axes_limits(len(fields), ax, axes_limits)
     _save_or_display(save_to)
+
+
+def _set_axes_limits(dimension, ax, axes_limits):
+    """Set axes limits"""
+    if axes_limits is None:
+        return
+    # Smaller lengths are allowed, will be interpreted as the first few axes.
+    # This should be an Exception not assertion though.
+    assert len(axes_limits) <= dimension
+
+    for axis_limits, dir_label in zip(axes_limits, DIR_LABELS):
+        # Get current limits
+        limits = list(getattr(ax, "get_" + dir_label + "lim")())
+        for i, axis_limit in enumerate(axis_limits):
+            if axis_limit is not None:
+                limits[i] = axis_limit
+        getattr(ax, "set_" + dir_label + "lim")(limits)
+
+    # Although **not for my purposes at the moment** (I only want to set limits
+    # so that different plots can be easily compared, so both axes will be
+    # getting set), it would be nice to rescale the axes which were not
+    # modified. However, when autoscaling, matplotlib always uses all the data.
+    # ax.relim() with ax.autoscale_view() seemed to be relevant but they do not
+    # easily operate on datapoints I think.
 
 
 def _set_axis_labels(ax, *fields):
