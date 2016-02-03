@@ -30,7 +30,6 @@ def plot(*fields, color=None, dist_field_filter=None, exclusion_dist=0,
          rand_skim=0.01, save_to=None):
 
     # Still plenty TODO:
-    # * Color bar legend!
     # For easy comparisons between plots:
     # * Set ranges of axes. The axes should be created by the caller, perhaps
     #   using a function or class from this module, so it can be used as a
@@ -69,7 +68,8 @@ def plot(*fields, color=None, dist_field_filter=None, exclusion_dist=0,
         *fields, color = fields_and_color
         # This has to be inside of the conditional because an error occurs when
         # the kwarg ``c`` is set to None, even though it's the default value.
-        ax.scatter(*fields, c=color, cmap=cmap)
+        image = ax.scatter(*fields, c=color, cmap=cmap)
+        fig.colorbar(image)
     else:
         fields = fields_and_color
         ax.scatter(*fields)
