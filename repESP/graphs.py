@@ -3,34 +3,100 @@ from mpl_toolkits.mplot3d import Axes3D
 
 import field_comparison
 
+DIR_LABELS = ['x', 'y', 'z']
 
-def plot3d(esp_field, diff, dist, exclusion_dist=0, rand_skim=0.02):
-    field_comparison._check_grids(esp_field, diff, dist)
-    if esp_field.field_type != 'esp':
-        raise TypeError("The field passed was of type '{0}' but 'esp' was "
-                        "expected.".format(esp_field.field_type))
-    if 'diff' not in diff.field_type:
-        raise TypeError("The field passed was of type '{0}' but one of the "
-                        "'diff' types was expected.".format(diff.field_type))
-    if 'dist' not in dist.field_type:
-        raise TypeError("The field passed was of type '{0}' but one of the "
-                        "'dist' types was expected.".format(dist.field_type))
 
+def _plot_common(dimension):
+    """Returns matplotlib axis"""
     fig = plt.figure()
-    ax = fig.add_subplot(111, projection='3d')
+    if dimension == 3:
+        ax = fig.add_subplot(111, projection='3d')
+    elif dimension == 2:
+        ax = fig.add_subplot(111)
+    else:
+        raise NotImplementedError("Plotting of dimension {0} not implemented"
+                                  .format(dimension))
+    return fig, ax
 
-    ax.set_xlabel('Distance ' + dist.field_type)
-    ax.set_ylabel('ESP value')
-    ax.set_zlabel('ESP ' + diff.field_type)
 
-    dist, esp_field, diff = field_comparison.skim(rand_skim, dist, esp_field,
-                                                  diff)
-    dist, esp_field, diff = field_comparison.filter_by_dist(
-        exclusion_dist, dist, esp_field, diff)
-    # Flatten and remove NANs
-    dist, esp_field, diff = map(field_comparison._flatten_no_nans, (
-        dist, esp_field, diff))
+def plot(*fields, color=None, dist_field_filter=None, exclusion_dist=0,
+         rand_skim=0.01, save_to=None):
 
-    ax.scatter(dist, esp_field, diff)
-    plt.show()
+    # Still plenty TODO:
+    # * Color bar legend!
+    # * For 2D plots draw a broken line at zero.
+    # For easy comparisons between plots:
+    # * Set ranges of axes. The axes should be created by the caller, perhaps
+    #   using a function or class from this module, so it can be used as a
+    #   parameter in calling this function for separate graphs.
+    # * How to change color scale
+
+    assert 2 <= len(fields) <= 3
+
+    # Pack fields and color together
+    if color is not None:
+        fields_and_color = list(fields) + [color]
+    else:
+        fields_and_color = fields
+
+    field_comparison._check_grids(*fields_and_color)
+
+    fig, ax = _plot_common(len(fields))
+    _set_axis_labels(ax, *fields)
+
+    if dist_field_filter is not None:
+        if dist_field_filter.field_type != 'dist':
+            print("WARNING: The field selected for filtering is not of type "
+                  "'dist' but ", dist_field_filter.field_type)
+        dist_field_filter, *fields_and_color = field_comparison.filter_by_dist(
+            exclusion_dist, *([dist_field_filter] + fields_and_color))
+    elif exclusion_dist:
+        print("WARNING: exclusion distance specified but no Field passed to "
+              "filter by.")
+    fields_and_color = field_comparison.skim(rand_skim, *fields_and_color)
+    # Flatten and remove NANs -- the NANs should have been introduced in a
+    # controlled manner by the two previous functions. However, if they were
+    # present beforehand, the element-wise relations may be corrupted at this
+    # stage. TODO
+    fields_and_color = list(map(field_comparison._flatten_no_nans,
+                            fields_and_color))
+
+    if color is not None:
+        cmap = _get_cmap(len(fields), color.field_type)
+        *fields, color = fields_and_color
+        # This has to be inside of the conditional because an error occurs when
+        # the kwarg ``c`` is set to None, even though it's the default value.
+        ax.scatter(*fields, c=color, cmap=cmap)
+    else:
+        fields = fields_and_color
+        ax.scatter(*fields)
+
+    _save_or_display(save_to)
+
+
+def _set_axis_labels(ax, *fields):
+    for field, dir_label in zip(fields, DIR_LABELS):
+        getattr(ax, "set_" + dir_label + "label")(field.lookup_name())
+
+
+def _get_cmap(dimension, field_type):
+    if field_type == 'dist':
+        if dimension != 3:
+            # Shading by distance is more intuitive
+            return plt.get_cmap('Blues_r')
+        else:
+            print("WARNING: Shading by distance doesn't look good on a 3D "
+                  "plot. Colouring instead.")
+    # This colour map is fairly intuitive, looks good in greysale and
+    # to coloublind people (according to a simulation on:
+    # http://www.color-blindness.com/coblis-color-blindness-simulator/
+    return plt.get_cmap('gnuplot2')
+
+
+def _save_or_display(save_to):
+    if save_to is None:
+        plt.show()
+    else:
+        # TODO: Handle existing file
+        plt.savefig(save_to)
     plt.close()
