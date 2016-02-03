@@ -54,7 +54,7 @@ def _check_grids(field1, *fields):
 
 def _flatten_no_nans(ndarray_input):
     """Flatten ndarray and remove None elements."""
-    return [elem for elem in ndarray_input if elem is not None]
+    return [elem for elem in ndarray_input.flat if not np.isnan(elem)]
 
 
 def filter_by_dist(exclusion_dist, dist, *fields, assign_val=None):
