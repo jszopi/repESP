@@ -40,6 +40,7 @@ def plot(*fields, color=None, dist_field_filter=None, exclusion_dist=0,
         fields_and_color = fields
 
     field_comparison._check_grids(*fields_and_color)
+    field_comparison._check_fields_for_nans(*fields_and_color)
 
     fig, ax = _plot_common(len(fields))
     _set_axis_labels(ax, *fields)
@@ -54,10 +55,6 @@ def plot(*fields, color=None, dist_field_filter=None, exclusion_dist=0,
         print("WARNING: exclusion distance specified but no Field passed to "
               "filter by.")
     fields_and_color = field_comparison.skim(rand_skim, *fields_and_color)
-    # Flatten and remove NANs -- the NANs should have been introduced in a
-    # controlled manner by the two previous functions. However, if they were
-    # present beforehand, the element-wise relations may be corrupted at this
-    # stage. TODO
     fields_and_color = list(map(field_comparison._flatten_no_nans,
                             fields_and_color))
 
