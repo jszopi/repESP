@@ -208,7 +208,7 @@ class Molecule(list):
         # Any new field_func must leave details in here
         if field_func == 'rep_esp':
             field_types = ['rep_esp']*len(field_func_args[0])
-            field_infos = field_func_args[0]
+            field_infos = [[elem] for elem in field_func_args[0]]
             func = self._rep_esp_func
         elif field_func == 'dist':
             field_types = ['parent_atom', 'dist']
