@@ -60,8 +60,9 @@ class Cube(object):
             grid.origin_coords = [float(coord) for coord in origin_coords]
 
             self.molecule = Molecule(self)
-            # The atoms will be added to the Molecule in the order of occurence
-            # in the input, which is assumed to correspond to Gaussian labels.
+            # The atoms will be added to the Molecule in the order of
+            # occurrence in the input, which is assumed to correspond to
+            # Gaussian labels.
             for label in range(self.atom_count):
                 atom_temp = f.readline().split()
                 for index in range(4):
@@ -247,7 +248,7 @@ class Molecule(list):
             bader -p all_atom -vac off density.cube
 
         Assigning low density points to vacuum needs to be switched off in
-        order to allow the basins to extend to infinty.
+        order to allow the basins to extend to infinity.
 
         This method returns a field with atomic labels indicating which basin
         each point belongs to.
@@ -295,7 +296,7 @@ class Molecule(list):
             elif sum(point_bool) > 1:
                 raise InputFormatError("Found point assigned to many atoms "
                                        "by the ``bader`` program. Possible "
-                                       "numerical inconsitency in algorithm.")
+                                       "numerical inconsistency in algorithm.")
             result.append(point_bool.index(True)+1)
 
         result = np.array(result)
