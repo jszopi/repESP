@@ -118,9 +118,13 @@ def _get_cmap(dimension, field_type):
             print("WARNING: Shading by distance doesn't look good on a 3D "
                   "plot. Colouring instead.")
     # This colour map is fairly intuitive, looks good in greysale and
-    # to coloublind people (according to a simulation on:
+    # to coloublind people (except for those with the very rare tritanomaly),
+    # according to a simulation on:
     # http://www.color-blindness.com/coblis-color-blindness-simulator/
-    return plt.get_cmap('gnuplot2')
+    return plt.get_cmap('plasma')
+    # 'gnuplot2' was also considered but in greyscale it yields black and white
+    # at the ends and IMO contains unnecessarily many hues. 'plasma' is simpler
+    # and uses similar colours.
 
 
 def _save_or_display(save_to=None):
