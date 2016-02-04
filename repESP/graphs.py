@@ -29,12 +29,9 @@ def _plot_common(dimension, title):
     return fig, ax
 
 
-def plot(*fields, color=None, dist_field_filter=None, exclusion_dist=0,
-         rand_skim=0.01, save_to=None, axes_limits=None, title=None):
-
-    # Still plenty TODO:
-    # For easy comparisons between plots:
-    # * How to change color scale
+def plot(*fields, color=None, color_span=None, dist_field_filter=None,
+         exclusion_dist=0, rand_skim=0.01, save_to=None, axes_limits=None,
+         title=None):
 
     assert 2 <= len(fields) <= 3
 
@@ -66,9 +63,14 @@ def plot(*fields, color=None, dist_field_filter=None, exclusion_dist=0,
     if color is not None:
         cmap = _get_cmap(len(fields), color.field_type)
         *fields, color = fields_and_color
-        # This has to be inside of the conditional because an error occurs when
-        # the kwarg ``c`` is set to None, even though it's the default value.
-        image = ax.scatter(*fields, c=color, cmap=cmap)
+        # ax.scatter has to be inside of the 'color is not None' conditional
+        # because an error occurs when the kwarg ``c`` is explicitly set to
+        # None, even though it's the default value.
+        if color_span is None:
+            image = ax.scatter(*fields, c=color, cmap=cmap)
+        else:
+            image = ax.scatter(*fields, c=color, cmap=cmap, vmin=color_span[0],
+                               vmax=color_span[1])
         fig.colorbar(image)
     else:
         fields = fields_and_color
