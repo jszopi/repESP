@@ -313,14 +313,16 @@ class Molecule(list):
 
 class Field(object):
 
-    def __init__(self, values, grid, field_type, field_info=None):
+    def __init__(self, values, grid, field_type, field_info=None,
+                 check_nans=True):
+        self.check_nans = check_nans
         self.values = values
         self.grid = grid
         self.field_type = field_type
         self.field_info = field_info
 
     def __setattr__(self, name, value):
-        if name == 'values':
+        if name == 'values' and self.check_nans:
             _check_for_nans(value)
         super().__setattr__(name, value)
 
