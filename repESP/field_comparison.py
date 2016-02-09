@@ -114,6 +114,13 @@ def filter_by_atom(molecule, atom_label, method, *fields, assign_val=None):
             method))
     condition = lambda elems: elems[0] != atom_label
     fields = [closest_atom] + list(fields)
+    # Set assign_val to be zero for the atomic label field to prevent an error
+    # about assigning None to an np.array of an integer dtype. This is expected
+    # to be the only case when atomic label fields are filtered, so a local
+    # workaround is fine. However, if this turns out to be more common, a
+    # general solution will be more elegant.
+    assign_val = [assign_val]*len(fields)
+    assign_val[0] = 0
     return _iterate_fields(condition, assign_val, *fields)
 
 
@@ -150,7 +157,7 @@ def skim(rand_skim, *fields, assign_val=None):
     return _iterate_fields(condition, assign_val, *fields)
 
 
-def _iterate_fields(condition, assign_val, *fields):
+def _iterate_fields(condition, assign_vals, *fields):
     """Iterate and remove corresponding elements in ndarrays.
 
     This function takes any number of field-like objects, whose data points
@@ -158,7 +165,7 @@ def _iterate_fields(condition, assign_val, *fields):
     corresponding data points from all the fields depending on whether the list
     of corresponding data points satisfies the passed `condition` function. The
     data points are not actually removed but replaced with a special value
-    `assign_val`. The input objects are not affected, as new ndarrays are
+    `assign_vals`. The input objects are not affected, as new ndarrays are
     returned.
 
     Parameters
@@ -167,8 +174,10 @@ def _iterate_fields(condition, assign_val, *fields):
         A function which takes the list of corresponding elements in the
         iterated fields and return a boolean value stating whether the list
         satisfies the condition.
-    assign_val
-        The data points to be removed will be replaced by this value.
+    assign_vals
+        The data points to be removed will be replaced by this value. This
+        argument can be a single value or a list of the same length as the
+        number of fields passed to specify a different value for each field.
     *fields : Field or np.ndarray
         The fields containing the data points to be iterated through.
 
@@ -181,10 +190,37 @@ def _iterate_fields(condition, assign_val, *fields):
     _check_grids(*fields)
     fields = [field.values.copy() if type(field) is Field else field.copy() for
               field in fields]
+
+    # Check if assign_vals is a list
+    try:
+        # Perhaps this should raise a more informative error, but since this is
+        # an internal-use function, an assertion is fine
+        assert len(assign_vals) == len(fields)
+    except TypeError:
+        # If not a list, make it a list of identical values
+        assign_vals = [assign_vals] * len(fields)
+
     # Numpy array iteration with nditer has a convenient write mode, but it
     # would affect the input arrays, so copies were made earlier.
     for field_elems in np.nditer(fields, op_flags=['readwrite']):
         if condition(field_elems):
-            for field_elem in field_elems:
-                field_elem[...] = assign_val
+            # An assertion just to make sure that the array iteration logic is
+            # correct.
+            assert len(field_elems) == len(assign_vals)
+            for field_elem, assign_val in zip(field_elems, assign_vals):
+                try:
+                    field_elem[...] = assign_val
+                except TypeError as e:
+                    raise TypeError(
+                        "Could not assign `{0}` as an element of a np.array of"
+                        " dtype `{1}`. The original, tricky example of this "
+                        "error is assigning `None` to an integer np.array. The"
+                        " caller should have specified a suitable value to "
+                        "assign, e.g. 0 for atomic label field. The handled "
+                        "error message was : \nTypeError: ".format(
+                            assign_val, field_elem.dtype) + str(e))
+                    # Atomic label fields are only expected to come up when
+                    # filtering by atomic label (filter_by_atom), so that
+                    # function manually sets 0 for that field.
+
     return fields
