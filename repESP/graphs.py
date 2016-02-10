@@ -35,8 +35,8 @@ def _plot_common(dimension, title):
 
 
 def plot(*fields, color=None, color_span=None, dist_field_filter=None,
-         exclusion_dist=0, rand_skim=0.01, save_to=None, axes_limits=None,
-         title=None):
+         exclusion_dist=0, rand_skim=0.01, extra_filter=None, save_to=None,
+         axes_limits=None, title=None):
 
     assert 2 <= len(fields) <= 3
 
@@ -48,12 +48,25 @@ def plot(*fields, color=None, color_span=None, dist_field_filter=None,
 
     field_comparison._check_grids(*fields_and_color)
     field_comparison._check_fields_for_nans(*fields_and_color)
+    # Necessary, as the original Field will be overwritten when filtering
+    dist_field_filter_type = dist_field_filter.field_type
 
     fig, ax = _plot_common(len(fields), title)
     _set_axis_labels(ax, *fields)
 
+    # This function got really fat due to all that filtering and it can still
+    # handle only one additional filter. Some refactoring is due. TODO
+    if extra_filter is not None:
+        fields_and_color = extra_filter(*fields_and_color)
+        # This filtering step changes all Fields to np.arrays. As a result, in
+        # the next filtering step, by dist_field_filter, a mixture of np.arrays
+        # and Fields is passed, which is not handled by the filters. While that
+        # deficiency was intentional, I don't think there's a reason it should
+        # not be handled (TODO). But for now, a kludge:
+        if dist_field_filter is not None:
+            dist_field_filter = dist_field_filter.values
     if dist_field_filter is not None:
-        if dist_field_filter.field_type != 'dist':
+        if dist_field_filter_type != 'dist':
             print("WARNING: The field selected for filtering is not of type "
                   "'dist' but ", dist_field_filter.field_type)
         dist_field_filter, *fields_and_color = field_comparison.filter_by_dist(
