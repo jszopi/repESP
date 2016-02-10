@@ -1,4 +1,4 @@
-from cube_helpers import Atom, Cube, InputFormatError
+from .cube_helpers import Atom, Cube, InputFormatError
 
 esp_type_in_log = {
     ' Merz-Kollman atomic radii used.': 'mk',

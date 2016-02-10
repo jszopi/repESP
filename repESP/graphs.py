@@ -8,7 +8,7 @@ import os
 from matplotlib import rcParams
 rcParams.update({'figure.autolayout': True})
 
-import field_comparison
+from . import field_comparison
 
 DIR_LABELS = ['x', 'y', 'z']
 

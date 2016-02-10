@@ -2,9 +2,10 @@ import random
 import numpy as np
 import inspect
 from warnings import warn
-from cube_helpers import GridError, Field, _check_for_nans
 from operator import attrgetter
 import os
+
+from .cube_helpers import GridError, Field, _check_for_nans
 
 
 def difference(field1, field2, relative=False, absolute=False):
