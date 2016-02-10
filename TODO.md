@@ -1,10 +1,21 @@
 # Implement research ideas
 
+* Read in ESP fitting datapoints (.esp) produced by Gaussian for restricted ESP (rESP) fitting.
+  Make them compatible with the original grid and check if values at each point match.
+  Enable the same analysis for this subset of points.
+  Calculate fit quality at such datapoints as well as the full grid to compare with Gaussian's printed RMS and RRMS in .log files.
+
 ## Analysis
 
-* 3D plots by basin
-
 # Code
+
+## Features
+
+### Distance from QTAIM atoms
+
+Yield distance from QTAIM atom (QTAIM extraction only yields a field of atomic labels).
+This might require splitting `_dist_func` but its design was intentional to prevent double execution and a lot of effort went into designing the program around it.
+So it should preferably stay, even if its functionality will be partly redundant to calculating the atomic label field first and then the distance with a separate function.
 
 ## Testing
 
@@ -15,6 +26,8 @@
     A separate test module could test if building the cube results in the same pickled object.
 
 ## Refactoring
+
+* The graphs.plot function needs to be refactored to decouple filtering and allow focusing on the appearance of the graph more.
 
 * Break down `cube_helpers` module.
 
@@ -39,5 +52,3 @@ For a given `Molecule`, it should be possible to list all the derived `Field`s.
 This can be done either by keeping the results as attributes or memoizing function calls.
 The best solution will vary on a case-by-case basis but should follow clearly from the established beforehand logical structure.
 Maybe memoization should not check just the ID but some of the properties of object arguments?
-
-## Features
