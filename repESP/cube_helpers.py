@@ -4,6 +4,7 @@ from scipy.ndimage.morphology import distance_transform_edt as scipy_edt
 from scipy.spatial.distance import euclidean
 import glob
 import os
+import sys
 
 AXES = ['x', 'y', 'z']
 
@@ -133,9 +134,9 @@ class Atom(object):
         self.charges = {}
         self.coords = coords
 
-    def print_with_charge(self, charge_type):
+    def print_with_charge(self, charge_type, f=sys.stdout):
         print(self, ', charge: {0: .4f}'.format(self.charges[charge_type]),
-              sep='')
+              sep='', file=f)
 
     def __str__(self):
         return 'Atom {0:2}:  {1:2}'.format(self.label, self.identity)
