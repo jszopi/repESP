@@ -36,7 +36,7 @@ def _plot_common(dimension, title):
 
 def plot(*fields, color=None, color_span=None, dist_field_filter=None,
          exclusion_dist=0, rand_skim=0.01, extra_filter=None, save_to=None,
-         axes_limits=None, title=None):
+         axes_limits=None, title=None, get_limits=None):
 
     assert 2 <= len(fields) <= 3
 
@@ -97,6 +97,17 @@ def plot(*fields, color=None, color_span=None, dist_field_filter=None,
 
     _set_axes_limits(len(fields), ax, axes_limits)
     _save_or_display(save_to)
+
+    # Save limits to get_limits. This is useful when they are to be reused in
+    # other plots. Saving the limits to an argument was more intuitive than
+    # returning them.
+    if get_limits is not None:
+        # Code copied from _set_axes_limits (TODO: DRY)
+        limits = []
+        for dir_label in DIR_LABELS[:len(fields)]:
+            # Get current limits
+            limits.append(getattr(ax, "get_" + dir_label + "lim")())
+        get_limits[:] = limits
 
 
 def _set_axes_limits(dimension, ax, axes_limits):
