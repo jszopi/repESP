@@ -3,6 +3,11 @@ from mpl_toolkits.mplot3d import Axes3D
 from matplotlib.backends.backend_pdf import PdfPages
 import os
 
+# This was necesssary to prevent y-axis label from being cut off when plotting
+# http://stackoverflow.com/a/17390833
+from matplotlib import rcParams
+rcParams.update({'figure.autolayout': True})
+
 import field_comparison
 
 DIR_LABELS = ['x', 'y', 'z']

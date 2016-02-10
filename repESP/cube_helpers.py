@@ -364,7 +364,7 @@ class Field(object):
                 result += 'relative'
             result = result.capitalize()
             if len(self.field_info[1]) == 2:
-                result += "between {0} and {1}".format(*self.field_info[1])
+                result += " between {0} and\n {1}".format(*self.field_info[1])
 
         elif self.field_type == 'parent_atom':
             result = "Parent atom"
