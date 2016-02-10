@@ -1,0 +1,7 @@
+# Selective ignoring
+# http://stackoverflow.com/a/5534865
+*
+!methane
+methane/*
+!methane/input/
+!methane/input/*
