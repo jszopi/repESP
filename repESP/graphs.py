@@ -67,6 +67,7 @@ def plot(*fields, color=None, color_span=None, dist_field_filter=None,
 
     if color is not None:
         cmap = _get_cmap(len(fields), color.field_type)
+        cmap_name = color.lookup_name()
         *fields, color = fields_and_color
         # ax.scatter has to be inside of the 'color is not None' conditional
         # because an error occurs when the kwarg ``c`` is explicitly set to
@@ -76,7 +77,7 @@ def plot(*fields, color=None, color_span=None, dist_field_filter=None,
         else:
             image = ax.scatter(*fields, c=color, cmap=cmap, vmin=color_span[0],
                                vmax=color_span[1])
-        fig.colorbar(image)
+        cbar = fig.colorbar(image, label=cmap_name)
     else:
         fields = fields_and_color
         ax.scatter(*fields)
