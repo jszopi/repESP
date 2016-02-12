@@ -121,6 +121,9 @@ class Atom(object):
                 ('Cl', 'Chlorine'),
                 ('Ar', 'Argon')]
 
+    # Inverse look-up
+    inv_periodic = {v[0]: i+1 for i, v in enumerate(periodic)}
+
     def __init__(self, label, atomic_no, coords=None):
         self.label = label
         self.atomic_no = atomic_no
