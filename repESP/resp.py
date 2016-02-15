@@ -1,6 +1,6 @@
 from fortranformat import FortranRecordWriter
 
-from .cube_helpers import InputFormatError, Atom, Molecule
+from .cube_helpers import InputFormatError, Atom, Molecule, Field
 
 # http://www.gaussian.com/g_tech/g_ur/k_constants.htm
 angstrom_per_bohr = 0.5291772086
@@ -94,7 +94,7 @@ class G09_esp(object):
             raise InputFormatError(e)
 
 
-class NonGridField(object):
+class NonGridField(Field):
 
     def __init__(self, points_coords, values, field_type, field_info=None,
                  allow_dupes=False, coords_in_bohr=True):
@@ -110,8 +110,7 @@ class NonGridField(object):
         values : List[str]
             The list of values at *correspoinding* coordinates.
         """
-        self.field_type = field_type
-        self.field_info = field_info
+        super().__init__(values, field_type, field_info)
 
         self.values = []
         self.points = []

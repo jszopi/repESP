@@ -5,7 +5,7 @@ from warnings import warn
 from operator import attrgetter
 import os
 
-from .cube_helpers import GridError, Field, _check_for_nans
+from .cube_helpers import GridError, GridField, _check_for_nans
 
 
 def difference(field1, field2, relative=False, absolute=False):
@@ -29,7 +29,7 @@ def difference(field1, field2, relative=False, absolute=False):
 
     values = np.vectorize(func)(field1.values, field2.values)
 
-    return Field(values, field1.grid, 'diff', info)
+    return GridField(values, field1.grid, 'diff', info)
 
 
 def _check_fields_for_nans(*fields):
@@ -43,7 +43,7 @@ def _check_grids(field1, *fields):
         warn('No fields to be compared! As this is a helper function, the '
              'issue is likely due to the caller: ' + inspect.stack()[1][3])
 
-    attr_dict = {Field: 'grid', np.ndarray: 'shape'}
+    attr_dict = {GridField: 'grid', np.ndarray: 'shape'}
     for field in fields:
         if type(field) != type(field1):
             raise TypeError("Expected '{0}' objects to be compared, received "
@@ -77,10 +77,10 @@ def filter_by_dist(exclusion_dist, dist, *fields, assign_val=None):
     ----------
     exclusion_dist : float
         data points at distances smaller or equal this number will be filtered.
-    dist : Field or np.ndarray
+    dist : GridField or np.ndarray
         The object specifying distance of each data point (distance transform).
         The data points in this object also get filtered.
-    *fields : Field or np.ndarray
+    *fields : GridField or np.ndarray
         The objects containing the data points to be filtered by distance.
     assign_val : Optional
         The data points within the exclusion distance will be replaced by this
@@ -142,7 +142,7 @@ def skim(rand_skim, *fields, assign_val=None):
     ----------
     rand_skim : float
         A number between 0 and 1. The fraction of data points to be retained.
-    *fields : Field or np.ndarray
+    *fields : GridField or np.ndarray
         The objects containing the data points to be skimmed.
     assign_val : Optional
         The data points to be removed will be replaced by this value. Defaults
@@ -179,7 +179,7 @@ def _iterate_fields(condition, assign_vals, *fields):
         The data points to be removed will be replaced by this value. This
         argument can be a single value or a list of the same length as the
         number of fields passed to specify a different value for each field.
-    *fields : Field or np.ndarray
+    *fields : GridField or np.ndarray
         The fields containing the data points to be iterated through.
 
     Returns
@@ -189,8 +189,8 @@ def _iterate_fields(condition, assign_vals, *fields):
 
     """
     _check_grids(*fields)
-    fields = [field.values.copy() if type(field) is Field else field.copy() for
-              field in fields]
+    fields = [field.values.copy() if type(field) is GridField else field.copy()
+              for field in fields]
 
     # Check if assign_vals is a list
     try:

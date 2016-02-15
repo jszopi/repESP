@@ -82,8 +82,8 @@ class Cube(object):
             # TODO: this may be unfeasible for very large cubes
             field = f.read().split()
 
-        self.field = Field(Cube.field_from_raw(field, grid), grid,
-                           self.cube_type, 'input')
+        self.field = GridField(Cube.field_from_raw(field, grid), grid,
+                               self.cube_type, 'input')
 
     @staticmethod
     def field_from_raw(raw_field, grid):
@@ -210,7 +210,7 @@ class Molecule(list):
                                                   field_infos):
             field = np.array(result)
             field.resize(grid.points_on_axes)
-            fields.append(Field(field, grid, field_type, field_info))
+            fields.append(GridField(field, grid, field_type, field_info))
 
         return fields
 
@@ -311,17 +311,15 @@ class Molecule(list):
 
         result = np.array(result)
         result.resize(self.parent_cube.field.grid.points_on_axes)
-        return Field(result, self.parent_cube.field.grid, 'parent_atom',
-                     ['qtaim'])
+        return GridField(result, self.parent_cube.field.grid, 'parent_atom',
+                         ['qtaim'])
 
 
 class Field(object):
 
-    def __init__(self, values, grid, field_type, field_info=None,
-                 check_nans=True):
+    def __init__(self, values, field_type, field_info, check_nans):
         self.check_nans = check_nans
         self.values = values
-        self.grid = grid
         self.field_type = field_type
         self.field_info = field_info
 
@@ -382,6 +380,14 @@ class Field(object):
                                               self.field_info))
         return result
 
+
+class GridField(Field):
+
+    def __init__(self, values, grid, field_type, field_info=None,
+                 check_nans=True):
+        self.grid = grid
+        super().__init__(values, field_type, field_info, check_nans)
+
     def distance_transform(self, isovalue):
         """This should only be applied to the electron density cube."""
 
@@ -398,7 +404,7 @@ class Field(object):
         select_iso = lambda x: 1 if x < isovalue else 0
         field = np.vectorize(select_iso)(self.values)
         dist = scipy_edt(field, sampling=self.grid.dir_intervals)
-        return Field(dist, self.grid, 'dist', ['ed', isovalue])
+        return GridField(dist, self.grid, 'dist', ['ed', isovalue])
 
     def write_cube(self, output_fn, molecule, charge_type=None):
         """Write the field as a Gaussian cube file.
