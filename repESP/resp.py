@@ -79,7 +79,7 @@ class G09_esp(object):
 
         try:
             self.field = NonGridField(
-                points_coords, values, 'esp', field_info=['input'],
+                values, points_coords, 'esp', field_info=['input'],
                 allow_dupes=allow_dupes, coords_in_bohr=coords_in_bohr)
 
         except DuplicateEntryError:
@@ -138,7 +138,7 @@ class Points(list):
 
 class NonGridField(Field):
 
-    def __init__(self, points, values, field_type, field_info=None,
+    def __init__(self, values, points, field_type, field_info=None,
                  allow_dupes=False, coords_in_bohr=True):
         """Create a NonGridField from given coordinates and values
 
