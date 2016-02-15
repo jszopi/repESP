@@ -1,5 +1,6 @@
 import my_unittest
 from repESP import cube_helpers
+from repESP.rep_esp import calc_grid_field
 
 import os
 
@@ -22,8 +23,8 @@ while True:
 # This is getting complicated so these initialization lines should be a
 # separate test. That likely requires a custom test suite so that they're only
 # executed once and before the others.
-dist_field = cube.molecule.calc_field(grid, 'dist')
-repESP_field = cube.molecule.calc_field(grid, 'rep_esp', ['cube'])[0]
+dist_field = calc_grid_field(cube.molecule, grid, 'dist')
+repESP_field = calc_grid_field(cube.molecule, grid, 'rep_esp', ['cube'])[0]
 # Values calculated with an independent ad-hoc script
 dist_result = [0.1, 0.3, 0.7, 0.316227766, 0.424264068, 0.761577310,
                0.608276253, 0.670820393, 0.921954445, 0.223606797, 0.360555127,

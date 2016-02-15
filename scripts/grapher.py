@@ -4,6 +4,7 @@ from repESP import cube_helpers
 from repESP.charges import update_with_charges
 from repESP.field_comparison import difference, filter_by_dist, filter_by_atom
 from repESP.graphs import plot
+from repESP.rep_esp import calc_grid_field
 # For development, use ``sudo python3 setup.py develop``, to link the files in
 # repESP directory and hence avoid reinstalling the package after every change.
 # http://tjelvarolsson.com/blog/begginers-guide-creating-clean-python-development-environments/
@@ -67,8 +68,8 @@ for charge_type in charge_types.keys():
 
     # This is costly but was designed to be easy for many charge types, so
     # should be moved outside of the loop
-    rep = esp_cube.molecule.calc_field(esp_cube.field.grid, 'rep_esp',
-                                       [charge_type])[0]
+    rep = calc_grid_field(esp_cube.molecule, esp_cube.field.grid, 'rep_esp',
+                          [charge_type])[0]
     # Change details of calculating difference here (absolute, relative)
     diff = difference(esp_cube.field, rep)
 

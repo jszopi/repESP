@@ -6,6 +6,7 @@ from operator import attrgetter
 import os
 
 from .cube_helpers import GridError, GridField, _check_for_nans
+from .rep_esp import calc_grid_field
 
 
 def difference(field1, field2, relative=False, absolute=False):
@@ -101,7 +102,7 @@ def filter_by_atom(molecule, atom_label, method, *fields, assign_val=None):
     # _iterate_fields will check grids anyway
     grid = fields[0].grid
     if method == 'dist':
-        closest_atom = molecule.calc_field(grid, 'dist')[0]
+        closest_atom = calc_grid_field(molecule, grid, 'dist')[0]
     elif method == 'qtaim':
         # TODO: It's not a good idea to assume the location of those cubes.
         # Currently, all the paths should be specified by the caller, i.e. the
