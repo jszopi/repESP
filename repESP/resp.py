@@ -69,7 +69,7 @@ class G09_esp(object):
         for line in f:
             line = [val.replace('D', 'E') for val in line.split()]
             points_coords.append(tuple(line[1:4]))
-            values.append(line[0])
+            values.append(float(line[0]))
 
         if len(points_coords) != expected_points_count:
             raise InputFormatError(
@@ -94,49 +94,17 @@ class G09_esp(object):
             raise InputFormatError(e)
 
 
-class NonGridField(Field):
+class Points(list):
 
-    def __init__(self, points_coords, values, field_type, field_info=None,
-                 allow_dupes=False, coords_in_bohr=True):
-        """Create a NonGridField from given coordinates and values
-
-        Parameters
-        ----------
-        points_coords : List[Tuple[str]]
-            The inner tuples represent coordinates and should hence have
-            lengths of 3. If the coordinates are given in Angstrom, the
-            `coords_in_bohr` parameter must be set to False.
-
-        values : List[str]
-            The list of values at *corresponding* coordinates.
-        """
-        super().__init__(values, field_type, field_info)
-
-        self.values = []
-        self.points = []
-        self.points_dict = {}
+    def __init__(self, points_coords, coords_in_bohr, allow_dupes):
+        super().__init__()
         self.allow_dupes = allow_dupes
+        if not self.allow_dupes:
+            self.points_dict = {}
 
-        if len(points_coords) != len(values):
-            raise ValueError("The number of points {0} is different from the "
-                             "number of values {1}.".format(len(points_coords),
-                                                            len(values)))
-
-        for point_coords, value in zip(points_coords, values):
-            self.points.append(self._check_and_create_point(point_coords,
-                               coords_in_bohr))
-            self.values.append(self._create_value(value))
-
-    def _create_value(self, value):
-        if type(value) is not str:
-            raise InputValueError("Parameter `values` must be a list of "
-                                  "*strings*. Encountered type {0} instead."
-                                  .format(type(value)))
-        try:
-            return float(value)
-        except ValueError:
-            raise InputValueError("Couldn't convert value {0} to float."
-                                  .format(value))
+        for point_coords in points_coords:
+            self.append(self._check_and_create_point(point_coords,
+                                                     coords_in_bohr))
 
     def _check_and_create_point(self, point_coords, coords_in_bohr):
         if len(point_coords) != 3:
@@ -144,16 +112,17 @@ class NonGridField(Field):
                 "Encountered a point with a number of coordinates {0}, which "
                 "is different from 3.".format(len(point_coords)))
 
-        for point_coord in point_coords:
-            if type(point_coord) is not str:
-                raise InputValueError("Parameter `points_coords` must be a "
-                                      "list of lists of *strings*. Encountered"
-                                      " type {0} instead.".format(
-                                          type(point_coord)))
+        if not self.allow_dupes:
+            for point_coord in point_coords:
+                if type(point_coord) is not str:
+                    raise InputValueError(
+                        "If no duplicates are allowed, `points` must be"
+                        " a list of tuples of *strings*. Encountered type {0} "
+                        "instead.".format(type(point_coord)))
 
-        if not self.allow_dupes and point_coords in self.points_dict:
-            raise DuplicateEntryError("Encountered a duplicate point: {0}"
-                                      .format(point_coords))
+            if point_coords in self.points_dict:
+                raise DuplicateEntryError("Encountered a duplicate point: {0}"
+                                          .format(point_coords))
 
         try:
             result = [float(point_coord) for point_coord in point_coords]
@@ -165,6 +134,37 @@ class NonGridField(Field):
             result = [angstrom_per_bohr*point_coord for point_coord in result]
 
         return result
+
+
+class NonGridField(Field):
+
+    def __init__(self, points, values, field_type, field_info=None,
+                 allow_dupes=False, coords_in_bohr=True):
+        """Create a NonGridField from given coordinates and values
+
+        Parameters
+        ----------
+        points : List[Tuple]
+            The inner tuples represent coordinates and should hence have
+            lengths of 3. If the coordinates are given in Angstrom, the
+            `coords_in_bohr` parameter must be set to False. If the
+            `allow_dupes` parameter is False (default), the values must be
+            given as strings to enable checking for duplicates.
+
+        values : List
+            The list of values at *corresponding* coordinates.
+        """
+        super().__init__(values, field_type, field_info, check_nans=False)
+
+        if type(points) is Points:
+            self.points = points
+        else:
+            self.points = Points(points, coords_in_bohr, allow_dupes)
+
+        if len(points) != len(values):
+            raise ValueError("The number of points {0} is different from the "
+                             "number of values {1}.".format(len(points),
+                                                            len(values)))
 
     def write_to_file(self, output_fn, molecule, write_coords_in_bohr=True):
         # Numeric formats specified in resp input specification
