@@ -84,10 +84,10 @@ class G09_esp(object):
 
         except DuplicateEntryError:
             raise InputFormatError(
-                "Duplicate points in the input file. This might be an "
-                "artefact of the algorithm which produced the points. If "
-                "these points are to be counted twice, the NonGridField needs "
-                "to be called with `allow_dupes=True`")
+                "Duplicate points in the input file. This might be an artefact"
+                " of the algorithm which produced the points. If these points "
+                "are to be counted twice, the NonGridField needs to be called "
+                "with `allow_dupes=True`")
         except InputValueError as e:
             # Translate the errors when creating a field to errors due to input
             # file format
@@ -108,7 +108,7 @@ class NonGridField(Field):
             `coords_in_bohr` parameter must be set to False.
 
         values : List[str]
-            The list of values at *correspoinding* coordinates.
+            The list of values at *corresponding* coordinates.
         """
         super().__init__(values, field_type, field_info)
 
