@@ -140,7 +140,7 @@ class TestRepESPField(my_unittest.TestCase):
         self.assertEqual(repESP_field.field_type, 'rep_esp')
 
     def test_atom_field_info(self):
-        self.assertEqual(repESP_field.field_info, 'cube')
+        self.assertEqual(repESP_field.field_info, ['cube'])
 
 
 class TestField(my_unittest.TestCase):
