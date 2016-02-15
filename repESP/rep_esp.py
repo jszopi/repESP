@@ -1,8 +1,8 @@
 from scipy.spatial.distance import euclidean
 import numpy as np
 
-from .resp import Points
-from .cube_helpers import GridField
+from .resp import Points, NonGridField
+from .cube_helpers import GridField, Grid
 
 
 def _calc_field(molecule, points, field_func, *field_func_args):
@@ -49,6 +49,11 @@ def _calc_field(molecule, points, field_func, *field_func_args):
 
 
 def calc_grid_field(molecule, grid, field_func, *field_func_args):
+    # Some code overlap between this function and the non-grid one, but IMO
+    # trying to DRY would overcomplicate it due to slight differences.
+    if type(grid) is not Grid:
+        raise TypeError("A Grid object was expected, given {0}.".format(
+            type(grid)))
 
     points = []
     for ix in range(grid.axes[0].point_count):
@@ -70,6 +75,27 @@ def calc_grid_field(molecule, grid, field_func, *field_func_args):
         field = np.array(result)
         field.resize(grid.points_on_axes)
         fields.append(GridField(field, grid, field_type, field_info))
+
+    return fields
+
+
+def calc_non_grid_field(molecule, points, field_func, *field_func_args):
+    # This is important to prevent the coordinates being given as a list and
+    # hence new Points objects being created upon initialization of
+    # NonGridField
+    if type(points) is not Points:
+        raise TypeError("A Points object was expected, given {0}.".format(
+            type(points)))
+
+    field_func, field_types, field_infos = _field_func_helper(
+        field_func, *field_func_args)
+    results = _calc_field(molecule, points, field_func, *field_func_args)
+
+    fields = []
+    for result, field_type, field_info in zip(results, field_types,
+                                              field_infos):
+        field = np.array(result)
+        fields.append(NonGridField(field, points, field_type, field_info))
 
     return fields
 
