@@ -1,9 +1,7 @@
 from fortranformat import FortranRecordWriter
 
 from .cube_helpers import InputFormatError, Atom, Molecule, Field
-
-# http://www.gaussian.com/g_tech/g_ur/k_constants.htm
-angstrom_per_bohr = 0.5291772086
+from .cube_helpers import angstrom_per_bohr
 
 
 class DuplicateEntryError(Exception):
@@ -47,10 +45,8 @@ class G09_esp(object):
             identity = line[0]
             atomic_no = Atom.inv_periodic[identity]
             coords = [float(coord.replace('D', 'E')) for coord in line[1:4]]
-            if coords_in_bohr:
-                coords = [angstrom_per_bohr*coord for coord in coords]
             # Neglect the ESP value at atoms, which is given by last value
-            self.molecule.append(Atom(i+1, atomic_no, coords))
+            self.molecule.append(Atom(i+1, atomic_no, coords, coords_in_bohr))
 
     def _read_moments(self, f):
         assert f.readline().rstrip('\n') == " DIPOLE MOMENT:"
@@ -96,7 +92,7 @@ class G09_esp(object):
 
 class Points(list):
 
-    def __init__(self, points_coords, coords_in_bohr, allow_dupes):
+    def __init__(self, points_coords, coords_in_bohr=False, allow_dupes=True):
         super().__init__()
         self.allow_dupes = allow_dupes
         if not self.allow_dupes:

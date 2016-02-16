@@ -2,7 +2,7 @@ from scipy.spatial.distance import euclidean
 import numpy as np
 
 from .resp import Points, NonGridField
-from .cube_helpers import GridField, Grid
+from .cube_helpers import GridField, Grid, angstrom_per_bohr
 
 
 def _calc_field(molecule, points, field_func, *field_func_args):
@@ -63,7 +63,7 @@ def calc_grid_field(molecule, grid, field_func, *field_func_args):
             for iz in range(grid.axes[2].point_count):
                 z = grid.origin_coords[2] + iz*grid.dir_intervals[2]
                 points.append((x, y, z))
-    points = Points(points, coords_in_bohr=False, allow_dupes=True)
+    points = Points(points)
 
     field_func, field_types, field_infos = _field_func_helper(
         field_func, *field_func_args)
@@ -123,7 +123,7 @@ def _rep_esp_func(molecule, x, y, z, charge_types):
     for atom in molecule:
         dist = euclidean([x, y, z], atom.coords)
         for i, charge_type in enumerate(charge_types):
-            values[i] += atom.charges[charge_type]/dist
+            values[i] += atom.charges[charge_type]/(dist/angstrom_per_bohr)
     return values
 
 

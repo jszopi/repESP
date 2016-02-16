@@ -1,5 +1,6 @@
 import my_unittest
 from repESP import cube_helpers
+from repESP.cube_helpers import angstrom_per_bohr
 from repESP.rep_esp import calc_grid_field
 
 import os
@@ -31,6 +32,8 @@ dist_result = [0.1, 0.3, 0.7, 0.316227766, 0.424264068, 0.761577310,
                0.728010988, 0.374165738, 0.469041575, 0.787400787, 0.640312423,
                0.7, 0.943398113, 0.412310562, 0.5, 0.806225774, 0.509901951,
                0.583095189, 0.860232526, 0.728010988, 0.781024967, 1.004987562]
+# Values above in Bohr, convert to Angstrom
+dist_result = [angstrom_per_bohr*elem for elem in dist_result]
 
 # Isovalue selected so that only two points fall above it
 ed_isoval = 7.01e-07
@@ -41,6 +44,8 @@ edt_result = [0.63245553, 0.63245553, 0.74833147, 0.36055512, 0.36055512,
               0.53851648, 0.2, 0.2, 0.44721359, 0.6, 0.6, 0.72111025, 0.3, 0.3,
               0.5, 0.0, 0.0, 0.4, 0.63245553, 0.63245553, 0.74833147,
               0.36055512, 0.36055512, 0.53851648, 0.2, 0.2, 0.44721359]
+# Convert to Angstrom
+edt_result = [angstrom_per_bohr*elem for elem in edt_result]
 
 
 class TestCube(my_unittest.TestCase):
@@ -84,10 +89,14 @@ class TestCube(my_unittest.TestCase):
 class TestGrid(my_unittest.TestCase):
 
     def test_origin_coords(self):
-        self.assertListAlmostEqual(grid.origin_coords, [0.1, 0.2, 0.3])
+        origin_coords = [0.1, 0.2, 0.3]
+        origin_coords = [angstrom_per_bohr*elem for elem in origin_coords]
+        self.assertListAlmostEqual(grid.origin_coords, origin_coords)
 
     def test_dir_intervals(self):
-        self.assertListAlmostEqual(grid.dir_intervals, [0.2, 0.3, 0.4])
+        dir_intervals = [0.2, 0.3, 0.4]
+        dir_intervals = [angstrom_per_bohr*elem for elem in dir_intervals]
+        self.assertListAlmostEqual(grid.dir_intervals, dir_intervals)
 
     def test_aligned(self):
         self.assertTrue(grid.aligned_to_coord)
@@ -105,7 +114,9 @@ class TestMolecule(my_unittest.TestCase):
         self.assertEqual(atom.atomic_no, 1)
 
     def test_coords(self):
-        self.assertListAlmostEqual(atom.coords, [0.1, 0.2, 0.4])
+        coords = [0.1, 0.2, 0.4]
+        coords = [angstrom_per_bohr*elem for elem in coords]
+        self.assertListAlmostEqual(atom.coords, coords)
 
     def test_cube_charges(self):
         self.assertAlmostEqual(atom.charges['cube'], 0.9)
@@ -135,7 +146,8 @@ class TestRepESPField(my_unittest.TestCase):
 
     def test_values(self):
         self.assertListAlmostEqual(list(repESP_field.values.flatten()),
-                                   [0.9/dist for dist in dist_result])
+                                   [0.9/(dist/angstrom_per_bohr) for dist in
+                                   dist_result])
 
     def test_field_type(self):
         self.assertEqual(repESP_field.field_type, 'rep_esp')
