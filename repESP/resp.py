@@ -74,10 +74,7 @@ class G09_esp(object):
                     len(points_coords), expected_points_count))
 
         try:
-            self.field = NonGridField(
-                values, points_coords, 'esp', field_info=['input'],
-                allow_dupes=allow_dupes, coords_in_bohr=coords_in_bohr)
-
+            points = Points(points_coords, coords_in_bohr, allow_dupes)
         except DuplicateEntryError:
             raise InputFormatError(
                 "Duplicate points in the input file. This might be an artefact"
@@ -85,9 +82,11 @@ class G09_esp(object):
                 "are to be counted twice, the NonGridField needs to be called "
                 "with `allow_dupes=True`")
         except InputValueError as e:
-            # Translate the errors when creating a field to errors due to input
+            # Translate the errors when creating Points to errors due to input
             # file format
             raise InputFormatError(e)
+
+        self.field = NonGridField(values, points, 'esp', field_info=['input'])
 
 
 class Points(list):
@@ -134,28 +133,22 @@ class Points(list):
 
 class NonGridField(Field):
 
-    def __init__(self, values, points, field_type, field_info=None,
-                 allow_dupes=False, coords_in_bohr=True):
+    def __init__(self, values, points, field_type, field_info=None):
         """Create a NonGridField from given coordinates and values
 
         Parameters
         ----------
-        points : List[Tuple]
-            The inner tuples represent coordinates and should hence have
-            lengths of 3. If the coordinates are given in Angstrom, the
-            `coords_in_bohr` parameter must be set to False. If the
-            `allow_dupes` parameter is False (default), the values must be
-            given as strings to enable checking for duplicates.
+        points : Points
 
         values : List
             The list of values at *corresponding* coordinates.
         """
         super().__init__(values, field_type, field_info, check_nans=False)
+        self.points = points
 
-        if type(points) is Points:
-            self.points = points
-        else:
-            self.points = Points(points, coords_in_bohr, allow_dupes)
+        if type(points) is not Points:
+            raise TypeError("Expected type Points for the points argument, "
+                            "instead got {0}".format(type(points)))
 
         if len(points) != len(values):
             raise ValueError("The number of points {0} is different from the "
