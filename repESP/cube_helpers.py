@@ -424,9 +424,6 @@ class GridAxis(object):
         if int(point_count) != float(point_count):
             raise GridError('Number of points in direction {0} is not an '
                             'integer: {1}'.format(self.label, point_count))
-        if self.label == 'x' and float(point_count) < 0:
-            raise GridError('Gaussian requested distance in angstroms, which '
-                            'is not currently supported.')
 
         self.point_count = int(point_count)
 
