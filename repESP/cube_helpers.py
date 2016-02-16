@@ -387,6 +387,7 @@ class Grid(object):
         for axis_number, input_axis in enumerate(grid_input):
             aligned_to_axis = self._add_axis(axis_number, input_axis,
                                              coords_in_bohr)
+            # All axes must fulfil this condition, hence the logic
             self.aligned_to_coord = self.aligned_to_coord and aligned_to_axis
 
         self.dir_intervals = []

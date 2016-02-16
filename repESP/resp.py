@@ -28,10 +28,10 @@ class G09_esp(object):
     def _read_header(self, fn, f):
         line = f.readline().rstrip('\n')
         if line != " ESP FILE - ATOMIC UNITS":
-            raise InputFormatError("The input file {0} does not seem to be the"
-                                   " G09 .esp format. Generate by specifying "
-                                   "Pop=MK/CHelp(G) with IOp(6/50=1)".format(
-                                       fn))
+            raise InputFormatError(
+                "The input file {0} does not seem to be the G09 .esp format. "
+                "Generate by specifying Pop=MK/CHelp(G) with IOp(6/50=1)"
+                .format(fn))
         line = f.readline().split()
         self.charge = int(line[2])
         self.multip = int(line[-1])
