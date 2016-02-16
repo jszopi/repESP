@@ -33,6 +33,14 @@ def _calc_field(molecule, points, field_func, *field_func_args):
     # https://www.python.org/doc/essays/list2str/
     # (5) Finally, iterating the points has a good potential for
     # parallelization.
+
+    # This is important to prevent the coordinates being given as a list and
+    # hence new Points objects being created upon initialization of
+    # NonGridField
+    if type(points) is not Points:
+        raise TypeError("A Points object was expected, given {0}.".format(
+            type(points)))
+
     for point in points:
         values = field_func(molecule, point[0], point[1], point[2],
                             *field_func_args)
@@ -80,12 +88,6 @@ def calc_grid_field(molecule, grid, field_func, *field_func_args):
 
 
 def calc_non_grid_field(molecule, points, field_func, *field_func_args):
-    # This is important to prevent the coordinates being given as a list and
-    # hence new Points objects being created upon initialization of
-    # NonGridField
-    if type(points) is not Points:
-        raise TypeError("A Points object was expected, given {0}.".format(
-            type(points)))
 
     field_func, field_types, field_infos = _field_func_helper(
         field_func, *field_func_args)
