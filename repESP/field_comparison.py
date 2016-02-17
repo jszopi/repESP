@@ -7,6 +7,7 @@ import os
 
 from .cube_helpers import GridError, GridField, _check_for_nans
 from .rep_esp import calc_grid_field
+from .resp import NonGridField
 
 
 def difference(field1, field2, relative=False, absolute=False):
@@ -31,7 +32,10 @@ def difference(field1, field2, relative=False, absolute=False):
 
     values = np.vectorize(func)(field1.values, field2.values)
 
-    return GridField(values, field1.grid, 'diff', info)
+    if type(field1) is NonGridField:
+        return NonGridField(values, field1.points, 'diff', info)
+    else:
+        return GridField(values, field1.grid, 'diff', info)
 
 
 def _check_fields_for_nans(*fields):
@@ -45,7 +49,8 @@ def _check_grids(field1, *fields):
         warn('No fields to be compared! As this is a helper function, the '
              'issue is likely due to the caller: ' + inspect.stack()[1][3])
 
-    attr_dict = {GridField: 'grid', np.ndarray: 'shape'}
+    attr_dict = {GridField: 'grid', np.ndarray: 'shape',
+                 NonGridField: 'points'}
     for field in fields:
         if type(field) != type(field1):
             raise TypeError("Expected '{0}' objects to be compared, received "
@@ -57,7 +62,8 @@ def _check_grids(field1, *fields):
                 raise TypeError("Checking dimensions of type '{0}' is not "
                                 "supported.".format(type(field)))
             if attrgetter(attr)(field1) != attrgetter(attr)(field):
-                raise GridError('Grids of fields to be compared do not match.')
+                raise GridError("Grids or points of fields to be compared do "
+                                "not match.")
 
 
 def _flatten_no_nans(ndarray_input):
