@@ -16,13 +16,14 @@ def difference(field1, field2, relative=False, absolute=False):
     # compared fields.
     info = [[], []]
     if absolute:
-        func = lambda val1, val2: abs(val1 - val2)
+        func_base = lambda val1, val2: abs(val1 - val2)
         info[0].append('abs')
     else:
-        func = lambda val1, val2: val1 - val2
+        func_base = lambda val1, val2: val1 - val2
 
+    func = func_base
     if relative:
-        func = lambda val1, val2: func(val1, val2)/val1
+        func = lambda val1, val2: func_base(val1, val2)/val1
         info[0].append('rel')
 
     info[1].append(field1.lookup_name())
