@@ -4,6 +4,7 @@ esp_type_in_log = {
     ' Merz-Kollman atomic radii used.': 'mk',
     ' Francl (CHELP) atomic radii used.': 'chelp',
     ' Breneman (CHELPG) radii used.': 'chelpg',
+    ' Generate Potential Derived Charges using the Hu-Lu-Yang model:': 'hly',
     }
 
 esp_charges = esp_type_in_log.values()

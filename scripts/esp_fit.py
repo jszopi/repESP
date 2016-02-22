@@ -5,6 +5,7 @@ from numpy import mean, sqrt, square, linspace, meshgrid
 
 charge_type = 'mk'
 # charge_type = 'chelpg'
+# charge_type = 'hly'
 
 # molecule_name = 'methane'
 molecule_name = 'tma'

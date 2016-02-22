@@ -37,6 +37,7 @@ charge_types = {'aim': '.sumviz',
                 'mulliken': '.log',
                 'chelpg': '_chelpg.log',
                 'mk': '_mk.log',
+                'hly': '_hly.log',
                 'nbo': '_nbo.log',
                 }
 
