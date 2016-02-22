@@ -2,6 +2,12 @@ from repESP import resp, rep_esp, charges
 from repESP.field_comparison import _check_grids, difference
 
 from numpy import mean, sqrt, square, linspace, meshgrid
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+from matplotlib import cm
+
+import numpy as np
+import pickle
 
 charge_type = 'mk'
 # charge_type = 'chelpg'
@@ -61,9 +67,6 @@ if False:
 
 # Plot the grid in 3D
 if False:
-    import matplotlib.pyplot as plt
-    from mpl_toolkits.mplot3d import Axes3D
-
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
 
@@ -130,18 +133,19 @@ def calc_rms2(net_charge, charge_dict, molecule):
     rms = sqrt(mean(square(diff)))
     return rms
 
+# One charge: 2D plot
 if False:
     vary_atom_label = 1
     xlim = (-1, 0.5)
     charges = linspace(xlim[0], xlim[1], num=150)
     result = []
     for i, charge in enumerate(charges):
-        if not i % 10: print("{0:.2f}%".format(100*i/num))
+        if not i % 10:
+            print("{0:.2f}%".format(100*i/num))
         result.append(calc_rms(charge, molecule, vary_atom_label))
 
     min_charge = molecule[0].charges[charge_type]
 
-    import matplotlib.pyplot as plt
     plt.title(molecule_name.capitalize() + " " + charge_type.upper())
     plt.xlabel("Charge on " + molecule[vary_atom_label-1].identity)
     plt.ylabel("RMSE at fitting points")
@@ -160,50 +164,63 @@ if False:
     plt.show()
     plt.close()
 
+
+def plot_common():
+    plt.title(molecule_name.capitalize() + " " + charge_type.upper())
+    plt.xlabel("Charge on N")
+    plt.ylabel("Charge on C")
+    plt.show()
+    plt.close()
+
+
+class Result(object):
+
+    def __init__(self, num, c_xlim, n_xlim):
+        self.num = num
+        self.c_xlim = c_xlim
+        self.n_xlim = n_xlim
+        self.c_inp, self.n_inp = self.get_meshgrid(c_xlim, n_xlim, num)
+        self.rms = []
+
+    @staticmethod
+    def get_meshgrid(c_xlim, n_xlim, num):
+        c_charges = linspace(c_xlim[0], c_xlim[1], num=num)
+        n_charges = linspace(n_xlim[0], n_xlim[1], num=num)
+        return meshgrid(c_charges, n_charges)
+
+# 2 charges: Calculation
 if True:
+    # Change input values here
     net_charge = 1
     charges = lambda n, c: {17: n, 1: c, 5: c, 9: c, 13: c}
     c_xlim = (-1, 0.5)
     n_xlim = (-0.5, 1)
-
-    num = 31
-    n_charges = linspace(n_xlim[0], n_xlim[1], num=num)
-    c_charges = linspace(c_xlim[0], c_xlim[1], num=num)
-
-    n_inp = []
-    c_inp = []
-    result = []
+    num = 51
+    new_result = Result(num, c_xlim, n_xlim)
 
     i = 0
-    for n in n_charges:
-        for c in c_charges:
-            n_inp.append(n)
-            c_inp.append(c)
-            result.append(calc_rms2(1, charges(n, c), molecule))
-            for atom in molecule:
-                atom.print_with_charge('temp')
-            i += 1
-            print("{0:.2f} %".format(100*i/num**2))
+    for n, c in zip(new_result.n_inp.flat, new_result.c_inp.flat):
+        new_result.rms.append(calc_rms2(1, charges(n, c), molecule))
+        for atom in molecule:
+            atom.print_with_charge('temp')
+        i += 1
+        print("{0:.2f} %".format(100*i/num**2))
 
-    import matplotlib.pyplot as plt
-    from mpl_toolkits.mplot3d import Axes3D
-    from matplotlib import cm
-    import numpy as np
+    new_result.rms = np.array(new_result.rms)
+    new_result.rms.resize([num, num])
 
-    n_inp = np.array(n_inp)
-    n_inp.resize((num, num))
-    c_inp = np.array(c_inp)
-    c_inp.resize((num, num))
-    result = np.array(result)
-    result.resize((num, num))
+    with open(molecule_name + "_" + charge_type + "_result.p", "wb") as f:
+        pickle.dump(new_result, f)
+
+# 2 charges: Presentation
+if True:
+    with open(molecule_name + "_" + charge_type + "_result.p", "rb") as f:
+        read_result = pickle.load(f)
 
     fig = plt.figure()
     ax = fig.gca(projection='3d')
-    surf = ax.plot_surface(n_inp, c_inp, result, cmap=cm.plasma, rstride=1, cstride=1)
+    surf = ax.plot_surface(read_result.n_inp, read_result.c_inp,
+                           read_result.rms, cmap=cm.plasma, rstride=1,
+                           cstride=1)
     fig.colorbar(surf, label="RMSE at fitting points")
-    plt.title(molecule_name.capitalize() + " " + charge_type.upper())
-    plt.xlabel("Charge on N")
-    plt.ylabel("Charge on C")
-
-    plt.show()
-    plt.close()
+    plot_common()
