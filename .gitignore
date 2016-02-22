@@ -3,3 +3,5 @@ __pycache__
 *.swo
 .DS_Store
 *.pyc
+scripts/*.p
+scripts/*.pdf

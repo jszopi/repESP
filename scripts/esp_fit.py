@@ -169,8 +169,6 @@ def plot_common():
     plt.title(molecule_name.capitalize() + " " + charge_type.upper())
     plt.xlabel("Charge on N")
     plt.ylabel("Charge on C")
-    plt.show()
-    plt.close()
 
 
 class Result(object):
@@ -217,10 +215,36 @@ if True:
     with open(molecule_name + "_" + charge_type + "_result.p", "rb") as f:
         read_result = pickle.load(f)
 
-    fig = plt.figure()
-    ax = fig.gca(projection='3d')
-    surf = ax.plot_surface(read_result.n_inp, read_result.c_inp,
-                           read_result.rms, cmap=cm.plasma, rstride=1,
-                           cstride=1)
-    fig.colorbar(surf, label="RMSE at fitting points")
-    plot_common()
+    rel_rms = [100*(elem-rms)/rms for elem in read_result.rms]
+    rel_rms = np.array(rel_rms)
+    rel_rms.resize([read_result.num, read_result.num])
+
+    # Presentation: 3D
+    if False:
+        fig = plt.figure()
+        ax = fig.gca(projection='3d')
+        surf = ax.plot_surface(read_result.n_inp, read_result.c_inp,
+                               read_result.rms, cmap=cm.plasma, rstride=1,
+                               cstride=1)
+        fig.colorbar(surf, label="RMSE at fitting points")
+        plot_common()
+        plt.show()
+        plt.close()
+
+    # Presentation: 2D contour
+    if True:
+        levels = [1, 5, 10, 20, 30, 50, 100]
+        CS = plt.contour(read_result.n_inp, read_result.c_inp, rel_rms, levels,
+                         rstride=1, ctride=1, inline=1, colors='k')
+        plt.clabel(CS, fmt="%1.0f", inline=1, fontsize=10, colors='b')
+        axes = plt.gca()
+
+        # Change axes here:
+        axes.set_ylim([-1, 0])
+        plt.axes().set_aspect('equal')
+
+        plot_common()
+        save_to = molecule_name + "_" + charge_type
+        plt.savefig(save_to + ".pdf", format='pdf')
+        plt.show()
+        plt.close()
