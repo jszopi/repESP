@@ -35,6 +35,7 @@ rand_skim = 1
 axes_limits = [[0, 4]]
 
 charge_types = {'aim': '.sumviz',
+                # 'aim': 'ACF.dat',
                 'mulliken': '.log',
                 'chelpg': '_chelpg.log',
                 'mk': '_mk.log',
@@ -57,8 +58,12 @@ for charge_type in charge_types.keys():
     charge_dir = path + charge_type
     # raises OSError if directory exists
     os.mkdir(charge_dir)
-    update_with_charges(charge_type, input_path + molecule_name +
-                        charge_types[charge_type], molecule)
+    if charge_types[charge_type][0] in ['.', '_']:
+        filename = input_path + molecule_name + charge_types[charge_type]
+    else:
+        filename = input_path + charge_types[charge_type]
+
+    update_with_charges(charge_type, filename, molecule)
 
     print("\n{0} charges:".format(charge_type.upper()))
     for atom in molecule:

@@ -48,6 +48,12 @@ def update_with_charges(charge_type, filename, molecule):
         _get_charges(charge_type, filename, 'log', molecule)
     elif filename[-7:] == '.sumviz' and charge_type == 'aim':
         _get_charges('aim', filename, 'sumviz', molecule)
+    elif filename[-4:] == '.dat' and charge_type == 'aim':
+        print("WARNING: The QTAIM charges obtained from Henkelman group's "
+              "`bader` program differed from those from `AIMAll` for methane "
+              "by more than 0.01e, even with a very fine cube grid. Extracting"
+              " charges from `.dat` files is hence currently not recommended.")
+        _get_charges('aim', filename, 'dat', molecule)
     elif filename[-4:] in ['.chk', '.fchk']:
         raise NotImplementedError('File extension {0} currently not supported.'
                                   .format(filename[-4]))
@@ -124,6 +130,11 @@ def _goto_in_sumviz(charge_type, file_object):
         file_object.readline()
 
 
+def _goto_in_dat(charge_type, file_object):
+    for i in range(2):
+        file_object.readline()
+
+
 def _charge_section_header_in_log(charge_type):
     if charge_type == 'mulliken':
         return ' Mulliken charges:'
@@ -145,6 +156,8 @@ def _charge_termination_line(input_type, charge_type):
             return ' Sum of '
     elif input_type == 'sumviz':
         return '--------'
+    elif input_type == 'dat':
+        return ' -------'
     else:
         raise NotImplementedError("Combination of input file type '{0}' and "
                                   "charge type '{1}' is not implemented."
@@ -173,6 +186,13 @@ def _sumviz_charge_line(line, charge_type):
     label = int(letter_and_label[1])
     charge = float(charge)
     return label, letter, charge
+
+
+def _dat_charge_line(line, charge_type):
+    label, x, y, z, charge, *other = line.split()
+    label = int(label)
+    charge = float(charge)
+    return label, None, charge
 
 
 def _get_charges_from_lines(charge_type, file_object, input_type, molecule):
@@ -225,10 +245,13 @@ def _get_charges_from_lines(charge_type, file_object, input_type, molecule):
                 " may be a feature of the program which generated the charges "
                 "output but is not supported in this program.")
         # Check if the atom identities agree between atom list and input
-        if letter != atom.identity:
+        if letter is not None and letter != atom.identity:
             raise InputFormatError(
                 'Atom {0} in atom list is given as {1} but input file '
                 'expected {2}'.format(int(label)+1, atom.identity, letter))
+
+        if charge_type == 'aim' and file_object.name[-4:] == '.dat':
+            charge = atom.atomic_no - charge
 
         charges.append(charge)
 
