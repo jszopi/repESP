@@ -23,8 +23,11 @@ def rms_and_rep(true_field, molecule, charge_type):
     return rms_val, rep_esp_field
 
 
-def difference(field1, field2, relative=False, absolute=False):
+def difference(field1, field2, relative=False, absolute=False,
+               check_nans=True):
     _check_grids(field1, field2)
+    if check_nans:
+        _check_fields_for_nans(field1, field2)
     # The first element contains information about whether the difference is
     # relative or absolute, the second contains the free-form names of the
     # compared fields.
@@ -46,9 +49,12 @@ def difference(field1, field2, relative=False, absolute=False):
     values = np.vectorize(func)(field1.values, field2.values)
 
     if type(field1) is NonGridField:
+        # TODO: NonGridField should also check_nans like GridField. When it's
+        # implemented, remember to update here.
         return NonGridField(values, field1.points, 'diff', info)
     else:
-        return GridField(values, field1.grid, 'diff', info)
+        return GridField(values, field1.grid, 'diff', info,
+                         check_nans=check_nans)
 
 
 def _check_fields_for_nans(*fields):
