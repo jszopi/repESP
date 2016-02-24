@@ -3,6 +3,7 @@
 from repESP import cube_helpers
 from repESP.charges import update_with_charges
 from repESP.field_comparison import difference, filter_by_dist, filter_by_atom
+from repESP.field_comparison import rms
 from repESP.graphs import plot
 from repESP.rep_esp import calc_grid_field
 # For development, use ``sudo python3 setup.py develop``, to link the files in
@@ -83,6 +84,15 @@ for charge_type in charge_types.keys():
     diff_filtered.values = diff_field_filtered
     diff_filtered.write_cube(charge_dir + '/diff_filtered.cub', molecule,
                              charge_type)
+
+    rep_filtered = copy.deepcopy(rep)
+    rep_filtered.check_nans = False
+    _dist, rep_filtered.values = filter_by_dist(exclusion_dist, dist, rep)
+    rms_val = rms(esp_cube.field, rep_filtered, ignore_nans=True)
+    print("\nRMS on filtered cube points: {0:.7f}".format(rms_val))
+    # TODO: my Tee object from my previous project would help DRY
+    with open(charge_dir + '/charges.txt', 'a') as f:
+        print("\nRMS on filtered cube points: {0:.7f}".format(rms_val), file=f)
 
     # Whole molecule plot
     title = "Not filtered (whole molecule)"
