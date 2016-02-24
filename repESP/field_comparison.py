@@ -10,7 +10,7 @@ from .rep_esp import calc_grid_field, calc_non_grid_field
 from .resp import NonGridField
 
 
-def rms_and_rep(true_field, molecule, charge_type):
+def rms_and_rep(true_field, molecule, charge_type, ignore_nans=False):
     calc_field_args = [molecule, None, 'rep_esp', [charge_type]]
     if type(true_field) is GridField:
         calc_field_args[1] = true_field.grid
@@ -18,9 +18,12 @@ def rms_and_rep(true_field, molecule, charge_type):
     elif type(true_field) is NonGridField:
         calc_field_args[1] = true_field.points
         rep_esp_field = calc_non_grid_field(*calc_field_args)[0]
-    diff = difference(true_field, rep_esp_field).values
-    rms_val = np.sqrt(np.mean(np.square(diff)))
-    return rms_val, rep_esp_field
+    diff = difference(true_field, rep_esp_field,
+                      check_nans=not ignore_nans).values
+    if ignore_nans:
+        return np.sqrt(np.nanmean(np.square(diff)))
+    else:
+        return np.sqrt(np.mean(np.square(diff)))
 
 
 def difference(field1, field2, relative=False, absolute=False,
