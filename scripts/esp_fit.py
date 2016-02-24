@@ -48,13 +48,12 @@ min_rms, rep_esp_field = rms_and_rep(g.field, g.molecule, charge_type)
 # parent_atom, dist = rep_esp.calc_non_grid_field(g.molecule, g.field.points,
 #                                                 'dist')
 
-
-diff = difference(g.field, rep_esp_field).values
-rel_diff = difference(g.field, rep_esp_field, relative=True).values
-
 print("\nRMS: {0:.6f}".format(min_rms))
-# Trying to reverese-engineer RRMS
+# Trying to reverse-engineer RRMS
 if False:
+    diff = difference(g.field, rep_esp_field).values
+    rel_diff = difference(g.field, rep_esp_field, relative=True).values
+
     rrms_by_mean = sqrt(mean(square(diff)))/mean(g.field.values)
     print("\nRRMS by mean:            {0:6f}".format(rrms_by_mean))
     mean_val = mean([abs(elem) for elem in g.field.values])
