@@ -137,7 +137,8 @@ def calc_rms2(net_charge, charge_dict, molecule):
 if False:
     vary_atom_label = 1
     xlim = (-1, 0.5)
-    charges = linspace(xlim[0], xlim[1], num=150)
+    num = 150
+    charges = linspace(xlim[0], xlim[1], num=num)
     result = []
     for i, charge in enumerate(charges):
         if not i % 10:
