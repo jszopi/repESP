@@ -78,10 +78,9 @@ for charge_type in charge_types.keys():
     # Write cube
     diff.write_cube(charge_dir + '/diff.cub', molecule, charge_type)
     # and with elements within the ED isosurface excluded
-    _dist, diff_field_filtered = filter_by_dist(exclusion_dist, dist, diff)
     diff_filtered = copy.deepcopy(diff)
     diff_filtered.check_nans = False
-    diff_filtered.values = diff_field_filtered
+    _dist, diff_filtered.values = filter_by_dist(exclusion_dist, dist, diff)
     diff_filtered.write_cube(charge_dir + '/diff_filtered.cub', molecule,
                              charge_type)
 
