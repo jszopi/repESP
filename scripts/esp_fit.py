@@ -1,5 +1,5 @@
 from repESP import resp, rep_esp, charges
-from repESP.field_comparison import _check_grids, difference
+from repESP.field_comparison import _check_grids, difference, rms_and_rep
 
 from numpy import mean, sqrt, square, linspace, meshgrid
 import matplotlib.pyplot as plt
@@ -40,9 +40,10 @@ for atom in g.molecule:
     atom.print_with_charge(charge_type)
 
 
-# Reproduce ESP values at those points
-rep_esp_field = rep_esp.calc_non_grid_field(g.molecule, g.field.points,
-                                            'rep_esp', [charge_type])[0]
+# Reproduce ESP values at those points and get RMS value, which can be compared
+# with that in log file
+min_rms, rep_esp_field = rms_and_rep(g.field, g.molecule, charge_type)
+
 # Division into Voronoi basins:
 # parent_atom, dist = rep_esp.calc_non_grid_field(g.molecule, g.field.points,
 #                                                 'dist')
@@ -51,8 +52,6 @@ rep_esp_field = rep_esp.calc_non_grid_field(g.molecule, g.field.points,
 diff = difference(g.field, rep_esp_field).values
 rel_diff = difference(g.field, rep_esp_field, relative=True).values
 
-# RMS value -- can compare with than in log file
-min_rms = sqrt(mean(square(diff)))
 print("\nRMS: {0:.6f}".format(min_rms))
 # Trying to reverese-engineer RRMS
 if False:
@@ -113,26 +112,6 @@ def change_charges2(net_charge, charge_dict, molecule):
         else:
             atom.charges['temp'] = inferred_charge
 
-
-def calc_rms(charge, molecule, vary_atom_label=1):
-    # Reproduce ESP values at those points
-    change_charges(charge, molecule, vary_atom_label)
-    rep_esp_field = rep_esp.calc_non_grid_field(molecule, g.field.points,
-                                                'rep_esp', ['temp'])[0]
-    diff = difference(g.field, rep_esp_field).values
-    rms = sqrt(mean(square(diff)))
-    return rms
-
-
-def calc_rms2(net_charge, charge_dict, molecule):
-    # Reproduce ESP values at those points
-    change_charges2(net_charge, charge_dict, molecule)
-    rep_esp_field = rep_esp.calc_non_grid_field(molecule, g.field.points,
-                                                'rep_esp', ['temp'])[0]
-    diff = difference(g.field, rep_esp_field).values
-    rms = sqrt(mean(square(diff)))
-    return rms
-
 # One charge: 2D plot
 if False:
     vary_atom_label = 1
@@ -143,7 +122,9 @@ if False:
     for i, charge in enumerate(charges):
         if not i % 10:
             print("{0:.2f}%".format(100*i/num))
-        result.append(calc_rms(charge, molecule, vary_atom_label))
+        change_charges(charge, molecule, vary_atom_label)
+        rms_val = rms_and_rep(g.field, molecule, 'temp')[0]
+        result.append(rms_val)
 
     min_charge = molecule[0].charges[charge_type]
 
@@ -199,7 +180,9 @@ if True:
 
     i = 0
     for n, c in zip(new_result.n_inp.flat, new_result.c_inp.flat):
-        new_result.rms.append(calc_rms2(1, charges(n, c), molecule))
+        change_charges2(net_charge, charges(n, c), molecule)
+        rms_val = rms_and_rep(g.field, molecule, 'temp')[0]
+        new_result.rms.append(rms_val)
         for atom in molecule:
             atom.print_with_charge('temp')
         i += 1
