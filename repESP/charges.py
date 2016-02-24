@@ -1,5 +1,7 @@
 from .cube_helpers import Atom, Cube, InputFormatError
 
+import re
+
 esp_type_in_log = {
     ' Merz-Kollman atomic radii used.': 'mk',
     ' Francl (CHELP) atomic radii used.': 'chelp',
@@ -8,6 +10,27 @@ esp_type_in_log = {
     }
 
 esp_charges = esp_type_in_log.values()
+
+
+def get_rms_from_log(filename):
+    # Simple regex for floating point numbers will suffice, as they are
+    # non-negative and in decimal format:
+    # http://stackoverflow.com/a/4703409
+    rms_re = re.compile(" Charges from ESP fit, RMS=\s+(\d+\.\d+) RRMS=\s+"
+                        "(\d+\.\d+):$")
+    found_line = None
+    with open(filename, 'r') as file_object:
+        for line_num, line in enumerate(file_object):
+            if rms_re.match(line) is not None:
+                if found_line is not None:
+                    raise InputFormatError(
+                        "Multiple lines match the ESP summary pattern: lines "
+                        "{0} and {1}.".format(found_line+1, line_num+1))
+                rms_line = rms_re.match(line)
+                found_line = line_num
+        if rms_line is None:
+            raise InputFormatError("No ESP fit summary found.")
+        return float(rms_line.group(1)), float(rms_line.group(2))
 
 
 def update_with_charges(charge_type, filename, molecule):
