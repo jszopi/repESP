@@ -6,8 +6,21 @@ from operator import attrgetter
 import os
 
 from .cube_helpers import GridError, GridField, _check_for_nans
-from .rep_esp import calc_grid_field
+from .rep_esp import calc_grid_field, calc_non_grid_field
 from .resp import NonGridField
+
+
+def rms_and_rep(true_field, molecule, charge_type):
+    calc_field_args = [molecule, None, 'rep_esp', [charge_type]]
+    if type(true_field) is GridField:
+        calc_field_args[1] = true_field.grid
+        rep_esp_field = calc_grid_field(*calc_field_args)[0]
+    elif type(true_field) is NonGridField:
+        calc_field_args[1] = true_field.points
+        rep_esp_field = calc_non_grid_field(*calc_field_args)[0]
+    diff = difference(true_field, rep_esp_field).values
+    rms_val = np.sqrt(np.mean(np.square(diff)))
+    return rms_val, rep_esp_field
 
 
 def difference(field1, field2, relative=False, absolute=False):
