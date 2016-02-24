@@ -20,8 +20,12 @@ class InputFormatError(Exception):
 
 
 def _check_for_nans(values):
+    try:
+        values = values.flat
+    except AttributeError:
+        pass
     # http://stackoverflow.com/a/6736970
-    if np.isnan(np.sum(values.flat)):
+    if np.isnan(np.sum(values)):
         raise InputFormatError("Values contain NANs!")
 
 
