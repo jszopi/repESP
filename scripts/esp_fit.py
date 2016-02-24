@@ -52,8 +52,8 @@ diff = difference(g.field, rep_esp_field).values
 rel_diff = difference(g.field, rep_esp_field, relative=True).values
 
 # RMS value -- can compare with than in log file
-rms = sqrt(mean(square(diff)))
-print("\nRMS: {0:.6f}".format(rms))
+min_rms = sqrt(mean(square(diff)))
+print("\nRMS: {0:.6f}".format(min_rms))
 # Trying to reverese-engineer RRMS
 if False:
     rrms_by_mean = sqrt(mean(square(diff)))/mean(g.field.values)
@@ -153,8 +153,8 @@ if False:
     plt.plot(charges, result)
     plt.plot((-1.2, 1.2), (0, 0), 'r--')
     plt.plot((0, 0), (0, 1.2*max(result)), 'r--')
-    plt.plot((min_charge, min_charge), (0, rms), 'g--')
-    plt.plot((-1.2, min_charge), (rms, rms), 'g--')
+    plt.plot((min_charge, min_charge), (0, min_rms), 'g--')
+    plt.plot((-1.2, min_charge), (min_rms, min_rms), 'g--')
 
     axes = plt.gca()
     axes.set_xlim(xlim)
@@ -216,7 +216,7 @@ if True:
     with open(molecule_name + "_" + charge_type + "_result.p", "rb") as f:
         read_result = pickle.load(f)
 
-    rel_rms = [100*(elem-rms)/rms for elem in read_result.rms]
+    rel_rms = [100*(elem-min_rms)/min_rms for elem in read_result.rms]
     rel_rms = np.array(rel_rms)
     rel_rms.resize([read_result.num, read_result.num])
 
