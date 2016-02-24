@@ -18,8 +18,12 @@ def rms_and_rep(true_field, molecule, charge_type, ignore_nans=False):
     elif type(true_field) is NonGridField:
         calc_field_args[1] = true_field.points
         rep_esp_field = calc_non_grid_field(*calc_field_args)[0]
-    diff = difference(true_field, rep_esp_field,
-                      check_nans=not ignore_nans).values
+    rms_val = rms(true_field, rep_esp_field, ignore_nans)
+    return rms_val, rep_esp_field
+
+
+def rms(true_field, rep_field, ignore_nans=False):
+    diff = difference(true_field, rep_field, check_nans=not ignore_nans).values
     if ignore_nans:
         return np.sqrt(np.nanmean(np.square(diff)))
     else:
