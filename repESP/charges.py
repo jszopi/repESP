@@ -87,7 +87,7 @@ def _goto_in_log(charge_type, file_object, occurrence=-1):
         line = line.rstrip('\n')
         # All ESP charges are added here, as they cannot be distinguished just
         # by the header
-        if line.rstrip() == _charge_section_header_in_log(charge_type):
+        if _charge_section_header_in_log(charge_type) in line.rstrip():
             result.append(offset)
         # The information about the type of ESP charges is gathered separately
         if charge_type in esp_charges and line in esp_type_in_log:
@@ -118,6 +118,8 @@ def _goto_in_log(charge_type, file_object, occurrence=-1):
     lines_count = 1
     if charge_type == 'nbo':
         lines_count = 5
+    if charge_type in esp_type_in_log.values():
+        lines_count = 2
     for counter in range(lines_count):
         file_object.readline()
 
@@ -139,7 +141,7 @@ def _charge_section_header_in_log(charge_type):
     if charge_type == 'mulliken':
         return ' Mulliken charges:'
     elif charge_type in esp_charges:
-        return ' ESP charges:'
+        return ' Charges from ESP fit,'
     elif charge_type == 'nbo':
         return ' Summary of Natural Population Analysis:'
     else:
@@ -153,7 +155,8 @@ def _charge_termination_line(input_type, charge_type):
         if charge_type == 'nbo':
             return [' =======']
         else:
-            return ' Sum of '
+            # The latter happens when IOp(6/50=1) is requested
+            return [' Sum of ', ' Charges']
     elif input_type == 'sumviz':
         return ['--------']
     elif input_type == 'dat':
