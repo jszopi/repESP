@@ -1,6 +1,11 @@
+from repESP import resp, charges
+from repESP.field_comparison import rms_and_rep
+
 import shutil
 import os
 import math
+import copy
+import pickle
 
 
 class FitCalc(object):
@@ -168,3 +173,42 @@ class IOpCalcSet(object):
             if elem is not None and elem < 4:
                 raise ValueError("The number of layers needs to be greater or "
                                  "equal to 4.")
+
+
+charge_type = 'mk'
+path = '../data/methane/fit_points-1/'
+
+# PART 1
+if True:
+    os.mkdir(path)
+    shutil.copy('../data/methane/input/methane.chk', path)
+
+    # A simple investigation --- varying only IOp42
+    calc_set = IOpCalcSet(iop42=list(range(1, 6)))
+    calcs = []
+    print(calc_set.create_param_list())
+    for iop41, iop42, iop43 in zip(*calc_set.create_param_list()):
+        calc = FitCalc(path, 'methane', 'MP2/6-31+G(d,p)', charge_type, 0, 1,
+                       iop41, iop42, iop43)
+        calc.create_input()
+        calcs.append(calc)
+        print("Created file: ", calc.filename)
+
+    # Pickle filenames for part 2
+    with open("fit_points-calcs.p", 'wb') as f:
+        pickle.dump([elem.filename for elem in calcs], f)
+
+# PART 2 --- run when the Gaussian calculations have been completed
+if False:
+    with open("fit_points-calcs.p", 'rb') as f:
+        calcs = pickle.load(f)
+
+    for calc in calcs:
+        g = resp.G09_esp(path + calc + '.esp')
+        charges.update_with_charges(charge_type, path + calc + '.log',
+                                    g.molecule)
+        for atom in g.molecule:
+            atom.print_with_charge(charge_type)
+        min_rms, rep_esp_field = rms_and_rep(g.field, g.molecule, charge_type)
+        print(min_rms)
+        # More sophisticated analysis of RMS and charges can now follow
