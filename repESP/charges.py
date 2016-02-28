@@ -151,13 +151,13 @@ def _charge_termination_line(input_type, charge_type):
     """Returns the first 8 characters of the charge section termination line"""
     if input_type == 'log':
         if charge_type == 'nbo':
-            return ' ======='
+            return [' =======']
         else:
             return ' Sum of '
     elif input_type == 'sumviz':
-        return '--------'
+        return ['--------']
     elif input_type == 'dat':
-        return ' -------'
+        return [' -------']
     else:
         raise NotImplementedError("Combination of input file type '{0}' and "
                                   "charge type '{1}' is not implemented."
@@ -258,10 +258,11 @@ def _get_charges_from_lines(charge_type, file_object, input_type, molecule):
     # Check if the atom list terminates after as many atoms as expected from
     # the Molecule object given
     next_line = file_object.readline()
-    if next_line[:8] != _charge_termination_line(input_type, charge_type):
+    expected = _charge_termination_line(input_type, charge_type)
+    if next_line[:8] not in expected:
+        expected = "' or '".join(expected)
         raise InputFormatError(
             "Expected end of charges ('{0}'), instead got: '{1}'".format(
-                _charge_termination_line(input_type, charge_type),
-                next_line[:8]))
+                expected, next_line[:8]))
 
     return charges
