@@ -13,7 +13,7 @@ from . import field_comparison
 DIR_LABELS = ['x', 'y', 'z']
 
 
-def _plot_common(dimension, title):
+def _plot_common(dimension, title, guideline=False):
     """Set up plot of correct dimensionality and return related objects"""
     fig = plt.figure()
     if dimension == 3:
@@ -25,7 +25,7 @@ def _plot_common(dimension, title):
                                   .format(dimension))
 
     # Add a horizontal line at 0 for 2D plots
-    if dimension == 2:
+    if guideline and dimension == 2:
         ax.axhline(color='k', linestyle='--')
 
     if title is not None:
@@ -51,7 +51,7 @@ def plot(*fields, color=None, color_span=None, dist_field_filter=None,
     # Necessary, as the original Field will be overwritten when filtering
     dist_field_filter_type = dist_field_filter.field_type
 
-    fig, ax = _plot_common(len(fields), title)
+    fig, ax = _plot_common(len(fields), title, guideline=True)
     _set_axis_labels(ax, *fields)
 
     # This function got really fat due to all that filtering and it can still
