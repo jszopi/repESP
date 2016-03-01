@@ -85,11 +85,8 @@ def plot(*fields, color=None, color_span=None, dist_field_filter=None,
         # ax.scatter has to be inside of the 'color is not None' conditional
         # because an error occurs when the kwarg ``c`` is explicitly set to
         # None, even though it's the default value.
-        if color_span is None:
-            image = ax.scatter(*fields, c=color, cmap=cmap)
-        else:
-            image = ax.scatter(*fields, c=color, cmap=cmap, vmin=color_span[0],
-                               vmax=color_span[1])
+        vmin, vmax = color_span if color_span is not None else None, None
+        image = ax.scatter(*fields, c=color, cmap=cmap, vmin=vmin, vmax=vmax)
         cbar = fig.colorbar(image, label=cmap_name)
     else:
         fields = fields_and_color
