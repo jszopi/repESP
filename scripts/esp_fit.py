@@ -63,6 +63,7 @@ if False:
     print("RRMS by relative error:  {0:6f}".format(rrms_by_rel_err))
 
 
+title = molecule_name.capitalize() + " " + charge_type.upper()
 # Plot the grid in 3D
 if False:
     fig = plt.figure()
@@ -74,6 +75,7 @@ if False:
     image = ax.scatter(*list(zip(*g.field.points)), c=color, cmap=cmap)
     cbar = fig.colorbar(image, label="ESP value")
 
+    plt.title(title)
     plt.show()
     plt.close()
 
@@ -127,7 +129,7 @@ if False:
 
     min_charge = molecule[0].charges[charge_type]
 
-    plt.title(molecule_name.capitalize() + " " + charge_type.upper())
+    plt.title(title)
     plt.xlabel("Charge on " + molecule[vary_atom_label-1].identity)
     plt.ylabel("RMSE at fitting points")
     plt.plot(charges, result)
@@ -147,7 +149,7 @@ if False:
 
 
 def plot_common():
-    plt.title(molecule_name.capitalize() + " " + charge_type.upper())
+    plt.title(title)
     plt.xlabel("Charge on N")
     plt.ylabel("Charge on C")
 
