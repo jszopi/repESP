@@ -1,4 +1,4 @@
-from repESP import resp, charges
+from repESP import resp, charges, graphs
 from repESP.field_comparison import rms_and_rep
 
 import shutil
@@ -6,6 +6,8 @@ import os
 import math
 import copy
 import pickle
+import numpy as np
+import matplotlib.pyplot as plt
 
 
 class FitCalc(object):
@@ -175,6 +177,39 @@ class IOpCalcSet(object):
                                  "equal to 4.")
 
 
+def calc_min_max(alist):
+    return min(alist), max(alist)
+
+
+def smart_range(min_max, low=0.9, high=1.1):
+    # Something like this:
+    # color_span = [0.8*min_max[0], 1.2*min_max[1]]
+    # but allowing for different signs
+    color_span = []
+    for elem, sign in zip(min_max, [-1, 1]):
+        if np.sign(elem) == sign:
+            color_span.append(high*elem)
+        else:
+            color_span.append(low*elem)
+    return color_span
+
+
+def plot_range(alist, margin=0.05):
+    min_max = calc_min_max(alist)
+    diff = abs(min_max[1] - min_max[0])
+    return min_max[0] - margin*diff, min_max[1] + margin*diff
+
+
+def calc_plot(calcs, to_plot, title, set_lim=False, save_to=None):
+    plt.scatter(list(range(len(calcs))), to_plot)
+    plt.xticks(list(range(len(calcs))), [elem[-6:] for elem in calcs])
+    plt.title(title)
+    axes = plt.gca()
+    if set_lim:
+        axes.set_ylim(plot_range(to_plot))
+    graphs._save_or_display(save_to)
+
+
 charge_type = 'mk'
 path = '../data/methane/fit_points-1/'
 
@@ -195,20 +230,56 @@ if True:
         print("Created file: ", calc.filename)
 
     # Pickle filenames for part 2
-    with open("fit_points-calcs.p", 'wb') as f:
+    with open(path + "fit_points.p", 'wb') as f:
         pickle.dump([elem.filename for elem in calcs], f)
 
 # PART 2 --- run when the Gaussian calculations have been completed
 if False:
-    with open("fit_points-calcs.p", 'rb') as f:
+    with open(path + "fit_points.p", 'rb') as f:
         calcs = pickle.load(f)
 
+    rms_list = []
+    charges_dict = {}
+
+    color_span = []
     for calc in calcs:
         g = resp.G09_esp(path + calc + '.esp')
         charges.update_with_charges(charge_type, path + calc + '.log',
                                     g.molecule)
-        for atom in g.molecule:
-            atom.print_with_charge(charge_type)
-        min_rms, rep_esp_field = rms_and_rep(g.field, g.molecule, charge_type)
-        print(min_rms)
-        # More sophisticated analysis of RMS and charges can now follow
+        with open(path + calc + "-charges.txt", "a") as fc:
+            for atom in g.molecule:
+                atom.print_with_charge(charge_type, fc)
+                if atom.label in charges_dict:
+                    charges_dict[atom.label].append(atom.charges[charge_type])
+                else:
+                    charges_dict[atom.label] = [atom.charges[charge_type]]
+
+            min_rms, rep_esp_field = rms_and_rep(g.field, g.molecule,
+                                                 charge_type)
+            rms_list.append(min_rms)
+            print("\n", min_rms, file=fc)
+
+        min_max = calc_min_max(g.field.values)
+        if color_span == []:
+            color_span = smart_range(min_max)
+        if min_max[0] < color_span[0] or min_max[1] > color_span[1]:
+            # The extent of this is unlikely to be large, sinve both MK and
+            # CHelpG use a fixed exclusion radius (or do they? That's up to
+            # Gaussian's implementation and is to be investigated).
+            print("WARNING: Values on graph (min_max = {0:.2f}, {1:.2f}) will "
+                  "be outside of color scale ({2:.2f}, {3:.2f})".format(
+                      *min_max, *color_span))
+
+        graphs.plot_points(
+            g.field, 2, title=path + calc, molecule=g.molecule,
+            plane_eqn=graphs.plane_through_atoms(g.molecule, 1, 2, 3),
+            dist_thresh=0.5, axes_limits=[(-5, 5)]*2, color_span=color_span,
+            save_to=path + calc[-6:] + '.pdf')
+
+    save_to = path + "RMS.pdf"
+    calc_plot(calcs, rms_list, "RMS value", set_lim=True, save_to=save_to)
+
+    for atom in g.molecule:
+        save_to = path + atom.identity + str(atom.label) + "_charge.pdf"
+        title = "Charge on " + atom.identity + str(atom.label)
+        calc_plot(calcs, charges_dict[atom.label], title, save_to=save_to)
