@@ -1,4 +1,4 @@
-from repESP import resp, rep_esp, charges
+from repESP import resp, rep_esp, charges, graphs
 from repESP.field_comparison import _check_grids, difference, rms_and_rep
 
 from numpy import mean, sqrt, square, linspace, meshgrid
@@ -64,20 +64,19 @@ if False:
 
 
 title = molecule_name.capitalize() + " " + charge_type.upper()
-# Plot the grid in 3D
-if False:
-    fig = plt.figure()
-    ax = fig.add_subplot(111, projection='3d')
-
-    color = g.field.values
-    cmap = plt.get_cmap('plasma')
-
-    image = ax.scatter(*list(zip(*g.field.points)), c=color, cmap=cmap)
-    cbar = fig.colorbar(image, label="ESP value")
-
-    plt.title(title)
-    plt.show()
-    plt.close()
+# Plot the grid in 3 and 2D:
+if True:
+    color_span = [min(g.field.values), max(g.field.values)]
+    for dimension in (3, 2):
+        graphs.plot_points(
+            g.field, dimension, title=title, molecule=g.molecule,
+            plane_eqn=graphs.plane_through_atoms(g.molecule, 1, 3, 17),
+            dist_thresh=0.5, axes_limits=[(-5, 5)]*dimension,
+            color_span=color_span)
+        graphs.plot_points(
+            g.field, dimension, title=title, molecule=g.molecule,
+            plane_eqn=[1, 0, 0, 0], dist_thresh=0.5,
+            axes_limits=[(-5, 5)]*dimension, color_span=color_span)
 
 # Calculate RMS for various charges
 import copy
