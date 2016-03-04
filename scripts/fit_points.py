@@ -202,7 +202,8 @@ def plot_range(alist, margin=0.05):
 
 def calc_plot(calcs, to_plot, title, set_lim=False, save_to=None):
     plt.scatter(list(range(len(calcs))), to_plot)
-    plt.xticks(list(range(len(calcs))), [elem[-6:] for elem in calcs])
+    plt.xticks(list(range(len(calcs))), [elem[-6:] for elem in calcs],
+               rotation='vertical')
     plt.title(title)
     axes = plt.gca()
     if set_lim:
@@ -271,13 +272,14 @@ if False:
                       *min_max, *color_span))
 
         graphs.plot_points(
-            g.field, 2, title=path + calc, molecule=g.molecule,
+            g.field, 2, title=calc, molecule=g.molecule,
             plane_eqn=graphs.plane_through_atoms(g.molecule, 1, 2, 3),
             dist_thresh=0.5, axes_limits=[(-5, 5)]*2, color_span=color_span,
             save_to=path + calc[-6:] + '.pdf')
 
     save_to = path + "RMS.pdf"
-    calc_plot(calcs, rms_list, "RMS value", set_lim=True, save_to=save_to)
+    calc_plot(calcs, rms_list, charge_type.upper() + " RMS value",
+              set_lim=True, save_to=save_to)
 
     for atom in g.molecule:
         save_to = path + atom.identity + str(atom.label) + "_charge.pdf"
