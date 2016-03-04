@@ -211,6 +211,23 @@ def calc_plot(calcs, to_plot, title, set_lim=False, save_to=None):
     graphs._save_or_display(save_to)
 
 
+def check_color_span(values, color_span, default=None):
+    min_max = calc_min_max(values)
+    if color_span == []:
+        if default is None:
+            color_span = smart_range(min_max)
+        else:
+            color_span = default
+    if min_max[0] < color_span[0] or min_max[1] > color_span[1]:
+        # The extent of this is unlikely to be large, since both MK and
+        # CHelpG use a fixed exclusion radius (or do they? That's up to
+        # Gaussian's implementation and is to be investigated).
+        print("WARNING: Values on graph (min_max = {0:.4f}, {1:.4f}) will "
+              "be outside of color scale ({2:.4f}, {3:.4f})".format(
+                  *min_max, *color_span))
+    return color_span
+
+
 charge_type = 'mk'
 path = '../data/methane/fit_points-1/'
 
@@ -260,16 +277,9 @@ if False:
             rms_list.append(min_rms)
             print("\n", min_rms, file=fc)
 
-        min_max = calc_min_max(g.field.values)
-        if color_span == []:
-            color_span = smart_range(min_max)
-        if min_max[0] < color_span[0] or min_max[1] > color_span[1]:
-            # The extent of this is unlikely to be large, sinve both MK and
-            # CHelpG use a fixed exclusion radius (or do they? That's up to
-            # Gaussian's implementation and is to be investigated).
-            print("WARNING: Values on graph (min_max = {0:.2f}, {1:.2f}) will "
-                  "be outside of color scale ({2:.2f}, {3:.2f})".format(
-                      *min_max, *color_span))
+        # Default given as extremal values of methane CHelpG
+        color_span = check_color_span(g.field.values, color_span,
+                                      default=[-0.0045, 0.011])
 
         graphs.plot_points(
             g.field, 2, title=calc, molecule=g.molecule,
