@@ -1,5 +1,5 @@
 from repESP import resp, charges, graphs
-from repESP.field_comparison import rms_and_rep
+from repESP.field_comparison import rms_and_rep, difference
 
 import shutil
 import os
@@ -260,6 +260,7 @@ if False:
     charges_dict = {}
 
     color_span = []
+    error_color_span = []
     for calc in calcs:
         g = resp.G09_esp(path + calc + '.esp')
         charges.update_with_charges(charge_type, path + calc + '.log',
@@ -280,12 +281,22 @@ if False:
         # Default given as extremal values of methane CHelpG
         color_span = check_color_span(g.field.values, color_span,
                                       default=[-0.0045, 0.011])
+        diff_field = difference(g.field, rep_esp_field)
+        error_color_span = check_color_span(diff_field.values,
+                                            error_color_span,
+                                            default=[-0.0012, 0.019])
 
         graphs.plot_points(
             g.field, 2, title=calc, molecule=g.molecule,
             plane_eqn=graphs.plane_through_atoms(g.molecule, 1, 2, 3),
             dist_thresh=0.5, axes_limits=[(-5, 5)]*2, color_span=color_span,
-            save_to=path + calc[-6:] + '.pdf')
+            save_to=path + calc[-6:] + '_V.pdf')
+
+        graphs.plot_points(
+            diff_field, 2, title=calc + " Errors", molecule=g.molecule,
+            plane_eqn=graphs.plane_through_atoms(g.molecule, 1, 2, 3),
+            dist_thresh=0.5, axes_limits=[(-5, 5)]*2,
+            color_span=error_color_span, save_to=path + calc[-6:] + '_E.pdf')
 
     save_to = path + "RMS.pdf"
     calc_plot(calcs, rms_list, charge_type.upper() + " RMS value",
