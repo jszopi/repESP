@@ -5,3 +5,4 @@ __pycache__
 *.pyc
 scripts/*.p
 scripts/*.pdf
+docs/build/
