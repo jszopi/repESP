@@ -1,4 +1,5 @@
 from fortranformat import FortranRecordWriter
+import textwrap
 
 from .cube_helpers import InputFormatError, Atom, Molecule, Field
 from .cube_helpers import angstrom_per_bohr
@@ -177,3 +178,85 @@ class NonGridField(Field):
                     point_coords = [point_coord/angstrom_per_bohr for
                                     point_coord in point_coords]
                 f.write(esp_points_format.write([esp_val] + point_coords)+"\n")
+
+
+def read_respin2(fn, ref_molecule=None):
+    with open(fn, 'r') as inp:
+        # Rewind to end of cntrl section
+        line = inp.readline()
+        while "&end" not in line:
+            line = inp.readline()
+        # Skip two lines ...
+        for i in range(3):
+            line = inp.readline()
+        # ... and the third one will be `charge, iuniq`
+        charge, iuniq = [int(elem) for elem in line.split()]
+
+        # Create a molecule
+        molecule = Molecule(None)
+        for i, line in enumerate(inp):
+            if len(line.split()) != 2:
+                break
+            atom = Atom(i+1, int(line.split()[0]))
+            # Crucial bit: reading in ivary
+            atom.ivary = int(line.split()[1])
+            molecule.append(atom)
+
+    # Check input file consistency
+    if len(molecule) != iuniq:
+        raise InputFormatError("The number of atoms {0} doesn't agree with"
+                               " the `iuniq` value in the input file: {1}"
+                               .format(len(molecule), iuniq))
+    # Check the molecule against a reference molecule
+    if ref_molecule is not None and molecule != ref_molecule:
+        molecule.verbose_compare(ref_molecule)
+        raise InputFormatError("The molecule in the .respin2 file differs "
+                               "from the other molecule as shown above.")
+
+    return molecule, charge, iuniq
+
+
+def write_modified_respin2(molecule, charge, iuniq, fn_out, check_ivary=True):
+    with open(fn_out, 'w') as out:
+        out.write(textwrap.dedent(
+            """\
+            Resp charges for organic molecule
+
+             &cntrl
+
+             nmol = 1,
+             ihfree = 1,
+             ioutopt = 1,
+             iqopt = 2,
+
+             &end
+                1.0
+            Resp charges for organic molecule
+            """))
+        numbers = FortranRecordWriter('2I5')
+        # `charge, iuniq` line
+        print(numbers.write([charge, iuniq]), file=out)
+
+        if check_ivary:
+            print("\nPlease check if the following generated RESP input is "
+                  "what you want. Note that the hydrogens to be equivalenced "
+                  "were selected automatically by the program which generated "
+                  "the `.respin1` file (likely `respgen`).\n")
+        for atom in molecule:
+            # Freeze non-hydrogens
+            ivary = atom.ivary if atom.atomic_no == 1 else -1
+            if check_ivary:
+                _print_ivary_action(atom, ivary, molecule)
+            print(numbers.write([atom.atomic_no, ivary]), file=out)
+
+        print(file=out)
+
+
+def _print_ivary_action(atom, ivary, molecule):
+    print(atom, end='')
+    if ivary == -1:
+        print(", frozen")
+    elif ivary > 0:
+        print(", equivalenced to atom", molecule[ivary-1].label)
+    else:
+        print()
