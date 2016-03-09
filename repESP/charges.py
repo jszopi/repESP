@@ -1,6 +1,7 @@
 from .cube_helpers import Atom, Cube, InputFormatError
 
 import re
+from fortranformat import FortranRecordWriter
 
 esp_type_in_log = {
     ' Merz-Kollman atomic radii used.': 'mk',
@@ -31,6 +32,13 @@ def get_rms_from_log(filename):
         if rms_line is None:
             raise InputFormatError("No ESP fit summary found.")
         return float(rms_line.group(1)), float(rms_line.group(2))
+
+
+def dump_charges_to_qout(molecule, charge_type, filename):
+    line = FortranRecordWriter("8F10.6")
+    charges = [atom.charges[charge_type] for atom in molecule]
+    with open(filename, 'w') as f:
+        print(line.write(charges), file=f)
 
 
 def update_with_charges(charge_type, filename, molecule):
