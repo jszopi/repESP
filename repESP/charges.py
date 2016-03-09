@@ -54,6 +54,12 @@ def update_with_charges(charge_type, filename, molecule):
               "by more than 0.01e, even with a very fine cube grid. Extracting"
               " charges from `.dat` files is hence currently not recommended.")
         _get_charges('aim', filename, 'dat', molecule)
+    elif filename[-5:] == ".qout":
+        print("WARNING: qout file doesn't contain information about the "
+              "identities of atoms. You should check if it has been generated "
+              "(likely by the `resp` program) using the same order of atoms as"
+              " that in the molecule being updated.")
+        _get_charges(charge_type, filename, 'qout', molecule)
     elif filename[-4:] in ['.chk', '.fchk']:
         raise NotImplementedError('File extension {0} currently not supported.'
                                   .format(filename[-4]))
@@ -65,10 +71,20 @@ def update_with_charges(charge_type, filename, molecule):
 def _get_charges(charge_type, filename, input_type, molecule):
     """Update the molecule with charges."""
     with open(filename, 'r') as file_object:
-        globals()['_goto_in_' + input_type](charge_type, file_object)
-        charges = _get_charges_from_lines(charge_type, file_object,
-                                          input_type, molecule)
+        if input_type == 'qout':
+            charges = _get_charges_from_qout(file_object)
+        else:
+            globals()['_goto_in_' + input_type](charge_type, file_object)
+            charges = _get_charges_from_lines(charge_type, file_object,
+                                              input_type, molecule)
         _update_molecule_with_charges(molecule, charges, charge_type)
+
+
+def _get_charges_from_qout(file_object):
+    charges = []
+    for line in file_object:
+        charges += [float(elem) for elem in line.split()]
+    return charges
 
 
 def _goto_in_log(charge_type, file_object, occurrence=-1):
