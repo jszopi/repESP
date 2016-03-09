@@ -165,6 +165,12 @@ class Atom(object):
     def __repr__(self):
         return str(self)
 
+    def __eq__(self, other):
+        result = self.atomic_no == other.atomic_no
+        if self.coords is not None and other.coords is not None:
+            result = result and self.coords == other.coords
+        return result
+
 
 class Molecule(list):
     """A list of atoms with extra functionalities."""
@@ -172,6 +178,24 @@ class Molecule(list):
     def __init__(self, parent_cube, *args):
         list.__init__(self, *args)
         self.parent_cube = parent_cube
+
+    def verbose_compare(self, other):
+        if self == other:
+            print("The molecules are the same.")
+            return
+        # Otherwise:
+        print("The molecules differ at the following atoms:")
+        for atom, other_atom in zip(self, other):
+            if atom != other_atom:
+                print("{0} != {1}".format(atom, other_atom))
+        if len(self) != len(other):
+            which = self if len(self) > len(other) else other
+            which_str = 'first' if len(self) > len(other) else 'second'
+
+            print("The {0} molecule has {1} more atoms:".format(
+                which_str, abs(len(other) - len(self))))
+            for atom in which[min(len(self), len(other)):]:
+                print(atom)
 
     def extract_qtaim_basins(self, grid, path):
         """Extract QTAIM basins from Henkelman group's ``bader`` program
