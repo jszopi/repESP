@@ -1,6 +1,7 @@
 from fortranformat import FortranRecordWriter
 import textwrap
 import os
+import shutil
 
 from .cube_helpers import InputFormatError, Atom, Molecule, Field
 from .cube_helpers import angstrom_per_bohr
@@ -378,8 +379,9 @@ def run_resp(input_dir, calc_dir_path, resp_type='two_stage', inp_charges=None,
                                      "input.qout")
 
     if resp_type == 'two_stage':
-        # _resp_two_stage(...)
-        pass
+        charges_out_fn = _resp_two_stage(
+            calc_dir_path, respin1_fn, respin2_fn, molecule, check_ivary,
+            inp_charges is not None)
     elif resp_type == 'h_only':
         charges_out_fn = _resp_optimize_hydrogens(
             calc_dir_path, respin2_fn, molecule, check_ivary,
@@ -417,3 +419,29 @@ def _resp_optimize_hydrogens(calc_dir_path, respin2_fn, molecule, check_ivary,
               "corrected.esp ".format(calc_dir_path) + input_charges_option +
               "-t charges.qout")
     return "charges.qout"
+
+
+def _resp_two_stage(calc_dir_path, respin1_fn, respin2_fn, molecule,
+                    check_ivary, read_input_charges):
+    """Run the two-stage RESP but with potentially non-zero initial charges"""
+    # Modify the .respin1 file only to ask to load initial charges. Although
+    # the file could just be copied, it's better for _write_modified_respin
+    # to be called in both cases for consistency, as it could potentially
+    # differ in other `&cntrl` options from `respgen` if it is updated someday.
+    respin_molecule, charge, iuniq = _read_respin(respin1_fn,
+                                                  ref_molecule=molecule)
+    _write_modified_respin('1', respin_molecule, charge, iuniq,
+                           calc_dir_path + "input1.respin",
+                           check_ivary=check_ivary,
+                           read_input_charges=read_input_charges)
+    # The same considerations apply to .respin2 but will just copy
+    shutil.copyfile(respin2_fn, calc_dir_path + "input2.respin")
+    # Run resp
+    input_charges_option = "-q input.qout " if read_input_charges else ""
+    os.system("cd {0}; resp -i input1.respin -o output1.respout -e "
+              "corrected.esp ".format(calc_dir_path) + input_charges_option +
+              "-t charges1.qout -s esout1 -p punch1")
+    os.system("cd {0}; resp -i input2.respin -o output2.respout -e "
+              "corrected.esp -q charges1.qout -t charges2.qout -s esout2 "
+              "-p punch2".format(calc_dir_path))
+    return "charges2.qout"
