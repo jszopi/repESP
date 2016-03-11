@@ -254,6 +254,10 @@ def _get_respin_content(respin_type, read_input_charges):
 
     if read_input_charges:
         result += " iqopt = 2,\n"
+    elif str(respin_type) == '2':
+        # These are the only incompatible options
+        raise ValueError("Second stage of RESP requested without reading in "
+                         "charges.")
 
     return result + textwrap.dedent(common_respin_tail)
 
