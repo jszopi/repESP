@@ -236,7 +236,7 @@ common_respin_tail = """
 
 def _get_respin_content(respin_type, read_input_charges):
     """Check if respin type is implemented and return the input content"""
-    if respin_type not in ['1', '2', 1, 2, 'h']:
+    if respin_type not in ['1', '2', 1, 2, 'h', 'u']:
         raise ValueError("`respin_type` {0} is not implemented.".format(
                          respin_type))
 
@@ -248,6 +248,8 @@ def _get_respin_content(respin_type, read_input_charges):
         result += " qwt = 0.00050,\n"
     elif str(respin_type) == '2':
         result += " qwt = 0.00100,\n"
+    elif str(respin_type) == 'u':
+        result += " qwt = 0.00000,\n"
 
     if read_input_charges:
         result += " iqopt = 2,\n"
@@ -330,12 +332,15 @@ def run_resp(input_dir, calc_dir_path, resp_type='two_stage', inp_charges=None,
         Directory containing the input files.
     calc_dir_path : str
         Path to the new directory to be created.
-    resp_type : {'two_stage', 'h_only'}, optional
+    resp_type : {'two_stage', 'h_only', 'unrest'}, optional
         The default ``two_stage`` option requests the normal two-stage RESP
         fitting. The ``ivary`` options are taken unaltered from the two
-        original ``.respin`` files. The other available option ``h_only``
-        freezes all atoms except for hydrogens. Hydrogen equivalence is taken
-        from the ``.respin2`` file.
+        original ``.respin`` files. ``unrest`` requests unconstrained
+        optimization through one-stage RESP with zero restraint weight
+        (``qwt``). ``h_only`` also performs one-stage fitting but freezes all
+        atoms except for hydrogens at input values. Both ``h_only`` and
+        ``unrest`` read atom equivalence from the ``.respin2`` file (``ivary``
+         values).
     inp_charges : List[float], optional
         The input charges. Defaults to ``None``, which causes no ``iqopt``
         command being specified in the ``&cntrl`` section of the ``.respin``
@@ -382,8 +387,8 @@ def run_resp(input_dir, calc_dir_path, resp_type='two_stage', inp_charges=None,
         charges_out_fn = _resp_two_stage(
             calc_dir_path, respin1_fn, respin2_fn, molecule, check_ivary,
             inp_charges is not None)
-    elif resp_type == 'h_only':
-        charges_out_fn = _resp_one_stage('h', calc_dir_path,
+    elif resp_type == 'h_only' or resp_type == 'unrest':
+        charges_out_fn = _resp_one_stage(resp_type[0], calc_dir_path,
                                          respin2_fn, molecule, check_ivary,
                                          inp_charges is not None)
     else:
@@ -401,7 +406,7 @@ def run_resp(input_dir, calc_dir_path, resp_type='two_stage', inp_charges=None,
 
 def _resp_one_stage(resp_type, calc_dir_path, respin2_fn, molecule,
                     check_ivary, read_input_charges):
-    """A common function for one-stage RESP calculations
+    """A common function for one-stage RESP ('h_only' and 'unrest')
 
     Atom equivalence will be taken from the ``.respin2`` file (``ivary``
     values).
