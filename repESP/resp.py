@@ -260,35 +260,30 @@ def _get_respin_content(respin_type, read_input_charges):
 
 
 def _write_modified_respin(respin_type, molecule, ivary_list, charge, iuniq,
-                           fn_out, check_ivary, read_input_charges):
-
+                           fn_out, read_input_charges):
     with open(fn_out, 'w') as out:
         out.write(_get_respin_content(respin_type, read_input_charges))
         numbers = FortranRecordWriter('2I5')
         # `charge, iuniq` line
         print(numbers.write([charge, iuniq]), file=out)
-
-        if check_ivary:
-            print("\nPlease check if the following generated RESP input is "
-                  "what you want. Note that the hydrogens to be equivalenced "
-                  "were selected automatically by the program which generated "
-                  "the `.respin` file (likely `respgen`).\n")
         for atom, ivary in zip(molecule, ivary_list):
-            if check_ivary:
-                _print_ivary_action(atom, ivary, molecule)
             print(numbers.write([atom.atomic_no, ivary]), file=out)
 
         print(file=out)
 
 
-def _print_ivary_action(atom, ivary, molecule):
-    print(atom, end='')
-    if ivary == -1:
-        print(", frozen")
-    elif ivary > 0:
-        print(", equivalenced to atom", molecule[ivary-1].label)
-    else:
-        print()
+def _check_ivary(check_ivary, molecule, ivary_list):
+    if not check_ivary:
+        return
+    print("\nPlease check if the following RESP input is what you want:\n")
+    for atom, ivary in zip(molecule, ivary_list):
+        print(atom, end='')
+        if ivary == -1:
+            print(", frozen")
+        elif ivary > 0:
+            print(", equivalenced to atom", molecule[ivary-1].label)
+        else:
+            print()
 
 
 def _get_input_files(input_dir, respin1_fn, respin2_fn, esp_fn):
@@ -433,9 +428,9 @@ def _resp_one_stage(resp_type, calc_dir_path, respin1_fn, respin2_fn, molecule,
     # Modify ivary list and write to new input file
     ivary_list = _modify_ivary_list(resp_type, molecule, ivary_list1,
                                     ivary_list2)
+    _check_ivary(check_ivary, molecule, ivary_list)
     _write_modified_respin(resp_type, molecule, ivary_list, charge1, iuniq1,
                            calc_dir_path + "input.respin",
-                           check_ivary=check_ivary,
                            read_input_charges=read_input_charges)
 
     # RUN RESP
@@ -476,9 +471,9 @@ def _resp_two_stage(calc_dir_path, respin1_fn, respin2_fn, molecule,
     ivary_list, charge, iuniq = _read_respin(respin1_fn,
                                              ref_molecule=molecule)
     # ivary_list used without modification
+    _check_ivary(check_ivary, molecule, ivary_list)
     _write_modified_respin('1', molecule, ivary_list, charge, iuniq,
                            calc_dir_path + "input1.respin",
-                           check_ivary=check_ivary,
                            read_input_charges=read_input_charges)
     # The same considerations apply to .respin2 but will just copy
     shutil.copyfile(respin2_fn, calc_dir_path + "input2.respin")
