@@ -339,8 +339,27 @@ def run_resp(input_dir, calc_dir_path, resp_type='two_stage', inp_charges=None,
         optimization through one-stage RESP with zero restraint weight
         (``qwt``). ``h_only`` also performs one-stage fitting but freezes all
         atoms except for hydrogens at input values. Both ``h_only`` and
-        ``unrest`` read atom equivalence from the ``.respin2`` file (``ivary``
-         values).
+        ``unrest`` read atom equivalence *only* (see note below) from the
+        ``.respin2`` file (``ivary`` values).
+
+        .. note:: Since in the second stage of default RESP only methyl and
+            methylene equivalence is required, the ``respin2`` file generated
+            by ``respgen`` will not contain any information about equivalence
+            of atoms in other groups. Having these is desired when using the
+            ``unrest`` *and also* ``h_only`` (since hydrogen equivalence is
+            also possible beyond methyl and methylene groups). Such equivalence
+            information is probably specified in ``respin1`` and should be
+            taken from there. This is to be implemented but at the moment this
+            must be done manually by modifying the ``ivary`` values in the
+            input ``respin2`` file.
+
+        .. TODO: As the above note affects both ``h_only`` and ``unrest``
+            options, the changes should be made to the ``_resp_one_stage``
+            function. The changes will likely also affect
+            ``_write_modified_respin``. Note that ``respin1`` may not specify
+            methyl and methylene hydrogen equivalence, although we need the
+            beyond-group equivalence in those cases.
+
     inp_charges : List[float], optional
         The input charges. Defaults to ``None``, which causes no ``iqopt``
         command being specified in the ``&cntrl`` section of the ``.respin``
