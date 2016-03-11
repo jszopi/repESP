@@ -383,9 +383,9 @@ def run_resp(input_dir, calc_dir_path, resp_type='two_stage', inp_charges=None,
             calc_dir_path, respin1_fn, respin2_fn, molecule, check_ivary,
             inp_charges is not None)
     elif resp_type == 'h_only':
-        charges_out_fn = _resp_optimize_hydrogens(
-            calc_dir_path, respin2_fn, molecule, check_ivary,
-            inp_charges is not None)
+        charges_out_fn = _resp_one_stage('h', calc_dir_path,
+                                         respin2_fn, molecule, check_ivary,
+                                         inp_charges is not None)
     else:
         raise ValueError("RESP fitting type '{0}' was not recognized."
                          .format(resp_type))
@@ -399,18 +399,19 @@ def run_resp(input_dir, calc_dir_path, resp_type='two_stage', inp_charges=None,
     return molecule
 
 
-def _resp_optimize_hydrogens(calc_dir_path, respin2_fn, molecule, check_ivary,
-                             read_input_charges):
-    """Run RESP to optimize hydrogen atoms only
+def _resp_one_stage(resp_type, calc_dir_path, respin2_fn, molecule,
+                    check_ivary, read_input_charges):
+    """A common function for one-stage RESP calculations
 
-    All heavy atoms will have their charges frozen at input values. Hydrogen
-    equivalencing will be taken from the `.respin2` file.
+    Atom equivalence will be taken from the ``.respin2`` file (``ivary``
+    values).
     """
     # Modify the .respin file
     respin_molecule, charge, iuniq = _read_respin(respin2_fn,
                                                   ref_molecule=molecule)
-    _write_modified_respin('h', respin_molecule, charge, iuniq, calc_dir_path +
-                           "input.respin", check_ivary=check_ivary,
+    _write_modified_respin(resp_type, respin_molecule, charge, iuniq,
+                           calc_dir_path + "input.respin",
+                           check_ivary=check_ivary,
                            read_input_charges=read_input_charges)
 
     # Run resp
