@@ -215,7 +215,7 @@ def _read_respin(fn, ref_molecule=None):
     # Check the molecule against a reference molecule
     if ref_molecule is not None and molecule != ref_molecule:
         molecule.verbose_compare(ref_molecule)
-        raise InputFormatError("The molecule in the .respin2 file differs "
+        raise InputFormatError("The molecule in the .respin file differs "
                                "from the other molecule as shown above.")
 
     return ivary_list, charge, iuniq
@@ -338,26 +338,17 @@ def run_resp(input_dir, calc_dir_path, resp_type='two_stage', inp_charges=None,
         optimization through one-stage RESP with zero restraint weight
         (``qwt``). ``h_only`` also performs one-stage fitting but freezes all
         atoms except for hydrogens at input values. Both ``h_only`` and
-        ``unrest`` read atom equivalence *only* (see note below) from the
-        ``.respin2`` file (``ivary`` values).
+        ``unrest`` read atom equivalence from the ``.respin`` files (``ivary``
+        values). To verify that the equivalence is as expected, leave the
+        ``check_ivary`` option enabled.
 
-        .. note:: Since in the second stage of default RESP only methyl and
-            methylene equivalence is required, the ``respin2`` file generated
-            by ``respgen`` will not contain any information about equivalence
-            of atoms in other groups. Having these is desired when using the
-            ``unrest`` *and also* ``h_only`` (since hydrogen equivalence is
-            also possible beyond methyl and methylene groups). Such equivalence
-            information is probably specified in ``respin1`` and should be
-            taken from there. This is to be implemented but at the moment this
-            must be done manually by modifying the ``ivary`` values in the
-            input ``respin2`` file.
-
-        .. TODO: As the above note affects both ``h_only`` and ``unrest``
-            options, the changes should be made to the ``_resp_one_stage``
-            function. The changes will likely also affect
-            ``_write_modified_respin``. Note that ``respin1`` may not specify
-            methyl and methylene hydrogen equivalence, although we need the
-            beyond-group equivalence in those cases.
+        .. The RESP logic is not explained very well in the papers but I've
+        additionally re-engineered the ``resp`` program's logic to be sure that
+        reading both the ``respin`` files will give the desired behaviour. In
+        fact, it's pretty simple. In the first stage atoms of the methyl and
+        methylene groups are free, while all the others are equivalenced. In
+        the second stage the former are equivalenced, while all the others are
+        frozen.
 
     inp_charges : List[float], optional
         The input charges. Defaults to ``None``, which causes no ``iqopt``
@@ -366,10 +357,11 @@ def run_resp(input_dir, calc_dir_path, resp_type='two_stage', inp_charges=None,
         zero'.
     check_ivary : bool, optional
         Verbosely report the RESP ``ivary`` actions to be performed by the
-        ``resp`` program and politely ask the user to if this is desired
-        behaviour. This is due to hydrogen equivalence being automatically
-        selected by the program which generated the ``.respin`` file (likely
-        the ``respgen program``).
+        ``resp`` program and ask the user if this is desired behaviour (no
+        prompt). This is recommended as the equivalence information is taken
+        from the ``.respin`` files, which are generated externally (likely by
+        the ``respgen`` program) and, for one-stage RESP (``h_only`` or
+        ``unrest``), additionaly modified by this program.
     respin1_fn,respin2_fn,esp_fn : str, optional
         The filenames of input files. These should be specified if there are
         more files with the same extension in the input directory.
@@ -407,8 +399,8 @@ def run_resp(input_dir, calc_dir_path, resp_type='two_stage', inp_charges=None,
             inp_charges is not None)
     elif resp_type == 'h_only' or resp_type == 'unrest':
         charges_out_fn = _resp_one_stage(resp_type[0], calc_dir_path,
-                                         respin2_fn, molecule, check_ivary,
-                                         inp_charges is not None)
+                                         respin1_fn, respin2_fn, molecule,
+                                         check_ivary, inp_charges is not None)
     else:
         raise ValueError("RESP fitting type '{0}' was not recognized."
                          .format(resp_type))
@@ -422,19 +414,26 @@ def run_resp(input_dir, calc_dir_path, resp_type='two_stage', inp_charges=None,
     return molecule
 
 
-def _resp_one_stage(resp_type, calc_dir_path, respin2_fn, molecule,
+def _resp_one_stage(resp_type, calc_dir_path, respin1_fn, respin2_fn, molecule,
                     check_ivary, read_input_charges):
     """A common function for one-stage RESP ('h_only' and 'unrest')
 
-    Atom equivalence will be taken from the ``.respin2`` file (``ivary``
+    Atom equivalence will be taken from the ``.respin`` files (``ivary``
     values).
     """
     # MODIFY THE .RESPIN FILE
+    # Read in .respin1
+    ivary_list1, charge1, iuniq1 = _read_respin(respin1_fn,
+                                                ref_molecule=molecule)
     # Read in .respin2
-    ivary_list, charge, iuniq = _read_respin(respin2_fn,
-                                             ref_molecule=molecule)
-    ivary_list = _modify_ivary_list(resp_type, molecule, ivary_list)
-    _write_modified_respin(resp_type, molecule, ivary_list, charge, iuniq,
+    ivary_list2, charge2, iuniq2 = _read_respin(respin2_fn,
+                                                ref_molecule=molecule)
+    assert charge1 == charge2
+    assert iuniq1 == iuniq2
+    # Modify ivary list and write to new input file
+    ivary_list = _modify_ivary_list(resp_type, molecule, ivary_list1,
+                                    ivary_list2)
+    _write_modified_respin(resp_type, molecule, ivary_list, charge1, iuniq1,
                            calc_dir_path + "input.respin",
                            check_ivary=check_ivary,
                            read_input_charges=read_input_charges)
@@ -447,11 +446,21 @@ def _resp_one_stage(resp_type, calc_dir_path, respin2_fn, molecule,
     return "charges.qout"
 
 
-def _modify_ivary_list(resp_type, molecule, ivary_list):
+def _modify_ivary_list(resp_type, molecule, ivary_list1, ivary_list2):
     result = []
-    for atom, ivary in zip(molecule, ivary_list):
+    for atom, ivary1, ivary2 in zip(molecule, ivary_list1, ivary_list2):
+        if resp_type in ['h', 'u']:
+            # Extract equivalence from the two default RESP inputs. This simple
+            # condition ensures that equivalence (positive number) is picked
+            # over free fitting (zero), which is picked over freezing charges
+            # (negative number).
+            ivary = max(ivary1, ivary2)
+        else:
+            raise NotImplementedError("Modification of ``ivary`` values not "
+                                      "implemented for resp_type '{0}'."
+                                      .format(resp_type))
         if resp_type == 'h':
-            # Freeze non-hydrogens
+            # Additionally freeze non-hydrogens
             ivary = ivary if atom.atomic_no == 1 else -1
         result.append(ivary)
     return result
@@ -466,6 +475,7 @@ def _resp_two_stage(calc_dir_path, respin1_fn, respin2_fn, molecule,
     # differ in other `&cntrl` options from `respgen` if it is updated someday.
     ivary_list, charge, iuniq = _read_respin(respin1_fn,
                                              ref_molecule=molecule)
+    # ivary_list used without modification
     _write_modified_respin('1', molecule, ivary_list, charge, iuniq,
                            calc_dir_path + "input1.respin",
                            check_ivary=check_ivary,
