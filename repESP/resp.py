@@ -274,9 +274,6 @@ def _write_modified_respin(respin_type, molecule, ivary_list, charge, iuniq,
                   "were selected automatically by the program which generated "
                   "the `.respin` file (likely `respgen`).\n")
         for atom, ivary in zip(molecule, ivary_list):
-            if respin_type == 'h':
-                # Freeze non-hydrogens
-                atom.ivary = atom.ivary if atom.atomic_no == 1 else -1
             if check_ivary:
                 _print_ivary_action(atom, ivary, molecule)
             print(numbers.write([atom.atomic_no, ivary]), file=out)
@@ -432,20 +429,32 @@ def _resp_one_stage(resp_type, calc_dir_path, respin2_fn, molecule,
     Atom equivalence will be taken from the ``.respin2`` file (``ivary``
     values).
     """
-    # Modify the .respin file
+    # MODIFY THE .RESPIN FILE
+    # Read in .respin2
     ivary_list, charge, iuniq = _read_respin(respin2_fn,
                                              ref_molecule=molecule)
+    ivary_list = _modify_ivary_list(resp_type, molecule, ivary_list)
     _write_modified_respin(resp_type, molecule, ivary_list, charge, iuniq,
                            calc_dir_path + "input.respin",
                            check_ivary=check_ivary,
                            read_input_charges=read_input_charges)
 
-    # Run resp
+    # RUN RESP
     input_charges_option = "-q input.qout " if read_input_charges else ""
     os.system("cd {0}; resp -i input.respin -o output.respout -e "
               "corrected.esp ".format(calc_dir_path) + input_charges_option +
               "-t charges.qout")
     return "charges.qout"
+
+
+def _modify_ivary_list(resp_type, molecule, ivary_list):
+    result = []
+    for atom, ivary in zip(molecule, ivary_list):
+        if resp_type == 'h':
+            # Freeze non-hydrogens
+            ivary = ivary if atom.atomic_no == 1 else -1
+        result.append(ivary)
+    return result
 
 
 def _resp_two_stage(calc_dir_path, respin1_fn, respin2_fn, molecule,
