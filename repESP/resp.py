@@ -281,7 +281,7 @@ def _check_ivary(check_ivary, molecule, ivary_list):
     print("\nPlease check if the following RESP input is what you want:\n")
     for atom, ivary in zip(molecule, ivary_list):
         print(atom, end='')
-        if ivary == -1:
+        if ivary < 0:  # RESP documentation states -1 but respgen uses -99
             print(", frozen")
         elif ivary > 0:
             print(", equivalenced to atom", molecule[ivary-1].label)
