@@ -195,14 +195,16 @@ def _read_respin(fn, ref_molecule=None):
         # ... and the third one will be `charge, iuniq`
         charge, iuniq = [int(elem) for elem in line.split()]
 
-        # Create a molecule
+        # Create a molecule for consistency checks. It will not be returned, so
+        # should be garbage-collected.
         molecule = Molecule(None)
+        ivary_list = []
         for i, line in enumerate(inp):
             if len(line.split()) != 2:
                 break
             atom = Atom(i+1, int(line.split()[0]))
             # Crucial bit: reading in ivary
-            atom.ivary = int(line.split()[1])
+            ivary_list.append(int(line.split()[1]))
             molecule.append(atom)
 
     # Check input file consistency
@@ -216,7 +218,7 @@ def _read_respin(fn, ref_molecule=None):
         raise InputFormatError("The molecule in the .respin2 file differs "
                                "from the other molecule as shown above.")
 
-    return molecule, charge, iuniq
+    return ivary_list, charge, iuniq
 
 
 common_respin_head = """
@@ -257,8 +259,8 @@ def _get_respin_content(respin_type, read_input_charges):
     return result + textwrap.dedent(common_respin_tail)
 
 
-def _write_modified_respin(respin_type, molecule, charge, iuniq, fn_out,
-                           check_ivary, read_input_charges):
+def _write_modified_respin(respin_type, molecule, ivary_list, charge, iuniq,
+                           fn_out, check_ivary, read_input_charges):
 
     with open(fn_out, 'w') as out:
         out.write(_get_respin_content(respin_type, read_input_charges))
@@ -271,23 +273,23 @@ def _write_modified_respin(respin_type, molecule, charge, iuniq, fn_out,
                   "what you want. Note that the hydrogens to be equivalenced "
                   "were selected automatically by the program which generated "
                   "the `.respin` file (likely `respgen`).\n")
-        for atom in molecule:
+        for atom, ivary in zip(molecule, ivary_list):
             if respin_type == 'h':
                 # Freeze non-hydrogens
                 atom.ivary = atom.ivary if atom.atomic_no == 1 else -1
             if check_ivary:
-                _print_ivary_action(atom, molecule)
-            print(numbers.write([atom.atomic_no, atom.ivary]), file=out)
+                _print_ivary_action(atom, ivary, molecule)
+            print(numbers.write([atom.atomic_no, ivary]), file=out)
 
         print(file=out)
 
 
-def _print_ivary_action(atom, molecule):
+def _print_ivary_action(atom, ivary, molecule):
     print(atom, end='')
-    if atom.ivary == -1:
+    if ivary == -1:
         print(", frozen")
-    elif atom.ivary > 0:
-        print(", equivalenced to atom", molecule[atom.ivary-1].label)
+    elif ivary > 0:
+        print(", equivalenced to atom", molecule[ivary-1].label)
     else:
         print()
 
@@ -431,9 +433,9 @@ def _resp_one_stage(resp_type, calc_dir_path, respin2_fn, molecule,
     values).
     """
     # Modify the .respin file
-    respin_molecule, charge, iuniq = _read_respin(respin2_fn,
-                                                  ref_molecule=molecule)
-    _write_modified_respin(resp_type, respin_molecule, charge, iuniq,
+    ivary_list, charge, iuniq = _read_respin(respin2_fn,
+                                             ref_molecule=molecule)
+    _write_modified_respin(resp_type, molecule, ivary_list, charge, iuniq,
                            calc_dir_path + "input.respin",
                            check_ivary=check_ivary,
                            read_input_charges=read_input_charges)
@@ -453,9 +455,9 @@ def _resp_two_stage(calc_dir_path, respin1_fn, respin2_fn, molecule,
     # the file could just be copied, it's better for _write_modified_respin
     # to be called in both cases for consistency, as it could potentially
     # differ in other `&cntrl` options from `respgen` if it is updated someday.
-    respin_molecule, charge, iuniq = _read_respin(respin1_fn,
-                                                  ref_molecule=molecule)
-    _write_modified_respin('1', respin_molecule, charge, iuniq,
+    ivary_list, charge, iuniq = _read_respin(respin1_fn,
+                                             ref_molecule=molecule)
+    _write_modified_respin('1', molecule, ivary_list, charge, iuniq,
                            calc_dir_path + "input1.respin",
                            check_ivary=check_ivary,
                            read_input_charges=read_input_charges)
