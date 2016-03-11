@@ -1,7 +1,6 @@
 from fortranformat import FortranRecordWriter
 import textwrap
 import os
-import shutil
 
 from .cube_helpers import InputFormatError, Atom, Molecule, Field
 from .cube_helpers import angstrom_per_bohr
@@ -464,19 +463,35 @@ def _modify_ivary_list(resp_type, molecule, ivary_list1, ivary_list2):
 def _resp_two_stage(calc_dir_path, respin1_fn, respin2_fn, molecule,
                     check_ivary, read_input_charges):
     """Run the two-stage RESP but with potentially non-zero initial charges"""
-    # Modify the .respin1 file only to ask to load initial charges. Although
-    # the file could just be copied, it's better for _write_modified_respin
-    # to be called in both cases for consistency, as it could potentially
-    # differ in other `&cntrl` options from `respgen` if it is updated someday.
-    ivary_list, charge, iuniq = _read_respin(respin1_fn,
-                                             ref_molecule=molecule)
-    # ivary_list used without modification
-    _check_ivary(check_ivary, molecule, ivary_list)
-    _write_modified_respin('1', molecule, ivary_list, charge, iuniq,
+    if check_ivary:
+        print("\nTwo-stage RESP --- `ivary` values were not modified from the "
+              "input `respin` files but you may want to inspect them "
+              "nevertheless.\n\nSTAGE 1")
+
+    ivary_list1, charge1, iuniq1 = _read_respin(respin1_fn,
+                                                ref_molecule=molecule)
+    # ivary_list1 used without modification. Modify the .respin1 file only to
+    # ask to load initial charges if `read_input_charges` is True.
+    _check_ivary(check_ivary, molecule, ivary_list1)
+    _write_modified_respin('1', molecule, ivary_list1, charge1, iuniq1,
                            calc_dir_path + "input1.respin",
                            read_input_charges=read_input_charges)
-    # The same considerations apply to .respin2 but will just copy
-    shutil.copyfile(respin2_fn, calc_dir_path + "input2.respin")
+
+    if check_ivary:
+        print("\nSTAGE 2")
+    # Although copying `.respin2` would suffice, _write_modified_respin is
+    # called here as well for consistency. The respin file content could
+    # potentially differ from that produced by `respgen` if its defaults change
+    ivary_list2, charge2, iuniq2 = _read_respin(respin2_fn,
+                                                ref_molecule=molecule)
+    _check_ivary(check_ivary, molecule, ivary_list2)
+    _write_modified_respin('2', molecule, ivary_list2, charge2, iuniq2,
+                           calc_dir_path + "input2.respin",
+                           read_input_charges=True)
+
+    assert charge1 == charge2
+    assert iuniq1 == iuniq2
+
     # Run resp
     input_charges_option = "-q input.qout " if read_input_charges else ""
     os.system("cd {0}; resp -i input1.respin -o output1.respout -e "
