@@ -42,26 +42,15 @@ for atom in g.molecule:
 
 # Reproduce ESP values at those points and get RMS value, which can be compared
 # with that in log file
-min_rms, rep_esp_field = rms_and_rep(g.field, g.molecule, charge_type)
+min_rms, min_rrms, rep_esp_field = rms_and_rep(g.field, g.molecule,
+                                               charge_type)
 
 # Division into Voronoi basins:
 # parent_atom, dist = rep_esp.calc_non_grid_field(g.molecule, g.field.points,
 #                                                 'dist')
 
-print("\nRMS: {0:.6f}".format(min_rms))
-# Trying to reverse-engineer RRMS
-if False:
-    diff = difference(g.field, rep_esp_field).values
-    rel_diff = difference(g.field, rep_esp_field, relative=True).values
-
-    rrms_by_mean = sqrt(mean(square(diff)))/mean(g.field.values)
-    print("\nRRMS by mean:            {0:6f}".format(rrms_by_mean))
-    mean_val = mean([abs(elem) for elem in g.field.values])
-    rrms_by_mean_val = sqrt(mean(square(diff)))/mean_val
-    print("RRMS by mean value:      {0:6f}".format(rrms_by_mean_val))
-    rrms_by_rel_err = sqrt(mean(square(rel_diff)))
-    print("RRMS by relative error:  {0:6f}".format(rrms_by_rel_err))
-
+print("\nRMS:  {0:.6f}".format(min_rms))
+print("RRMS: {0:.6f}".format(min_rrms))
 
 title = molecule_name.capitalize() + " " + charge_type.upper()
 # Plot the grid in 3 and 2D:

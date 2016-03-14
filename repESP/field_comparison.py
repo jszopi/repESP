@@ -18,16 +18,23 @@ def rms_and_rep(true_field, molecule, charge_type, ignore_nans=False):
     elif type(true_field) is NonGridField:
         calc_field_args[1] = true_field.points
         rep_esp_field = calc_non_grid_field(*calc_field_args)[0]
-    rms_val = rms(true_field, rep_esp_field, ignore_nans)
-    return rms_val, rep_esp_field
+    rms, rrms = rms_and_rrms(true_field, rep_esp_field, ignore_nans)
+    return rms, rrms, rep_esp_field
 
 
-def rms(true_field, rep_field, ignore_nans=False):
+def rms_and_rrms(true_field, rep_field, ignore_nans=False):
     diff = difference(true_field, rep_field, check_nans=not ignore_nans).values
+    rmse = calc_rms(diff, ignore_nans=ignore_nans)
+    rms_of_values = calc_rms(true_field.values, ignore_nans=ignore_nans)
+    # This definition of RRMS comes from Bayly1993
+    return rmse, rmse/rms_of_values
+
+
+def calc_rms(lista, ignore_nans=False):
     if ignore_nans:
-        return np.sqrt(np.nanmean(np.square(diff)))
+        return np.sqrt(np.nanmean(np.square(lista)))
     else:
-        return np.sqrt(np.mean(np.square(diff)))
+        return np.sqrt(np.mean(np.square(lista)))
 
 
 def difference(field1, field2, relative=False, absolute=False,
