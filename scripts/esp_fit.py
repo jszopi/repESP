@@ -112,14 +112,14 @@ if False:
         if not i % 10:
             print("{0:.2f}%".format(100*i/num))
         change_charges(charge, molecule, vary_atom_label)
-        rms_val = rms_and_rep(g.field, molecule, 'temp')[0]
-        result.append(rms_val)
+        rrms_val = rms_and_rep(g.field, molecule, 'temp')[1]
+        result.append(rrms_val)
 
     min_charge = molecule[0].charges[charge_type]
 
     plt.title(title)
     plt.xlabel("Charge on " + molecule[vary_atom_label-1].identity)
-    plt.ylabel("RMSE at fitting points")
+    plt.ylabel("RRMSE at fitting points")
     plt.plot(charges, result)
     plt.plot((-1.2, 1.2), (0, 0), 'r--')
     plt.plot((0, 0), (0, 1.2*max(result)), 'r--')
@@ -149,7 +149,7 @@ class Result(object):
         self.c_xlim = c_xlim
         self.n_xlim = n_xlim
         self.c_inp, self.n_inp = self.get_meshgrid(c_xlim, n_xlim, num)
-        self.rms = []
+        self.rrms = []
 
     @staticmethod
     def get_meshgrid(c_xlim, n_xlim, num):
@@ -170,15 +170,15 @@ if True:
     i = 0
     for n, c in zip(new_result.n_inp.flat, new_result.c_inp.flat):
         change_charges2(net_charge, charges(n, c), molecule)
-        rms_val = rms_and_rep(g.field, molecule, 'temp')[0]
-        new_result.rms.append(rms_val)
+        rrms_val = rms_and_rep(g.field, molecule, 'temp')[1]
+        new_result.rrms.append(rrms_val)
         for atom in molecule:
             atom.print_with_charge('temp')
         i += 1
         print("{0:.2f} %".format(100*i/num**2))
 
-    new_result.rms = np.array(new_result.rms)
-    new_result.rms.resize([num, num])
+    new_result.rrms = np.array(new_result.rrms)
+    new_result.rrms.resize([num, num])
 
     with open(molecule_name + "_" + charge_type + "_result.p", "wb") as f:
         pickle.dump(new_result, f)
@@ -188,18 +188,18 @@ if True:
     with open(molecule_name + "_" + charge_type + "_result.p", "rb") as f:
         read_result = pickle.load(f)
 
-    rel_rms = [100*(elem-min_rms)/min_rms for elem in read_result.rms]
-    rel_rms = np.array(rel_rms)
-    rel_rms.resize([read_result.num, read_result.num])
+    rel_rrms = [100*(elem-min_rrms)/min_rrms for elem in read_result.rrms]
+    rel_rrms = np.array(rel_rrms)
+    rel_rrms.resize([read_result.num, read_result.num])
 
     # Presentation: 3D
     if False:
         fig = plt.figure()
         ax = fig.gca(projection='3d')
         surf = ax.plot_surface(read_result.n_inp, read_result.c_inp,
-                               read_result.rms, cmap=cm.plasma, rstride=1,
+                               read_result.rrms, cmap=cm.plasma, rstride=1,
                                cstride=1)
-        fig.colorbar(surf, label="RMSE at fitting points")
+        fig.colorbar(surf, label="RRMSE at fitting points")
         plot_common()
         plt.show()
         plt.close()
@@ -207,8 +207,8 @@ if True:
     # Presentation: 2D contour
     if True:
         levels = [1, 5, 10, 20, 30, 50, 100]
-        CS = plt.contour(read_result.n_inp, read_result.c_inp, rel_rms, levels,
-                         rstride=1, ctride=1, inline=1, colors='k')
+        CS = plt.contour(read_result.n_inp, read_result.c_inp, rel_rrms,
+                         levels, rstride=1, ctride=1, inline=1, colors='k')
         plt.clabel(CS, fmt="%1.0f", inline=1, fontsize=10, colors='b')
         axes = plt.gca()
 

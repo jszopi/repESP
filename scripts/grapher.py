@@ -92,11 +92,15 @@ for charge_type in charge_types.keys():
     rep_filtered = copy.deepcopy(rep)
     rep_filtered.check_nans = False
     _dist, rep_filtered.values = filter_by_dist(exclusion_dist, dist, rep)
-    rms_val = rms_and_rrms(esp_cube.field, rep_filtered, ignore_nans=True)[0]
-    print("\nRMS on filtered cube points: {0:.7f}".format(rms_val))
+    rms_val, rrms_val = rms_and_rrms(esp_cube.field, rep_filtered,
+                                     ignore_nans=True)
+    text = "RMS on filtered cube points:"
+    # Report both RMS and RRMS
+    text = "\n {0} {1:.7f}\nR{0} {2:.7f}".format(text, rms_val, rrms_val)
+    print(text)
     # TODO: my Tee object from my previous project would help DRY
     with open(charge_dir + '/charges.txt', 'a') as f:
-        print("\nRMS on filtered cube points: {0:.7f}".format(rms_val), file=f)
+        print(text, file=f)
 
     # Whole molecule plot
     title = "Not filtered (whole molecule)"
