@@ -5,6 +5,7 @@ from numpy import mean, sqrt, square, linspace, meshgrid
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
+import os
 
 import numpy as np
 import pickle
@@ -17,6 +18,8 @@ charge_type = 'mk'
 molecule_name = 'tma'
 path = '../data/' + molecule_name + '/'
 input_path = path + 'input/'
+output_path = path + "resp_calcs" + '_' + charge_type + '/'
+os.mkdir(output_path)
 
 common_fn = input_path + molecule_name + "_" + charge_type
 log_fn = common_fn + ".log"
@@ -71,35 +74,6 @@ if True:
 import copy
 from itertools import chain
 molecule = copy.deepcopy(g.molecule)
-# Could also do a 2D plot for tetramethylammonium.
-
-
-def change_charges(charge, molecule, vary_atom_label):
-    # Assumes neutral molecule
-    charge_other = -charge/(len(molecule)-1)
-    for i, atom in enumerate(molecule):
-        if i+1 == vary_atom_label:
-            atom.charges['temp'] = charge
-        else:
-            atom.charges['temp'] = charge_other
-
-
-def change_charges2(net_charge, charge_dict, molecule):
-    # e.g. {17: n, 1: c, 5: c, 9: c, 13: c}
-    described_labels = list(charge_dict.keys())
-    inferred_labels = list(set(range(1, len(molecule)+1))
-                           - set(described_labels))
-
-    left_charge = net_charge
-    for label in charge_dict:
-        left_charge -= charge_dict[label]
-    inferred_charge = left_charge/len(inferred_labels)
-
-    for i, atom in enumerate(molecule):
-        if i+1 in described_labels:
-            atom.charges['temp'] = charge_dict[i+1]
-        else:
-            atom.charges['temp'] = inferred_charge
 
 # One charge: 2D plot
 if False:
@@ -107,12 +81,20 @@ if False:
     xlim = (-1, 0.5)
     num = 150
     charges = linspace(xlim[0], xlim[1], num=num)
+    charge_dict = lambda c: {vary_atom_label: c}
+
     result = []
     for i, charge in enumerate(charges):
         if not i % 10:
             print("{0:.2f}%".format(100*i/num))
-        change_charges(charge, molecule, vary_atom_label)
-        rrms_val = rms_and_rep(g.field, molecule, 'temp')[1]
+        inp_charges = resp.charges_from_dict(charge_dict(charge),
+                                             len(molecule))
+        updated_molecule = resp.run_resp(
+            input_path, output_path + "C{0:+.3f}".format(charge),
+            resp_type='h_only', inp_charges=inp_charges, esp_fn=molecule_name +
+            "_" + charge_type + '_resp.esp')
+
+        rrms_val = rms_and_rep(g.field, updated_molecule, 'resp')[1]
         result.append(rrms_val)
 
     min_charge = molecule[0].charges[charge_type]
@@ -161,7 +143,7 @@ class Result(object):
 if True:
     # Change input values here
     net_charge = 1
-    charges = lambda n, c: {17: n, 1: c, 5: c, 9: c, 13: c}
+    charge_dict = lambda n, c: {17: n, 1: c, 5: c, 9: c, 13: c}
     c_xlim = (-1, 0.5)
     n_xlim = (-0.5, 1)
     num = 51
@@ -169,11 +151,16 @@ if True:
 
     i = 0
     for n, c in zip(new_result.n_inp.flat, new_result.c_inp.flat):
-        change_charges2(net_charge, charges(n, c), molecule)
-        rrms_val = rms_and_rep(g.field, molecule, 'temp')[1]
+        inp_charges = resp.charges_from_dict(charge_dict(n, c), len(molecule))
+        updated_molecule = resp.run_resp(
+            input_path, output_path + "N{0:+.3f}C{1:+.3f}".format(n, c),
+            resp_type='h_only', inp_charges=inp_charges, esp_fn=molecule_name +
+            "_" + charge_type + "_resp.esp")
+
+        rrms_val = rms_and_rep(g.field, updated_molecule, 'resp')[1]
         new_result.rrms.append(rrms_val)
-        for atom in molecule:
-            atom.print_with_charge('temp')
+        for atom in updated_molecule:
+            atom.print_with_charge('resp')
         i += 1
         print("{0:.2f} %".format(100*i/num**2))
 
