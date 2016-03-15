@@ -505,3 +505,36 @@ def _resp_two_stage(calc_dir_path, respin1_fn, respin2_fn, molecule,
               "corrected.esp -q charges1.qout -t charges2.qout -s esout2 "
               "-p punch2".format(calc_dir_path))
     return "charges2.qout"
+
+
+def charges_from_dict(charge_dict, len_molecule, default_val=55):
+    """Translate a charge dictionary to a list of charges
+
+    If you only want to specify a few charges, it is more efficient to give
+    them as a dictionary of the labels of the atoms that you want to specify,
+    leaving out the others.
+
+    Parameters
+    ----------
+    charge_dict : Dict[int: float]
+        The keys are the labels of the atoms to be be specified, the values are
+        the charge values. Note that if these charges are to be passed to
+        ``run_resp`` and they are to be frozen, equivalence will not be
+        invoked. Hence you must take care to assign equal values to equivalent
+        atoms here. For example, to assign +0.1 to carbons and -0.2 to the
+        nitrogen in  tetramethylammonium (NMe4), the input would be ``{17:
+        -0.2, 1: 0.1, 5: 0.1, 9: 0.1, 13: 0.1}``
+    len_molecule : int
+        The number of atoms in the molecule.
+    default_val : int
+        This should be a clearly wrong value, so it can be spotted in the
+        ``respin`` input for the ``resp`` program in case the user misuses the
+        ``run_resp`` function.
+    Returns
+    -------
+    List[float]
+        A list of charges corresponding to the consecutive atoms in the
+        molecule.
+    """
+    return [charge_dict[i+1] if i+1 in charge_dict else default_val for i in
+            range(len_molecule)]
