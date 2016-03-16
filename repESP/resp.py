@@ -289,7 +289,7 @@ def _check_ivary(check_ivary, molecule, ivary_list):
             print()
 
 
-def _get_input_files(input_dir, respin1_fn, respin2_fn, esp_fn):
+def _get_input_files(input_dir, respin1_fn=None, respin2_fn=None, esp_fn=None):
     if input_dir[-1] != '/':
         input_dir += '/'
     input_dir_contents = os.listdir(input_dir)
@@ -297,6 +297,8 @@ def _get_input_files(input_dir, respin1_fn, respin2_fn, esp_fn):
     result = []
     filenames = [respin1_fn, respin2_fn, esp_fn]
     for extension, fn in zip(extensions, filenames):
+        if fn is None:
+            continue
         candidates = [f for f in input_dir_contents if f.endswith(extension)]
         if fn:
             if fn in candidates:
@@ -322,7 +324,7 @@ def _get_input_files(input_dir, respin1_fn, respin2_fn, esp_fn):
 
 
 def run_resp(input_dir, calc_dir_path, resp_type='two_stage', inp_charges=None,
-             check_ivary=True, respin1_fn=None, respin2_fn=None, esp_fn=None):
+             check_ivary=True, respin1_fn="", respin2_fn="", esp_fn=""):
     """Runs RESP fitting and returns a molecule updated with resulting charges
 
     The necessary input files (``.esp``, ``.respin1`` and ``.respin2``) will be
