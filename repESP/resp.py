@@ -298,18 +298,25 @@ def _get_input_files(input_dir, respin1_fn, respin2_fn, esp_fn):
     filenames = [respin1_fn, respin2_fn, esp_fn]
     for extension, fn in zip(extensions, filenames):
         candidates = [f for f in input_dir_contents if f.endswith(extension)]
+        if fn:
+            if fn in candidates:
+                result.append(input_dir + fn)
+                continue
+            else:
+                raise FileNotFoundError("The file {0} was not found in the "
+                                        "input directory {1}".format(
+                                            fn, input_dir))
         if not len(candidates):
             raise FileNotFoundError(
-                "The input directory {0} doesn't contain any {1} files."
-                .format(input_dir, extension))
-        if fn in candidates:
-            result.append(input_dir + fn)
-            continue
-        elif len(candidates) > 1:
+                "The input directory {0} doesn't contain any {1} files. If "
+                "your desired file has a different extension, please specify "
+                "the full filename.".format(input_dir, extension))
+        if len(candidates) > 1:
             raise InputFormatError(
                 "{0} {1} files found in the input directory {2}. Please "
                 "specify the filename of the file to be used."
                 .format(len(candidates), extension, input_dir))
+
         result.append(input_dir + candidates[0])
     return result
 
