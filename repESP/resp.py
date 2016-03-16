@@ -290,6 +290,28 @@ def _check_ivary(check_ivary, molecule, ivary_list):
 
 
 def _get_input_files(input_dir, respin1_fn=None, respin2_fn=None, esp_fn=None):
+    """Check input directory for .respin and .esp files
+
+    Parameters
+    ----------
+    input_dir : str
+        The input directory.
+    respin1_fn,respin2_fn,esp_fn : str, optional
+        The filenames of the desired files. Default to `None`. If you don't
+        wish to look for any of the files, leave its value at `None`. If you
+        wish for any of the files to be detected automatically by its
+        extension, set its filename to an empty string. An error will be thrown
+        if there are no or more than one matching file.
+
+    Returns
+    -------
+    List[str]
+        The list of the paths to the files. If any of the input filename
+        parameters was left at `None`, this list will be shorter than three
+        elements. Note that the order of the returned paths will be as per the
+        function header, rather than the order in which the keyword arguments
+        are specified when calling this function.
+    """
     if input_dir[-1] != '/':
         input_dir += '/'
     input_dir_contents = os.listdir(input_dir)
