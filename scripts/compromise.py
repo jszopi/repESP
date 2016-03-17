@@ -1,5 +1,6 @@
-from repESP import resp, charges, graphs
+from repESP import resp, graphs
 from repESP.field_comparison import rms_and_rep
+from repESP.charges import update_with_charges, _update_molecule_with_charges
 
 import numpy as np
 import os
@@ -37,21 +38,51 @@ log_fn = path + molecule_name + "_" + charge_type + ".log"
 esp_log_fn = path + molecule_name + "_" + esp_charge_type + ".log"
 g = resp.G09_esp(path + molecule_name + '_' + esp_charge_type + '.esp')
 
-charges.update_with_charges(esp_charge_type, esp_log_fn, g.molecule)
-charges.update_with_charges(charge_type, log_fn, g.molecule)
+# Both the Gaussian ESP fitting methods and other charge assignment methods may
+# not yield equivalent charges. As equivalent charges make more sense for force
+# field development, they will be used. The ESP charges are equivalenced by
+# performing unrestrained RESP, which will be used as a reference for the fit
+# minimum. Charges from the other method will be equivalenced manually by my
+# averaging function `resp.equivalence`. They will be scaled to obtain
+# different ratio charges. All the charges are calculated and printed at the
+# start for reference.
+update_with_charges(esp_charge_type, esp_log_fn, g.molecule)
+update_with_charges(charge_type, log_fn, g.molecule)
+equiv_charges = resp.equivalence(g.molecule, charge_type, path)
+_update_molecule_with_charges(g.molecule, equiv_charges, charge_type+'_equiv')
+print("\nNOTE: Running unrestrained RESP to fit ESP with equivalence:")
+esp_equiv_molecule = resp.run_resp(
+    path, resp_output_path + 'unrest', resp_type='unrest', esp_fn=molecule_name
+    + "_" + esp_charge_type + '.esp')
+
+charge_rrms = rms_and_rep(g.field, g.molecule, charge_type)[1]
+equiv_charge_rrms = rms_and_rep(g.field, g.molecule, charge_type + '_equiv')[1]
+esp_charge_rrms = rms_and_rep(g.field, g.molecule, esp_charge_type)[1]
+resp_charge_rrms = rms_and_rep(g.field, esp_equiv_molecule, 'resp')[1]
 
 print("\nThe molecule with {0} charges:".format(charge_type.upper()))
+print("RRMS: {0:.5f}".format(charge_rrms))
 for atom in g.molecule:
     atom.print_with_charge(charge_type)
 
+print("\nThe molecule with equivalenced {0} charges:".format(
+      charge_type.upper()))
+print("RRMS: {0:.5f}".format(equiv_charge_rrms))
+for atom in g.molecule:
+    atom.print_with_charge(charge_type + '_equiv')
+
 print("\nThe molecule with {0} charges:".format(esp_charge_type.upper()))
+print("RRMS: {0:.5f}".format(esp_charge_rrms))
 for atom in g.molecule:
     atom.print_with_charge(esp_charge_type)
 
-start_charges = [atom.charges[charge_type] for atom in g.molecule]
+print("\nThe molecule with equivalenced {0} charges (unrestrained RESP):"
+      .format(esp_charge_type.upper()))
+print("RRMS: {0:.5f}".format(resp_charge_rrms))
+for atom in esp_equiv_molecule:
+    atom.print_with_charge('resp')
 
-min_rms, min_rrms, rep_esp_field = rms_and_rep(g.field, g.molecule,
-                                               esp_charge_type)
+start_charges = [atom.charges[charge_type + '_equiv'] for atom in g.molecule]
 
 num = 50
 heavy_result = []
@@ -79,7 +110,7 @@ for ratio in ratio_values:
         # Scaling all charges is only possible with neutral molecules as
         # otherwise in this case there's no free hydrogens to compensate as in
         # the 'heavy_only' version
-        charges._update_molecule_with_charges(g.molecule, inp_charges, 'temp')
+        _update_molecule_with_charges(g.molecule, inp_charges, 'temp')
         rrms_val = rms_and_rep(g.field, g.molecule, 'temp')[1]
         result.append(rrms_val)
 
@@ -112,7 +143,7 @@ def plot(result_list, title):
     # see whether you get two different lines. However, hard-coding the x-axis
     # limits should ensure that the lines do overlap.
     ax1.plot((1, 1), (0, ax1.get_ylim()[1]), 'g--')
-    ax1.plot(ratio_limits, (min_rrms, min_rrms), 'r--')
+    ax1.plot(ratio_limits, (resp_charge_rrms, resp_charge_rrms), 'r--')
 
     plt.title(title, y=1.15)
     plt.show()
