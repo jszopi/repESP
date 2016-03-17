@@ -1,4 +1,4 @@
-from repESP import resp, charges
+from repESP import resp, charges, graphs
 from repESP.field_comparison import rms_and_rep
 
 import numpy as np
@@ -97,7 +97,7 @@ def plot(result_list, title):
     if start_charges[indicator_label-1] < 0:
         ax2.invert_xaxis()
 
-    ax1.set_xlabel(charge_type.upper() + " ratio")
+    ax1.set_xlabel(charge_type.upper() + " charge ratio")
     ax2.set_xlabel("Charge on " + g.molecule[indicator_label-1].identity +
                    str(indicator_label))
     ax1.set_ylabel("RRMS")
@@ -118,9 +118,13 @@ def plot(result_list, title):
     plt.show()
     plt.close()
 
-title = "RRMS values for various {0} charge ratios".format(charge_type.upper())
-if zero_net_charge:
-    plot(result, title)
+molecule_name = graphs.pretty_molecule_name(molecule_name)
 
-title += "\nset on heavy atoms ONLY (H free to improve fit)"
-plot(heavy_result, title)
+title = "{0}: RRMS on {1} fitting points v. {2} ratio".format(
+        molecule_name, esp_charge_type.upper(), charge_type.upper())
+
+if zero_net_charge:
+    plot(result,
+         title + "\nset on ALL atoms (only possible for neutral molecules)")
+
+plot(heavy_result, title + "\nset on heavy atoms ONLY (H free to improve fit)")
