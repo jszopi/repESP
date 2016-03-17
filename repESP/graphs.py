@@ -5,6 +5,7 @@ import os
 import numpy as np
 import random
 import math
+import re
 
 # This was necessary to prevent y-axis label from being cut off when plotting
 # http://stackoverflow.com/a/17390833
@@ -453,3 +454,13 @@ def _points_rand_skim(points, values, rand_skim):
             _points.append(point)
             _values.append(value)
     return _points, _values
+
+
+def pretty_molecule_name(molecule_name):
+    if molecule_name.endswith("_plus"):
+        molecule_name = molecule_name[:-5] + "$^\oplus$"
+    elif molecule_name.endswith("_minus"):
+        molecule_name = molecule_name[:-6] + "$^\ominus$"
+    # Make all numbers subscripts
+    molecule_name = re.sub(r'(\d+)', r'$_{\1}$', molecule_name)
+    return molecule_name
