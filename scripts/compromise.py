@@ -1,4 +1,4 @@
-from repESP import resp, graphs
+from repESP import resp, resp_helpers, graphs
 from repESP.field_comparison import rms_and_rep
 from repESP.charges import update_with_charges, _update_molecule_with_charges
 
@@ -37,7 +37,7 @@ os.mkdir(resp_output_path)
 
 log_fn = path + molecule_name + "_" + charge_type + ".log"
 esp_log_fn = path + molecule_name + "_" + esp_charge_type + ".log"
-g = resp.G09_esp(path + molecule_name + '_' + esp_charge_type + '.esp')
+g = resp_helpers.G09_esp(path + molecule_name + '_' + esp_charge_type + '.esp')
 
 # Both the Gaussian ESP fitting methods and other charge assignment methods may
 # not yield equivalent charges. As equivalent charges make more sense for force

@@ -1,4 +1,4 @@
-from repESP import resp, charges, graphs
+from repESP import resp_helpers, charges, graphs
 from repESP.field_comparison import rms_and_rep, difference
 from repESP.esp_fit_calc import FitCalc, IOpCalcSet
 
@@ -95,7 +95,7 @@ if False:
     color_span = []
     error_color_span = []
     for calc in calcs:
-        g = resp.G09_esp(path + calc + '.esp')
+        g = resp_helpers.G09_esp(path + calc + '.esp')
         charges.update_with_charges(charge_type, path + calc + '.log',
                                     g.molecule)
         with open(path + calc + "-charges.txt", "a") as fc:

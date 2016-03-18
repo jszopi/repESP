@@ -1,7 +1,7 @@
 from scipy.spatial.distance import euclidean
 import numpy as np
 
-from .resp import Points, NonGridField
+from .resp_helpers import Points, NonGridField
 from .cube_helpers import GridField, Grid, angstrom_per_bohr
 
 

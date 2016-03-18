@@ -7,7 +7,7 @@ import os
 
 from .cube_helpers import GridError, GridField, _check_for_nans
 from .rep_esp import calc_grid_field, calc_non_grid_field
-from .resp import NonGridField
+from .resp_helpers import NonGridField
 
 
 def rms_and_rep(true_field, molecule, charge_type, ignore_nans=False):

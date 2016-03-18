@@ -1,4 +1,4 @@
-from repESP import resp, rep_esp, charges, graphs
+from repESP import resp, resp_helpers, rep_esp, charges, graphs
 from repESP.field_comparison import _check_grids, difference, rms_and_rep
 
 from numpy import mean, sqrt, square, linspace, meshgrid
@@ -32,7 +32,7 @@ print("To see a demonstration of all the capabilities of the script, change "
 print("\nMolecule:    ", molecule_name.capitalize())
 print("Charge type: ", charge_type.upper(), '\n')
 
-g = resp.G09_esp(input_esp)
+g = resp_helpers.G09_esp(input_esp)
 
 # Write the .esp file in the correct format expected by the `resp` program
 if False:
