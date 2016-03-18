@@ -2,6 +2,8 @@ from fortranformat import FortranRecordWriter
 import textwrap
 import os
 import numpy as np
+from random import choice
+from string import ascii_lowercase
 
 from .cube_helpers import InputFormatError, Atom, Molecule
 from .resp_helpers import G09_esp
@@ -455,10 +457,16 @@ def equivalence(molecule, charge_type, input_dir, respin1_fn="",
 
 
 def eval_heavy_ratio(ratio, start_charges, field, path, output_path, esp_fn,
-                     verbose=True):
+                     verbose=True, optimization=False):
     inp_charges = [charge*ratio for charge in start_charges]
+    if optimization:
+        # Generate folders with random names --- we don't care about the exact
+        # steps of the optimization.
+        output_folder = ''.join(choice(ascii_lowercase) for _ in range(10))
+    else:
+        output_folder = "ratio{0:+3f}".format(ratio)
     updated_molecule = run_resp(
-        path, output_path + "ratio{0:+.3f}".format(ratio), resp_type='h_only',
+        path, output_path + output_folder, resp_type='h_only',
         inp_charges=inp_charges, esp_fn=esp_fn, check_ivary=verbose)
     rrms_val = rms_and_rep(field, updated_molecule, 'resp')[1]
 
