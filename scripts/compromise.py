@@ -6,6 +6,8 @@ import numpy as np
 import os
 import matplotlib.pyplot as plt
 import math
+from scipy.optimize import minimize_scalar
+import shutil
 
 # This was necessary to prevent title from being cut-off when it's shifted up
 # due to the second x-axis label.
@@ -34,7 +36,9 @@ print("\nThe molecule was found {0}to be neutral based on its name. You should"
       " check if this is correct.".format("" if zero_net_charge else "NOT "))
 
 resp_output_path = output_path + 'resp_calcs/'
+min_resp_output_path = output_path + 'min_resp_calcs/'
 os.mkdir(resp_output_path)
+os.mkdir(min_resp_output_path)
 
 log_fn = path + molecule_name + "_" + charge_type + ".log"
 esp_log_fn = path + molecule_name + "_" + esp_charge_type + ".log"
@@ -108,6 +112,26 @@ for ratio in ratio_values:
         result.append(rrms_val)
 
 
+def _find_bracket(x, y):
+    assert len(x) == len(y)
+    min_ind = y.index(min(y))
+    # Check if the minimum value is not at the very edges of the interval:
+    assert 0 < min_ind < len(x) - 1
+    return x[min_ind-1: min_ind+2]
+
+func = lambda input_ratio: resp.eval_heavy_ratio(
+    input_ratio, start_charges, g.field, path, min_resp_output_path,
+    esp_fn, verbose=False, optimization=True)
+
+print("\nMINIMIZATION begins:\n")
+bracket = _find_bracket(ratio_values, heavy_result)
+tol = 1e-6/min(heavy_result)
+minimized = minimize_scalar(func, bracket=bracket, tol=tol)
+
+min_ratio, min_ratio_rrms = minimized.x, minimized.fun
+shutil.rmtree(min_resp_output_path)
+
+
 def plot(result_list, title):
     fig, ax1 = plt.subplots()
     ax1.plot(ratio_values, result_list)
@@ -149,6 +173,7 @@ def plot(result_list, title):
 
     ax1.plot((1, 1), (0, ax1.get_ylim()[1]), 'g--')
     ax1.plot(ratio_limits, (resp_charge_rrms, resp_charge_rrms), 'r--')
+    ax1.plot((min_ratio, min_ratio), (0, min_ratio_rrms), 'g--')
 
     plt.title(title, y=1.15)
     plt.show()
