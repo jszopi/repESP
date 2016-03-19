@@ -38,26 +38,36 @@ g = resp.G09_esp(input_esp)
 if False:
     g.field.write_to_file(output_esp, g.molecule)
 
+print("\nNOTE: Running unrestrained RESP to fit ESP with equivalence:")
+esp_equiv_molecule = resp.run_resp(
+    input_path, output_path + 'unrest', resp_type='unrest',
+    esp_fn=molecule_name + "_" + charge_type + '_resp.esp')
+
 charges.update_with_charges(charge_type, log_fn, g.molecule)
+charge_rms, charge_rrms = rms_and_rep(g.field, g.molecule, charge_type)[:2]
+resp_rms, resp_rrms = rms_and_rep(g.field, esp_equiv_molecule, 'resp')[:2]
+
+print("\nThe molecule with {0} charges:".format(charge_type.upper()))
+print(" RMS: {0:.5f}".format(charge_rms))
+print("RRMS: {0:.5f}".format(charge_rrms))
+# The above value should be compared with that in the log file.
 for atom in g.molecule:
     atom.print_with_charge(charge_type)
 
-
-# Reproduce ESP values at those points and get RMS value, which can be compared
-# with that in log file
-min_rms, min_rrms, rep_esp_field = rms_and_rep(g.field, g.molecule,
-                                               charge_type)
+print("\nThe molecule with equivalenced {0} charges (unrestrained RESP):"
+      .format(charge_type.upper()))
+print(" RMS: {0:.5f}".format(resp_rms))
+print("RRMS: {0:.5f}".format(resp_rrms))
+for atom in esp_equiv_molecule:
+    atom.print_with_charge('resp')
 
 # Division into Voronoi basins:
 # parent_atom, dist = rep_esp.calc_non_grid_field(g.molecule, g.field.points,
 #                                                 'dist')
 
-print("\nRMS:  {0:.6f}".format(min_rms))
-print("RRMS: {0:.6f}".format(min_rrms))
-
 title = molecule_name.capitalize() + " " + charge_type.upper()
 # Plot the grid in 3 and 2D:
-if True:
+if False:
     color_span = [min(g.field.values), max(g.field.values)]
     for dimension in (3, 2):
         graphs.plot_points(
@@ -97,7 +107,7 @@ if False:
         rrms_val = rms_and_rep(g.field, updated_molecule, 'resp')[1]
         result.append(rrms_val)
 
-    min_charge = molecule[0].charges[charge_type]
+    min_charge = esp_equiv_molecule[0].charges['resp']
 
     plt.title(title)
     plt.xlabel("Charge on " + molecule[vary_atom_label-1].identity)
@@ -105,14 +115,14 @@ if False:
     plt.plot(charges, result)
     plt.plot((-1.2, 1.2), (0, 0), 'r--')
     plt.plot((0, 0), (0, 1.2*max(result)), 'r--')
-    plt.plot((min_charge, min_charge), (0, min_rms), 'g--')
-    plt.plot((-1.2, min_charge), (min_rms, min_rms), 'g--')
+    plt.plot((min_charge, min_charge), (0, resp_rrms), 'g--')
+    plt.plot((-1.2, min_charge), (resp_rrms, resp_rrms), 'g--')
 
     axes = plt.gca()
     axes.set_xlim(xlim)
     axes.set_ylim([0, max(result)])
 
-    save_to = path + molecule_name + "_rms_" + charge_type
+    save_to = path + molecule_name + "_rrms_" + charge_type
     plt.savefig(save_to + ".pdf", format='pdf')
     plt.show()
     plt.close()
@@ -175,7 +185,7 @@ if True:
     with open(molecule_name + "_" + charge_type + "_result.p", "rb") as f:
         read_result = pickle.load(f)
 
-    rel_rrms = [100*(elem-min_rrms)/min_rrms for elem in read_result.rrms]
+    rel_rrms = [100*(elem-resp_rrms)/resp_rrms for elem in read_result.rrms]
     rel_rrms = np.array(rel_rrms)
     rel_rrms.resize([read_result.num, read_result.num])
 
