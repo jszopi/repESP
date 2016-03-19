@@ -5,6 +5,7 @@ import numpy as np
 
 from .cube_helpers import InputFormatError, Atom, Molecule
 from .resp_helpers import G09_esp
+from .field_comparison import rms_and_rep
 from . import charges
 
 
@@ -451,3 +452,33 @@ def equivalence(molecule, charge_type, input_dir, respin1_fn="",
                 elem = result[ivary_list[i]-1]
         new_result.append(elem)
     return new_result
+
+
+def eval_heavy_ratio(ratio, start_charges, field, path, output_path, esp_fn,
+                     verbose=True):
+    inp_charges = [charge*ratio for charge in start_charges]
+    updated_molecule = run_resp(
+        path, output_path + "ratio{0:+.3f}".format(ratio), resp_type='h_only',
+        inp_charges=inp_charges, esp_fn=esp_fn, check_ivary=verbose)
+    rrms_val = rms_and_rep(field, updated_molecule, 'resp')[1]
+
+    if verbose:
+        print("\nHEAVY: RATIO: {0:.3f}, RRMS: {1:.3f}".format(ratio, rrms_val))
+        for atom in updated_molecule:
+            atom.print_with_charge('resp')
+
+    return rrms_val
+
+
+def eval_ratio(ratio, start_charges, molecule, field, verbose=True):
+    inp_charges = [charge*ratio for charge in start_charges]
+    charges._update_molecule_with_charges(molecule, inp_charges, 'temp')
+    rrms_val = rms_and_rep(field, molecule, 'temp')[1]
+
+    if verbose:
+        print("\nREGULAR: RATIO: {0:.3f}, RRMS: {1:.3f}".format(ratio,
+                                                                rrms_val))
+        for atom in molecule:
+            atom.print_with_charge('temp')
+
+    return rrms_val

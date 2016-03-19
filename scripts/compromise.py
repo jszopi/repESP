@@ -93,31 +93,19 @@ ratio_values = np.linspace(*ratio_limits, num=num)
 indicator_charge = []
 
 for ratio in ratio_values:
-    inp_charges = [charge*ratio for charge in start_charges]
-    indicator_charge.append(inp_charges[indicator_label-1])
+    indicator_charge.append(ratio*start_charges[indicator_label-1])
 
-    updated_molecule = resp.run_resp(
-        path, resp_output_path + "ratio{0:+.3f}".format(ratio),
-        resp_type='h_only', inp_charges=inp_charges, esp_fn=esp_fn)
-    rrms_val = rms_and_rep(g.field, updated_molecule, 'resp')[1]
+    rrms_val = resp.eval_heavy_ratio(ratio, start_charges, g.field, path,
+                                     resp_output_path, esp_fn, verbose=True)
     heavy_result.append(rrms_val)
-
-    print("\nHEAVY: RATIO: {0:.3f}, RRMS: {1:.3f}".format(ratio, rrms_val))
-    for atom in updated_molecule:
-        atom.print_with_charge('resp')
 
     if zero_net_charge:
         # Scaling all charges is only possible with neutral molecules as
         # otherwise in this case there's no free hydrogens to compensate as in
         # the 'heavy_only' version
-        _update_molecule_with_charges(g.molecule, inp_charges, 'temp')
-        rrms_val = rms_and_rep(g.field, g.molecule, 'temp')[1]
+        rrms_val = resp.eval_ratio(ratio, start_charges, g.molecule, g.field,
+                                   verbose=True)
         result.append(rrms_val)
-
-        print("\nREGULAR: RATIO: {0:.3f}, RRMS: {1:.3f}".format(ratio,
-                                                                rrms_val))
-        for atom in g.molecule:
-            atom.print_with_charge('temp')
 
 
 def plot(result_list, title):
