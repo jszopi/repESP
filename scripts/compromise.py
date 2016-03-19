@@ -6,7 +6,6 @@ import numpy as np
 import os
 import matplotlib.pyplot as plt
 import math
-from scipy.optimize import minimize_scalar
 import shutil
 
 # This was necessary to prevent title from being cut-off when it's shifted up
@@ -111,24 +110,12 @@ for ratio in ratio_values:
                                    verbose=True)
         result.append(rrms_val)
 
-
-def _find_bracket(x, y):
-    assert len(x) == len(y)
-    min_ind = y.index(min(y))
-    # Check if the minimum value is not at the very edges of the interval:
-    assert 0 < min_ind < len(x) - 1
-    return x[min_ind-1: min_ind+2]
-
-func = lambda input_ratio: resp.eval_heavy_ratio(
-    input_ratio, start_charges, g.field, path, min_resp_output_path,
-    esp_fn, verbose=False, optimization=True)
-
-print("\nMINIMIZATION begins:\n")
-bracket = _find_bracket(ratio_values, heavy_result)
-tol = 1e-6/min(heavy_result)
-minimized = minimize_scalar(func, bracket=bracket, tol=tol)
-
-min_ratio, min_ratio_rrms = minimized.x, minimized.fun
+# Most arguments here are the same as in the loop with minor changes specific
+# to an optimization run (output directory, verbosity)
+heavy_args = (start_charges, g.field, path, min_resp_output_path, esp_fn,
+              False, True)
+min_ratio, min_ratio_rrms = resp.minimize_ratio(
+    'heavy', ratio_values, heavy_result, heavy_args)
 shutil.rmtree(min_resp_output_path)
 
 

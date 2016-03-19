@@ -4,6 +4,7 @@ import os
 import numpy as np
 from random import choice
 from string import ascii_lowercase
+from scipy.optimize import minimize_scalar
 
 from .cube_helpers import InputFormatError, Atom, Molecule
 from .resp_helpers import G09_esp
@@ -490,3 +491,37 @@ def eval_ratio(ratio, start_charges, molecule, field, verbose=True):
             atom.print_with_charge('temp')
 
     return rrms_val
+
+
+def _find_bracket(x, y):
+    """Find rough minimum location for ratio minimization"""
+    assert len(x) == len(y)
+    min_ind = y.index(min(y))
+    # Check if the minimum value is not at the very edges of the interval:
+    assert 0 < min_ind < len(x) - 1
+    return x[min_ind-1: min_ind+2]
+
+
+def minimize_ratio(eval_type, ratio_values, result_list, eval_func_args):
+    if eval_type == 'heavy':
+        eval_func = eval_heavy_ratio
+    elif eval_type == 'regular':
+        eval_func = eval_ratio
+    else:
+        raise NotImplementedError("Optimizing the evaluation function given as"
+                                  "is not implemented".format(eval_type))
+
+    print("\nMINIMIZATION begins.\n")
+    bracket = _find_bracket(ratio_values, result_list)
+    tol = 1e-6/min(result_list)
+    minimized = minimize_scalar(eval_func, bracket=bracket,
+                                tol=tol, args=eval_func_args)
+    if not minimized.success:
+        raise ValueError(
+            "Minimization of {0} ratio failed. The message from `scipy."
+            "optimize.minimize_scalar` is '{1}'".format(eval_type,
+                                                        minimized.message))
+    min_ratio, min_ratio_rrms = minimized.x, minimized.fun
+    print("\nFOUND optimal {0} ratio: {1:.4f} with RRMS of {2:6f}\n".format(
+          eval_type, min_ratio, min_ratio_rrms))
+    return min_ratio, min_ratio_rrms
