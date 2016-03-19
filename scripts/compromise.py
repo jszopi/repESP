@@ -110,16 +110,24 @@ for ratio in ratio_values:
                                    verbose=True)
         result.append(rrms_val)
 
+# RATIO MINIMIZATION
+
 # Most arguments here are the same as in the loop with minor changes specific
 # to an optimization run (output directory, verbosity)
 heavy_args = (start_charges, g.field, path, min_resp_output_path, esp_fn,
               False, True)
-min_ratio, min_ratio_rrms = resp.minimize_ratio(
+heavy_min_ratio, heavy_min_ratio_rrms = resp.minimize_ratio(
     'heavy', ratio_values, heavy_result, heavy_args)
+
+if zero_net_charge:
+    regular_args = (start_charges, g.molecule, g.field, False)
+    reg_min_ratio, reg_min_ratio_rrms = resp.minimize_ratio(
+        'regular', ratio_values, result, regular_args)
+
 shutil.rmtree(min_resp_output_path)
 
 
-def plot(result_list, title):
+def plot(result_list, title, min_ratio, min_ratio_rrms):
     fig, ax1 = plt.subplots()
     ax1.plot(ratio_values, result_list)
     ax2 = ax1.twiny()
@@ -173,6 +181,8 @@ title = "{0}: RRMS on {1} fitting points v. {2} ratio".format(
 
 if zero_net_charge:
     plot(result,
-         title + "\nset on ALL atoms (only possible for neutral molecules)")
+         title + "\nset on ALL atoms (only possible for neutral molecules)",
+         reg_min_ratio, reg_min_ratio_rrms)
 
-plot(heavy_result, title + "\nset on heavy atoms ONLY (H free to improve fit)")
+plot(heavy_result, title + "\nset on heavy atoms ONLY (H free to improve fit)",
+     heavy_min_ratio, heavy_min_ratio_rrms)
