@@ -24,6 +24,7 @@ indicator_label = 1
 path = '../data/methane/input/'
 output_path = path + "compromise" + '_' + charge_type + '/'
 os.mkdir(output_path)
+esp_fn = molecule_name + "_" + esp_charge_type + '.esp'
 
 zero_net_charge = True
 if "plus" in molecule_name or "minus" in molecule_name:
@@ -37,7 +38,7 @@ os.mkdir(resp_output_path)
 
 log_fn = path + molecule_name + "_" + charge_type + ".log"
 esp_log_fn = path + molecule_name + "_" + esp_charge_type + ".log"
-g = resp_helpers.G09_esp(path + molecule_name + '_' + esp_charge_type + '.esp')
+g = resp_helpers.G09_esp(path + esp_fn)
 
 # Both the Gaussian ESP fitting methods and other charge assignment methods may
 # not yield equivalent charges. As equivalent charges make more sense for force
@@ -53,8 +54,7 @@ equiv_charges = resp.equivalence(g.molecule, charge_type, path)
 _update_molecule_with_charges(g.molecule, equiv_charges, charge_type+'_equiv')
 print("\nNOTE: Running unrestrained RESP to fit ESP with equivalence:")
 esp_equiv_molecule = resp.run_resp(
-    path, resp_output_path + 'unrest', resp_type='unrest', esp_fn=molecule_name
-    + "_" + esp_charge_type + '.esp')
+    path, resp_output_path + 'unrest', resp_type='unrest', esp_fn=esp_fn)
 
 charge_rrms = rms_and_rep(g.field, g.molecule, charge_type)[1]
 equiv_charge_rrms = rms_and_rep(g.field, g.molecule, charge_type + '_equiv')[1]
@@ -98,8 +98,7 @@ for ratio in ratio_values:
 
     updated_molecule = resp.run_resp(
         path, resp_output_path + "ratio{0:+.3f}".format(ratio),
-        resp_type='h_only', inp_charges=inp_charges, esp_fn=molecule_name + "_"
-        + esp_charge_type + '.esp')
+        resp_type='h_only', inp_charges=inp_charges, esp_fn=esp_fn)
     rrms_val = rms_and_rep(g.field, updated_molecule, 'resp')[1]
     heavy_result.append(rrms_val)
 
