@@ -5,6 +5,7 @@ from repESP.charges import update_with_charges, _update_molecule_with_charges
 import numpy as np
 import os
 import matplotlib.pyplot as plt
+import math
 
 # This was necessary to prevent title from being cut-off when it's shifted up
 # due to the second x-axis label.
@@ -142,6 +143,23 @@ def plot(result_list, title):
     # NOTE: if the plots don't look right, try disabling the above option and
     # see whether you get two different lines. However, hard-coding the x-axis
     # limits should ensure that the lines do overlap.
+    mark_charge = g.molecule[indicator_label-1].charges[charge_type]
+    ax2.scatter(mark_charge, charge_rrms, marker='D')
+    ax2.annotate(charge_type.upper(), xy=(mark_charge, charge_rrms),
+                 textcoords='offset points', xytext=(5, -10))
+    ax1.scatter(1, equiv_charge_rrms)
+
+    mark_equiv_charge = g.molecule[indicator_label-1].charges[charge_type +
+                                                              '_equiv']
+    if (math.isclose(mark_charge, mark_equiv_charge, rel_tol=0.04) and
+            math.isclose(charge_rrms, equiv_charge_rrms, rel_tol=0.04)):
+        print("WARNING: The NBO and NBO (equiv) points overlap or are close to"
+              " overlapping. Only one label is plotted.")
+    else:
+        ax1.annotate(charge_type.upper() + ' (equiv)',
+                     xy=(1, equiv_charge_rrms), textcoords='offset points',
+                     xytext=(5, -10))
+
     ax1.plot((1, 1), (0, ax1.get_ylim()[1]), 'g--')
     ax1.plot(ratio_limits, (resp_charge_rrms, resp_charge_rrms), 'r--')
 
