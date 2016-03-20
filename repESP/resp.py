@@ -502,15 +502,18 @@ def _find_bracket(x, y):
     return x[min_ind-1: min_ind+2]
 
 
-def minimize_ratio(eval_type, ratio_values, result_list, eval_func_args):
+def _get_eval_func(eval_type):
     if eval_type == 'heavy':
-        eval_func = eval_heavy_ratio
+        return eval_heavy_ratio
     elif eval_type == 'regular':
-        eval_func = eval_ratio
+        return eval_ratio
     else:
         raise NotImplementedError("Optimizing the evaluation function given as"
                                   "is not implemented".format(eval_type))
 
+
+def minimize_ratio(eval_type, ratio_values, result_list, eval_func_args):
+    eval_func = _get_eval_func(eval_type)
     print("\nMINIMIZATION begins.\n")
     bracket = _find_bracket(ratio_values, result_list)
     tol = 1e-6/min(result_list)
