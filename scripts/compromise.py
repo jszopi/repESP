@@ -2,7 +2,6 @@ from repESP import resp, resp_helpers, graphs
 from repESP.field_comparison import rms_and_rep
 from repESP.charges import update_with_charges, _update_molecule_with_charges
 
-import numpy as np
 import os
 import matplotlib.pyplot as plt
 import math
@@ -89,26 +88,19 @@ for atom in esp_equiv_molecule:
 start_charges = [atom.charges[charge_type + '_equiv'] for atom in g.molecule]
 
 num = 50
-heavy_result = []
-result = []
 ratio_limits = (0, 1.5)
-ratio_values = np.linspace(*ratio_limits, num=num)
-indicator_charge = []
 
-for ratio in ratio_values:
-    indicator_charge.append(ratio*start_charges[indicator_label-1])
+heavy_args = (g.field, path, resp_output_path, esp_fn, True)
+heavy_result, indicator_charge, ratio_values = resp.eval_ratios(
+    'heavy', ratio_limits, start_charges, num, indicator_label, heavy_args)
 
-    rrms_val = resp.eval_heavy_ratio(ratio, start_charges, g.field, path,
-                                     resp_output_path, esp_fn, verbose=True)
-    heavy_result.append(rrms_val)
-
-    if zero_net_charge:
-        # Scaling all charges is only possible with neutral molecules as
-        # otherwise in this case there's no free hydrogens to compensate as in
-        # the 'heavy_only' version
-        rrms_val = resp.eval_ratio(ratio, start_charges, g.molecule, g.field,
-                                   verbose=True)
-        result.append(rrms_val)
+if zero_net_charge:
+    # Scaling all charges is only possible with neutral molecules as
+    # otherwise in this case there's no free hydrogens to compensate as in
+    # the 'heavy_only' version
+    regular_args = (g.molecule, g.field, True)
+    result = resp.eval_ratios('regular', ratio_limits, start_charges, num,
+                              indicator_label, regular_args)[0]
 
 # RATIO MINIMIZATION
 

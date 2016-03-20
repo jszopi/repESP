@@ -528,3 +528,18 @@ def minimize_ratio(eval_type, ratio_values, result_list, eval_func_args):
     print("\nFOUND optimal {0} ratio: {1:.4f} with RRMS of {2:6f}\n".format(
           eval_type, min_ratio, min_ratio_rrms))
     return min_ratio, min_ratio_rrms
+
+
+def eval_ratios(eval_type, ratio_limits, start_charges, sampling_num,
+                indicator_label, eval_func_args):
+    indicator_charge = []
+    result = []
+    ratio_values = np.linspace(*ratio_limits, num=sampling_num)
+    eval_func = _get_eval_func(eval_type)
+
+    for ratio in ratio_values:
+        indicator_charge.append(ratio*start_charges[indicator_label-1])
+        rrms_val = eval_func(ratio, start_charges, *eval_func_args)
+        result.append(rrms_val)
+
+    return result, indicator_charge, ratio_values
