@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
 import os
+import shutil
 
 import numpy as np
 import pickle
@@ -19,6 +20,10 @@ path = '../data/' + molecule_name + '/'
 input_path = path + 'input/'
 output_path = path + "resp_calcs" + '_' + esp_charge_type + '/'
 os.mkdir(output_path)
+
+charge_type = 'nbo'
+charge_log_fn = input_path + molecule_name + "_" + charge_type + ".log"
+temp_output_path = output_path + 'ratio/'
 
 common_fn = input_path + molecule_name + "_" + esp_charge_type
 log_fn = common_fn + ".log"
@@ -187,6 +192,21 @@ if True:
     rel_rrms = np.array(rel_rrms)
     rel_rrms.resize([read_result.num, read_result.num])
 
+    # Non-ESP charge and its minimized ratio
+    charges.update_with_charges(charge_type, charge_log_fn, molecule)
+    start_charges = [atom.charges[charge_type] for atom in molecule]
+    os.mkdir(temp_output_path)
+    # Scan roughly various ratios to find bracket for minimization
+    heavy_args = (g.field, path, temp_output_path, esp_fn, True)
+    heavy_result, indicator_charge, ratio_values = resp.eval_ratios(
+        'heavy', (0, 2), start_charges, 10, 17, heavy_args)
+    # Minimization
+    heavy_args = (start_charges, g.field, path, temp_output_path,
+                  esp_fn, False, True)
+    heavy_min_ratio, heavy_min_ratio_rrms = resp.minimize_ratio(
+        'heavy', ratio_values, heavy_result, heavy_args)
+    shutil.rmtree(temp_output_path)
+
     # Presentation: 3D
     if False:
         fig = plt.figure()
@@ -208,8 +228,20 @@ if True:
         axes = plt.gca()
 
         # Change axes here:
+        axes.set_xlim([-0.5, 1])
         axes.set_ylim([-1, 0])
         plt.axes().set_aspect('equal')
+
+        # Add non-esp point. The indices are for N17 and C1 in TMA+
+        new_point = (molecule[16].charges[charge_type],
+                     molecule[0].charges[charge_type])
+        plt.scatter(*new_point)
+        # Non-esp ratio charge point
+        plt.scatter(heavy_min_ratio*start_charges[16],
+                    heavy_min_ratio*start_charges[0])
+        # Add ratio line
+        y_coord = axes.get_xlim()[0]*new_point[1]/new_point[0]
+        plt.plot((axes.get_xlim()[0], 0), (y_coord, 0))
 
         plot_common()
         save_to = molecule_name + "_" + esp_charge_type
