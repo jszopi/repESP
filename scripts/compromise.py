@@ -119,7 +119,7 @@ if zero_net_charge:
 shutil.rmtree(min_resp_output_path)
 
 
-def plot(result_list, title, min_ratio, min_ratio_rrms):
+def plot(result_list, heavy, min_ratio, min_ratio_rrms):
     fig, ax1 = plt.subplots()
     ax1.plot(ratio_values, result_list)
     ax2 = ax1.twiny()
@@ -162,19 +162,20 @@ def plot(result_list, title, min_ratio, min_ratio_rrms):
     ax1.plot(ratio_limits, (resp_charge_rrms, resp_charge_rrms), 'r--')
     ax1.plot((min_ratio, min_ratio), (0, min_ratio_rrms), 'g--')
 
+    title = "{0}: RRMS on {1} fitting points v. {2} ratio".format(
+            molecule_name, esp_charge_type.upper(), charge_type.upper())
+    if heavy:
+        title += "\nset on heavy atoms ONLY (H free to improve fit)"
+    else:
+        title += "\nset on ALL atoms (only possible for neutral molecules)"
+
     plt.title(title, y=1.15)
     plt.show()
     plt.close()
 
 molecule_name = graphs.pretty_molecule_name(molecule_name)
 
-title = "{0}: RRMS on {1} fitting points v. {2} ratio".format(
-        molecule_name, esp_charge_type.upper(), charge_type.upper())
-
 if zero_net_charge:
-    plot(result,
-         title + "\nset on ALL atoms (only possible for neutral molecules)",
-         reg_min_ratio, reg_min_ratio_rrms)
+    plot(result, False, reg_min_ratio, reg_min_ratio_rrms)
 
-plot(heavy_result, title + "\nset on heavy atoms ONLY (H free to improve fit)",
-     heavy_min_ratio, heavy_min_ratio_rrms)
+plot(heavy_result, True, heavy_min_ratio, heavy_min_ratio_rrms)
