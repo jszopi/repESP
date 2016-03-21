@@ -149,7 +149,7 @@ def filter_by_atom(molecule, atom_label, method, *fields, assign_val=None):
         # path should be one of the arguments of this function. However, in the
         # future the issue of paths will be resolved in some smart way, so I'll
         # leave it as it is now.
-        path = os.path.dirname(molecule.parent_cube.cube_fn) + '/'
+        path = os.path.dirname(molecule.parent_cube.cube_fn) + '/bader/'
         closest_atom = molecule.extract_qtaim_basins(grid, path)
     else:
         raise NotImplementedError("Method {0} is not implemented.".format(

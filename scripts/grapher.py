@@ -16,15 +16,16 @@ import numpy as np
 
 molecule_name = 'methane'
 path = '../data/' + molecule_name + '/'
-input_path = path + 'input/'
+output_path = path + 'grapher_output/'
+os.mkdir(output_path)
 
-if not os.path.isdir(input_path):
+if not os.path.isdir(path):
     raise FileNotFoundError("The input directory does not exist! Currently "
                             "this script assumes a certain directory tree and "
                             "should be run from its own `scripts` directory.")
 
-esp_cube = cube_helpers.Cube(input_path + molecule_name + '_esp.cub')
-ed_cube = cube_helpers.Cube(input_path + molecule_name + '_den.cub')
+esp_cube = cube_helpers.Cube(path + molecule_name + '_esp.cub')
+ed_cube = cube_helpers.Cube(path + molecule_name + '_den.cub')
 
 molecule = esp_cube.molecule
 
@@ -39,7 +40,6 @@ charge_types = {'aim': '.sumviz',
                 'mulliken': '.log',
                 'chelpg': '_chelpg.log',
                 'mk': '_mk.log',
-                'hly': '_hly.log',
                 'nbo': '_nbo.log',
                 }
 
@@ -55,13 +55,13 @@ color_span = [np.nanmin(esp_values), np.nanmax(esp_values)]
 # desired behaviour, it could be set in a similar manner here.
 
 for charge_type in charge_types.keys():
-    charge_dir = path + charge_type
+    charge_dir = output_path + charge_type
     # raises OSError if directory exists
     os.mkdir(charge_dir)
     if charge_types[charge_type][0] in ['.', '_']:
-        filename = input_path + molecule_name + charge_types[charge_type]
+        filename = path + molecule_name + charge_types[charge_type]
     else:
-        filename = input_path + charge_types[charge_type]
+        filename = path + charge_types[charge_type]
 
     update_with_charges(charge_type, filename, molecule)
 
