@@ -10,18 +10,17 @@ import os
 import numpy as np
 import pickle
 
-charge_type = 'mk'
-# charge_type = 'chelpg'
-# charge_type = 'hly'
+esp_charge_type = 'mk'
+# esp_charge_type = 'chelpg'
 
 # molecule_name = 'methane'
 molecule_name = 'tma'
 path = '../data/' + molecule_name + '/'
 input_path = path + 'input/'
-output_path = path + "resp_calcs" + '_' + charge_type + '/'
+output_path = path + "resp_calcs" + '_' + esp_charge_type + '/'
 os.mkdir(output_path)
 
-common_fn = input_path + molecule_name + "_" + charge_type
+common_fn = input_path + molecule_name + "_" + esp_charge_type
 log_fn = common_fn + ".log"
 input_esp = common_fn + "_resp.esp"
 output_esp = common_fn + "_resp_reformatted.esp"
@@ -30,7 +29,7 @@ print("To see a demonstration of all the capabilities of the script, change "
       "the hard-coded conditional values to True. You can also change the "
       "charges type between MK and CHelp(G).")
 print("\nMolecule:    ", molecule_name.capitalize())
-print("Charge type: ", charge_type.upper(), '\n')
+print("Charge type: ", esp_charge_type.upper(), '\n')
 
 g = resp_helpers.G09_esp(input_esp)
 
@@ -43,19 +42,19 @@ esp_equiv_molecule = resp.run_resp(
     input_path, output_path + 'unrest', resp_type='unrest',
     esp_fn=molecule_name + "_" + charge_type + '_resp.esp')
 
-charges.update_with_charges(charge_type, log_fn, g.molecule)
-charge_rms, charge_rrms = rms_and_rep(g.field, g.molecule, charge_type)[:2]
+charges.update_with_charges(esp_charge_type, log_fn, g.molecule)
+charge_rms, charge_rrms = rms_and_rep(g.field, g.molecule, esp_charge_type)[:2]
 resp_rms, resp_rrms = rms_and_rep(g.field, esp_equiv_molecule, 'resp')[:2]
 
-print("\nThe molecule with {0} charges:".format(charge_type.upper()))
+print("\nThe molecule with {0} charges:".format(esp_charge_type.upper()))
 print(" RMS: {0:.5f}".format(charge_rms))
 print("RRMS: {0:.5f}".format(charge_rrms))
 # The above value should be compared with that in the log file.
 for atom in g.molecule:
-    atom.print_with_charge(charge_type)
+    atom.print_with_charge(esp_charge_type)
 
 print("\nThe molecule with equivalenced {0} charges (unrestrained RESP):"
-      .format(charge_type.upper()))
+      .format(esp_charge_type.upper()))
 print(" RMS: {0:.5f}".format(resp_rms))
 print("RRMS: {0:.5f}".format(resp_rrms))
 for atom in esp_equiv_molecule:
@@ -65,7 +64,7 @@ for atom in esp_equiv_molecule:
 # parent_atom, dist = rep_esp.calc_non_grid_field(g.molecule, g.field.points,
 #                                                 'dist')
 
-title = molecule_name.capitalize() + " " + charge_type.upper()
+title = molecule_name.capitalize() + " " + esp_charge_type.upper()
 # Plot the grid in 3 and 2D:
 if False:
     color_span = [min(g.field.values), max(g.field.values)]
@@ -122,7 +121,7 @@ if False:
     axes.set_xlim(xlim)
     axes.set_ylim([0, max(result)])
 
-    save_to = path + molecule_name + "_rrms_" + charge_type
+    save_to = path + molecule_name + "_rrms_" + esp_charge_type
     plt.savefig(save_to + ".pdf", format='pdf')
     plt.show()
     plt.close()
@@ -177,12 +176,12 @@ if True:
     new_result.rrms = np.array(new_result.rrms)
     new_result.rrms.resize([num, num])
 
-    with open(molecule_name + "_" + charge_type + "_result.p", "wb") as f:
+    with open(molecule_name + "_" + esp_charge_type + "_result.p", "wb") as f:
         pickle.dump(new_result, f)
 
 # 2 charges: Presentation
 if True:
-    with open(molecule_name + "_" + charge_type + "_result.p", "rb") as f:
+    with open(molecule_name + "_" + esp_charge_type + "_result.p", "rb") as f:
         read_result = pickle.load(f)
 
     rel_rrms = [100*(elem-resp_rrms)/resp_rrms for elem in read_result.rrms]
@@ -214,7 +213,7 @@ if True:
         plt.axes().set_aspect('equal')
 
         plot_common()
-        save_to = molecule_name + "_" + charge_type
+        save_to = molecule_name + "_" + esp_charge_type
         plt.savefig(save_to + ".pdf", format='pdf')
         plt.show()
         plt.close()
