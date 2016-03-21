@@ -17,19 +17,20 @@ esp_charge_type = 'mk'
 # molecule_name = 'methane'
 molecule_name = 'tma'
 path = '../data/' + molecule_name + '/'
-input_path = path + 'input/'
-output_path = path + "resp_calcs" + '_' + esp_charge_type + '/'
+output_path = path + "esp_fit" + '_' + esp_charge_type + '/'
+resp_output_path = output_path + 'resp_calcs/'
 os.mkdir(output_path)
+os.mkdir(resp_output_path)
 
 charge_type = 'nbo'
-charge_log_fn = input_path + molecule_name + "_" + charge_type + ".log"
+charge_log_fn = path + molecule_name + "_" + charge_type + ".log"
 temp_output_path = output_path + 'ratio/'
 
-common_fn = input_path + molecule_name + "_" + esp_charge_type
+common_fn = path + molecule_name + "_" + esp_charge_type
 log_fn = common_fn + ".log"
-input_esp = common_fn + "_resp.esp"
-esp_fn = molecule_name + "_" + esp_charge_type + "_resp.esp"
-output_esp = common_fn + "_resp_reformatted.esp"
+input_esp = common_fn + ".esp"
+esp_fn = molecule_name + "_" + esp_charge_type + ".esp"
+output_esp = common_fn + ".esp"
 
 print("To see a demonstration of all the capabilities of the script, change "
       "the hard-coded conditional values to True. You can also change the "
@@ -45,7 +46,7 @@ if False:
 
 print("\nNOTE: Running unrestrained RESP to fit ESP with equivalence:")
 esp_equiv_molecule = resp.run_resp(
-    input_path, output_path + 'unrest', resp_type='unrest',
+    path, resp_output_path + 'unrest', resp_type='unrest',
     esp_fn=esp_fn)
 
 charges.update_with_charges(esp_charge_type, log_fn, g.molecule)
@@ -105,7 +106,7 @@ if False:
         inp_charges = resp.charges_from_dict(charge_dict(charge),
                                              len(molecule))
         updated_molecule = resp.run_resp(
-            input_path, output_path + "C{0:+.3f}".format(charge),
+            path, resp_output_path + "C{0:+.3f}".format(charge),
             resp_type='h_only', inp_charges=inp_charges, esp_fn=esp_fn)
 
         rrms_val = rms_and_rep(g.field, updated_molecule, 'resp')[1]
@@ -126,7 +127,7 @@ if False:
     axes.set_xlim(xlim)
     axes.set_ylim([0, max(result)])
 
-    save_to = path + molecule_name + "_rrms_" + esp_charge_type
+    save_to = output_path + molecule_name + "_rrms_" + esp_charge_type
     plt.savefig(save_to + ".pdf", format='pdf')
     plt.show()
     plt.close()
@@ -167,7 +168,7 @@ if True:
     for n, c in zip(new_result.n_inp.flat, new_result.c_inp.flat):
         inp_charges = resp.charges_from_dict(charge_dict(n, c), len(molecule))
         updated_molecule = resp.run_resp(
-            input_path, output_path + "N{0:+.3f}C{1:+.3f}".format(n, c),
+            path, resp_output_path + "N{0:+.3f}C{1:+.3f}".format(n, c),
             resp_type='h_only', inp_charges=inp_charges, esp_fn=esp_fn)
 
         rrms_val = rms_and_rep(g.field, updated_molecule, 'resp')[1]
@@ -180,12 +181,12 @@ if True:
     new_result.rrms = np.array(new_result.rrms)
     new_result.rrms.resize([num, num])
 
-    with open(molecule_name + "_" + esp_charge_type + "_result.p", "wb") as f:
+    with open(output_path + "result.p", "wb") as f:
         pickle.dump(new_result, f)
 
 # 2 charges: Presentation
 if True:
-    with open(molecule_name + "_" + esp_charge_type + "_result.p", "rb") as f:
+    with open(output_path + "result.p", "rb") as f:
         read_result = pickle.load(f)
 
     rel_rrms = [100*(elem-resp_rrms)/resp_rrms for elem in read_result.rrms]
@@ -244,7 +245,6 @@ if True:
         plt.plot((axes.get_xlim()[0], 0), (y_coord, 0))
 
         plot_common()
-        save_to = molecule_name + "_" + esp_charge_type
+        save_to = output_path + molecule_name + "_" + esp_charge_type
         plt.savefig(save_to + ".pdf", format='pdf')
-        plt.show()
         plt.close()
