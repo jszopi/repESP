@@ -16,6 +16,30 @@ esp_charge_type = 'mk'
 
 molecule_name = 'NMe3H_plus'
 # molecule_name = 'methane'
+
+# Parameters to change when changing the molecule
+# Methane/water:
+vary_label1 = 1
+# charge_dict = lambda a1: {1: a1}
+xlim1 = (-1, 0)
+xlim2 = (-0.5, 1)
+# NMe3H_plus, NMe3:
+vary_label2 = 13
+charge_dict = lambda c, n: {1: c, 5: c, 9: c, 13: n}
+# NMe4_plus:
+# vary_label2 = 17
+# charge_dict = lambda c, n: {1: c, 5: c, 9: c, 13: c, 17: n}
+sampling_num = 21
+# SLICING plots
+# Methane:
+# cut_through = 1, 2, 3
+# NMe3_plus:
+cut_through = 1, 13, 14
+# NMe4_plus:
+# cut_through = 1, 5, 17
+# NMe3:
+# cut_through = 1, 5, 9
+
 path = '../data/' + molecule_name + '/'
 output_path = path + "esp_fit" + '_' + esp_charge_type + '/'
 resp_output_path = output_path + 'resp_calcs/'
@@ -53,7 +77,7 @@ if False:
     for dimension in (3, 2):
         graphs.plot_points(
             g.field, dimension, title=title, molecule=g.molecule,
-            plane_eqn=graphs.plane_through_atoms(g.molecule, 1, 13, 14),
+            plane_eqn=graphs.plane_through_atoms(g.molecule, *cut_through),
             dist_thresh=0.5, axes_limits=[(-5, 5)]*dimension,
             color_span=color_span)
         graphs.plot_points(
@@ -67,20 +91,24 @@ from itertools import chain
 molecule = copy.deepcopy(g.molecule)
 
 
+def get_atom_signature(molecule, label):
+    return molecule[label-1].identity + str(label)
+
+
 class Result(object):
 
-    def __init__(self, num, c_xlim, n_xlim):
-        self.num = num
-        self.c_xlim = c_xlim
-        self.n_xlim = n_xlim
-        self.c_inp, self.n_inp = self.get_meshgrid(c_xlim, n_xlim, num)
+    def __init__(self, sampling_num, xlim1, xlim2):
+        self.sampling_num = sampling_num
+        self.xlim1 = xlim1
+        self.xlim2 = xlim2
+        self.inp1, self.inp2 = self.get_meshgrid(xlim1, xlim2, sampling_num)
         self.rrms = []
 
     @staticmethod
-    def get_meshgrid(c_xlim, n_xlim, num):
-        c_charges = linspace(c_xlim[0], c_xlim[1], num=num)
-        n_charges = linspace(n_xlim[0], n_xlim[1], num=num)
-        return meshgrid(c_charges, n_charges)
+    def get_meshgrid(xlim1, xlim2, sampling_num):
+        charges1 = linspace(xlim1[0], xlim1[1], num=sampling_num)
+        charges2 = linspace(xlim2[0], xlim2[1], num=sampling_num)
+        return meshgrid(charges1, charges2)
 
 
 # Calculation --- set to True if running the 'one charge variation' version.
@@ -116,29 +144,25 @@ if True:
 
 # One charge (e.g. methane, water): 2D plot
 if False:
-    vary_atom_label = 1
-    xlim = (-1, 0.5)
-    num = 150
-    charges = linspace(xlim[0], xlim[1], num=num)
-    charge_dict = lambda c: {vary_atom_label: c}
+    charges = linspace(xlim1[0], xlim1[1], num=sampling_num)
 
     result = []
     for i, charge in enumerate(charges):
         if not i % 10:
-            print("{0:.2f}%".format(100*i/num))
+            print("{0:.2f}%".format(100*i/sampling_num))
         inp_charges = resp.charges_from_dict(charge_dict(charge),
                                              len(molecule))
         updated_molecule = resp.run_resp(
-            path, resp_output_path + "C{0:+.3f}".format(charge),
+            path, resp_output_path + "{0}{1:+.3f}".format(
+                get_atom_signature(molecule, vary_label1), charge),
             resp_type='h_only', inp_charges=inp_charges, esp_fn=esp_fn)
-
         rrms_val = rms_and_rep(g.field, updated_molecule, 'resp')[1]
         result.append(rrms_val)
 
     min_charge = esp_equiv_molecule[0].charges['resp']
 
     plt.title(title)
-    plt.xlabel("Charge on " + molecule[vary_atom_label-1].identity)
+    plt.xlabel("Charge on " + get_atom_signature(molecule, vary_label1))
     plt.ylabel("RRMSE at fitting points")
     plt.plot(charges, result)
     plt.plot((-1.2, 1.2), (0, 0), 'r--')
@@ -147,7 +171,7 @@ if False:
     plt.plot((-1.2, min_charge), (resp_rrms, resp_rrms), 'g--')
 
     axes = plt.gca()
-    axes.set_xlim(xlim)
+    axes.set_xlim(xlim1)
     axes.set_ylim([0, max(result)])
 
     save_to = output_path + molecule_name + "_rrms_" + esp_charge_type
@@ -156,27 +180,23 @@ if False:
     plt.close()
 
 
-def plot_common():
+def plot_common(x_atom_label, y_atom_label, molecule, title):
     plt.title(title)
-    plt.xlabel("Charge on N")
-    plt.ylabel("Charge on C")
+    plt.ylabel("Charge on " + get_atom_signature(molecule, x_atom_label))
+    plt.xlabel("Charge on " + get_atom_signature(molecule, y_atom_label))
 
 # 2 charges (NMe3H_plus, NMe4_plus etc.): Calculation. Note that the previous
 # calculation section must also be switched on.
 if True:
-    # Change input values here
-    net_charge = 1
-    charge_dict = lambda n, c: {13: n, 1: c, 5: c, 9: c}
-    c_xlim = (-1, 0.5)
-    n_xlim = (-0.5, 1)
-    num = 51
-    new_result = Result(num, c_xlim, n_xlim)
+    new_result = Result(sampling_num, xlim1, xlim2)
 
     i = 0
-    for n, c in zip(new_result.n_inp.flat, new_result.c_inp.flat):
-        inp_charges = resp.charges_from_dict(charge_dict(n, c), len(molecule))
+    for c, n in zip(new_result.inp1.flat, new_result.inp2.flat):
+        inp_charges = resp.charges_from_dict(charge_dict(c, n), len(molecule))
         updated_molecule = resp.run_resp(
-            path, resp_output_path + "N{0:+.3f}C{1:+.3f}".format(n, c),
+            path, resp_output_path + "{0}{1:+.3f}{2}{3:+.3f}".format(
+                get_atom_signature(molecule, vary_label1), c,
+                get_atom_signature(molecule, vary_label2), n),
             resp_type='h_only', inp_charges=inp_charges, esp_fn=esp_fn)
 
         rrms_val = rms_and_rep(g.field, updated_molecule, 'resp')[1]
@@ -184,10 +204,10 @@ if True:
         for atom in updated_molecule:
             atom.print_with_charge('resp')
         i += 1
-        print("{0:.2f} %".format(100*i/num**2))
+        print("{0:.2f} %".format(100*i/sampling_num**2))
 
     new_result.rrms = np.array(new_result.rrms)
-    new_result.rrms.resize([num, num])
+    new_result.rrms.resize([sampling_num, sampling_num])
     new_result.resp_rms = resp_rms
     new_result.resp_rrms = resp_rrms
 
@@ -202,7 +222,7 @@ if True:
     rel_rrms = [100*(elem-read_result.resp_rrms)/read_result.resp_rrms for
                 elem in read_result.rrms]
     rel_rrms = np.array(rel_rrms)
-    rel_rrms.resize([read_result.num, read_result.num])
+    rel_rrms.resize([read_result.sampling_num, read_result.sampling_num])
 
     # Non-ESP charge and its minimized ratio
     charges.update_with_charges(charge_type, charge_log_fn, molecule)
@@ -211,7 +231,7 @@ if True:
     # Scan roughly various ratios to find bracket for minimization
     heavy_args = (g.field, path, temp_output_path, esp_fn, True)
     heavy_result, indicator_charge, ratio_values = resp.eval_ratios(
-        'heavy', (0, 2), start_charges, 10, 13, heavy_args)
+        'heavy', (0, 2), start_charges, 10, vary_label2, heavy_args)
     # Minimization
     heavy_args = (start_charges, g.field, path, temp_output_path,
                   esp_fn, False, True)
@@ -223,39 +243,38 @@ if True:
     if False:
         fig = plt.figure()
         ax = fig.gca(projection='3d')
-        surf = ax.plot_surface(read_result.n_inp, read_result.c_inp,
+        surf = ax.plot_surface(read_result.inp2, read_result.inp1,
                                read_result.rrms, cmap=cm.plasma, rstride=1,
                                cstride=1)
         fig.colorbar(surf, label="RRMSE at fitting points")
-        plot_common()
+        plot_common(vary_label2, vary_label1, molecule, title)
         plt.show()
         plt.close()
 
     # Presentation: 2D contour
     if True:
         levels = [1, 5, 10, 20, 30, 50, 100]
-        CS = plt.contour(read_result.n_inp, read_result.c_inp, rel_rrms,
+        CS = plt.contour(read_result.inp2, read_result.inp1, rel_rrms,
                          levels, rstride=1, ctride=1, inline=1, colors='k')
         plt.clabel(CS, fmt="%1.0f", inline=1, fontsize=10, colors='b')
         axes = plt.gca()
 
-        # Change axes here:
-        axes.set_xlim([-0.5, 1])
-        axes.set_ylim([-1, 0])
+        axes.set_xlim(xlim2)
+        axes.set_ylim(xlim1)
         plt.axes().set_aspect('equal')
 
-        # Add non-esp point. The indices are for N13 and C1 in TMA+
-        new_point = (molecule[12].charges[charge_type],
-                     molecule[0].charges[charge_type])
+        # Add non-esp point
+        new_point = (molecule[vary_label2-1].charges[charge_type],
+                     molecule[vary_label1-1].charges[charge_type])
         plt.scatter(*new_point)
         # Non-esp ratio charge point
-        plt.scatter(heavy_min_ratio*start_charges[12],
-                    heavy_min_ratio*start_charges[0])
+        plt.scatter(heavy_min_ratio*start_charges[vary_label2-1],
+                    heavy_min_ratio*start_charges[vary_label1-1])
         # Add ratio line
         y_coord = axes.get_xlim()[0]*new_point[1]/new_point[0]
         plt.plot((axes.get_xlim()[0], 0), (y_coord, 0))
 
-        plot_common()
+        plot_common(vary_label2, vary_label1, molecule, title)
         save_to = output_path + molecule_name + "_" + esp_charge_type
         plt.savefig(save_to + ".pdf", format='pdf')
         plt.close()
