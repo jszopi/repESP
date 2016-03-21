@@ -2,6 +2,7 @@
 # http://stackoverflow.com/a/5534865
 *
 !methane
-methane/*
-!methane/input/
-!methane/input/*
+!methane/*
+!methane/prep/*.com
+!methane/prep/*.wfx
+!methane/bader/*

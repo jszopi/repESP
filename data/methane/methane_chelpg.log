@@ -1,9 +1,9 @@
  Entering Gaussian System, Link 0=g09
- Input=methane_hly.com
- Output=methane_hly.log
+ Input=methane_chelpg.com
+ Output=methane_chelpg.log
  Initial command:
- /Applications/g09/l1.exe "/Users/js4811/Scratch/Gau-34484.inp" -scrdir="/Users/js4811/Scratch/"
- Entering Link 1 = /Applications/g09/l1.exe PID=     34485.
+ /Applications/g09/l1.exe "/Users/js4811/Scratch/Gau-5777.inp" -scrdir="/Users/js4811/Scratch/"
+ Entering Link 1 = /Applications/g09/l1.exe PID=      5778.
   
  Copyright (c) 1988,1990,1992,1993,1995,1998,2003,2009,2013,
             Gaussian, Inc.  All Rights Reserved.
@@ -76,32 +76,30 @@
  
  ******************************************
  Gaussian 09:  EM64M-G09RevD.01 24-Apr-2013
-                25-Feb-2016 
+                14-Mar-2016 
  ******************************************
- %chk=methane_hly.chk
- ------------------------------------------------
- # MP2/6-31+G(d,p) Geom=Check Pop=HLY IOp(6/50=1)
- ------------------------------------------------
+ %chk=methane_chelpg.chk
+ ----------------------------------------------------------------
+ # B3LYP/6-311G(d,p) Geom=Check Guess=Read Pop=CHelpG IOp(6/50=1)
+ ----------------------------------------------------------------
  1/29=2,38=1/1;
  2/12=2,40=1/2;
- 3/5=1,6=6,7=111,11=9,14=-4,16=1,25=1,30=1/1,2,3;
- 4//1;
- 5/5=2,38=5/2;
- 8/10=2/1;
- 9/16=-3/6;
- 6/7=2,8=2,9=2,10=2,15=8,20=5,50=1/1,2;
+ 3/5=4,6=6,7=101,11=2,14=-4,16=1,25=1,30=1,74=-5,116=-2/1,2,3;
+ 4/5=1/1;
+ 5/5=2,38=6/2;
+ 6/7=2,8=2,9=2,10=2,15=8,20=3,28=1,50=1/1,2;
  99/5=1,9=1/99;
- -----------
- Methane HLY
- -----------
- Structure from the checkpoint file:  "methane_hly.chk"
+ -------
+ Methane
+ -------
+ Structure from the checkpoint file:  "methane_chelpg.chk"
  Charge =  0 Multiplicity = 1
  Redundant internal coordinates found in file.
- C,0,0.0000000072,-0.0000000135,0.0000000203
- H,0,0.000000019,-0.0000000296,1.0868780363
- H,0,1.0247184238,-0.0000000793,-0.3622926628
- H,0,-0.5123592686,-0.8874321565,-0.3622926592
- H,0,-0.5123591454,0.8874322113,-0.3622926329
+ C,0,0.,0.,0.
+ H,0,0.,0.,1.0907549973
+ H,0,1.0283736736,0.,-0.3635849991
+ H,0,-0.5141868368,-0.890597726,-0.3635849991
+ H,0,-0.5141868368,0.890597726,-0.3635849991
  Recover connectivity data from disk.
                           Input orientation:                          
  ---------------------------------------------------------------------
@@ -109,18 +107,18 @@
  Number     Number       Type             X           Y           Z
  ---------------------------------------------------------------------
       1          6           0        0.000000    0.000000    0.000000
-      2          1           0        0.000000    0.000000    1.086878
-      3          1           0        1.024718    0.000000   -0.362293
-      4          1           0       -0.512359   -0.887432   -0.362293
-      5          1           0       -0.512359    0.887432   -0.362293
+      2          1           0        0.000000    0.000000    1.090755
+      3          1           0        1.028374    0.000000   -0.363585
+      4          1           0       -0.514187   -0.890598   -0.363585
+      5          1           0       -0.514187    0.890598   -0.363585
  ---------------------------------------------------------------------
                     Distance matrix (angstroms):
                     1          2          3          4          5
      1  C    0.000000
-     2  H    1.086878   0.000000
-     3  H    1.086878   1.774864   0.000000
-     4  H    1.086878   1.774864   1.774864   0.000000
-     5  H    1.086878   1.774864   1.774864   1.774864   0.000000
+     2  H    1.090755   0.000000
+     3  H    1.090755   1.781195   0.000000
+     4  H    1.090755   1.781195   1.781195   0.000000
+     5  H    1.090755   1.781195   1.781195   1.781195   0.000000
  Stoichiometry    CH4
  Framework group  TD[O(C),4C3(H)]
  Deg. of freedom     1
@@ -133,68 +131,48 @@
  Number     Number       Type             X           Y           Z
  ---------------------------------------------------------------------
       1          6           0        0.000000    0.000000    0.000000
-      2          1           0        0.627509    0.627509    0.627509
-      3          1           0       -0.627509   -0.627509    0.627509
-      4          1           0       -0.627509    0.627509   -0.627509
-      5          1           0        0.627509   -0.627509   -0.627509
+      2          1           0        0.629748    0.629748    0.629748
+      3          1           0       -0.629748   -0.629748    0.629748
+      4          1           0       -0.629748    0.629748   -0.629748
+      5          1           0        0.629748   -0.629748   -0.629748
  ---------------------------------------------------------------------
- Rotational constants (GHZ):    159.1848423    159.1848423    159.1848423
- Standard basis: 6-31+G(d,p) (6D, 7F)
- There are    12 symmetry adapted cartesian basis functions of A   symmetry.
- There are     9 symmetry adapted cartesian basis functions of B1  symmetry.
- There are     9 symmetry adapted cartesian basis functions of B2  symmetry.
- There are     9 symmetry adapted cartesian basis functions of B3  symmetry.
+ Rotational constants (GHZ):    158.0552397    158.0552397    158.0552397
+ Standard basis: 6-311G(d,p) (5D, 7F)
+ There are    13 symmetry adapted cartesian basis functions of A   symmetry.
+ There are    10 symmetry adapted cartesian basis functions of B1  symmetry.
+ There are    10 symmetry adapted cartesian basis functions of B2  symmetry.
+ There are    10 symmetry adapted cartesian basis functions of B3  symmetry.
  There are    12 symmetry adapted basis functions of A   symmetry.
- There are     9 symmetry adapted basis functions of B1  symmetry.
- There are     9 symmetry adapted basis functions of B2  symmetry.
- There are     9 symmetry adapted basis functions of B3  symmetry.
-    39 basis functions,    60 primitive gaussians,    39 cartesian basis functions
+ There are    10 symmetry adapted basis functions of B1  symmetry.
+ There are    10 symmetry adapted basis functions of B2  symmetry.
+ There are    10 symmetry adapted basis functions of B3  symmetry.
+    42 basis functions,    64 primitive gaussians,    43 cartesian basis functions
      5 alpha electrons        5 beta electrons
-       nuclear repulsion energy        13.4739814476 Hartrees.
+       nuclear repulsion energy        13.4260895057 Hartrees.
  NAtoms=    5 NActive=    5 NUniq=    2 SFac= 4.00D+00 NAtFMM=   60 NAOKFM=F Big=F
  Integral buffers will be    131072 words long.
- Raffenetti 1 integral format.
+ Raffenetti 2 integral format.
  Two-electron integral symmetry is turned on.
  One-electron integrals computed using PRISM.
- NBasis=    39 RedAO= T EigKep=  1.27D-02  NBF=    12     9     9     9
- NBsUse=    39 1.00D-06 EigRej= -1.00D+00 NBFU=    12     9     9     9
- ExpMin= 4.38D-02 ExpMax= 3.05D+03 ExpMxC= 4.57D+02 IAcc=2 IRadAn=         4 AccDes= 0.00D+00
- Harris functional with IExCor=  205 and IRadAn=       4 diagonalized for initial guess.
- HarFok:  IExCor=  205 AccDes= 0.00D+00 IRadAn=         4 IDoV= 1 UseB2=F ITyADJ=14
- ICtDFT=  3500011 ScaDFX=  1.000000  1.000000  1.000000  1.000000
- FoFCou: FMM=F IPFlag=           0 FMFlag=      100000 FMFlg1=           0
-         NFxFlg=           0 DoJE=T BraDBF=F KetDBF=T FulRan=T
-         wScrn=  0.000000 ICntrl=     500 IOpCl=  0 I1Cent=   200000004 NGrid=           0
-         NMat0=    1 NMatS0=      1 NMatT0=    0 NMatD0=    1 NMtDS0=    0 NMtDT0=    0
- Petite list used in FoFCou.
+ NBasis=    42 RedAO= T EigKep=  1.28D-02  NBF=    12    10    10    10
+ NBsUse=    42 1.00D-06 EigRej= -1.00D+00 NBFU=    12    10    10    10
+ Initial guess from the checkpoint file:  "methane_chelpg.chk"
+ B after Tr=     0.000000    0.000000    0.000000
+         Rot=    1.000000    0.000000    0.000000    0.000000 Ang=   0.00 deg.
  Initial guess orbital symmetries:
        Occupied  (A1) (A1) (T2) (T2) (T2)
        Virtual   (A1) (T2) (T2) (T2) (T2) (T2) (T2) (A1) (T2) (T2)
-                 (T2) (T2) (T2) (T2) (A1) (A1) (E) (E) (T1) (T1)
-                 (T1) (T2) (T2) (T2) (T2) (T2) (T2) (E) (E) (A1)
-                 (T2) (T2) (T2) (A1)
- The electronic state of the initial guess is 1-A1.
- Keep R1 ints in memory in symmetry-blocked form, NReq=1165467.
+                 (T2) (A1) (E) (E) (T1) (T1) (T1) (T2) (T2) (T2)
+                 (T2) (T2) (T2) (A1) (E) (E) (T2) (T2) (T2) (T2)
+                 (T2) (T2) (A1) (T2) (T2) (T2) (A1)
+ Keep R1 ints in memory in symmetry-blocked form, NReq=1297003.
  Requested convergence on RMS density matrix=1.00D-08 within 128 cycles.
  Requested convergence on MAX density matrix=1.00D-06.
  Requested convergence on             energy=1.00D-06.
  No special actions if energy rises.
- SCF Done:  E(RHF) =  -40.2021062792     A.U. after    8 cycles
-            NFock=  8  Conv=0.22D-08     -V/T= 2.0011
- ExpMin= 4.38D-02 ExpMax= 3.05D+03 ExpMxC= 4.57D+02 IAcc=3 IRadAn=         5 AccDes= 0.00D+00
- HarFok:  IExCor=  205 AccDes= 0.00D+00 IRadAn=         5 IDoV=-2 UseB2=F ITyADJ=14
- ICtDFT= 12500011 ScaDFX=  1.000000  1.000000  1.000000  1.000000
- Range of M.O.s used for correlation:     2    39
- NBasis=    39 NAE=     5 NBE=     5 NFC=     1 NFV=     0
- NROrb=     38 NOA=     4 NOB=     4 NVA=    34 NVB=    34
- Fully in-core method, ICMem=     6712644.
- JobTyp=1 Pass  1 fully in-core, NPsUse=  1.
- Spin components of T(2) and E(2):
-     alpha-alpha T2 =       0.4939288632D-02 E2=     -0.1498527905D-01
-     alpha-beta  T2 =       0.4150850776D-01 E2=     -0.1338752616D+00
-     beta-beta   T2 =       0.4939288632D-02 E2=     -0.1498527905D-01
- ANorm=    0.1025371681D+01
- E2 =    -0.1638458197D+00 EUMP2 =    -0.40365952098817D+02
+ Skip diagonalization as Alpha Fock matrix is already diagonal.
+ SCF Done:  E(RB3LYP) =  -40.5337484279     A.U. after    1 cycles
+            NFock=  1  Conv=0.72D-18     -V/T= 2.0062
 
  **********************************************************************
 
@@ -205,42 +183,43 @@
  Orbital symmetries:
        Occupied  (A1) (A1) (T2) (T2) (T2)
        Virtual   (A1) (T2) (T2) (T2) (T2) (T2) (T2) (A1) (T2) (T2)
-                 (T2) (T2) (T2) (T2) (A1) (A1) (E) (E) (T1) (T1)
-                 (T1) (T2) (T2) (T2) (T2) (T2) (T2) (E) (E) (A1)
-                 (T2) (T2) (T2) (A1)
+                 (T2) (A1) (E) (E) (T1) (T1) (T1) (T2) (T2) (T2)
+                 (T2) (T2) (T2) (A1) (E) (E) (T2) (T2) (T2) (T2)
+                 (T2) (T2) (A1) (T2) (T2) (T2) (A1)
  The electronic state is 1-A1.
- Alpha  occ. eigenvalues --  -11.20937  -0.94526  -0.54568  -0.54568  -0.54568
- Alpha virt. eigenvalues --    0.09246   0.12224   0.12224   0.12224   0.33366
- Alpha virt. eigenvalues --    0.33366   0.33366   0.41646   0.84906   0.84906
- Alpha virt. eigenvalues --    0.84906   1.17194   1.17194   1.17194   1.31234
- Alpha virt. eigenvalues --    1.35301   1.62737   1.62737   2.35026   2.35026
- Alpha virt. eigenvalues --    2.35026   2.41164   2.41164   2.41164   2.95756
- Alpha virt. eigenvalues --    2.95756   2.95756   3.25777   3.25777   3.54166
- Alpha virt. eigenvalues --    3.80295   3.80295   3.80295   4.84244
+ Alpha  occ. eigenvalues --  -10.15225  -0.69614  -0.39492  -0.39492  -0.39492
+ Alpha virt. eigenvalues --    0.05349   0.12415   0.12415   0.12415   0.27888
+ Alpha virt. eigenvalues --    0.27888   0.27888   0.54232   0.59121   0.59121
+ Alpha virt. eigenvalues --    0.59121   0.74272   0.96482   0.96482   1.45478
+ Alpha virt. eigenvalues --    1.45478   1.45478   1.46082   1.46082   1.46082
+ Alpha virt. eigenvalues --    1.88929   1.88929   1.88929   2.17293   2.31430
+ Alpha virt. eigenvalues --    2.31430   2.39765   2.39765   2.39765   2.52265
+ Alpha virt. eigenvalues --    2.52265   2.52265   2.86597   3.78695   3.78695
+ Alpha virt. eigenvalues --    3.78695  23.98878
           Condensed to atoms (all electrons):
                1          2          3          4          5
-     1  C    4.929091   0.398422   0.398422   0.398422   0.398422
-     2  H    0.398422   0.550063  -0.026393  -0.026393  -0.026393
-     3  H    0.398422  -0.026393   0.550063  -0.026393  -0.026393
-     4  H    0.398422  -0.026393  -0.026393   0.550063  -0.026393
-     5  H    0.398422  -0.026393  -0.026393  -0.026393   0.550063
+     1  C    4.827330   0.402474   0.402474   0.402474   0.402474
+     2  H    0.402474   0.566848  -0.026210  -0.026210  -0.026210
+     3  H    0.402474  -0.026210   0.566848  -0.026210  -0.026210
+     4  H    0.402474  -0.026210  -0.026210   0.566848  -0.026210
+     5  H    0.402474  -0.026210  -0.026210  -0.026210   0.566848
  Mulliken charges:
                1
-     1  C   -0.522779
-     2  H    0.130695
-     3  H    0.130695
-     4  H    0.130695
-     5  H    0.130695
+     1  C   -0.437226
+     2  H    0.109307
+     3  H    0.109307
+     4  H    0.109307
+     5  H    0.109307
  Sum of Mulliken charges =   0.00000
  Mulliken charges with hydrogens summed into heavy atoms:
                1
      1  C    0.000000
- Electronic spatial extent (au):  <R**2>=             35.7615
+ Electronic spatial extent (au):  <R**2>=             35.8686
  Charge=              0.0000 electrons
  Dipole moment (field-independent basis, Debye):
     X=              0.0000    Y=              0.0000    Z=              0.0000  Tot=              0.0000
  Quadrupole moment (field-independent basis, Debye-Ang):
-   XX=             -8.4681   YY=             -8.4681   ZZ=             -8.4681
+   XX=             -8.4621   YY=             -8.4621   ZZ=             -8.4621
    XY=              0.0000   XZ=              0.0000   YZ=              0.0000
  Traceless Quadrupole moment (field-independent basis, Debye-Ang):
    XX=              0.0000   YY=              0.0000   ZZ=              0.0000
@@ -248,20 +227,22 @@
  Octapole moment (field-independent basis, Debye-Ang**2):
   XXX=              0.0000  YYY=              0.0000  ZZZ=              0.0000  XYY=              0.0000
   XXY=              0.0000  XXZ=              0.0000  XZZ=              0.0000  YZZ=              0.0000
-  YYZ=              0.0000  XYZ=              0.6706
+  YYZ=              0.0000  XYZ=              0.7062
  Hexadecapole moment (field-independent basis, Debye-Ang**3):
- XXXX=            -16.6313 YYYY=            -16.6313 ZZZZ=            -16.6313 XXXY=              0.0000
+ XXXX=            -16.9938 YYYY=            -16.9938 ZZZZ=            -16.9938 XXXY=              0.0000
  XXXZ=              0.0000 YYYX=              0.0000 YYYZ=              0.0000 ZZZX=              0.0000
- ZZZY=              0.0000 XXYY=             -5.0752 XXZZ=             -5.0752 YYZZ=             -5.0752
+ ZZZY=              0.0000 XXYY=             -5.1633 XXZZ=             -5.1633 YYZZ=             -5.1633
  XXYZ=              0.0000 YYXZ=              0.0000 ZZXY=              0.0000
- N-N= 1.347398144763D+01 E-N=-1.199274392727D+02  KE= 4.015864174012D+01
- Symmetry A    KE= 3.447395697794D+01
- Symmetry B1   KE= 1.894894920727D+00
- Symmetry B2   KE= 1.894894920727D+00
- Symmetry B3   KE= 1.894894920727D+00
- Generate Potential Derived Charges using the Hu-Lu-Yang model:
- IRhTyp=5 IRadAn=         4 Sigma=    0.800 Ln(Rho0)=    -9.00 ThrGrd= 1.00D-08 Tiny= 1.00D-08
-      36028 gridpoints compressed to      9002.
+ N-N= 1.342608950571D+01 E-N=-1.201115454854D+02  KE= 4.028443906125D+01
+ Symmetry A    KE= 3.444400804457D+01
+ Symmetry B1   KE= 1.946810338895D+00
+ Symmetry B2   KE= 1.946810338895D+00
+ Symmetry B3   KE= 1.946810338895D+00
+ Breneman (CHELPG) radii used.
+ Generate Potential Derived Charges using the Breneman model, NDens= 1.
+ Grid spacing= 0.300 Box extension= 2.800
+ NStep X,Y,Z=   24     24     24   Total possible points=       13824
+ Number of Points to Fit=    5360
 
  **********************************************************************
 
@@ -270,26 +251,26 @@
  **********************************************************************
 
        Atomic Center    1 is at   0.000000  0.000000  0.000000
-       Atomic Center    2 is at   0.627509  0.627509  0.627509
-       Atomic Center    3 is at  -0.627509 -0.627509  0.627509
-       Atomic Center    4 is at  -0.627509  0.627509 -0.627509
-       Atomic Center    5 is at   0.627509 -0.627509 -0.627509
-    9002 points will be used for fitting atomic charges
+       Atomic Center    2 is at   0.629748  0.629748  0.629748
+       Atomic Center    3 is at  -0.629748 -0.629748  0.629748
+       Atomic Center    4 is at  -0.629748  0.629748 -0.629748
+       Atomic Center    5 is at   0.629748 -0.629748 -0.629748
+    5360 points will be used for fitting atomic charges
  Fitting point charges to electrostatic potential
- Charges from ESP fit, RMS=   0.00010 RRMS=   0.27350:
+ Charges from ESP fit, RMS=   0.00121 RRMS=   0.62228:
  ESP charges:
                1
-     1  C   -0.516668
-     2  H    0.129167
-     3  H    0.129167
-     4  H    0.129167
-     5  H    0.129167
+     1  C   -0.344877
+     2  H    0.086219
+     3  H    0.086219
+     4  H    0.086219
+     5  H    0.086219
  Sum of ESP charges =   0.00000
  ESP charges with hydrogens summed into heavy atoms:
                1
      1  C    0.000000
  Charge=   0.00000 Dipole=     0.0000     0.0000     0.0000 Tot=     0.0000
- Writing Antechamber ESP file "methane_hly_resp.esp"
+ Writing Antechamber ESP file "methane_chelpg.esp"
  -----------------------------------------------------------------
 
               Electrostatic Properties (Atomic Units)
@@ -298,26 +279,25 @@
     Center     Electric         -------- Electric Field --------
                Potential          X             Y             Z
  -----------------------------------------------------------------
-    1 Atom    -14.746053
-    2 Atom     -1.125789
-    3 Atom     -1.125789
-    4 Atom     -1.125789
-    5 Atom     -1.125789
+    1 Atom    -14.793728
+    2 Atom     -1.124251
+    3 Atom     -1.124251
+    4 Atom     -1.124251
+    5 Atom     -1.124251
  -----------------------------------------------------------------
 
  Test job not archived.
- 1\1\GINC-CH-NETTLE\SP\RMP2-FC\6-31+G(d,p)\C1H4\JS4811\25-Feb-2016\0\\#
-  MP2/6-31+G(d,p) Geom=Check Pop=HLY IOp(6/50=1)\\Methane HLY\\0,1\C,0,
- 0.0000000072,-0.0000000135,0.0000000203\H,0,0.000000019,-0.0000000296,
- 1.0868780363\H,0,1.0247184238,-0.0000000793,-0.3622926628\H,0,-0.51235
- 92686,-0.8874321565,-0.3622926592\H,0,-0.5123591454,0.8874322113,-0.36
- 22926329\\Version=EM64M-G09RevD.01\State=1-A1\HF=-40.2021063\MP2=-40.3
- 659521\RMSD=2.159e-09\PG=TD [O(C1),4C3(H1)]\\@
+ 1\1\GINC-CH-NETTLE\SP\RB3LYP\6-311G(d,p)\C1H4\JS4811\14-Mar-2016\0\\# 
+ B3LYP/6-311G(d,p) Geom=Check Guess=Read Pop=CHelpG IOp(6/50=1)\\Methan
+ e\\0,1\C,0,0.,0.,0.\H,0,0.,0.,1.0907549973\H,0,1.0283736736,0.,-0.3635
+ 849991\H,0,-0.5141868368,-0.890597726,-0.3635849991\H,0,-0.5141868368,
+ 0.890597726,-0.3635849991\\Version=EM64M-G09RevD.01\State=1-A1\HF=-40.
+ 5337484\RMSD=7.196e-19\Dipole=0.,0.,0.\Quadrupole=0.,0.,0.,0.,0.,0.\PG
+ =TD [O(C1),4C3(H1)]\\@
 
 
- DEMOCRATS BUY MOST OF THE BOOKS THAT HAVE BEEN
- BANNED; REPUBLICANS FORM CENSORSHIP COMMITTEES AND
- READ THEM AS A GROUP.
- Job cpu time:       0 days  0 hours  0 minutes  1.0 seconds.
+ Change starts when someone sees the next step.
+                            -- William Drayton
+ Job cpu time:       0 days  0 hours  0 minutes  0.7 seconds.
  File lengths (MBytes):  RWF=      5 Int=      0 D2E=      0 Chk=      1 Scr=      1
- Normal termination of Gaussian 09 at Thu Feb 25 12:47:06 2016.
+ Normal termination of Gaussian 09 at Mon Mar 14 11:23:58 2016.
