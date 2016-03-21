@@ -6,3 +6,6 @@
 !methane/prep/*.com
 !methane/prep/*.wfx
 !methane/bader/*
+!NMe3H_plus
+!NMe3H_plus/*
+NMe3H_plus/*.cub
