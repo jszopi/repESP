@@ -19,8 +19,6 @@ molecule_name = 'tma'
 path = '../data/' + molecule_name + '/'
 output_path = path + "esp_fit" + '_' + esp_charge_type + '/'
 resp_output_path = output_path + 'resp_calcs/'
-os.mkdir(output_path)
-os.mkdir(resp_output_path)
 
 charge_type = 'nbo'
 charge_log_fn = path + molecule_name + "_" + charge_type + ".log"
@@ -43,29 +41,6 @@ g = resp_helpers.G09_esp(input_esp)
 # Write the .esp file in the correct format expected by the `resp` program
 if False:
     g.field.write_to_file(output_esp, g.molecule)
-
-print("\nNOTE: Running unrestrained RESP to fit ESP with equivalence:")
-esp_equiv_molecule = resp.run_resp(
-    path, resp_output_path + 'unrest', resp_type='unrest',
-    esp_fn=esp_fn)
-
-charges.update_with_charges(esp_charge_type, log_fn, g.molecule)
-charge_rms, charge_rrms = rms_and_rep(g.field, g.molecule, esp_charge_type)[:2]
-resp_rms, resp_rrms = rms_and_rep(g.field, esp_equiv_molecule, 'resp')[:2]
-
-print("\nThe molecule with {0} charges:".format(esp_charge_type.upper()))
-print(" RMS: {0:.5f}".format(charge_rms))
-print("RRMS: {0:.5f}".format(charge_rrms))
-# The above value should be compared with that in the log file.
-for atom in g.molecule:
-    atom.print_with_charge(esp_charge_type)
-
-print("\nThe molecule with equivalenced {0} charges (unrestrained RESP):"
-      .format(esp_charge_type.upper()))
-print(" RMS: {0:.5f}".format(resp_rms))
-print("RRMS: {0:.5f}".format(resp_rrms))
-for atom in esp_equiv_molecule:
-    atom.print_with_charge('resp')
 
 # Division into Voronoi basins:
 # parent_atom, dist = rep_esp.calc_non_grid_field(g.molecule, g.field.points,
@@ -91,7 +66,55 @@ import copy
 from itertools import chain
 molecule = copy.deepcopy(g.molecule)
 
-# One charge: 2D plot
+
+class Result(object):
+
+    def __init__(self, num, c_xlim, n_xlim):
+        self.num = num
+        self.c_xlim = c_xlim
+        self.n_xlim = n_xlim
+        self.c_inp, self.n_inp = self.get_meshgrid(c_xlim, n_xlim, num)
+        self.rrms = []
+
+    @staticmethod
+    def get_meshgrid(c_xlim, n_xlim, num):
+        c_charges = linspace(c_xlim[0], c_xlim[1], num=num)
+        n_charges = linspace(n_xlim[0], n_xlim[1], num=num)
+        return meshgrid(c_charges, n_charges)
+
+
+# Calculation --- set to True if running the 'one charge variation' version.
+# Also set to True when performing the calculations for the 'two charges'
+# version. Then you must also switch on the other calculation section.
+if True:
+    os.mkdir(output_path)
+    os.mkdir(resp_output_path)
+
+    print("\nNOTE: Running unrestrained RESP to fit ESP with equivalence:")
+    esp_equiv_molecule = resp.run_resp(
+        path, resp_output_path + 'unrest', resp_type='unrest',
+        esp_fn=esp_fn)
+
+    charges.update_with_charges(esp_charge_type, log_fn, g.molecule)
+    charge_rms, charge_rrms = rms_and_rep(g.field, g.molecule,
+                                          esp_charge_type)[:2]
+    resp_rms, resp_rrms = rms_and_rep(g.field, esp_equiv_molecule, 'resp')[:2]
+
+    print("\nThe molecule with {0} charges:".format(esp_charge_type.upper()))
+    print(" RMS: {0:.5f}".format(charge_rms))
+    print("RRMS: {0:.5f}".format(charge_rrms))
+    # The above value should be compared with that in the log file.
+    for atom in g.molecule:
+        atom.print_with_charge(esp_charge_type)
+
+    print("\nThe molecule with equivalenced {0} charges (unrestrained RESP):"
+          .format(esp_charge_type.upper()))
+    print(" RMS: {0:.5f}".format(resp_rms))
+    print("RRMS: {0:.5f}".format(resp_rrms))
+    for atom in esp_equiv_molecule:
+        atom.print_with_charge('resp')
+
+# One charge (e.g. methane, water): 2D plot
 if False:
     vary_atom_label = 1
     xlim = (-1, 0.5)
@@ -138,23 +161,8 @@ def plot_common():
     plt.xlabel("Charge on N")
     plt.ylabel("Charge on C")
 
-
-class Result(object):
-
-    def __init__(self, num, c_xlim, n_xlim):
-        self.num = num
-        self.c_xlim = c_xlim
-        self.n_xlim = n_xlim
-        self.c_inp, self.n_inp = self.get_meshgrid(c_xlim, n_xlim, num)
-        self.rrms = []
-
-    @staticmethod
-    def get_meshgrid(c_xlim, n_xlim, num):
-        c_charges = linspace(c_xlim[0], c_xlim[1], num=num)
-        n_charges = linspace(n_xlim[0], n_xlim[1], num=num)
-        return meshgrid(c_charges, n_charges)
-
-# 2 charges: Calculation
+# 2 charges (NMe3H_plus, NMe4_plus etc.): Calculation. Note that the previous
+# calculation section must also be switched on.
 if True:
     # Change input values here
     net_charge = 1
@@ -180,6 +188,8 @@ if True:
 
     new_result.rrms = np.array(new_result.rrms)
     new_result.rrms.resize([num, num])
+    new_result.resp_rms = resp_rms
+    new_result.resp_rrms = resp_rrms
 
     with open(output_path + "result.p", "wb") as f:
         pickle.dump(new_result, f)
@@ -189,7 +199,8 @@ if True:
     with open(output_path + "result.p", "rb") as f:
         read_result = pickle.load(f)
 
-    rel_rrms = [100*(elem-resp_rrms)/resp_rrms for elem in read_result.rrms]
+    rel_rrms = [100*(elem-read_result.resp_rrms)/read_result.resp_rrms for
+                elem in read_result.rrms]
     rel_rrms = np.array(rel_rrms)
     rel_rrms.resize([read_result.num, read_result.num])
 
