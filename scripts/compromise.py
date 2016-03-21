@@ -20,9 +20,12 @@ charge_type = 'nbo'
 
 molecule_name = 'methane'
 indicator_label = 1
+# molecule_name = 'NMe3H_plus'
+# indicator_label = 13
 
-path = '../data/methane/input/'
-output_path = path + "compromise" + '_' + charge_type + '/'
+path = '../data/' + molecule_name + '/'
+output_path = path + "compromise_{0}_and_{1}/".format(charge_type,
+                                                      esp_charge_type)
 os.mkdir(output_path)
 esp_fn = molecule_name + "_" + esp_charge_type + '.esp'
 
@@ -170,7 +173,7 @@ def plot(result_list, heavy, min_ratio, min_ratio_rrms):
         title += "\nset on ALL atoms (only possible for neutral molecules)"
 
     plt.title(title, y=1.15)
-    plt.show()
+    plt.savefig(output_path+"{0}.pdf".format('heavy' if heavy else 'regular'))
     plt.close()
 
 molecule_name = graphs.pretty_molecule_name(molecule_name)
