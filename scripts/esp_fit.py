@@ -14,8 +14,8 @@ import pickle
 esp_charge_type = 'mk'
 # esp_charge_type = 'chelpg'
 
+molecule_name = 'NMe3H_plus'
 # molecule_name = 'methane'
-molecule_name = 'tma'
 path = '../data/' + molecule_name + '/'
 output_path = path + "esp_fit" + '_' + esp_charge_type + '/'
 resp_output_path = output_path + 'resp_calcs/'
@@ -53,7 +53,7 @@ if False:
     for dimension in (3, 2):
         graphs.plot_points(
             g.field, dimension, title=title, molecule=g.molecule,
-            plane_eqn=graphs.plane_through_atoms(g.molecule, 1, 3, 17),
+            plane_eqn=graphs.plane_through_atoms(g.molecule, 1, 13, 14),
             dist_thresh=0.5, axes_limits=[(-5, 5)]*dimension,
             color_span=color_span)
         graphs.plot_points(
@@ -166,7 +166,7 @@ def plot_common():
 if True:
     # Change input values here
     net_charge = 1
-    charge_dict = lambda n, c: {17: n, 1: c, 5: c, 9: c, 13: c}
+    charge_dict = lambda n, c: {13: n, 1: c, 5: c, 9: c}
     c_xlim = (-1, 0.5)
     n_xlim = (-0.5, 1)
     num = 51
@@ -211,7 +211,7 @@ if True:
     # Scan roughly various ratios to find bracket for minimization
     heavy_args = (g.field, path, temp_output_path, esp_fn, True)
     heavy_result, indicator_charge, ratio_values = resp.eval_ratios(
-        'heavy', (0, 2), start_charges, 10, 17, heavy_args)
+        'heavy', (0, 2), start_charges, 10, 13, heavy_args)
     # Minimization
     heavy_args = (start_charges, g.field, path, temp_output_path,
                   esp_fn, False, True)
@@ -244,12 +244,12 @@ if True:
         axes.set_ylim([-1, 0])
         plt.axes().set_aspect('equal')
 
-        # Add non-esp point. The indices are for N17 and C1 in TMA+
-        new_point = (molecule[16].charges[charge_type],
+        # Add non-esp point. The indices are for N13 and C1 in TMA+
+        new_point = (molecule[12].charges[charge_type],
                      molecule[0].charges[charge_type])
         plt.scatter(*new_point)
         # Non-esp ratio charge point
-        plt.scatter(heavy_min_ratio*start_charges[16],
+        plt.scatter(heavy_min_ratio*start_charges[12],
                     heavy_min_ratio*start_charges[0])
         # Add ratio line
         y_coord = axes.get_xlim()[0]*new_point[1]/new_point[0]
