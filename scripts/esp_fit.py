@@ -23,6 +23,7 @@ os.mkdir(output_path)
 common_fn = input_path + molecule_name + "_" + esp_charge_type
 log_fn = common_fn + ".log"
 input_esp = common_fn + "_resp.esp"
+esp_fn = molecule_name + "_" + esp_charge_type + "_resp.esp"
 output_esp = common_fn + "_resp_reformatted.esp"
 
 print("To see a demonstration of all the capabilities of the script, change "
@@ -40,7 +41,7 @@ if False:
 print("\nNOTE: Running unrestrained RESP to fit ESP with equivalence:")
 esp_equiv_molecule = resp.run_resp(
     input_path, output_path + 'unrest', resp_type='unrest',
-    esp_fn=molecule_name + "_" + charge_type + '_resp.esp')
+    esp_fn=esp_fn)
 
 charges.update_with_charges(esp_charge_type, log_fn, g.molecule)
 charge_rms, charge_rrms = rms_and_rep(g.field, g.molecule, esp_charge_type)[:2]
@@ -100,8 +101,7 @@ if False:
                                              len(molecule))
         updated_molecule = resp.run_resp(
             input_path, output_path + "C{0:+.3f}".format(charge),
-            resp_type='h_only', inp_charges=inp_charges, esp_fn=molecule_name +
-            "_" + charge_type + '_resp.esp')
+            resp_type='h_only', inp_charges=inp_charges, esp_fn=esp_fn)
 
         rrms_val = rms_and_rep(g.field, updated_molecule, 'resp')[1]
         result.append(rrms_val)
@@ -163,8 +163,7 @@ if True:
         inp_charges = resp.charges_from_dict(charge_dict(n, c), len(molecule))
         updated_molecule = resp.run_resp(
             input_path, output_path + "N{0:+.3f}C{1:+.3f}".format(n, c),
-            resp_type='h_only', inp_charges=inp_charges, esp_fn=molecule_name +
-            "_" + charge_type + "_resp.esp")
+            resp_type='h_only', inp_charges=inp_charges, esp_fn=esp_fn)
 
         rrms_val = rms_and_rep(g.field, updated_molecule, 'resp')[1]
         new_result.rrms.append(rrms_val)
