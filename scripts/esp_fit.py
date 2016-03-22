@@ -210,6 +210,7 @@ if True:
     new_result.rrms.resize([sampling_num, sampling_num])
     new_result.resp_rms = resp_rms
     new_result.resp_rrms = resp_rrms
+    new_result.esp_equiv_molecule = esp_equiv_molecule
 
     with open(output_path + "result.p", "wb") as f:
         pickle.dump(new_result, f)
@@ -273,6 +274,10 @@ if True:
         # Add ratio line
         y_coord = axes.get_xlim()[0]*new_point[1]/new_point[0]
         plt.plot((axes.get_xlim()[0], 0), (y_coord, 0))
+
+        plt.scatter(
+            read_result.esp_equiv_molecule[vary_label2-1].charges['resp'],
+            read_result.esp_equiv_molecule[vary_label1-1].charges['resp'])
 
         plot_common(vary_label2, vary_label1, molecule, title)
         save_to = output_path + molecule_name + "_" + esp_charge_type
