@@ -456,7 +456,7 @@ def equivalence(molecule, charge_type, input_dir, respin1_fn="",
 
 
 def eval_heavy_ratio(ratio, start_charges, field, path, output_path, esp_fn,
-                     verbose=True, optimization=False):
+                     optimization=False, verbose=True):
     inp_charges = [charge*ratio for charge in start_charges]
     if optimization:
         # Generate folders with random names --- we don't care about the exact
@@ -469,7 +469,7 @@ def eval_heavy_ratio(ratio, start_charges, field, path, output_path, esp_fn,
         inp_charges=inp_charges, esp_fn=esp_fn, check_ivary=verbose)
     rrms_val = rms_and_rep(field, updated_molecule, 'resp')[1]
 
-    if verbose:
+    if verbose > 1:
         print("\nHEAVY: RATIO: {0:.3f}, RRMS: {1:.3f}".format(ratio, rrms_val))
         for atom in updated_molecule:
             atom.print_with_charge('resp')
@@ -482,7 +482,7 @@ def eval_ratio(ratio, start_charges, molecule, field, verbose=True):
     charges._update_molecule_with_charges(molecule, inp_charges, 'temp')
     rrms_val = rms_and_rep(field, molecule, 'temp')[1]
 
-    if verbose:
+    if verbose > 1:
         print("\nREGULAR: RATIO: {0:.3f}, RRMS: {1:.3f}".format(ratio,
                                                                 rrms_val))
         for atom in molecule:
@@ -512,7 +512,9 @@ def _get_eval_func(eval_type):
 
 def minimize_ratio(eval_type, ratio_values, result_list, eval_func_args):
     eval_func = _get_eval_func(eval_type)
-    print("\nMINIMIZATION begins.\n")
+    # eval_func_args should not contain verbosity information.
+    # Add False for verbosity. Conversion to tuple proved necessary:
+    eval_func_args = tuple(list(eval_func_args) + [False])
     bracket = _find_bracket(ratio_values, result_list)
     tol = 1e-6/min(result_list)
     minimized = minimize_scalar(eval_func, bracket=bracket,
@@ -529,7 +531,8 @@ def minimize_ratio(eval_type, ratio_values, result_list, eval_func_args):
 
 
 def eval_ratios(eval_type, ratio_limits, start_charges, sampling_num,
-                indicator_label, eval_func_args):
+                indicator_label, eval_func_args, first_verbose=True):
+    # eval_func_args should not contain verbosity information.
     indicator_charge = []
     result = []
     ratio_values = np.linspace(*ratio_limits, num=sampling_num)
@@ -537,7 +540,9 @@ def eval_ratios(eval_type, ratio_limits, start_charges, sampling_num,
 
     for ratio in ratio_values:
         indicator_charge.append(ratio*start_charges[indicator_label-1])
-        rrms_val = eval_func(ratio, start_charges, *eval_func_args)
+        rrms_val = eval_func(ratio, start_charges, *eval_func_args,
+                             verbose=first_verbose)
+        first_verbose = False
         result.append(rrms_val)
 
     return result, indicator_charge, ratio_values
