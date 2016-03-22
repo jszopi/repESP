@@ -57,7 +57,7 @@ output_esp = common_fn + ".esp"
 print("To see a demonstration of all the capabilities of the script, change "
       "the hard-coded conditional values to True. You can also change the "
       "charges type between MK and CHelp(G).")
-print("\nMolecule:    ", molecule_name.capitalize())
+print("\nMolecule:    ", molecule_name)
 print("Charge type: ", esp_charge_type.upper(), '\n')
 
 g = resp_helpers.G09_esp(input_esp)
@@ -70,7 +70,7 @@ if False:
 # parent_atom, dist = rep_esp.calc_non_grid_field(g.molecule, g.field.points,
 #                                                 'dist')
 
-title = molecule_name.capitalize() + " " + esp_charge_type.upper()
+title = molecule_name + " " + esp_charge_type.upper()
 # Plot the grid in 3 and 2D:
 if False:
     color_span = [min(g.field.values), max(g.field.values)]
@@ -256,7 +256,8 @@ if True:
     if True:
         levels = [1, 5, 10, 20, 30, 50, 100]
         CS = plt.contour(read_result.inp2, read_result.inp1, rel_rrms,
-                         levels, rstride=1, ctride=1, inline=1, colors='k')
+                         levels, rstride=1, ctride=1, inline=1, colors='k',
+                         zorder=1)
         plt.clabel(CS, fmt="%1.0f", inline=1, fontsize=10, colors='b')
         axes = plt.gca()
 
@@ -267,17 +268,19 @@ if True:
         # Add non-esp point
         new_point = (molecule[vary_label2-1].charges[charge_type],
                      molecule[vary_label1-1].charges[charge_type])
-        plt.scatter(*new_point)
+        plt.scatter(*new_point, zorder=2)
         # Non-esp ratio charge point
         plt.scatter(heavy_min_ratio*start_charges[vary_label2-1],
-                    heavy_min_ratio*start_charges[vary_label1-1])
+                    heavy_min_ratio*start_charges[vary_label1-1],
+                    marker='D', zorder=2)
         # Add ratio line
         y_coord = axes.get_xlim()[0]*new_point[1]/new_point[0]
-        plt.plot((axes.get_xlim()[0], 0), (y_coord, 0))
+        plt.plot((axes.get_xlim()[0], 0), (y_coord, 0), 'r--', zorder=1)
 
         plt.scatter(
             read_result.esp_equiv_molecule[vary_label2-1].charges['resp'],
-            read_result.esp_equiv_molecule[vary_label1-1].charges['resp'])
+            read_result.esp_equiv_molecule[vary_label1-1].charges['resp'],
+            marker='x', zorder=2)
 
         plot_common(vary_label2, vary_label1, molecule, title)
         save_to = output_path + molecule_name + "_" + esp_charge_type
