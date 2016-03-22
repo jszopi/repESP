@@ -147,6 +147,7 @@ if False:
     charges = linspace(xlim1[0], xlim1[1], num=sampling_num)
 
     result = []
+    check_ivary = True
     for i, charge in enumerate(charges):
         if not i % 10:
             print("{0:.2f}%".format(100*i/sampling_num))
@@ -155,7 +156,11 @@ if False:
         updated_molecule = resp.run_resp(
             path, resp_output_path + "{0}{1:+.3f}".format(
                 get_atom_signature(molecule, vary_label1), charge),
-            resp_type='h_only', inp_charges=inp_charges, esp_fn=esp_fn)
+            resp_type='h_only', inp_charges=inp_charges, esp_fn=esp_fn,
+            check_ivary=check_ivary)
+        # check_ivary is supposed to be True only on the first run
+        if check_ivary:
+            check_ivary = False
         rrms_val = rms_and_rep(g.field, updated_molecule, 'resp')[1]
         result.append(rrms_val)
 
@@ -191,13 +196,20 @@ if True:
     new_result = Result(sampling_num, xlim1, xlim2)
 
     i = 0
+    check_ivary = True
     for c, n in zip(new_result.inp1.flat, new_result.inp2.flat):
         inp_charges = resp.charges_from_dict(charge_dict(c, n), len(molecule))
         updated_molecule = resp.run_resp(
             path, resp_output_path + "{0}{1:+.3f}{2}{3:+.3f}".format(
                 get_atom_signature(molecule, vary_label1), c,
                 get_atom_signature(molecule, vary_label2), n),
-            resp_type='h_only', inp_charges=inp_charges, esp_fn=esp_fn)
+            resp_type='h_only', inp_charges=inp_charges, esp_fn=esp_fn,
+            check_ivary=check_ivary)
+
+        # check_ivary is supposed to be True only on the first run
+        if check_ivary:
+            check_ivary = False
+            print()
 
         rrms_val = rms_and_rep(g.field, updated_molecule, 'resp')[1]
         new_result.rrms.append(rrms_val)
