@@ -230,12 +230,13 @@ if True:
     start_charges = [atom.charges[charge_type] for atom in molecule]
     os.mkdir(temp_output_path)
     # Scan roughly various ratios to find bracket for minimization
-    heavy_args = (g.field, path, temp_output_path, esp_fn, True)
+    heavy_args = (g.field, path, temp_output_path, esp_fn, False)
     heavy_result, indicator_charge, ratio_values = resp.eval_ratios(
-        'heavy', (0, 2), start_charges, 10, vary_label2, heavy_args)
+        'heavy', (0, 2), start_charges, 10, vary_label2, heavy_args,
+        first_verbose=True)
     # Minimization
     heavy_args = (start_charges, g.field, path, temp_output_path,
-                  esp_fn, False, True)
+                  esp_fn, True)  # True for optimization
     heavy_min_ratio, heavy_min_ratio_rrms = resp.minimize_ratio(
         'heavy', ratio_values, heavy_result, heavy_args)
     shutil.rmtree(temp_output_path)

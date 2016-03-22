@@ -93,29 +93,30 @@ start_charges = [atom.charges[charge_type + '_equiv'] for atom in g.molecule]
 num = 50
 ratio_limits = (0, 1.5)
 
-heavy_args = (g.field, path, resp_output_path, esp_fn, True)
+heavy_args = (g.field, path, resp_output_path, esp_fn, False)
 heavy_result, indicator_charge, ratio_values = resp.eval_ratios(
-    'heavy', ratio_limits, start_charges, num, indicator_label, heavy_args)
+    'heavy', ratio_limits, start_charges, num, indicator_label, heavy_args,
+    first_verbose=True)
 
 if zero_net_charge:
     # Scaling all charges is only possible with neutral molecules as
     # otherwise in this case there's no free hydrogens to compensate as in
     # the 'heavy_only' version
-    regular_args = (g.molecule, g.field, True)
+    regular_args = (g.molecule, g.field)
     result = resp.eval_ratios('regular', ratio_limits, start_charges, num,
-                              indicator_label, regular_args)[0]
+                              indicator_label, regular_args,
+                              first_verbose=True)[0]
 
 # RATIO MINIMIZATION
 
 # Most arguments here are the same as in the loop with minor changes specific
 # to an optimization run (output directory, verbosity)
-heavy_args = (start_charges, g.field, path, min_resp_output_path, esp_fn,
-              False, True)
+heavy_args = (start_charges, g.field, path, min_resp_output_path, esp_fn, True)
 heavy_min_ratio, heavy_min_ratio_rrms = resp.minimize_ratio(
     'heavy', ratio_values, heavy_result, heavy_args)
 
 if zero_net_charge:
-    regular_args = (start_charges, g.molecule, g.field, False)
+    regular_args = (start_charges, g.molecule, g.field)
     reg_min_ratio, reg_min_ratio_rrms = resp.minimize_ratio(
         'regular', ratio_values, result, regular_args)
 
