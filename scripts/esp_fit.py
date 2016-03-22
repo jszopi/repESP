@@ -7,6 +7,7 @@ from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
 import os
 import shutil
+import sys
 
 import numpy as np
 import pickle
@@ -194,13 +195,13 @@ def plot_common(x_atom_label, y_atom_label, molecule, title):
 # calculation section must also be switched on.
 if True:
     new_result = Result(sampling_num, xlim1, xlim2)
-
     i = 0
     check_ivary = True
+    print("\nEvaluating the meshgrid of H-only RESPs.")
     for c, n in zip(new_result.inp1.flat, new_result.inp2.flat):
         inp_charges = resp.charges_from_dict(charge_dict(c, n), len(molecule))
         updated_molecule = resp.run_resp(
-            path, resp_output_path + "{0}{1:+.3f}{2}{3:+.3f}".format(
+            path, resp_output_path + "{0}{1:+.3f}-{2}{3:+.3f}".format(
                 get_atom_signature(molecule, vary_label1), c,
                 get_atom_signature(molecule, vary_label2), n),
             resp_type='h_only', inp_charges=inp_charges, esp_fn=esp_fn,
@@ -213,10 +214,11 @@ if True:
 
         rrms_val = rms_and_rep(g.field, updated_molecule, 'resp')[1]
         new_result.rrms.append(rrms_val)
-        for atom in updated_molecule:
-            atom.print_with_charge('resp')
+
         i += 1
-        print("{0:.2f} %".format(100*i/sampling_num**2))
+        sys.stdout.write("\rMeshgrid progress: {0:.2f} %".format(
+            100*i/sampling_num**2))
+        sys.stdout.flush()
 
     new_result.rrms = np.array(new_result.rrms)
     new_result.rrms.resize([sampling_num, sampling_num])
@@ -242,11 +244,13 @@ if True:
     start_charges = [atom.charges[charge_type] for atom in molecule]
     os.mkdir(temp_output_path)
     # Scan roughly various ratios to find bracket for minimization
+    print("\nScanning roughly various ratios. This shouldn't take long.")
     heavy_args = (g.field, path, temp_output_path, esp_fn, False)
     heavy_result, indicator_charge, ratio_values = resp.eval_ratios(
         'heavy', (0, 2), start_charges, 10, vary_label2, heavy_args,
         first_verbose=True)
     # Minimization
+    print("\nStarting minimization of charge ratio.")
     heavy_args = (start_charges, g.field, path, temp_output_path,
                   esp_fn, True)  # True for optimization
     heavy_min_ratio, heavy_min_ratio_rrms = resp.minimize_ratio(

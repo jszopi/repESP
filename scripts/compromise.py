@@ -57,7 +57,7 @@ update_with_charges(esp_charge_type, esp_log_fn, g.molecule)
 update_with_charges(charge_type, log_fn, g.molecule)
 equiv_charges = resp.equivalence(g.molecule, charge_type, path)
 _update_molecule_with_charges(g.molecule, equiv_charges, charge_type+'_equiv')
-print("\nNOTE: Running unrestrained RESP to fit ESP with equivalence:")
+print("\nRunning unrestrained RESP to fit ESP with equivalence:")
 esp_equiv_molecule = resp.run_resp(
     path, resp_output_path + 'unrest', resp_type='unrest', esp_fn=esp_fn)
 
@@ -93,6 +93,7 @@ start_charges = [atom.charges[charge_type + '_equiv'] for atom in g.molecule]
 num = 50
 ratio_limits = (0, 1.5)
 
+print("\nEvaluating HEAVY ratios. This may take a while.")
 heavy_args = (g.field, path, resp_output_path, esp_fn, False)
 heavy_result, indicator_charge, ratio_values = resp.eval_ratios(
     'heavy', ratio_limits, start_charges, num, indicator_label, heavy_args,
@@ -102,6 +103,7 @@ if zero_net_charge:
     # Scaling all charges is only possible with neutral molecules as
     # otherwise in this case there's no free hydrogens to compensate as in
     # the 'heavy_only' version
+    print("\nEvaluating REGULAR ratios. This may take a while.")
     regular_args = (g.molecule, g.field)
     result = resp.eval_ratios('regular', ratio_limits, start_charges, num,
                               indicator_label, regular_args,
@@ -109,6 +111,7 @@ if zero_net_charge:
 
 # RATIO MINIMIZATION
 
+print("\nMinimizing HEAVY ratio. This shouldn't take long.")
 # Most arguments here are the same as in the loop with minor changes specific
 # to an optimization run (output directory, verbosity)
 heavy_args = (start_charges, g.field, path, min_resp_output_path, esp_fn, True)
@@ -116,6 +119,7 @@ heavy_min_ratio, heavy_min_ratio_rrms = resp.minimize_ratio(
     'heavy', ratio_values, heavy_result, heavy_args)
 
 if zero_net_charge:
+    print("Minimizing REGULAR ratio. This shouldn't take long.")
     regular_args = (start_charges, g.molecule, g.field)
     reg_min_ratio, reg_min_ratio_rrms = resp.minimize_ratio(
         'regular', ratio_values, result, regular_args)
