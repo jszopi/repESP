@@ -41,7 +41,7 @@ def dump_charges_to_qout(molecule, charge_type, filename):
         print(line.write(charges), file=f)
 
 
-def update_with_charges(charge_type, filename, molecule):
+def update_with_charges(charge_type, filename, molecule, verbose=True):
     """Update the molecule with charges
 
     Only charges calculated directly by Gaussian are currently supported. The
@@ -57,16 +57,19 @@ def update_with_charges(charge_type, filename, molecule):
     elif filename[-7:] == '.sumviz' and charge_type == 'aim':
         _get_charges('aim', filename, 'sumviz', molecule)
     elif filename[-4:] == '.dat' and charge_type == 'aim':
-        print("WARNING: The QTAIM charges obtained from Henkelman group's "
-              "`bader` program differed from those from `AIMAll` for methane "
-              "by more than 0.01e, even with a very fine cube grid. Extracting"
-              " charges from `.dat` files is hence currently not recommended.")
+        if verbose:
+            print("WARNING: The QTAIM charges obtained from Henkelman group's "
+                  "`bader` program differed from those from `AIMAll` for "
+                  "methane by more than 0.01e, even with a very fine cube "
+                  "grid. Extracting charges from `.dat` files is hence "
+                  "currently not recommended.")
         _get_charges('aim', filename, 'dat', molecule)
     elif filename[-5:] == ".qout":
-        print("WARNING: qout file doesn't contain information about the "
-              "identities of atoms. You should check if it has been generated "
-              "(likely by the `resp` program) using the same order of atoms as"
-              " that in the molecule being updated.")
+        if verbose:
+            print("WARNING: qout file doesn't contain information about the "
+                  "identities of atoms. You should check if it has been "
+                  "generated (likely by the `resp` program) using the same "
+                  "order of atoms as that in the molecule being updated.")
         _get_charges(charge_type, filename, 'qout', molecule)
     elif filename[-4:] in ['.chk', '.fchk']:
         raise NotImplementedError('File extension {0} currently not supported.'
