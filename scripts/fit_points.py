@@ -106,8 +106,8 @@ if False:
                 else:
                     charges_dict[atom.label] = [atom.charges[charge_type]]
 
-            min_rms, rep_esp_field = rms_and_rep(g.field, g.molecule,
-                                                 charge_type)
+            min_rms, min_rrms, rep_esp_field = rms_and_rep(g.field, g.molecule,
+                                                           charge_type)
             rms_list.append(min_rms)
             print("\n", min_rms, file=fc)
 
