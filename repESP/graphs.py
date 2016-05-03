@@ -197,11 +197,11 @@ def plot_points(points_field, dimension, title=None, color_span=None,
                 atom_dist_threshs, atom_format, show_all_atoms)
 
     cmap_name = points_field.lookup_name()
-    cmap = plt.get_cmap('plasma')
+    cmap = plt.get_cmap('RdYlBu')
     vmin, vmax = color_span if color_span is not None else None, None
 
     image = ax.scatter(*list(zip(*points))[:dimension], c=values,
-                       cmap=cmap, vmin=vmin, vmax=vmax)
+                       cmap=cmap, vmin=vmin, vmax=vmax, s=50, lw=0.5)
     cbar = fig.colorbar(image, label=cmap_name)
 
     _set_axis_labels2(ax, dimension, project_onto_plane, plane_eqn)
