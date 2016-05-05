@@ -1,6 +1,7 @@
 from repESP import resp, resp_helpers, graphs
 from repESP.field_comparison import rms_and_rep
 from repESP.charges import update_with_charges, _update_molecule_with_charges
+from repESP.charges import compare_charges
 
 import os
 import matplotlib.pyplot as plt
@@ -77,6 +78,9 @@ print("RRMS: {0:.5f}".format(equiv_charge_rrms))
 for atom in g.molecule:
     atom.print_with_charge(charge_type + '_equiv')
 
+print("\nChecking differences between raw and equivalenced charges ...")
+print(compare_charges(charge_type, charge_type + '_equiv', g.molecule))
+
 print("\nThe molecule with {0} charges:".format(esp_charge_type.upper()))
 print("RRMS: {0:.5f}".format(esp_charge_rrms))
 for atom in g.molecule:
@@ -87,6 +91,9 @@ print("\nThe molecule with equivalenced {0} charges (unrestrained RESP):"
 print("RRMS: {0:.5f}".format(resp_charge_rrms))
 for atom in esp_equiv_molecule:
     atom.print_with_charge('resp')
+
+print("\nChecking differences between raw and equivalenced charges ...")
+print(compare_charges(esp_charge_type, 'resp', g.molecule, esp_equiv_molecule))
 
 start_charges = [atom.charges[charge_type + '_equiv'] for atom in g.molecule]
 

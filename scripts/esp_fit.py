@@ -143,6 +143,10 @@ if True:
     for atom in esp_equiv_molecule:
         atom.print_with_charge('resp')
 
+    print("\nChecking differences between raw and equivalenced charges ...")
+    print(charges.compare_charges(esp_charge_type, 'resp', g.molecule,
+          esp_equiv_molecule))
+
 # One charge (e.g. methane, water): 2D plot
 if False:
     charges = linspace(xlim1[0], xlim1[1], num=sampling_num)
