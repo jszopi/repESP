@@ -109,6 +109,22 @@ def contour_vertices(contour_isovalue, contour_plot, levels):
     return contour_plot.collections[contour_index].get_paths()[0].vertices
 
 
+def interpret(molecule, charge_dict, vary_label1, vary_label2=None):
+    dictio = charge_dict(1, 2)  # Example numbers to get the dict
+    print("\nCharges on these atoms will be varied:")
+    for vary_label in vary_label1, vary_label2:
+        if vary_label is None:
+            break
+        print('*', molecule[vary_label-1])
+        equiv = [label for label in dictio if
+                 dictio[label] == dictio[vary_label] and label != vary_label]
+        if equiv:
+            print("  with the following atoms equivalenced to it:")
+            for equiv_label in sorted(equiv):
+                print("  -", molecule[equiv_label-1])
+    print("\nSee below for equivalence information of other atoms.")
+
+
 class Result(object):
 
     def __init__(self, sampling_num, xlim1, xlim2):
@@ -215,6 +231,7 @@ if True:
     i = 0
     check_ivary = True
     print("\nEvaluating the meshgrid of H-only RESPs.")
+    interpret(g.molecule, charge_dict, vary_label1, vary_label2)
     for c, n in zip(new_result.inp1.flat, new_result.inp2.flat):
         inp_charges = resp.charges_from_dict(charge_dict(c, n), len(molecule))
         updated_molecule = resp.run_resp(
