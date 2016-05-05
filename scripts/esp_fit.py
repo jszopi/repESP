@@ -96,6 +96,19 @@ def get_atom_signature(molecule, label):
     return molecule[label-1].identity + str(label)
 
 
+def polygon_area(vertices):
+    x, y = vertices[:, 0], vertices[:, 1]
+    # http://stackoverflow.com/a/30408825
+    # Tested against TADlib.polygon.shoelace (python2 only)
+    return 0.5*np.abs(np.dot(x, np.roll(y, 1))-np.dot(y, np.roll(x, 1)))
+
+
+def contour_vertices(contour_isovalue, contour_plot, levels):
+    contour_index = levels.index(contour_isovalue)
+    # http://stackoverflow.com/a/5666461
+    return contour_plot.collections[contour_index].get_paths()[0].vertices
+
+
 class Result(object):
 
     def __init__(self, sampling_num, xlim1, xlim2):
@@ -282,6 +295,13 @@ if True:
         CS = plt.contour(read_result.inp2, read_result.inp1, rel_rrms,
                          levels, rstride=1, ctride=1, inline=1, colors='k',
                          zorder=1)
+
+        print("Reporting contour surface areas:")
+        for contour_isovalue in levels:
+            vertices = contour_vertices(contour_isovalue, CS, levels)
+            print("{0:>3}% contour area: {1:.5f}".format(
+                contour_isovalue, polygon_area(vertices)))
+
         plt.clabel(CS, fmt="%1.0f", inline=1, fontsize=10, colors='b')
         axes = plt.gca()
 
