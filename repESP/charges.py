@@ -79,6 +79,27 @@ def update_with_charges(charge_type, filename, molecule, verbose=True):
                                   .format(filename[-4]))
 
 
+def compare_charges(charge_type1, charge_type2, molecule, molecule2=None,
+                    thresh=0.05):
+    """Check if two types of charges differ by more than a threshhold
+
+    The charges can be in the same molecule or another molecule object with the
+    same atoms.
+    """
+    output = []
+    if molecule2 is None:
+        molecule2 = molecule
+    for atom1, atom2 in zip(molecule, molecule2):
+        if atom1 != atom2:
+            raise ValueError("The given molecules contain different atoms!\n"
+                             "{0}\n{1}".format(atom1, atom1))
+        # May rise KeyError if any atom doesn't have the right charges
+        diff = atom1.charges[charge_type1] - atom2.charges[charge_type2]
+        if abs(diff) >= thresh:
+            output.append("{0} differ by {1: .3f}".format(atom1, diff))
+    return '\n'.join(output)
+
+
 def _get_charges(charge_type, filename, input_type, molecule):
     """Update the molecule with charges."""
     with open(filename, 'r') as file_object:
