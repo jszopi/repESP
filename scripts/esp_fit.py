@@ -161,6 +161,7 @@ if True:
     print("\nThe molecule with {0} charges:".format(esp_charge_type.upper()))
     print(" RMS: {0:.5f}".format(charge_rms))
     print("RRMS: {0:.5f}".format(charge_rrms))
+    print("RMSV: {0:.5f}".format(charge_rms/charge_rrms))
     # The above value should be compared with that in the log file.
     for atom in g.molecule:
         atom.print_with_charge(esp_charge_type)
@@ -169,6 +170,7 @@ if True:
           .format(esp_charge_type.upper()))
     print(" RMS: {0:.5f}".format(resp_rms))
     print("RRMS: {0:.5f}".format(resp_rrms))
+    print("RMSV: {0:.5f}".format(resp_rms/resp_rrms))
     for atom in esp_equiv_molecule:
         atom.print_with_charge('resp')
 
@@ -202,7 +204,7 @@ if False:
 
     plt.title(title)
     plt.xlabel("Charge on " + get_atom_signature(molecule, vary_label1))
-    plt.ylabel("RRMSE at fitting points")
+    plt.ylabel("RRMS at fitting points")
     plt.plot(charges, result)
     plt.plot((-1.2, 1.2), (0, 0), 'r--')
     plt.plot((0, 0), (0, 1.2*max(result)), 'r--')
@@ -220,7 +222,8 @@ if False:
 
 
 def plot_common(x_atom_label, y_atom_label, molecule, title):
-    plt.title(title)
+    if title is not None:
+        plt.title(title)
     plt.ylabel("Charge on " + get_atom_signature(molecule, x_atom_label))
     plt.xlabel("Charge on " + get_atom_signature(molecule, y_atom_label))
 
@@ -301,7 +304,7 @@ if True:
         surf = ax.plot_surface(read_result.inp2, read_result.inp1,
                                read_result.rrms, cmap=cm.plasma, rstride=1,
                                cstride=1)
-        fig.colorbar(surf, label="RRMSE at fitting points")
+        fig.colorbar(surf, label="RRMS at fitting points")
         plot_common(vary_label2, vary_label1, molecule, title)
         plt.show()
         plt.close()
@@ -313,6 +316,7 @@ if True:
                          levels, rstride=1, ctride=1, inline=1, colors='k',
                          zorder=1)
 
+        print("Number of charges sampled along each axis:", sampling_num)
         print("Reporting contour surface areas:")
         for contour_isovalue in levels:
             vertices = contour_vertices(contour_isovalue, CS, levels)
