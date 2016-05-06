@@ -193,16 +193,19 @@ def run_resp(input_dir, calc_dir_path, resp_type='two_stage', inp_charges=None,
         Directory containing the input files.
     calc_dir_path : str
         Path to the new directory to be created.
-    resp_type : {'two_stage', 'h_only', 'unrest'}, optional
+    resp_type : {'two_stage', 'h_only', 'unrest', 'dict'}, optional
         The default ``two_stage`` option requests the normal two-stage RESP
         fitting. The ``ivary`` options are taken unaltered from the two
-        original ``.respin`` files. ``unrest`` requests unconstrained
-        optimization through one-stage RESP with zero restraint weight
-        (``qwt``). ``h_only`` also performs one-stage fitting but freezes all
-        atoms except for hydrogens at input values. Both ``h_only`` and
-        ``unrest`` read atom equivalence from the ``.respin`` files (``ivary``
-        values). To verify that the equivalence is as expected, leave the
-        ``check_ivary`` option enabled.
+        original ``.respin`` files.
+
+        The three options ``h_only``, ``unrest`` and ``dict`` request
+        unconstrained (in terms of charge magnitude) optimization through
+        one-stage RESP with zero restraint weight (``qwt``). ``h_only`` freezes
+        all atoms except for hydrogens at input values. ``dict`` freezes only
+        the atoms which are specified through the input charges
+        (``inp_charges``). All three options read atom equivalence from the
+        ``.respin`` files (``ivary`` values). To verify that equivalence is as
+        expected, leave the ``check_ivary`` option enabled.
 
         ..
             The equivalence logic is explained somewhat inconsistently in the
