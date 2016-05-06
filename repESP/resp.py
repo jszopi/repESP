@@ -11,6 +11,8 @@ from .resp_helpers import G09_esp
 from .field_comparison import rms_and_rep
 from . import charges
 
+unset_charge = 42
+
 
 def _read_respin(fn, ref_molecule=None):
     with open(fn, 'r') as inp:
@@ -369,7 +371,7 @@ def _resp_two_stage(calc_dir_path, respin1_fn, respin2_fn, molecule,
     return "charges2.qout"
 
 
-def charges_from_dict(charge_dict, len_molecule, default_val=55):
+def charges_from_dict(charge_dict, len_molecule):
     """Translate a charge dictionary to a list of charges
 
     If you only want to specify a few charges, it is more efficient to give
@@ -388,17 +390,13 @@ def charges_from_dict(charge_dict, len_molecule, default_val=55):
         -0.2, 1: 0.1, 5: 0.1, 9: 0.1, 13: 0.1}``
     len_molecule : int
         The number of atoms in the molecule.
-    default_val : int
-        This should be a clearly wrong value, so it can be spotted in the
-        ``respin`` input for the ``resp`` program in case the user misuses the
-        ``run_resp`` function.
     Returns
     -------
     List[float]
         A list of charges corresponding to the consecutive atoms in the
         molecule.
     """
-    return [charge_dict[i+1] if i+1 in charge_dict else default_val for i in
+    return [charge_dict[i+1] if i+1 in charge_dict else unset_charge for i in
             range(len_molecule)]
 
 
