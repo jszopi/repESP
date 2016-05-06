@@ -286,6 +286,7 @@ if True:
     new_result.resp_rms = resp_rms
     new_result.resp_rrms = resp_rrms
     new_result.esp_equiv_molecule = esp_equiv_molecule
+    new_result.alt_esp_equiv_molecule = alt_esp_equiv_molecule
 
     with open(output_path + "result.p", "wb") as f:
         pickle.dump(new_result, f)
@@ -370,6 +371,11 @@ if True:
             read_result.esp_equiv_molecule[vary_label2-1].charges['resp'],
             read_result.esp_equiv_molecule[vary_label1-1].charges['resp'],
             marker='x', zorder=2, s=50, lw=0.8)
+
+        plt.scatter(
+            read_result.alt_esp_equiv_molecule[vary_label2-1].charges['resp'],
+            read_result.alt_esp_equiv_molecule[vary_label1-1].charges['resp'],
+            marker='+', zorder=2, s=50, lw=0.8)
 
         plot_common(vary_label2, vary_label1, molecule, title)
         save_to = output_path + molecule_name + "_" + esp_charge_type
