@@ -58,11 +58,11 @@ esp_fn = molecule_name + "_" + esp_charge_type + ".esp"
 alt_esp_fn = molecule_name + "_" + alt_esp_charge_type + ".esp"
 output_esp = common_fn + ".esp"
 
-print("To see a demonstration of all the capabilities of the script, change "
-      "the hard-coded conditional values to True. You can also change the "
-      "charges type between MK and CHelp(G).")
-print("\nMolecule:    ", molecule_name)
-print("Charge type: ", esp_charge_type.upper(), '\n')
+print("esp_fit.py script")
+print("\nMolecule:             ", molecule_name)
+print("Charge type:          ", esp_charge_type.upper())
+print("Non-ESP charge type:  ", charge_type.upper())
+print("Alt. ESP charge type: ", alt_esp_charge_type.upper(), '\n')
 
 g = resp_helpers.G09_esp(input_esp)
 
@@ -174,7 +174,6 @@ if True:
     print(" RMS: {0:.5f}".format(charge_rms))
     print("RRMS: {0:.5f}".format(charge_rrms))
     print("RMSV: {0:.5f}".format(charge_rms/charge_rrms))
-    # The above value should be compared with that in the log file.
     for atom in g.molecule:
         atom.print_with_charge(esp_charge_type)
 
