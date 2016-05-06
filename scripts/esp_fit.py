@@ -13,7 +13,9 @@ import numpy as np
 import pickle
 
 esp_charge_type = 'mk'
+alt_esp_charge_type = 'chelpg'
 # esp_charge_type = 'chelpg'
+# alt_esp_charge_type = 'mk'
 
 molecule_name = 'NMe3H_plus'
 # molecule_name = 'methane'
@@ -53,6 +55,7 @@ common_fn = path + molecule_name + "_" + esp_charge_type
 log_fn = common_fn + ".log"
 input_esp = common_fn + ".esp"
 esp_fn = molecule_name + "_" + esp_charge_type + ".esp"
+alt_esp_fn = molecule_name + "_" + alt_esp_charge_type + ".esp"
 output_esp = common_fn + ".esp"
 
 print("To see a demonstration of all the capabilities of the script, change "
@@ -152,11 +155,20 @@ if True:
     esp_equiv_molecule = resp.run_resp(
         path, resp_output_path + 'unrest', resp_type='unrest',
         esp_fn=esp_fn)
+    # Equivalence alternative charge as well (i.e. unrest RESP on its own grid)
+    alt_esp_equiv_molecule = resp.run_resp(
+        path, resp_output_path + 'alt_unrest', resp_type='unrest',
+        esp_fn=alt_esp_fn)
 
     charges.update_with_charges(esp_charge_type, log_fn, g.molecule)
+    # This should actually be called esp_charge_rms
     charge_rms, charge_rrms = rms_and_rep(g.field, g.molecule,
                                           esp_charge_type)[:2]
     resp_rms, resp_rrms = rms_and_rep(g.field, esp_equiv_molecule, 'resp')[:2]
+    # Note that, crucially, the equivalenced alternative charges are evaluated
+    # on the same grid as the original charges, i.e. `g.field`
+    alt_resp_rms, alt_resp_rrms = rms_and_rep(g.field, alt_esp_equiv_molecule,
+                                              'resp')[:2]
 
     print("\nThe molecule with {0} charges:".format(esp_charge_type.upper()))
     print(" RMS: {0:.5f}".format(charge_rms))
@@ -177,6 +189,18 @@ if True:
     print("\nChecking differences between raw and equivalenced charges ...")
     print(charges.compare_charges(esp_charge_type, 'resp', g.molecule,
           esp_equiv_molecule))
+
+    print("\nThe molecule with equivalenced {0} charges (unrestrained RESP) "
+          "evaluated on the {1} grid:".format(alt_esp_charge_type.upper(),
+                                              esp_charge_type.upper()))
+    print(" RMS: {0:.5f}".format(alt_resp_rms))
+    print("RRMS: {0:.5f}".format(alt_resp_rrms))
+    print("RMSV: {0:.5f}".format(alt_resp_rms/alt_resp_rrms))
+    print("Percentage increase over equivalenced {0} charges: {1:.2f} %"
+          .format(esp_charge_type.upper(),
+                  100*(alt_resp_rrms-resp_rrms)/resp_rrms))
+    for atom in alt_esp_equiv_molecule:
+        atom.print_with_charge('resp')
 
 # One charge (e.g. methane, water): 2D plot
 if False:
