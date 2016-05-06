@@ -262,7 +262,7 @@ def run_resp(input_dir, calc_dir_path, resp_type='two_stage', inp_charges=None,
     elif resp_type == 'h_only' or resp_type == 'unrest':
         charges_out_fn = _resp_one_stage(resp_type[0], calc_dir_path,
                                          respin1_fn, respin2_fn, molecule,
-                                         check_ivary, inp_charges is not None)
+                                         check_ivary, inp_charges)
     else:
         raise ValueError("RESP fitting type '{0}' was not recognized."
                          .format(resp_type))
@@ -275,12 +275,13 @@ def run_resp(input_dir, calc_dir_path, resp_type='two_stage', inp_charges=None,
 
 
 def _resp_one_stage(resp_type, calc_dir_path, respin1_fn, respin2_fn, molecule,
-                    check_ivary, read_input_charges):
+                    check_ivary, inp_charges):
     """A common function for one-stage RESP ('h_only' and 'unrest')
 
     Atom equivalence will be taken from the ``.respin`` files (``ivary``
     values).
     """
+    read_input_charges = inp_charges is not None
     # MODIFY THE .RESPIN FILE
     # Read in .respin1
     ivary_list1, charge1, iuniq1 = _read_respin(respin1_fn,
@@ -292,7 +293,7 @@ def _resp_one_stage(resp_type, calc_dir_path, respin1_fn, respin2_fn, molecule,
     assert iuniq1 == iuniq2
     # Modify ivary list and write to new input file
     ivary_list = _modify_ivary_list(resp_type, molecule, ivary_list1,
-                                    ivary_list2)
+                                    ivary_list2, inp_charges)
     _check_ivary(check_ivary, molecule, ivary_list)
     _write_modified_respin(resp_type, molecule, ivary_list, charge1, iuniq1,
                            calc_dir_path + "input.respin",
@@ -306,7 +307,8 @@ def _resp_one_stage(resp_type, calc_dir_path, respin1_fn, respin2_fn, molecule,
     return "charges.qout"
 
 
-def _modify_ivary_list(resp_type, molecule, ivary_list1, ivary_list2):
+def _modify_ivary_list(resp_type, molecule, ivary_list1, ivary_list2,
+                       inp_charges=None):
     result = []
     for atom, ivary1, ivary2 in zip(molecule, ivary_list1, ivary_list2):
         if resp_type in ['h', 'u', 'e']:
