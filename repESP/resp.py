@@ -69,7 +69,7 @@ common_respin_tail = """
 
 def _get_respin_content(respin_type, read_input_charges):
     """Check if respin type is implemented and return the input content"""
-    if respin_type not in ['1', '2', 1, 2, 'h', 'u']:
+    if respin_type not in ['1', '2', 1, 2, 'h', 'u', 'd']:
         raise ValueError("`respin_type` {0} is not implemented.".format(
                          respin_type))
 
@@ -81,7 +81,8 @@ def _get_respin_content(respin_type, read_input_charges):
         result += " qwt = 0.00050,\n"
     elif str(respin_type) == '2':
         result += " qwt = 0.00100,\n"
-    elif str(respin_type) == 'u':
+    elif str(respin_type) in ['h', 'u', 'd']:
+        # h_only RESP wouldn't constrain H charges anyway, but just in case
         result += " qwt = 0.00000,\n"
 
     if read_input_charges:
@@ -259,7 +260,7 @@ def run_resp(input_dir, calc_dir_path, resp_type='two_stage', inp_charges=None,
         charges_out_fn = _resp_two_stage(
             calc_dir_path, respin1_fn, respin2_fn, molecule, check_ivary,
             inp_charges is not None)
-    elif resp_type == 'h_only' or resp_type == 'unrest':
+    elif resp_type in ['h_only', 'unrest', 'dict']:
         charges_out_fn = _resp_one_stage(resp_type[0], calc_dir_path,
                                          respin1_fn, respin2_fn, molecule,
                                          check_ivary, inp_charges)
@@ -310,14 +311,22 @@ def _resp_one_stage(resp_type, calc_dir_path, respin1_fn, respin2_fn, molecule,
 def _modify_ivary_list(resp_type, molecule, ivary_list1, ivary_list2,
                        inp_charges=None):
     result = []
-    for atom, ivary1, ivary2 in zip(molecule, ivary_list1, ivary_list2):
-        if resp_type in ['h', 'u', 'e']:
-            # Extract equivalence from the two default RESP inputs. This simple
-            # condition ensures that equivalence (positive number) is picked
-            # over free fitting (zero), which is picked over freezing charges
-            # (negative number). This is used by the 'h_only' and 'unrest'
-            # options of `run_resp` ('h' and 'u') and also by the function
-            # `equivalence` (specified here by 'e').
+    if inp_charges is None:
+        if resp_type == 'd':
+            raise ValueError("Modification of ivary list requested for "
+                             "resp_type='d' but no input charges were given.")
+        else:
+            inp_charges = [None]*len(molecule)
+
+    for atom, ivary1, ivary2, inp_charge in zip(molecule, ivary_list1,
+                                                ivary_list2, inp_charges):
+        if resp_type in ['h', 'u', 'd', 'e']:
+            # Extract equivalence from the two default RESP inputs from
+            # `respgen` program. This simple condition ensures that equivalence
+            # (positive number) is picked over free fitting (zero), which is
+            # picked over freezing charges (negative number). This is used by
+            # the 'h_only', 'unrest' and 'dict' options of `run_resp` ('h', 'u'
+            # and 'd') and also by the function `equivalence` ('e').
             ivary = max(ivary1, ivary2)
         else:
             raise NotImplementedError("Modification of ``ivary`` values not "
@@ -326,6 +335,9 @@ def _modify_ivary_list(resp_type, molecule, ivary_list1, ivary_list2,
         if resp_type == 'h':
             # Additionally freeze non-hydrogens
             ivary = ivary if atom.atomic_no == 1 else -1
+        if resp_type == 'd':
+            # Freeze atoms whose charges are specified in input
+            ivary = ivary if inp_charge == unset_charge else -1
         result.append(ivary)
     return result
 
