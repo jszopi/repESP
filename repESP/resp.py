@@ -201,13 +201,14 @@ def run_resp(input_dir, calc_dir_path, resp_type='two_stage', inp_charges=None,
         values). To verify that the equivalence is as expected, leave the
         ``check_ivary`` option enabled.
 
-        .. The RESP logic is not explained very well in the papers but I've
-        additionally re-engineered the ``resp`` program's logic to be sure that
-        reading both the ``respin`` files will give the desired behaviour. In
-        fact, it's pretty simple. In the first stage atoms of the methyl and
-        methylene groups are free, while all the others are equivalenced. In
-        the second stage the former are equivalenced, while all the others are
-        frozen.
+        ..
+            The equivalence logic is explained somewhat inconsistently in the
+            RESP papers but I've additionally re-engineered the ``resp``
+            program's logic to be sure that reading both the ``respin`` files
+            will give the desired behaviour. In fact, it's pretty simple. In
+            the first stage atoms of the methyl and methylene groups are free,
+            while all the others are equivalenced. In the second stage the
+            former are equivalenced, while all the others are frozen.
 
     inp_charges : List[float], optional
         The input charges. Defaults to ``None``, which causes no ``iqopt``
