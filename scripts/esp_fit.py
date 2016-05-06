@@ -347,7 +347,7 @@ if True:
             print("{0:>3}% contour area: {1:.5f}".format(
                 contour_isovalue, polygon_area(vertices)))
 
-        plt.clabel(CS, fmt="%1.0f", inline=1, fontsize=10, colors='b')
+        plt.clabel(CS, fmt="%1.0f", inline=1, fontsize=15, colors='b')
         axes = plt.gca()
 
         axes.set_xlim(xlim2)
@@ -357,11 +357,11 @@ if True:
         # Add non-esp point
         new_point = (molecule[vary_label2-1].charges[charge_type],
                      molecule[vary_label1-1].charges[charge_type])
-        plt.scatter(*new_point, zorder=2)
+        plt.scatter(*new_point, zorder=2, s=50, lw=0.3)
         # Non-esp ratio charge point
         plt.scatter(heavy_min_ratio*equiv_start_charges[vary_label2-1],
                     heavy_min_ratio*equiv_start_charges[vary_label1-1],
-                    marker='D', zorder=2)
+                    marker='D', zorder=2, s=50, lw=0.3)
         # Add ratio line
         y_coord = axes.get_xlim()[0]*new_point[1]/new_point[0]
         plt.plot((axes.get_xlim()[0], 0), (y_coord, 0), 'r--', zorder=1)
@@ -369,7 +369,7 @@ if True:
         plt.scatter(
             read_result.esp_equiv_molecule[vary_label2-1].charges['resp'],
             read_result.esp_equiv_molecule[vary_label1-1].charges['resp'],
-            marker='x', zorder=2)
+            marker='x', zorder=2, s=50, lw=0.8)
 
         plot_common(vary_label2, vary_label1, molecule, title)
         save_to = output_path + molecule_name + "_" + esp_charge_type
