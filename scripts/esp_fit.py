@@ -1,5 +1,6 @@
 from repESP import resp, resp_helpers, rep_esp, charges, graphs
 from repESP.field_comparison import _check_grids, difference, rms_and_rep
+from repESP.resp import get_atom_signature
 
 from numpy import mean, sqrt, square, linspace, meshgrid
 import matplotlib.pyplot as plt
@@ -93,10 +94,6 @@ if False:
 import copy
 from itertools import chain
 molecule = copy.deepcopy(g.molecule)
-
-
-def get_atom_signature(molecule, label):
-    return molecule[label-1].identity + str(label)
 
 
 def polygon_area(vertices):

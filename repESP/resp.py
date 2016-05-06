@@ -471,6 +471,10 @@ def equivalence(molecule, charge_type, input_dir, respin1_fn="",
     return new_result
 
 
+def get_atom_signature(molecule, label):
+    return molecule[label-1].identity + str(label)
+
+
 def eval_heavy_ratio(ratio, start_charges, field, path, output_path, esp_fn,
                      optimization=False, verbose=True):
     inp_charges = [charge*ratio for charge in start_charges]
