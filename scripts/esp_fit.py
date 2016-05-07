@@ -50,7 +50,6 @@ resp_output_path = output_path + 'resp_calcs/'
 
 charge_type = 'nbo'
 charge_log_fn = path + molecule_name + "_" + charge_type + ".log"
-temp_output_path = output_path + 'ratio/'
 opt_output_path = output_path + 'opt/'
 
 common_fn = path + molecule_name + "_" + esp_charge_type
@@ -328,20 +327,20 @@ if True:
     charge_type += '_equiv'
     charges._update_molecule_with_charges(molecule, equiv_start_charges,
                                           charge_type)
-    os.mkdir(temp_output_path)
+    os.mkdir(opt_output_path)
     # Scan roughly various ratios to find bracket for minimization
     print("\nScanning roughly various ratios. This shouldn't take long.")
-    heavy_args = (g.field, path, temp_output_path, esp_fn, False)
+    heavy_args = (g.field, path, opt_output_path, esp_fn, False)
     heavy_result, indicator_charge, ratio_values = resp.eval_ratios(
         'heavy', (0, 2), equiv_start_charges, 10, vary_label2, heavy_args,
         first_verbose=True)
     # Minimization
     print("\nStarting minimization of charge ratio.")
-    heavy_args = (equiv_start_charges, g.field, path, temp_output_path,
+    heavy_args = (equiv_start_charges, g.field, path, opt_output_path,
                   esp_fn, True)  # True for optimization
     heavy_min_ratio, heavy_min_ratio_rrms = resp.minimize_ratio(
         'heavy', ratio_values, heavy_result, heavy_args)
-    shutil.rmtree(temp_output_path)
+    shutil.rmtree(opt_output_path)
 
     # Presentation: 3D
     if False:
