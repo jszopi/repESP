@@ -205,20 +205,16 @@ if False:
     result = []
     print("\nOne-dimensional scan:")
     check_ivary = True
+    resp_args = [g.field, path, resp_output_path, esp_fn, molecule,
+                 vary_label1, charge_dict]
     for i, charge in enumerate(charges):
-        inp_charges = resp.charges_from_dict(charge_dict(charge),
-                                             len(molecule))
-        updated_molecule = resp.run_resp(
-            path, resp_output_path + "{0}{1:+.3f}".format(
-                get_atom_signature(molecule, vary_label1), charge),
-            resp_type='dict', inp_charges=inp_charges, esp_fn=esp_fn,
-            check_ivary=check_ivary)
+        rrms_val = resp.eval_one_charge_resp(
+            charge, *resp_args, check_ivary)
+        result.append(rrms_val)
         # check_ivary is supposed to be True only on the first run
         if check_ivary:
             check_ivary = False
             print()
-        rrms_val = rms_and_rep(g.field, updated_molecule, 'resp')[1]
-        result.append(rrms_val)
         sys.stdout.write("\rSampling progress: {0:.2f} %".format(
             100*(i+1)/sampling_num))
 
