@@ -51,6 +51,7 @@ resp_output_path = output_path + 'resp_calcs/'
 charge_type = 'nbo'
 charge_log_fn = path + molecule_name + "_" + charge_type + ".log"
 temp_output_path = output_path + 'ratio/'
+opt_output_path = output_path + 'opt/'
 
 common_fn = path + molecule_name + "_" + esp_charge_type
 log_fn = common_fn + ".log"
@@ -147,6 +148,7 @@ class Result(object):
 if True:
     os.mkdir(output_path)
     os.mkdir(resp_output_path)
+    levels = [1, 5, 10, 20, 30, 50, 100]
 
     print("\nRunning unrestrained RESP to fit ESP with equivalence:")
     esp_equiv_molecule = resp.run_resp(
@@ -219,6 +221,18 @@ if False:
             100*(i+1)/sampling_num))
 
     min_charge = esp_equiv_molecule[vary_label1-1].charges['resp']
+
+    os.mkdir(opt_output_path)
+    resp_args[2] = opt_output_path
+    print("\n\nFlexibility limits on", molecule[vary_label1-1])
+    for level in levels:
+        sol1, sol2 = resp.find_flex((1+level/100)*resp_rrms, charges, result,
+                                    resp_args)
+        # Difference also shown as percentage of charge on that atom
+        print("{0:>3}% limits: {1: .5f}, {2: .5f}, diff: {3:.5f} ({4:.1f}%)"
+              .format(level, sol1, sol2, sol2-sol1,
+                      100*abs((sol2-sol1)/min_charge)))
+    shutil.rmtree(opt_output_path)
 
     plt.title(title)
     plt.xlabel("Charge on " + get_atom_signature(molecule, vary_label1))
@@ -334,7 +348,6 @@ if True:
 
     # Presentation: 2D contour
     if True:
-        levels = [1, 5, 10, 20, 30, 50, 100]
         CS = plt.contour(read_result.inp2, read_result.inp1, rel_rrms,
                          levels, rstride=1, ctride=1, inline=1, colors='k',
                          zorder=1)
