@@ -4,7 +4,7 @@ import os
 import numpy as np
 from random import choice
 from string import ascii_lowercase
-from scipy.optimize import minimize_scalar
+from scipy.optimize import minimize_scalar, brentq
 
 from .cube_helpers import InputFormatError, Atom, Molecule
 from .resp_helpers import G09_esp
@@ -567,6 +567,17 @@ def minimize_ratio(eval_type, ratio_values, result_list, eval_func_args):
     print("\nFOUND optimal {0} ratio: {1:.4f} with RRMS of {2:6f}\n".format(
           eval_type, min_ratio, min_ratio_rrms))
     return min_ratio, min_ratio_rrms
+
+
+def find_flex(target_val, charge_values, result_list, eval_func_args):
+    eval_func = lambda charge: eval_one_charge_resp(
+        charge, *eval_func_args, False, True) - target_val
+    min_ind = result_list.index(min(result_list))
+    solution1 = brentq(eval_func, charge_values[0], charge_values[min_ind],
+                       xtol=1e-5)
+    solution2 = brentq(eval_func, charge_values[min_ind], charge_values[-1],
+                       xtol=1e-5)
+    return solution1, solution2
 
 
 def eval_ratios(eval_type, ratio_limits, start_charges, sampling_num,
