@@ -203,15 +203,14 @@ if True:
 
 # ONE CHARGE VARIATION
 if False:
-    charges = linspace(xlim1[0], xlim1[1], num=sampling_num)
-
+    charge_vals = linspace(xlim1[0], xlim1[1], num=sampling_num)
     result = []
     print("\nOne-dimensional scan:")
     check_ivary = True
     interpret(g.molecule, charge_dict, vary_label1)
     resp_args = [g.field, path, resp_output_path, esp_fn, molecule,
                  vary_label1, charge_dict]
-    for i, charge in enumerate(charges):
+    for i, charge in enumerate(charge_vals):
         rrms_val = resp.eval_one_charge_resp(charge, *resp_args, check_ivary)
         result.append(rrms_val)
         # check_ivary is supposed to be True only on the first run
@@ -228,8 +227,8 @@ if False:
     flex_limits = []
     print("\n\nFlexibility limits on", molecule[vary_label1-1])
     for level in levels:
-        sol1, sol2 = resp.find_flex((1+level/100)*resp_rrms, charges, result,
-                                    resp_args)
+        sol1, sol2 = resp.find_flex((1+level/100)*resp_rrms, charge_vals,
+                                    result, resp_args)
         flex_limits.append([sol1, sol2])
         # Difference also shown as percentage of charge on that atom
         print("{0:>3}% limits: {1: .5f}, {2: .5f}, diff: {3:.5f} ({4:.1f}%)"
@@ -239,7 +238,7 @@ if False:
 
     plt.xlabel("Charge on " + get_atom_signature(molecule, vary_label1))
     plt.ylabel("RRMS at fitting points")
-    plt.plot(charges, result)
+    plt.plot(charge_vals, result)
     # Guiding line at zero y
     plt.plot((-1.2, 1.2), (0, 0), 'r--')
     # Guiding line at zero x
