@@ -212,7 +212,7 @@ if False:
         updated_molecule = resp.run_resp(
             path, resp_output_path + "{0}{1:+.3f}".format(
                 get_atom_signature(molecule, vary_label1), charge),
-            resp_type='h_only', inp_charges=inp_charges, esp_fn=esp_fn,
+            resp_type='dict', inp_charges=inp_charges, esp_fn=esp_fn,
             check_ivary=check_ivary)
         # check_ivary is supposed to be True only on the first run
         if check_ivary:
@@ -261,7 +261,7 @@ if True:
             path, resp_output_path + "{0}{1:+.3f}-{2}{3:+.3f}".format(
                 get_atom_signature(molecule, vary_label1), c,
                 get_atom_signature(molecule, vary_label2), n),
-            resp_type='h_only', inp_charges=inp_charges, esp_fn=esp_fn,
+            resp_type='dict', inp_charges=inp_charges, esp_fn=esp_fn,
             check_ivary=check_ivary)
 
         # check_ivary is supposed to be True only on the first run
