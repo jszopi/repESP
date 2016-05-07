@@ -475,6 +475,25 @@ def get_atom_signature(molecule, label):
     return molecule[label-1].identity + str(label)
 
 
+def eval_one_charge_resp(charge, field, path, output_path, esp_fn,
+                         molecule, vary_label, charge_dict, check_ivary,
+                         optimization=False):
+    # TODO: This function was written based on those optimizing ratios but
+    # should be checked for overall code quality, e.g. if all arguments are
+    # necessary or could be moved outside.
+    if optimization:
+        output_folder = ''.join(choice(ascii_lowercase) for _ in range(10))
+    else:
+        output_folder = "{0}{1:+.3f}".format(get_atom_signature(
+            molecule, vary_label), charge)
+    inp_charges = charges_from_dict(charge_dict(charge), len(molecule))
+    updated_molecule = run_resp(
+        path, output_path + output_folder, resp_type='dict',
+        inp_charges=inp_charges, esp_fn=esp_fn, check_ivary=check_ivary)
+    rrms_val = rms_and_rep(field, updated_molecule, 'resp')[1]
+    return rrms_val
+
+
 def eval_heavy_ratio(ratio, start_charges, field, path, output_path, esp_fn,
                      optimization=False, verbose=True):
     inp_charges = [charge*ratio for charge in start_charges]
