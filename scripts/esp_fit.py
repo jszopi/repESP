@@ -111,7 +111,10 @@ def contour_vertices(contour_isovalue, contour_plot, levels):
 
 
 def interpret(molecule, charge_dict, vary_label1, vary_label2=None):
-    dictio = charge_dict(1, 2)  # Example numbers to get the dict
+    if vary_label2 is None:
+        dictio = charge_dict(1)  # Example number to get the dict
+    else:
+        dictio = charge_dict(1, 2)  # Example numbers to get the dict
     print("\nCharges on these atoms will be varied:")
     for vary_label in vary_label1, vary_label2:
         if vary_label is None:
@@ -207,6 +210,7 @@ if False:
     result = []
     print("\nOne-dimensional scan:")
     check_ivary = True
+    interpret(g.molecule, charge_dict, vary_label1)
     resp_args = [g.field, path, resp_output_path, esp_fn, molecule,
                  vary_label1, charge_dict]
     for i, charge in enumerate(charges):
