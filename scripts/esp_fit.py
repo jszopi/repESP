@@ -224,10 +224,12 @@ if False:
 
     os.mkdir(opt_output_path)
     resp_args[2] = opt_output_path
+    flex_limits = []
     print("\n\nFlexibility limits on", molecule[vary_label1-1])
     for level in levels:
         sol1, sol2 = resp.find_flex((1+level/100)*resp_rrms, charges, result,
                                     resp_args)
+        flex_limits.append([sol1, sol2])
         # Difference also shown as percentage of charge on that atom
         print("{0:>3}% limits: {1: .5f}, {2: .5f}, diff: {3:.5f} ({4:.1f}%)"
               .format(level, sol1, sol2, sol2-sol1,
@@ -243,8 +245,11 @@ if False:
     # Guiding line at zero x
     plt.plot((0, 0), (0, 1.2*max(result)), 'r--')
     # Location of minimum
-    plt.plot((min_charge, min_charge), (0, resp_rrms), 'g--')
-    plt.plot((-1.2, min_charge), (resp_rrms, resp_rrms), 'g--')
+    plt.plot((min_charge, min_charge), (0, resp_rrms), '--', color='grey')
+    plt.plot((-1.2, min_charge), (resp_rrms, resp_rrms), '--', color='grey')
+    # 10% flexibility limits
+    plt.plot(2*[flex_limits[2][0]], (0, 1.1*resp_rrms), 'g--')
+    plt.plot(2*[flex_limits[2][1]], (0, 1.1*resp_rrms), 'g--')
 
     axes = plt.gca()
     axes.set_xlim(xlim1)
