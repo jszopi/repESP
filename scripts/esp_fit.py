@@ -148,14 +148,14 @@ if True:
     os.mkdir(output_path)
     os.mkdir(resp_output_path)
 
-    print("\nNOTE: Running unrestrained RESP to fit ESP with equivalence:")
+    print("\nRunning unrestrained RESP to fit ESP with equivalence:")
     esp_equiv_molecule = resp.run_resp(
         path, resp_output_path + 'unrest', resp_type='unrest',
         esp_fn=esp_fn)
     # Equivalence alternative charge as well (i.e. unrest RESP on its own grid)
     alt_esp_equiv_molecule = resp.run_resp(
         path, resp_output_path + 'alt_unrest', resp_type='unrest',
-        esp_fn=alt_esp_fn)
+        esp_fn=alt_esp_fn, check_ivary=False)
 
     charges.update_with_charges(esp_charge_type, log_fn, g.molecule)
     # This should actually be called esp_charge_rms
@@ -203,10 +203,9 @@ if False:
     charges = linspace(xlim1[0], xlim1[1], num=sampling_num)
 
     result = []
+    print("\nOne-dimensional scan:")
     check_ivary = True
     for i, charge in enumerate(charges):
-        if not i % 10:
-            print("{0:.2f}%".format(100*i/sampling_num))
         inp_charges = resp.charges_from_dict(charge_dict(charge),
                                              len(molecule))
         updated_molecule = resp.run_resp(
@@ -217,17 +216,23 @@ if False:
         # check_ivary is supposed to be True only on the first run
         if check_ivary:
             check_ivary = False
+            print()
         rrms_val = rms_and_rep(g.field, updated_molecule, 'resp')[1]
         result.append(rrms_val)
+        sys.stdout.write("\rSampling progress: {0:.2f} %".format(
+            100*(i+1)/sampling_num))
 
-    min_charge = esp_equiv_molecule[0].charges['resp']
+    min_charge = esp_equiv_molecule[vary_label1-1].charges['resp']
 
     plt.title(title)
     plt.xlabel("Charge on " + get_atom_signature(molecule, vary_label1))
     plt.ylabel("RRMS at fitting points")
     plt.plot(charges, result)
+    # Guiding line at zero y
     plt.plot((-1.2, 1.2), (0, 0), 'r--')
+    # Guiding line at zero x
     plt.plot((0, 0), (0, 1.2*max(result)), 'r--')
+    # Location of minimum
     plt.plot((min_charge, min_charge), (0, resp_rrms), 'g--')
     plt.plot((-1.2, min_charge), (resp_rrms, resp_rrms), 'g--')
 
@@ -250,6 +255,7 @@ def plot_common(x_atom_label, y_atom_label, molecule, title):
 # 2 charges (NMe3H_plus, NMe4_plus etc.): Calculation. Note that the previous
 # calculation section must also be switched on.
 if True:
+    print("\nTwo-dimensional scan:")
     new_result = Result(sampling_num, xlim1, xlim2)
     i = 0
     check_ivary = True
