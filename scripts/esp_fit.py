@@ -22,18 +22,20 @@ molecule_name = 'NMe3H_plus'
 # molecule_name = 'methane'
 
 # Parameters to change when changing the molecule
-# Methane/water:
-vary_label1 = 1
-# charge_dict = lambda a1: {1: a1}
-xlim1 = (-1, 0)
-xlim2 = (-0.5, 1)
+# The first label is the more important atom, for which a 1D scan will be done
 # NMe3H_plus, NMe3:
-vary_label2 = 13
-charge_dict = lambda c, n: {1: c, 5: c, 9: c, 13: n}
+vary_label1 = 13
+charge_dict_1D = lambda a1: {13: a1}
+vary_label2 = 1
+charge_dict_2D = lambda a1, a2: {1: a2, 5: a2, 9: a2, 13: a1}
 # NMe4_plus:
-# vary_label2 = 17
-# charge_dict = lambda c, n: {1: c, 5: c, 9: c, 13: c, 17: n}
+# vary_label1 = 17
+# charge_dict_1D = lambda a1: {17: a1}
+# charge_dict_2D = lambda a2, a1: {1: a2, 5: a2, 9: a2, 13: a2, 17: a1}
+xlim1 = (-0.5, 1)
+xlim2 = (-1, 0)
 sampling_num = 21
+
 # SLICING plots
 # Note that slicing plots in planes different than those of the coordinate
 # system do not preserve distances. TODO
@@ -202,14 +204,14 @@ if True:
 
 
 # ONE CHARGE VARIATION
-if False:
+if True:
     charge_vals = linspace(xlim1[0], xlim1[1], num=sampling_num)
     result = []
     print("\nOne-dimensional scan:")
     check_ivary = True
-    interpret(g.molecule, charge_dict, vary_label1)
+    interpret(g.molecule, charge_dict_1D, vary_label1)
     resp_args = [g.field, path, resp_output_path, esp_fn, molecule,
-                 vary_label1, charge_dict]
+                 vary_label1, charge_dict_1D]
     for i, charge in enumerate(charge_vals):
         rrms_val = resp.eval_one_charge_resp(charge, *resp_args, check_ivary)
         result.append(rrms_val)
@@ -274,13 +276,14 @@ if True:
     new_result = Result(sampling_num, xlim1, xlim2)
     i = 0
     check_ivary = True
-    interpret(g.molecule, charge_dict, vary_label1, vary_label2)
-    for c, n in zip(new_result.inp1.flat, new_result.inp2.flat):
-        inp_charges = resp.charges_from_dict(charge_dict(c, n), len(molecule))
+    interpret(g.molecule, charge_dict_2D, vary_label1, vary_label2)
+    for a1, a2 in zip(new_result.inp1.flat, new_result.inp2.flat):
+        inp_charges = resp.charges_from_dict(charge_dict_2D(a1, a2),
+                                             len(molecule))
         updated_molecule = resp.run_resp(
             path, resp_output_path + "{0}{1:+.3f}-{2}{3:+.3f}".format(
-                get_atom_signature(molecule, vary_label1), c,
-                get_atom_signature(molecule, vary_label2), n),
+                get_atom_signature(molecule, vary_label1), a1,
+                get_atom_signature(molecule, vary_label2), a2),
             resp_type='dict', inp_charges=inp_charges, esp_fn=esp_fn,
             check_ivary=check_ivary)
         rrms_val = rms_and_rep(g.field, updated_molecule, 'resp')[1]
@@ -326,7 +329,7 @@ if True:
     print("\nScanning roughly various ratios. This shouldn't take long.")
     heavy_args = (g.field, path, opt_output_path, esp_fn, False)
     heavy_result, indicator_charge, ratio_values = resp.eval_ratios(
-        'heavy', (0, 2), equiv_start_charges, 10, vary_label2, heavy_args,
+        'heavy', (0, 2), equiv_start_charges, 10, vary_label1, heavy_args,
         first_verbose=True)
     # Minimization
     print("\nStarting minimization of charge ratio.")
@@ -340,17 +343,19 @@ if True:
     if False:
         fig = plt.figure()
         ax = fig.gca(projection='3d')
-        surf = ax.plot_surface(read_result.inp2, read_result.inp1,
+        surf = ax.plot_surface(read_result.inp1, read_result.inp2,
                                read_result.rrms, cmap=cm.plasma, rstride=1,
                                cstride=1)
         fig.colorbar(surf, label="RRMS at fitting points")
-        plot_common(vary_label2, vary_label1, molecule, title)
+        plot_common(vary_label1, vary_label2, molecule, title)
         plt.show()
         plt.close()
 
     # Presentation: 2D contour
     if True:
-        CS = plt.contour(read_result.inp2, read_result.inp1, rel_rrms,
+        # NOTE: the x and y axes may need to be swapped for these plots to look
+        # better if desired. These have been designed with NMe3H in mind.
+        CS = plt.contour(read_result.inp1, read_result.inp2, rel_rrms,
                          levels, rstride=1, ctride=1, inline=1, colors='k',
                          zorder=1)
 
@@ -364,30 +369,30 @@ if True:
         plt.clabel(CS, fmt="%1.0f", inline=1, fontsize=15, colors='b')
         axes = plt.gca()
 
-        axes.set_xlim(xlim2)
-        axes.set_ylim(xlim1)
+        axes.set_xlim(xlim1)
+        axes.set_ylim(xlim2)
         plt.axes().set_aspect('equal')
 
         # Add non-esp point
-        new_point = (molecule[vary_label2-1].charges[charge_type],
-                     molecule[vary_label1-1].charges[charge_type])
+        new_point = (molecule[vary_label1-1].charges[charge_type],
+                     molecule[vary_label2-1].charges[charge_type])
         plt.scatter(*new_point, zorder=2, s=50, lw=0.3)
         # Non-esp ratio charge point
-        plt.scatter(heavy_min_ratio*equiv_start_charges[vary_label2-1],
-                    heavy_min_ratio*equiv_start_charges[vary_label1-1],
+        plt.scatter(heavy_min_ratio*equiv_start_charges[vary_label1-1],
+                    heavy_min_ratio*equiv_start_charges[vary_label2-1],
                     marker='D', zorder=2, s=50, lw=0.3)
         # Add ratio line
         y_coord = axes.get_xlim()[0]*new_point[1]/new_point[0]
         plt.plot((axes.get_xlim()[0], 0), (y_coord, 0), 'r--', zorder=1)
 
         plt.scatter(
-            read_result.esp_equiv_molecule[vary_label2-1].charges['resp'],
             read_result.esp_equiv_molecule[vary_label1-1].charges['resp'],
+            read_result.esp_equiv_molecule[vary_label2-1].charges['resp'],
             marker='x', zorder=2, s=50, lw=0.8)
 
         plt.scatter(
-            read_result.alt_esp_equiv_molecule[vary_label2-1].charges['resp'],
             read_result.alt_esp_equiv_molecule[vary_label1-1].charges['resp'],
+            read_result.alt_esp_equiv_molecule[vary_label2-1].charges['resp'],
             marker='+', zorder=2, s=50, lw=0.8)
 
         plot_common(vary_label2, vary_label1, molecule, None)
