@@ -35,6 +35,8 @@ charge_dict = lambda c, n: {1: c, 5: c, 9: c, 13: n}
 # charge_dict = lambda c, n: {1: c, 5: c, 9: c, 13: c, 17: n}
 sampling_num = 21
 # SLICING plots
+# Note that slicing plots in planes different than those of the coordinate
+# system do not preserve distances. TODO
 # Methane:
 # cut_through = 1, 2, 3
 # NMe3_plus:
@@ -90,7 +92,6 @@ if False:
             plane_eqn=[1, 0, 0, 0], dist_thresh=0.5,
             axes_limits=[(-5, 5)]*dimension, color_span=color_span)
 
-# Calculate RMS for various charges
 import copy
 from itertools import chain
 molecule = copy.deepcopy(g.molecule)
@@ -144,9 +145,7 @@ class Result(object):
         return meshgrid(charges1, charges2)
 
 
-# Calculation --- set to True if running the 'one charge variation' version.
-# Also set to True when performing the calculations for the 'two charges'
-# version. Then you must also switch on the other calculation section.
+# CALCULATIONS COMMON TO 1 AND 2D VARIATIONS
 if True:
     os.mkdir(output_path)
     os.mkdir(resp_output_path)
@@ -154,8 +153,7 @@ if True:
 
     print("\nRunning unrestrained RESP to fit ESP with equivalence:")
     esp_equiv_molecule = resp.run_resp(
-        path, resp_output_path + 'unrest', resp_type='unrest',
-        esp_fn=esp_fn)
+        path, resp_output_path + 'unrest', resp_type='unrest', esp_fn=esp_fn)
     # Equivalence alternative charge as well (i.e. unrest RESP on its own grid)
     alt_esp_equiv_molecule = resp.run_resp(
         path, resp_output_path + 'alt_unrest', resp_type='unrest',
@@ -202,7 +200,8 @@ if True:
     for atom in alt_esp_equiv_molecule:
         atom.print_with_charge('resp')
 
-# One charge (e.g. methane, water): 2D plot
+
+# ONE CHARGE VARIATION
 if False:
     charges = linspace(xlim1[0], xlim1[1], num=sampling_num)
 
@@ -213,8 +212,7 @@ if False:
     resp_args = [g.field, path, resp_output_path, esp_fn, molecule,
                  vary_label1, charge_dict]
     for i, charge in enumerate(charges):
-        rrms_val = resp.eval_one_charge_resp(
-            charge, *resp_args, check_ivary)
+        rrms_val = resp.eval_one_charge_resp(charge, *resp_args, check_ivary)
         result.append(rrms_val)
         # check_ivary is supposed to be True only on the first run
         if check_ivary:
@@ -239,7 +237,6 @@ if False:
                       100*abs((sol2-sol1)/min_charge)))
     shutil.rmtree(opt_output_path)
 
-    plt.title(title)
     plt.xlabel("Charge on " + get_atom_signature(molecule, vary_label1))
     plt.ylabel("RRMS at fitting points")
     plt.plot(charges, result)
@@ -258,7 +255,7 @@ if False:
     axes.set_xlim(xlim1)
     axes.set_ylim([0, max(result)])
 
-    save_to = output_path + molecule_name + "_rrms_" + esp_charge_type
+    save_to = output_path + molecule_name + "_" + esp_charge_type + "_1D"
     plt.savefig(save_to + ".pdf", format='pdf')
     plt.show()
     plt.close()
@@ -270,14 +267,14 @@ def plot_common(x_atom_label, y_atom_label, molecule, title):
     plt.ylabel("Charge on " + get_atom_signature(molecule, x_atom_label))
     plt.xlabel("Charge on " + get_atom_signature(molecule, y_atom_label))
 
-# 2 charges (NMe3H_plus, NMe4_plus etc.): Calculation. Note that the previous
-# calculation section must also be switched on.
+
+# TWO CHARGE VARIATION (switch off for molecules with less than 2 heavy atoms
+# or when this is not of interest)
 if True:
     print("\nTwo-dimensional scan:")
     new_result = Result(sampling_num, xlim1, xlim2)
     i = 0
     check_ivary = True
-    print("\nEvaluating the meshgrid of H-only RESPs.")
     interpret(g.molecule, charge_dict, vary_label1, vary_label2)
     for c, n in zip(new_result.inp1.flat, new_result.inp2.flat):
         inp_charges = resp.charges_from_dict(charge_dict(c, n), len(molecule))
@@ -287,15 +284,13 @@ if True:
                 get_atom_signature(molecule, vary_label2), n),
             resp_type='dict', inp_charges=inp_charges, esp_fn=esp_fn,
             check_ivary=check_ivary)
-
+        rrms_val = rms_and_rep(g.field, updated_molecule, 'resp')[1]
+        new_result.rrms.append(rrms_val)
         # check_ivary is supposed to be True only on the first run
         if check_ivary:
             check_ivary = False
             print()
-
-        rrms_val = rms_and_rep(g.field, updated_molecule, 'resp')[1]
-        new_result.rrms.append(rrms_val)
-
+        # Show progress
         i += 1
         sys.stdout.write("\rMeshgrid progress: {0:.2f} %".format(
             100*i/sampling_num**2))
@@ -396,7 +391,7 @@ if True:
             read_result.alt_esp_equiv_molecule[vary_label1-1].charges['resp'],
             marker='+', zorder=2, s=50, lw=0.8)
 
-        plot_common(vary_label2, vary_label1, molecule, title)
-        save_to = output_path + molecule_name + "_" + esp_charge_type
+        plot_common(vary_label2, vary_label1, molecule, None)
+        save_to = output_path + molecule_name + "_" + esp_charge_type + '_2D'
         plt.savefig(save_to + ".pdf", format='pdf')
         plt.close()
