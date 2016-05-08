@@ -239,23 +239,23 @@ if True:
                       100*abs((sol2-sol1)/min_charge)))
     shutil.rmtree(opt_output_path)
 
-    plt.xlabel("Charge on " + get_atom_signature(molecule, vary_label1))
-    plt.ylabel("RRMS at fitting points")
-    plt.plot(charge_vals, result)
+    fig, ax1 = plt.subplots()
+    ax1.set_xlabel("Charge on " + get_atom_signature(molecule, vary_label1))
+    ax1.set_ylabel("RRMS at fitting points")
+    ax1.plot(charge_vals, result)
     # Guiding line at zero y
-    plt.plot((-1.2, 1.2), (0, 0), 'r--')
+    ax1.plot((-1.2, 1.2), (0, 0), 'r--')
     # Guiding line at zero x
-    plt.plot((0, 0), (0, 1.2*max(result)), 'r--')
+    ax1.plot((0, 0), (0, 1.2*max(result)), 'r--')
     # Location of minimum
-    plt.plot((min_charge, min_charge), (0, resp_rrms), '--', color='grey')
-    plt.plot((-1.2, min_charge), (resp_rrms, resp_rrms), '--', color='grey')
+    ax1.plot((min_charge, min_charge), (0, resp_rrms), '--', color='grey')
+    ax1.plot((-1.2, min_charge), (resp_rrms, resp_rrms), '--', color='grey')
     # 10% flexibility limits
-    plt.plot(2*[flex_limits[2][0]], (0, 1.1*resp_rrms), 'g--')
-    plt.plot(2*[flex_limits[2][1]], (0, 1.1*resp_rrms), 'g--')
+    ax1.plot(2*[flex_limits[2][0]], (0, 1.1*resp_rrms), 'g--')
+    ax1.plot(2*[flex_limits[2][1]], (0, 1.1*resp_rrms), 'g--')
 
-    axes = plt.gca()
-    axes.set_xlim(xlim1)
-    axes.set_ylim([0, max(result)])
+    ax1.set_xlim(xlim1)
+    ax1.set_ylim([0, max(result)])
 
     save_to = output_path + molecule_name + "_" + esp_charge_type + "_1D"
     plt.savefig(save_to + ".pdf", format='pdf')
