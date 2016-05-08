@@ -207,6 +207,7 @@ if True:
 if True:
     charge_vals = linspace(xlim1[0], xlim1[1], num=sampling_num)
     result = []
+    all_charges_result = []
     print("\nOne-dimensional scan:")
     check_ivary = True
     interpret(g.molecule, charge_dict_1D, vary_label1)
@@ -216,6 +217,7 @@ if True:
         rrms_val, all_charges = resp.eval_one_charge_resp(charge, *resp_args,
                                                           check_ivary)
         result.append(rrms_val)
+        all_charges_result.append(all_charges)
         # check_ivary is supposed to be True only on the first run
         if check_ivary:
             check_ivary = False
