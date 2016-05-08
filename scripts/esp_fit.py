@@ -28,6 +28,8 @@ vary_label1 = 13
 charge_dict_1D = lambda a1: {13: a1}
 vary_label2 = 1
 charge_dict_2D = lambda a1, a2: {1: a2, 5: a2, 9: a2, 13: a1}
+# This shouldn't be more than 5 because that's the max number of colors in plot
+labels_to_monitor = [1, 2, 14]
 # NMe4_plus:
 # vary_label1 = 17
 # charge_dict_1D = lambda a1: {17: a1}
@@ -243,8 +245,23 @@ if True:
 
     fig, ax1 = plt.subplots()
     ax1.set_xlabel("Charge on " + get_atom_signature(molecule, vary_label1))
-    ax1.set_ylabel("RRMS")
     ax1.plot(charge_vals, result)
+    # Make the y-axis label and tick labels match the line color
+    ax1.set_ylabel("RRMS", color='b')
+    for tl in ax1.get_yticklabels():
+        tl.set_color('b')
+
+    ax2 = ax1.twinx()
+    colors = iter(['g', 'r', 'c', 'm', 'y'])
+    # Plot charges on other atoms
+    ax2.set_ylabel("Charges on other atoms (see legend)")
+    for i, atom_charge in enumerate(zip(*all_charges_result)):
+        if i+1 in labels_to_monitor:
+            ax2.plot(charge_vals, atom_charge, color=next(colors),
+                     label=get_atom_signature(molecule, i+1))
+    ax2.legend()
+    # Guiding line at zero y2
+    ax2.plot((-1.2, 1.2), (0, 0), 'k:')
     # Guiding line at zero x
     ax1.plot((0, 0), (0, 1.2*max(result)), 'k:')
     # Location of minimum
