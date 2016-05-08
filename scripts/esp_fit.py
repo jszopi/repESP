@@ -242,10 +242,23 @@ if True:
         sol1, sol2, charges1, charges2 = resp.find_flex(
             (1+level/100)*resp_rrms, charge_vals, result, resp_args)
         flex_limits.append([sol1, sol2])
+        if level == 10:
+            charges1_at_10 = charges1
+            charges2_at_10 = charges2
         # Difference also shown as percentage of charge on that atom
         print("{0:>3}% limits: {1: .5f}, {2: .5f}, diff: {3:.5f} ({4:.1f}%)"
               .format(level, sol1, sol2, sol2-sol1,
                       100*abs((sol2-sol1)/min_charge)))
+
+    print("\nThe monitored charges at 10% flexibility limits:")
+    i = 1
+    for charge1, charge2 in zip(charges1_at_10, charges2_at_10):
+        if i in labels_to_monitor:
+            print("{0:>3}: {1: .5f}, {2: .5f}, diff: {3:.5f}".format(
+                get_atom_signature(molecule, i), charge1, charge2,
+                abs(charge1 - charge2)))
+        i += 1
+
     shutil.rmtree(opt_output_path)
 
     fig, ax1 = plt.subplots()
