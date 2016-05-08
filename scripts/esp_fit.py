@@ -213,7 +213,8 @@ if True:
     resp_args = [g.field, path, resp_output_path, esp_fn, molecule,
                  vary_label1, charge_dict_1D]
     for i, charge in enumerate(charge_vals):
-        rrms_val = resp.eval_one_charge_resp(charge, *resp_args, check_ivary)
+        rrms_val, all_charges = resp.eval_one_charge_resp(charge, *resp_args,
+                                                          check_ivary)
         result.append(rrms_val)
         # check_ivary is supposed to be True only on the first run
         if check_ivary:

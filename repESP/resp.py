@@ -491,7 +491,8 @@ def eval_one_charge_resp(charge, field, path, output_path, esp_fn,
         path, output_path + output_folder, resp_type='dict',
         inp_charges=inp_charges, esp_fn=esp_fn, check_ivary=check_ivary)
     rrms_val = rms_and_rep(field, updated_molecule, 'resp')[1]
-    return rrms_val
+    charges = [atom.charges['resp'] for atom in updated_molecule]
+    return rrms_val, charges
 
 
 def eval_heavy_ratio(ratio, start_charges, field, path, output_path, esp_fn,
@@ -571,7 +572,7 @@ def minimize_ratio(eval_type, ratio_values, result_list, eval_func_args):
 
 def find_flex(target_val, charge_values, result_list, eval_func_args):
     eval_func = lambda charge: eval_one_charge_resp(
-        charge, *eval_func_args, False, True) - target_val
+        charge, *eval_func_args, False, True)[0] - target_val
     min_ind = result_list.index(min(result_list))
     solution1 = brentq(eval_func, charge_values[0], charge_values[min_ind],
                        xtol=1e-5)
