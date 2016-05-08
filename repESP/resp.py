@@ -12,6 +12,7 @@ from .field_comparison import rms_and_rep
 from . import charges
 
 unset_charge = 42
+charges_1D_resp = []
 
 
 def _read_respin(fn, ref_molecule=None):
@@ -492,6 +493,9 @@ def eval_one_charge_resp(charge, field, path, output_path, esp_fn,
         inp_charges=inp_charges, esp_fn=esp_fn, check_ivary=check_ivary)
     rrms_val = rms_and_rep(field, updated_molecule, 'resp')[1]
     charges = [atom.charges['resp'] for atom in updated_molecule]
+    # Also save to global variable, which is to be accesssed only by find_flex
+    global charges_1D_resp
+    charges_1D_resp = charges
     return rrms_val, charges
 
 
@@ -576,9 +580,13 @@ def find_flex(target_val, charge_values, result_list, eval_func_args):
     min_ind = result_list.index(min(result_list))
     solution1 = brentq(eval_func, charge_values[0], charge_values[min_ind],
                        xtol=1e-5)
+    # List copying here is not necessary, because `eval_one_charge_resp`
+    # reassigns this function rather than mutate it, but still used to be safe
+    charges1 = charges_1D_resp[:]
     solution2 = brentq(eval_func, charge_values[min_ind], charge_values[-1],
                        xtol=1e-5)
-    return solution1, solution2
+    charges2 = charges_1D_resp[:]
+    return solution1, solution2, charges1, charges2
 
 
 def eval_ratios(eval_type, ratio_limits, start_charges, sampling_num,

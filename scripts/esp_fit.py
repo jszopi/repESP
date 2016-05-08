@@ -239,8 +239,8 @@ if True:
             print("Further limits were beyond the sampled range.")
             break
 
-        sol1, sol2 = resp.find_flex((1+level/100)*resp_rrms, charge_vals,
-                                    result, resp_args)
+        sol1, sol2, charges1, charges2 = resp.find_flex(
+            (1+level/100)*resp_rrms, charge_vals, result, resp_args)
         flex_limits.append([sol1, sol2])
         # Difference also shown as percentage of charge on that atom
         print("{0:>3}% limits: {1: .5f}, {2: .5f}, diff: {3:.5f} ({4:.1f}%)"
