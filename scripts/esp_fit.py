@@ -241,18 +241,15 @@ if True:
 
     fig, ax1 = plt.subplots()
     ax1.set_xlabel("Charge on " + get_atom_signature(molecule, vary_label1))
-    ax1.set_ylabel("RRMS at fitting points")
+    ax1.set_ylabel("RRMS")
     ax1.plot(charge_vals, result)
-    # Guiding line at zero y
-    ax1.plot((-1.2, 1.2), (0, 0), 'r--')
     # Guiding line at zero x
-    ax1.plot((0, 0), (0, 1.2*max(result)), 'r--')
+    ax1.plot((0, 0), (0, 1.2*max(result)), 'k:')
     # Location of minimum
-    ax1.plot((min_charge, min_charge), (0, resp_rrms), '--', color='grey')
-    ax1.plot((-1.2, min_charge), (resp_rrms, resp_rrms), '--', color='grey')
+    ax1.plot((min_charge, min_charge), (0, resp_rrms), 'k--')
+    ax1.plot((-1.2, min_charge), (resp_rrms, resp_rrms), 'k--')
     # 10% flexibility limits
-    ax1.plot(2*[flex_limits[2][0]], (0, 1.1*resp_rrms), 'g--')
-    ax1.plot(2*[flex_limits[2][1]], (0, 1.1*resp_rrms), 'g--')
+    ax1.axvspan(flex_limits[2][0], flex_limits[2][1], alpha=0.2, color='grey')
 
     ax1.set_xlim(xlim1)
     ax1.set_ylim([0, max(result)])
