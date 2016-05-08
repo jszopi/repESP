@@ -234,6 +234,11 @@ if True:
     flex_limits = []
     print("\n\nFlexibility limits on", molecule[vary_label1-1])
     for level in levels:
+        if (1+level/100)*resp_rrms > min(result[0], result[1]):
+            # Otherwise find_flex would throw an error
+            print("Further limits were beyond the sampled range.")
+            break
+
         sol1, sol2 = resp.find_flex((1+level/100)*resp_rrms, charge_vals,
                                     result, resp_args)
         flex_limits.append([sol1, sol2])
