@@ -300,8 +300,8 @@ if True:
 def plot_common(x_atom_label, y_atom_label, molecule, title):
     if title is not None:
         plt.title(title)
-    plt.ylabel("Charge on " + get_atom_signature(molecule, x_atom_label))
-    plt.xlabel("Charge on " + get_atom_signature(molecule, y_atom_label))
+    plt.xlabel("Charge on " + get_atom_signature(molecule, x_atom_label))
+    plt.ylabel("Charge on " + get_atom_signature(molecule, y_atom_label))
 
 
 # TWO CHARGE VARIATION (switch off for molecules with less than 2 heavy atoms
@@ -430,7 +430,7 @@ if True:
             read_result.alt_esp_equiv_molecule[vary_label2-1].charges['resp'],
             marker='+', zorder=2, s=50, lw=0.8)
 
-        plot_common(vary_label2, vary_label1, molecule, None)
+        plot_common(vary_label1, vary_label2, molecule, None)
         save_to = output_path + molecule_name + "_" + esp_charge_type + '_2D'
         plt.savefig(save_to + ".pdf", format='pdf')
         plt.close()
