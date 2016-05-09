@@ -37,6 +37,7 @@ labels_to_monitor = [1, 2, 14]
 xlim1 = (-0.5, 1)
 xlim2 = (-1, 0)
 sampling_num = 21
+swap_axes = False
 
 # SLICING plots
 # Note that slicing plots in planes different than those of the coordinate
@@ -388,11 +389,17 @@ if True:
 
     # Presentation: 2D contour
     if True:
+        inp1 = read_result.inp1
+        inp2 = read_result.inp2
+        if swap_axes:
+            xlim1, xlim2 = xlim2, xlim1
+            vary_label1, vary_label2 = vary_label2, vary_label1
+            inp1, inp2 = inp2, inp1
+
         # NOTE: the x and y axes may need to be swapped for these plots to look
         # better if desired. These have been designed with NMe3H in mind.
-        CS = plt.contour(read_result.inp1, read_result.inp2, rel_rrms,
-                         levels, rstride=1, ctride=1, inline=1, colors='k',
-                         zorder=1)
+        CS = plt.contour(inp1, inp2, rel_rrms, levels, rstride=1, ctride=1,
+                         inline=1, colors='k', zorder=1)
 
         print("Number of charges sampled along each axis:", sampling_num)
         print("Reporting contour surface areas:")
