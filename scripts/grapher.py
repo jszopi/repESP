@@ -30,7 +30,8 @@ ed_cube = cube_helpers.Cube(path + molecule_name + '_den.cub')
 molecule = esp_cube.molecule
 
 # SET OPTIONS HERE
-dist = ed_cube.field.distance_transform(0.002)  # ISOVALUE
+isoval = 0.01
+dist = ed_cube.field.distance_transform(isoval)
 exclusion_dist = 0
 rand_skim = 1
 axes_limits = [[0, 4]]
@@ -48,7 +49,7 @@ charge_types = {'aim': '.sumviz',
 _dist, esp_values = filter_by_dist(exclusion_dist, dist, esp_cube.field)
 color_span = [np.nanmin(esp_values), np.nanmax(esp_values)]
 # A symmetric span can also be used:
-# color_limit = max(abs(nanmin(esp_values)), abs(nanmax(esp_values)))
+# color_limit = max(abs(np.nanmin(esp_values)), abs(np.nanmax(esp_values)))
 # color_span = [-color_limit, color_limit]
 
 # Note that the y-axis is not set for different charge_types! If this is
@@ -86,8 +87,8 @@ for charge_type in charge_types.keys():
     diff_filtered = copy.deepcopy(diff)
     diff_filtered.check_nans = False
     _dist, diff_filtered.values = filter_by_dist(exclusion_dist, dist, diff)
-    diff_filtered.write_cube(charge_dir + '/diff_filtered.cub', molecule,
-                             charge_type)
+    diff_filtered.write_cube(charge_dir + '/diff_filtered-iso_' + str(isoval) +
+                             '.cub', molecule, charge_type)
 
     rep_filtered = copy.deepcopy(rep)
     rep_filtered.check_nans = False
