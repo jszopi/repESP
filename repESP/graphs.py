@@ -90,11 +90,12 @@ def plot(*fields, color=None, color_span=None, dist_field_filter=None,
         # because an error occurs when the kwarg ``c`` is explicitly set to
         # None, even though it's the default value.
         vmin, vmax = color_span if color_span is not None else None, None
-        image = ax.scatter(*fields, c=color, cmap=cmap, vmin=vmin, vmax=vmax)
+        image = ax.scatter(*fields, c=color, cmap=cmap, vmin=vmin, vmax=vmax,
+                           lw=0, s=5)
         cbar = fig.colorbar(image, label=cmap_name)
     else:
         fields = fields_and_color
-        ax.scatter(*fields)
+        ax.scatter(*fields, lw=0, s=5)
 
     _set_axes_limits(len(fields), ax, axes_limits)
     _save_or_display(save_to)
@@ -150,14 +151,7 @@ def _get_cmap(dimension, field_type):
         else:
             print("WARNING: Shading by distance doesn't look good on a 3D "
                   "plot. Colouring instead.")
-    # This colour map is fairly intuitive, looks good in greysale and
-    # to coloublind people (except for those with the very rare tritanomaly),
-    # according to a simulation on:
-    # http://www.color-blindness.com/coblis-color-blindness-simulator/
-    return plt.get_cmap('plasma')
-    # 'gnuplot2' was also considered but in greyscale it yields black and white
-    # at the ends and IMO contains unnecessarily many hues. 'plasma' is simpler
-    # and uses similar colours.
+    return plt.get_cmap('coolwarm_r')
 
 
 def _save_or_display(save_to=None):
