@@ -129,6 +129,13 @@ for charge_type in charge_types.keys():
             atom_filter = lambda *fields: filter_by_atom(molecule, atom.label,
                                                          basin, *fields)[1:]
 
+            diff_atom = copy.deepcopy(diff)
+            diff_atom.check_nans = False
+            _atom, diff_atom.values = filter_by_atom(molecule, atom.label,
+                                                     basin, diff_atom)
+            diff_atom.write_cube(basin_dir + '/diff_filtered-atom_' +
+                                 atom_id + '.cub', molecule, charge_type)
+
             plot(dist, diff, color=esp_cube.field, color_span=color_span,
                  dist_field_filter=dist, exclusion_dist=exclusion_dist,
                  rand_skim=rand_skim, extra_filter=atom_filter,
