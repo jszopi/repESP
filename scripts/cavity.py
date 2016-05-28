@@ -1,10 +1,24 @@
+#!/usr/bin/env python3
+
 from repESP import cube_helpers
 
 import numpy as np
 from scipy.ndimage.morphology import distance_transform_edt as scipy_edt
+import argparse
 
-path = '../data/'
-mol_name = 'NMe3H_plus'
+parser = argparse.ArgumentParser(
+    description="Create a Gaussian cube file (.cub) with an (approximate) atom"
+    " distance transform. Visualizing isosurfaces or contours can help "
+    "creating SMD cavity diagrams.",
+    formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+
+parser.add_argument("input_cube",
+                    help="input cube (content doesn't matter, only the grid "
+                    "and atomic coordinates are extracted)")
+parser.add_argument("-o", "--output",
+                    help="output file name",
+                    default='cavity.cub')
+args = parser.parse_args()
 
 
 def grid_point_nearest_atom(field, atom):
@@ -40,9 +54,7 @@ def atom_distance_transform(field, molecule):
     dist = scipy_edt(atom_field, sampling=field.grid.dir_intervals)
     return cube_helpers.GridField(dist, field.grid, 'atom_dist')
 
-esp_cube = cube_helpers.Cube(path + mol_name + '/' + mol_name + '_esp.cub')
-cavity_field = atom_distance_transform(esp_cube.field, esp_cube.molecule)
-cavity_fn = mol_name + "_cavity.cub"
-cavity_field.write_cube(cavity_fn, esp_cube.molecule)
-
-print("Cavity cube written to '{}'".format(cavity_fn))
+input_cube = cube_helpers.Cube(args.input_cube)
+cavity_field = atom_distance_transform(input_cube.field, input_cube.molecule)
+cavity_field.write_cube(args.output, input_cube.molecule)
+print("Cavity cube written to '{}'".format(args.output))
