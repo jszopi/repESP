@@ -216,6 +216,10 @@ def _charge_termination_line(input_type, charge_type):
 
 
 def _update_molecule_with_charges(molecule, charges, charge_type):
+    if len(molecule) != len(charges):
+        raise ValueError("The number of charges provided ({0}) is not equal to"
+                         " the number of atoms in molecule ({1}).".format(
+                             len(charges), len(molecule)))
     for atom, charge in zip(molecule, charges):
         atom.charges[charge_type] = charge
 
