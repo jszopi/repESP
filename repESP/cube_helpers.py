@@ -48,9 +48,13 @@ class Cube(object):
             try:
                 self.cube_type = Cube.title_to_type[self.title[:18]]
             except KeyError:
-                raise NotImplementedError("Cube title '" + self.title + "' is "
-                                          "not associated with a known cube "
-                                          "type.")
+                self.cube_type = "unrecognized"
+                # TODO: Cubes created by this program are currently not
+                # recognized. When fixing this look for another use of the word
+                # 'unrecognized' in this file.
+                # raise NotImplementedError(
+                #         "Cube title '" + self.title + "' is not associated "
+                #         "with a known cube type.")
 
             line = f.readline().split()
             if len(line) == 5:
@@ -320,6 +324,8 @@ class Field(object):
                 result += "of Voronoi basin"
             elif self.field_info[0] == 'qtaim':
                 result += "of QTAIM basin"
+        elif self.field_type == "unrecognized":
+            result = "Unrecognized"
         else:
             raise NotImplementedError("Free-form name not implemented for "
                                       "Field of type '{0}' and info '{1}'"
