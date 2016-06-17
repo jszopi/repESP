@@ -88,6 +88,7 @@ def compare_charges(charge_type1, charge_type2, molecule, molecule2=None,
     same atoms.
     """
     output = []
+    accuracy = math.ceil(abs(math.log10(thresh))) + 1
     if molecule2 is None:
         molecule2 = molecule
     for atom1, atom2 in zip(molecule, molecule2):
@@ -98,7 +99,8 @@ def compare_charges(charge_type1, charge_type2, molecule, molecule2=None,
         diff = atom1.charges[charge_type1] - atom2.charges[charge_type2]
         # The second condition tests for equality if the threshold is not zero
         if abs(diff) > thresh or (thresh and math.isclose(abs(diff), thresh)):
-            output.append("{0} differ by {1: .3f}".format(atom1, diff))
+            output.append("{0} differs by {1: .{2}f}".format(atom1, diff,
+                                                             accuracy))
     return '\n'.join(output)
 
 
