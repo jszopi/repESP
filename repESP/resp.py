@@ -50,7 +50,7 @@ def _read_respin(fn, ref_molecule=None):
         raise InputFormatError("The molecule in the .respin file differs "
                                "from the other molecule as shown above.")
 
-    return ivary_list, charge, iuniq
+    return ivary_list, charge, iuniq, molecule
 
 
 common_respin_head = """
@@ -289,11 +289,11 @@ def _resp_one_stage(resp_type, calc_dir_path, respin1_fn, respin2_fn, molecule,
     read_input_charges = inp_charges is not None
     # MODIFY THE .RESPIN FILE
     # Read in .respin1
-    ivary_list1, charge1, iuniq1 = _read_respin(respin1_fn,
-                                                ref_molecule=molecule)
+    ivary_list1, charge1, iuniq1, _molecule = _read_respin(
+        respin1_fn, ref_molecule=molecule)
     # Read in .respin2
-    ivary_list2, charge2, iuniq2 = _read_respin(respin2_fn,
-                                                ref_molecule=molecule)
+    ivary_list2, charge2, iuniq2, _molecule = _read_respin(
+        respin2_fn, ref_molecule=molecule)
     assert charge1 == charge2
     assert iuniq1 == iuniq2
     # Modify ivary list and write to new input file
@@ -354,8 +354,8 @@ def _resp_two_stage(calc_dir_path, respin1_fn, respin2_fn, molecule,
               "input `respin` files but you may want to inspect them "
               "nevertheless.\n\nSTAGE 1")
 
-    ivary_list1, charge1, iuniq1 = _read_respin(respin1_fn,
-                                                ref_molecule=molecule)
+    ivary_list1, charge1, iuniq1, _molecule = _read_respin(
+        respin1_fn, ref_molecule=molecule)
     # ivary_list1 used without modification. Modify the .respin1 file only to
     # ask to load initial charges if `read_input_charges` is True.
     _check_ivary(check_ivary, molecule, ivary_list1)
@@ -368,8 +368,8 @@ def _resp_two_stage(calc_dir_path, respin1_fn, respin2_fn, molecule,
     # Although copying `.respin2` would suffice, _write_modified_respin is
     # called here as well for consistency. The respin file content could
     # potentially differ from that produced by `respgen` if its defaults change
-    ivary_list2, charge2, iuniq2 = _read_respin(respin2_fn,
-                                                ref_molecule=molecule)
+    ivary_list2, charge2, iuniq2, _molecule = _read_respin(
+        respin2_fn, ref_molecule=molecule)
     _check_ivary(check_ivary, molecule, ivary_list2)
     _write_modified_respin('2', molecule, ivary_list2, charge2, iuniq2,
                            calc_dir_path + "input2.respin",
@@ -422,8 +422,10 @@ def equivalence(molecule, charge_type, input_dir, respin1_fn="",
                 respin2_fn=""):
     """Average atomic charges type as per the equivalence from .respin files"""
     respin1, respin2 = _get_input_files(input_dir, respin1_fn, respin2_fn)
-    ivary_list1, charge1, iuniq1 = _read_respin(respin1, ref_molecule=molecule)
-    ivary_list2, charge2, iuniq2 = _read_respin(respin2, ref_molecule=molecule)
+    ivary_list1, charge1, iuniq1, _molecule = _read_respin(
+        respin1, ref_molecule=molecule)
+    ivary_list2, charge2, iuniq2, _molecule = _read_respin(
+        respin2, ref_molecule=molecule)
     assert charge1 == charge2
     assert iuniq1 == iuniq2
     ivary_list = _modify_ivary_list('e', molecule, ivary_list1, ivary_list2)
