@@ -14,7 +14,8 @@ parser = argparse.ArgumentParser(
 
 parser.add_argument("input_cube",
                     help="input cube (content doesn't matter, only the grid "
-                    "and atomic coordinates are extracted)")
+                    "and atomic coordinates are extracted)",
+                    metavar="INPUT_CUBE")
 parser.add_argument("-o", "--output",
                     help="output file name",
                     default='cavity.cub')

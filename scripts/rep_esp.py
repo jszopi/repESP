@@ -23,7 +23,8 @@ parser = argparse.ArgumentParser(
 
 parser.add_argument("template_cube",
                     help="template cube file (content doesn't matter, only the"
-                    " grid and atomic coordinates are used)")
+                    " grid and atomic coordinates are used)",
+                    metavar="TEMPLATE_CUBE")
 
 charge_choices = ['list', 'mulliken', 'nbo', 'aim', 'mk', 'chelp', 'chelpg',
                   'hly']
@@ -33,18 +34,18 @@ parser.add_argument(
     "input_charge_type",
     help="type of input charges. To extract charges from a text file, use the "
     "'list' option. Other available options are: " + charge_choices_text,
-    choices=charge_choices, metavar="input_charge_type")
+    choices=charge_choices, metavar="INPUT_CHARGE_TYPE")
 
 parser.add_argument(
     "input_charge_file",
-    help=""""input file to extract charges from. This can be a Gaussian .log,
+    help="""input file to extract charges from. This can be a Gaussian .log,
     AIMAll .sumviz or a text file. The appropriate format for the text file is
     used throughout this suite of scripts and is very simple:
 
     1. Values should be space-separated
     2. Atom order should follow that in the template cube file
-    3. Line breaks are not significant
-    """)
+    3. Line breaks are not significant""",
+    metavar="INPUT_CHARGE_FILE")
 
 parser.add_argument("-o", "--output",
                     help="output file name",

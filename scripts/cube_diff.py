@@ -8,12 +8,12 @@ import os
 
 help_description = """Create a Gaussian cube file (.cub) with the difference
                    between two cube files. The difference is calculated as
-                   field1 - field2."""
+                   FIELD1 - FIELD2."""
 
 parser = argparse.ArgumentParser(description=help_description)
 
-parser.add_argument("field1")
-parser.add_argument("field2")
+parser.add_argument("field1", metavar="FIELD1")
+parser.add_argument("field2", metavar="FIELD2")
 
 parser.add_argument("--relative",
                     help="At each point divide the difference by the value of "
@@ -29,7 +29,7 @@ parser.add_argument("--exclude",
                     "density (ED) isosurface of the given isovalue closer than"
                     " the given distance.",
                     nargs=3,
-                    metavar=("ED_cube", "ED_isovalue", "exclusion_distance"))
+                    metavar=("ED_CUBE", "ED_ISOVALUE", "EXCLUSION_DISTANCE"))
 
 parser.add_argument("--exclusion_as_zero",
                     help="""When excluding points, excluded points are by
