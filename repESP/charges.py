@@ -1,6 +1,7 @@
 from .cube_helpers import Atom, Cube, InputFormatError
 
 import re
+import math
 from fortranformat import FortranRecordWriter
 
 esp_type_in_log = {
@@ -95,7 +96,8 @@ def compare_charges(charge_type1, charge_type2, molecule, molecule2=None,
                              "{0}\n{1}".format(atom1, atom1))
         # May rise KeyError if any atom doesn't have the right charges
         diff = atom1.charges[charge_type1] - atom2.charges[charge_type2]
-        if abs(diff) >= thresh:
+        # The second condition tests for equality if the threshold is not zero
+        if abs(diff) > thresh or (thresh and math.isclose(abs(diff), thresh)):
             output.append("{0} differ by {1: .3f}".format(atom1, diff))
     return '\n'.join(output)
 
