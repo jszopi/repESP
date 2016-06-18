@@ -53,8 +53,7 @@ parser.add_argument("--save_resp_to",
 
 parser.add_argument("-o", "--output",
                     help="output file name",
-                    default='charges.txt')
-
+                    default='averaged_charges.txt')
 
 args = parser.parse_args()
 
@@ -106,10 +105,12 @@ else:
 
 message = charges.compare_charges(args.input_charge_type, "resp", molecule,
                                   averaged_molecule, thresh=args.thresh)
+thresh_message = " vary by more than the threshold of " + str(args.thresh)
 
 if message:
+    print("\nThe following charges" + thresh_message)
     print(message)
 else:
-    print("No charges vary by more than the threshold of " + str(args.thresh))
+    print("\nNo charges" + thresh_message)
 
 charges.dump_charges_to_qout(averaged_molecule, "resp", args.output)
