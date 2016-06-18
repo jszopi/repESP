@@ -6,7 +6,7 @@ from repESP import charges
 from repESP import resp_helpers
 
 import argparse
-import parent_parser
+import charges_parser
 
 import os
 import shutil
@@ -18,7 +18,7 @@ help_description = """Average charges according to atom equivalence information
     --esp_file option."""
 
 parser = argparse.ArgumentParser(
-    parents=[parent_parser.parent_parser],
+    parents=[charges_parser.parser],
     formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     description=help_description)
 
@@ -71,7 +71,7 @@ if os.path.exists(args.output):
 if args.save_resp_to is not None and os.path.exists(args.save_resp_to):
     raise FileExistsError("Output directory exists: " + args.save_resp_to)
 
-input_type = parent_parser.input_type(args.input_charge_type)
+input_type = charges_parser.input_type(args.input_charge_type)
 
 respin1, respin2 = _get_input_files(args.respin_location, respin1_fn="",
                                     respin2_fn="")

@@ -4,7 +4,7 @@ from repESP import cube_helpers, charges
 from repESP.rep_esp import calc_grid_field
 
 import argparse
-import parent_parser
+import charges_parser
 import os
 
 help_description = """
@@ -18,7 +18,7 @@ help_description = """
     """
 
 parser = argparse.ArgumentParser(
-    parents=[parent_parser.parent_parser],
+    parents=[charges_parser.parser],
     description=help_description,
     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
@@ -39,7 +39,7 @@ if os.path.exists(args.output):
 template_cube = cube_helpers.Cube(args.template_cube)
 molecule = template_cube.molecule
 
-input_type = parent_parser.input_type(args.input_charge_type)
+input_type = charges_parser.input_type(args.input_charge_type)
 charges._get_charges(args.input_charge_type, args.input_charge_file,
                      input_type, molecule)
 

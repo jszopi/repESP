@@ -11,20 +11,19 @@ def input_type(input_charge_type):
     return result
 
 
-parent_parser = argparse.ArgumentParser(
-    add_help=False)
+parser = argparse.ArgumentParser(add_help=False)
 
 charge_choices = ['list', 'mulliken', 'nbo', 'aim', 'mk', 'chelp', 'chelpg',
                   'hly']
 charge_choices_text = "'" + "', '".join(charge_choices[1:-1]) + "' and '" + \
                       charge_choices[-1] + "'."
-parent_parser.add_argument(
+parser.add_argument(
     "input_charge_type",
     help="type of input charges. To extract charges from a text file, use the "
     "'list' option. Other available options are: " + charge_choices_text,
     choices=charge_choices, metavar="INPUT_CHARGE_TYPE")
 
-parent_parser.add_argument(
+parser.add_argument(
     "input_charge_file",
     help="""input file to extract charges from. This can be a Gaussian .log,
     AIMAll .sumviz or a text file. The appropriate format for the text file is
