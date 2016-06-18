@@ -13,10 +13,9 @@ help_description = """
     If you do not want to process the charge in any way, raw charges can be
     extracted from Gaussian .log or AIMAll .sumviz files. However, it is
     probably sensible to average or equivalence the charges first, using the
-    appropriate script from this suite. The charges can then be read in from
+    'average.py' script from this suite. The charges can then be read in from
     the output text file.
     """
-# TODO: give the name of the appropriate script once it's been written
 
 parser = argparse.ArgumentParser(
     parents=[parent_parser.parent_parser],
