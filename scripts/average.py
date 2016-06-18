@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 from repESP.resp import equivalence, _get_input_files, _read_respin
+from repESP.resp import _check_ivary
 from repESP import charges
 
 import argparse
@@ -48,9 +49,12 @@ molecule = _read_respin(respin1)[-1]
 charges._get_charges(args.input_charge_type, args.input_charge_file,
                      input_type, molecule)
 
-averaged_charges = equivalence(molecule, args.input_charge_type,
-                               args.respin_location, respin1_fn="",
-                               respin2_fn="")
+averaged_charges, ivary_list = equivalence(
+    molecule, args.input_charge_type, args.respin_location, respin1_fn="",
+    respin2_fn="")
+# Check equivalence information from respin:
+_check_ivary(True, molecule, ivary_list)
+
 charges._update_molecule_with_charges(molecule, averaged_charges, "avgd")
 
 message = charges.compare_charges(args.input_charge_type, "avgd", molecule,
