@@ -49,7 +49,7 @@ args = parser.parse_args()
 if os.path.exists(args.output):
     raise FileExistsError("Output file exists: " + args.output)
 
-if args.exclusion_as_zero and not args.exclude:
+if args.exclusion_as_zero and args.exclude is None:
     raise ValueError("The --exclusion_as_zero flag should only be set when "
                      "--exclude options are set.")
 
