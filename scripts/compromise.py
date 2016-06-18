@@ -56,7 +56,7 @@ g = resp_helpers.G09_esp(path + esp_fn)
 # start for reference.
 update_with_charges(esp_charge_type, esp_log_fn, g.molecule)
 update_with_charges(charge_type, log_fn, g.molecule)
-equiv_charges = resp.equivalence(g.molecule, charge_type, path)
+equiv_charges = resp.equivalence(g.molecule, charge_type, path)[0]
 _update_molecule_with_charges(g.molecule, equiv_charges, charge_type+'_equiv')
 print("\nRunning unrestrained RESP to fit ESP with equivalence:")
 esp_equiv_molecule = resp.run_resp(

@@ -471,7 +471,7 @@ def equivalence(molecule, charge_type, input_dir, respin1_fn="",
             else:
                 elem = result[ivary_list[i]-1]
         new_result.append(elem)
-    return new_result
+    return new_result, ivary_list
 
 
 def get_atom_signature(molecule, label):

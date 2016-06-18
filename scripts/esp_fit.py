@@ -356,7 +356,7 @@ if True:
 
     # Non-ESP charge and its minimized ratio
     charges.update_with_charges(charge_type, charge_log_fn, molecule)
-    equiv_start_charges = resp.equivalence(molecule, charge_type, path)
+    equiv_start_charges = resp.equivalence(molecule, charge_type, path)[0]
     charge_type += '_equiv'
     charges._update_molecule_with_charges(molecule, equiv_start_charges,
                                           charge_type)
