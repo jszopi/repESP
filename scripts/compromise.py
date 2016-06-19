@@ -112,6 +112,9 @@ if zero_net_charge:
     # the 'heavy_only' version
     print("\nEvaluating REGULAR ratios. This may take a while.")
     regular_args = (g.molecule, g.field)
+    # Note that indicator charge and ratio values are re-used from the heavy
+    # version. This is fine for ratio_values. For indicator_charge it's fine as
+    # long as the indicator charge is on a heavy atom. TODO
     result = resp.eval_ratios('regular', ratio_limits, start_charges, num,
                               indicator_label, regular_args,
                               first_verbose=True)[0]
