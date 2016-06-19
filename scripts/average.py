@@ -55,8 +55,8 @@ else:
 
 if os.path.exists(args.output):
     raise FileExistsError("Output file exists: " + args.output)
-if args.save_resp_to is not None and os.path.exists(args.save_resp_to):
-    raise FileExistsError("Output directory exists: " + args.save_resp_to)
+if os.path.exists(save_resp_to):
+    raise FileExistsError("Output directory exists: " + save_resp_to)
 
 input_type = charges_parser.input_type(args.input_charge_type)
 
