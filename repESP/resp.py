@@ -495,7 +495,7 @@ def eval_one_charge_resp(charge, field, path, output_path, esp_fn,
         inp_charges=inp_charges, esp_fn=esp_fn, check_ivary=check_ivary)
     rrms_val = rms_and_rep(field, updated_molecule, 'resp')[1]
     charges = [atom.charges['resp'] for atom in updated_molecule]
-    # Also save to global variable, which is to be accesssed only by find_flex
+    # Also save to global variable, which is to be accesssed by find_flex
     global charges_1D_resp
     charges_1D_resp = charges
     return rrms_val, charges
@@ -515,6 +515,11 @@ def eval_heavy_ratio(ratio, start_charges, field, path, output_path, esp_fn,
         inp_charges=inp_charges, esp_fn=esp_fn, check_ivary=verbose)
     rrms_val = rms_and_rep(field, updated_molecule, 'resp')[1]
 
+    new_charges = [atom.charges['resp'] for atom in updated_molecule]
+    # Also save to global variable, which is to be accesssed by minimize_ratio
+    global charges_1D_resp
+    charges_1D_resp = new_charges
+
     if verbose > 1:
         print("\nHEAVY: RATIO: {0:.3f}, RRMS: {1:.3f}".format(ratio, rrms_val))
         for atom in updated_molecule:
@@ -527,6 +532,11 @@ def eval_ratio(ratio, start_charges, molecule, field, verbose=True):
     inp_charges = [charge*ratio for charge in start_charges]
     charges._update_molecule_with_charges(molecule, inp_charges, 'temp')
     rrms_val = rms_and_rep(field, molecule, 'temp')[1]
+
+    new_charges = [atom.charges['temp'] for atom in molecule]
+    # Also save to global variable, which is to be accesssed by minimize_ratio
+    global charges_1D_resp
+    charges_1D_resp = new_charges
 
     if verbose > 1:
         print("\nREGULAR: RATIO: {0:.3f}, RRMS: {1:.3f}".format(ratio,
@@ -573,7 +583,9 @@ def minimize_ratio(eval_type, ratio_values, result_list, eval_func_args):
     min_ratio, min_ratio_rrms = minimized.x, minimized.fun
     print("\nFOUND optimal {0} ratio: {1:.4f} with RRMS of {2:6f}\n".format(
           eval_type, min_ratio, min_ratio_rrms))
-    return min_ratio, min_ratio_rrms
+
+    charges = charges_1D_resp[:]
+    return min_ratio, min_ratio_rrms, charges
 
 
 def find_flex(target_val, charge_values, result_list, eval_func_args):
