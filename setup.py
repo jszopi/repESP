@@ -15,7 +15,8 @@ config = {
     'author_email': 'jszopi@users.noreply.github.com',
     'url': 'https://github.com/jszopi/repESP',
     'packages': ['repESP'],
-    'install_requires': ['numpy', 'scipy', 'matplotlib'],
+    'install_requires': ['scipy', 'matplotlib', 'fortranformat'],
+    'license': 'GPLv3',
 }
 
 # TODO Additional files will need to be added when demo scripts are created
