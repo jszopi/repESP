@@ -38,6 +38,14 @@ parser.add_argument("--save_resp_to",
                     "directory",
                     metavar="SAVE_RESP_TO")
 
+# TODO: This is a a useful hack to extract charges. This should probably be a
+# separate script but it would still require the information about the molecule
+# from a cube or respin files. That would be undesriable, so I don't want to
+# implement it before I have a better idea.
+parser.add_argument("--dump_raw",
+                    help="dump extracted raw charges and exit",
+                    metavar="DUMP_RAW")
+
 parser.add_argument("-o", "--output",
                     help="output file name",
                     default='averaged_charges.txt')
@@ -67,6 +75,11 @@ molecule = _read_respin(respin1)[-1]
 # ... but this will throw an error if the molecule in log is not the same one
 charges._get_charges(args.input_charge_type, args.input_charge_file,
                      input_type, molecule)
+
+if args.dump_raw:
+    charges.dump_charges_to_qout(molecule, args.input_charge_type, args.dump_raw)
+    import sys
+    sys.exit(0)
 
 if args.esp_file is not None:
     try:
