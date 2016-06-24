@@ -10,8 +10,8 @@ import resp_parser
 import os
 import shutil
 
-help_description = """Evaluate the fit quality of the given charges on the
-    provided mesh of fitting points."""
+help_description = """Run 2-stage RESP. Running this wrapper is arguably easier
+    than runnning the `resp` program manually."""
 
 parser = argparse.ArgumentParser(
     parents=[resp_parser.parser],
