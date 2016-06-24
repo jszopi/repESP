@@ -552,7 +552,14 @@ def _find_bracket(x, y):
     assert len(x) == len(y)
     min_ind = y.index(min(y))
     # Check if the minimum value is not at the very edges of the interval:
-    assert 0 < min_ind < len(x) - 1
+    message = ""
+    if min_ind == 0:
+        message = "left"
+    elif min_ind == len(x) - 1:
+        message = "right"
+    if message:
+        raise ValueError("The minimum is located on the {0} edge of the "
+                         "interval.".format(message))
     return x[min_ind-1: min_ind+2]
 
 
