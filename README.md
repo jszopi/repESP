@@ -53,7 +53,7 @@ To run, `repESP` requires Python with certain packages and two other free progra
 ### Python
 
 * Python 3.5
-* Packages: `scipy`, `matplotlib`, `fortranformatter` (install using `pip3.5`, which comes with your Python)
+* Packages: `scipy`, `matplotlib`, `fortranformat` (install using `pip3.5`, which comes with your Python)
 
 ### `resp` 
 
