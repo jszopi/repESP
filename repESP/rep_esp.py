@@ -4,6 +4,8 @@ import numpy as np
 from .resp_helpers import Points, NonGridField
 from .cube_helpers import GridField, Grid, angstrom_per_bohr
 
+au_per_debye = 0.393430307
+
 
 def _calc_field(molecule, points, field_func, *field_func_args):
     """Calculate values at points to a function
@@ -127,6 +129,19 @@ def _rep_esp_func(molecule, x, y, z, charge_types):
         for i, charge_type in enumerate(charge_types):
             values[i] += atom.charges[charge_type]/(dist/angstrom_per_bohr)
     return values
+
+
+def calc_dipole(molecule, charge_type):
+    """3D components of dipole moment in Debye"""
+    # Wouldn't this function fit better to another module?
+    dipole = []
+    for coord in range(3):
+        component = 0
+        for atom in molecule:
+            component += (atom.charges[charge_type]*atom.coords[coord] /
+                          angstrom_per_bohr / au_per_debye)
+        dipole.append(component)
+    return dipole
 
 
 def _dist_func(molecule, x, y, z):
