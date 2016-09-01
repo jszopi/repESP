@@ -39,6 +39,15 @@ xlim2 = (-1, 0)
 sampling_num = 21
 swap_axes = False
 
+plot_flexibility = True
+plot_response = True
+
+try:
+    assert(plot_flexibility or plot_response)
+except AssertionError:
+    raise AssertionError("At least one of plot_flexibility or `plot_response` "
+                         "must be requested.")
+
 # SLICING plots
 # Note that slicing plots in planes different than those of the coordinate
 # system do not preserve distances. TODO
@@ -206,6 +215,41 @@ if True:
         atom.print_with_charge('resp')
 
 
+def plot_flexibility_func(axis, molecule, vary_label1, charge_vals, result,
+                          min_charge, resp_rrms, flex_limits):
+    # TODO: Add option to plot either RMS or RRMS
+    axis.set_xlabel("Charge on " + get_atom_signature(molecule, vary_label1))
+    axis.plot(charge_vals, result)
+    # Make the y-axis label and tick labels match the line color
+    axis.set_ylabel("RRMS", color='b')
+    for tl in axis.get_yticklabels():
+        tl.set_color('b')
+
+    # Guiding line at zero x
+    axis.plot((0, 0), (0, 1.2*max(result)), 'k:')
+    # Location of minimum
+    axis.plot((min_charge, min_charge), (0, resp_rrms), 'k--')
+    axis.plot((-1.2, min_charge), (resp_rrms, resp_rrms), 'k--')
+    # 10% flexibility limits
+    axis.axvspan(flex_limits[2][0], flex_limits[2][1], alpha=0.2, color='grey')
+
+    axis.set_ylim([0, max(result)])
+
+
+def plot_response_func(axis, molecule, charge_vals, all_charges_result,
+                       labels_to_monitor):
+    # Plot charges on other atoms
+    axis.set_ylabel("Charges on other atoms (see legend)")
+    colors = iter(['g', 'r', 'c', 'm', 'y'])
+    for i, atom_charge in enumerate(zip(*all_charges_result)):
+        if i+1 in labels_to_monitor:
+            axis.plot(charge_vals, atom_charge, color=next(colors),
+                      label=get_atom_signature(molecule, i+1))
+    axis.legend()
+    # Guiding line at zero y2
+    axis.plot((-1.2, 1.2), (0, 0), 'k:')
+
+
 # ONE CHARGE VARIATION
 if True:
     charge_vals = linspace(xlim1[0], xlim1[1], num=sampling_num)
@@ -263,37 +307,25 @@ if True:
     shutil.rmtree(opt_output_path)
 
     fig, ax1 = plt.subplots()
-    ax1.set_xlabel("Charge on " + get_atom_signature(molecule, vary_label1))
-    ax1.plot(charge_vals, result)
-    # Make the y-axis label and tick labels match the line color
-    ax1.set_ylabel("RRMS", color='b')
-    for tl in ax1.get_yticklabels():
-        tl.set_color('b')
 
-    ax2 = ax1.twinx()
-    colors = iter(['g', 'r', 'c', 'm', 'y'])
-    # Plot charges on other atoms
-    ax2.set_ylabel("Charges on other atoms (see legend)")
-    for i, atom_charge in enumerate(zip(*all_charges_result)):
-        if i+1 in labels_to_monitor:
-            ax2.plot(charge_vals, atom_charge, color=next(colors),
-                     label=get_atom_signature(molecule, i+1))
-    ax2.legend()
-    # Guiding line at zero y2
-    ax2.plot((-1.2, 1.2), (0, 0), 'k:')
-    # Guiding line at zero x
-    ax1.plot((0, 0), (0, 1.2*max(result)), 'k:')
-    # Location of minimum
-    ax1.plot((min_charge, min_charge), (0, resp_rrms), 'k--')
-    ax1.plot((-1.2, min_charge), (resp_rrms, resp_rrms), 'k--')
-    # 10% flexibility limits
-    ax1.axvspan(flex_limits[2][0], flex_limits[2][1], alpha=0.2, color='grey')
+    plot_response_func_curry = lambda axis: plot_response_func(
+        axis, molecule, charge_vals, all_charges_result, labels_to_monitor)
+
+    if plot_flexibility:
+        plot_flexibility_func(ax1, molecule, vary_label1, charge_vals, result,
+                              min_charge, resp_rrms, flex_limits)
+        if plot_response:
+            ax2 = ax1.twinx()
+            plot_response_func_curry(ax2)
+    elif plot_response:
+            plot_response_func_curry(ax1)
+    # One of plot_flexibility or plot_response must be on, this is verified by
+    # an assertion at the top of this script.
 
     ax1.set_xlim(xlim1)
-    ax1.set_ylim([0, max(result)])
-
     save_to = output_path + molecule_name + "_" + esp_charge_type + "_1D"
     plt.savefig(save_to + ".pdf", format='pdf')
+    # TODO: Add option not to show the plot only save
     plt.show()
     plt.close()
 
