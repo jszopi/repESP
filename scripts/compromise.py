@@ -125,13 +125,13 @@ print("\nMinimizing HEAVY ratio. This shouldn't take long.")
 # Most arguments here are the same as in the loop with minor changes specific
 # to an optimization run (output directory, verbosity)
 heavy_args = (start_charges, g.field, path, min_resp_output_path, esp_fn, True)
-heavy_min_ratio, heavy_min_ratio_rrms = resp.minimize_ratio(
+heavy_min_ratio, heavy_min_ratio_rrms, heavy_charges = resp.minimize_ratio(
     'heavy', ratio_values, heavy_result, heavy_args)
 
 if zero_net_charge:
     print("Minimizing REGULAR ratio. This shouldn't take long.")
     regular_args = (start_charges, g.molecule, g.field)
-    reg_min_ratio, reg_min_ratio_rrms = resp.minimize_ratio(
+    reg_min_ratio, reg_min_ratio_rrms, reg_charges = resp.minimize_ratio(
         'regular', ratio_values, result, regular_args)
 
 shutil.rmtree(min_resp_output_path)
