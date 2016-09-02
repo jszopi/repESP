@@ -215,10 +215,9 @@ if True:
         atom.print_with_charge('resp')
 
 
-def plot_flexibility_func(axis, molecule, vary_label1, charge_vals, result,
-                          min_charge, resp_rrms, flex_limits):
+def plot_flexibility_func(axis, charge_vals, result, min_charge, resp_rrms,
+                          flex_limits):
     # TODO: Add option to plot either RMS or RRMS
-    axis.set_xlabel("Charge on " + get_atom_signature(molecule, vary_label1))
     axis.plot(charge_vals, result)
     # Make the y-axis label and tick labels match the line color
     axis.set_ylabel("RRMS", color='b')
@@ -312,8 +311,8 @@ if True:
         axis, molecule, charge_vals, all_charges_result, labels_to_monitor)
 
     if plot_flexibility:
-        plot_flexibility_func(ax1, molecule, vary_label1, charge_vals, result,
-                              min_charge, resp_rrms, flex_limits)
+        plot_flexibility_func(ax1, charge_vals, result, min_charge, resp_rrms,
+                              flex_limits)
         if plot_response:
             ax2 = ax1.twinx()
             plot_response_func_curry(ax2)
@@ -322,6 +321,7 @@ if True:
     # One of plot_flexibility or plot_response must be on, this is verified by
     # an assertion at the top of this script.
 
+    ax1.set_xlabel("Charge on " + get_atom_signature(molecule, vary_label1))
     ax1.set_xlim(xlim1)
     save_to = output_path + molecule_name + "_" + esp_charge_type + "_1D"
     plt.savefig(save_to + ".pdf", format='pdf')
