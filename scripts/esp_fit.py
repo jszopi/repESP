@@ -236,7 +236,7 @@ def plot_flexibility_func(axis, charge_vals, result, min_charge, resp_rrms,
 
 
 def plot_response_func(axis, molecule, charge_vals, all_charges_result,
-                       labels_to_monitor, ylabel_see_legend=False):
+                       labels_to_monitor, xlim1, ylabel_see_legend=False):
     ylabel = "Charges on other atoms"
     if ylabel_see_legend:
         ylabel += " (see legend)"
@@ -249,7 +249,8 @@ def plot_response_func(axis, molecule, charge_vals, all_charges_result,
                       label=get_atom_signature(molecule, i+1))
     axis.legend()
     # Guiding line at zero y2
-    axis.plot((-1.2, 1.2), (0, 0), 'k:')
+    # x-limits will be set to `xlim1` by the common code, so this is fine:
+    axis.plot(xlim1, (0, 0), 'k:')
 
 
 # ONE CHARGE VARIATION
