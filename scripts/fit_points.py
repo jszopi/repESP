@@ -30,16 +30,15 @@ input_esp = common_fn + ".esp"
 g = resp_helpers.G09_esp(input_esp)
 
 title = molecule_name + " " + esp_charge_type.upper()
-# Plot the grid in 3 and 2D:
-if False:
-    color_span = [min(g.field.values), max(g.field.values)]
-    for dimension in (3, 2):
-        graphs.plot_points(
-            g.field, dimension, title=title, molecule=g.molecule,
-            plane_eqn=graphs.plane_through_atoms(g.molecule, *cut_through),
-            dist_thresh=0.5, axes_limits=[(-5, 5)]*dimension,
-            color_span=color_span)
-        graphs.plot_points(
-            g.field, dimension, title=title, molecule=g.molecule,
-            plane_eqn=[1, 0, 0, 0], dist_thresh=0.5,
-            axes_limits=[(-5, 5)]*dimension, color_span=color_span)
+
+color_span = [min(g.field.values), max(g.field.values)]
+for dimension in (3, 2):
+    graphs.plot_points(
+        g.field, dimension, title=title, molecule=g.molecule,
+        plane_eqn=graphs.plane_through_atoms(g.molecule, *cut_through),
+        dist_thresh=0.5, axes_limits=[(-5, 5)]*dimension,
+        color_span=color_span)
+    graphs.plot_points(
+        g.field, dimension, title=title, molecule=g.molecule,
+        plane_eqn=[1, 0, 0, 0], dist_thresh=0.5,
+        axes_limits=[(-5, 5)]*dimension, color_span=color_span)
