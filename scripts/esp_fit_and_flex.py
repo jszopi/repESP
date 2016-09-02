@@ -1,8 +1,8 @@
-from repESP import resp, resp_helpers, rep_esp, charges, graphs
-from repESP.field_comparison import _check_grids, difference, rms_and_rep
+from repESP import resp, resp_helpers, rep_esp, charges
+from repESP.field_comparison import difference, rms_and_rep
 from repESP.resp import get_atom_signature
 
-from numpy import mean, sqrt, square, linspace, meshgrid
+from numpy import linspace, meshgrid
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
@@ -48,18 +48,6 @@ except AssertionError:
     raise AssertionError("At least one of `plot_flexibility` or "
                          "`plot_response` must be requested.")
 
-# SLICING plots
-# Note that 2D slicing plots in planes different than those of the coordinate
-# system distort distances (3D plots are fine). TODO
-# Methane:
-# cut_through = 1, 2, 3
-# NMe3_plus:
-cut_through = 1, 13, 14
-# NMe4_plus:
-# cut_through = 1, 5, 17
-# NMe3:
-# cut_through = 1, 5, 9
-
 path = '../data/' + molecule_name + '/'
 output_path = path + "esp_fit" + '_' + esp_charge_type + '/'
 resp_output_path = output_path + 'resp_calcs/'
@@ -90,21 +78,6 @@ if False:
 # Division into Voronoi basins:
 # parent_atom, dist = rep_esp.calc_non_grid_field(g.molecule, g.field.points,
 #                                                 'dist')
-
-title = molecule_name + " " + esp_charge_type.upper()
-# Plot the grid in 3 and 2D:
-if False:
-    color_span = [min(g.field.values), max(g.field.values)]
-    for dimension in (3, 2):
-        graphs.plot_points(
-            g.field, dimension, title=title, molecule=g.molecule,
-            plane_eqn=graphs.plane_through_atoms(g.molecule, *cut_through),
-            dist_thresh=0.5, axes_limits=[(-5, 5)]*dimension,
-            color_span=color_span)
-        graphs.plot_points(
-            g.field, dimension, title=title, molecule=g.molecule,
-            plane_eqn=[1, 0, 0, 0], dist_thresh=0.5,
-            axes_limits=[(-5, 5)]*dimension, color_span=color_span)
 
 import copy
 from itertools import chain
@@ -426,6 +399,7 @@ if True:
                                read_result.rrms, cmap=cm.plasma, rstride=1,
                                cstride=1)
         fig.colorbar(surf, label="RRMS at fitting points")
+        title = molecule_name + " " + esp_charge_type.upper()
         plot_common(vary_label1, vary_label2, molecule, title)
         plt.show()
         plt.close()
