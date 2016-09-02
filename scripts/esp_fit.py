@@ -224,8 +224,6 @@ def plot_flexibility_func(axis, charge_vals, result, min_charge, resp_rrms,
     for tl in axis.get_yticklabels():
         tl.set_color('b')
 
-    # Guiding line at zero x
-    axis.plot((0, 0), (0, 1.2*max(result)), 'k:')
     # Location of minimum
     axis.plot((min_charge, min_charge), (0, resp_rrms), 'k--')
     axis.plot((-1.2, min_charge), (resp_rrms, resp_rrms), 'k--')
@@ -329,6 +327,13 @@ if True:
 
     ax1.set_xlabel("Charge on " + get_atom_signature(molecule, vary_label1))
     ax1.set_xlim(xlim1)
+
+    # Guiding line at zero x
+    ylim = ax1.get_ylim()
+    ax1.plot((0, 0), ylim, 'k:')
+    # Plotting affected the y-limit itself, which was unintended
+    ax1.set_ylim(ylim)
+
     save_to = output_path + molecule_name + "_" + esp_charge_type + "_1D"
     plt.savefig(save_to + ".pdf", format='pdf')
     # TODO: Add option not to show the plot only save
