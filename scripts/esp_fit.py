@@ -43,14 +43,14 @@ plot_flexibility = True
 plot_response = True
 
 try:
-    assert(plot_flexibility or plot_response)
+    assert plot_flexibility or plot_response
 except AssertionError:
-    raise AssertionError("At least one of plot_flexibility or `plot_response` "
-                         "must be requested.")
+    raise AssertionError("At least one of `plot_flexibility` or "
+                         "`plot_response` must be requested.")
 
 # SLICING plots
-# Note that slicing plots in planes different than those of the coordinate
-# system do not preserve distances. TODO
+# Note that 2D slicing plots in planes different than those of the coordinate
+# system distort distances (3D plots are fine). TODO
 # Methane:
 # cut_through = 1, 2, 3
 # NMe3_plus:
