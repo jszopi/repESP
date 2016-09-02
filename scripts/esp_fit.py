@@ -236,9 +236,12 @@ def plot_flexibility_func(axis, charge_vals, result, min_charge, resp_rrms,
 
 
 def plot_response_func(axis, molecule, charge_vals, all_charges_result,
-                       labels_to_monitor):
-    # Plot charges on other atoms
-    axis.set_ylabel("Charges on other atoms (see legend)")
+                       labels_to_monitor, ylabel_see_legend=False):
+    ylabel = "Charges on other atoms"
+    if ylabel_see_legend:
+        ylabel += " (see legend)"
+    axis.set_ylabel(ylabel)
+
     colors = iter(['g', 'r', 'c', 'm', 'y'])
     for i, atom_charge in enumerate(zip(*all_charges_result)):
         if i+1 in labels_to_monitor:
@@ -307,17 +310,19 @@ if True:
 
     fig, ax1 = plt.subplots()
 
-    plot_response_func_curry = lambda axis: plot_response_func(
-        axis, molecule, charge_vals, all_charges_result, labels_to_monitor)
+    plot_response_func_curry = lambda axis, ylabel_see_legend: (
+        plot_response_func(
+            axis, molecule, charge_vals, all_charges_result, labels_to_monitor,
+            xlim1, ylabel_see_legend=ylabel_see_legend))
 
     if plot_flexibility:
         plot_flexibility_func(ax1, charge_vals, result, min_charge, resp_rrms,
                               flex_limits)
         if plot_response:
             ax2 = ax1.twinx()
-            plot_response_func_curry(ax2)
+            plot_response_func_curry(ax2, True)
     elif plot_response:
-            plot_response_func_curry(ax1)
+            plot_response_func_curry(ax1, False)
     # One of plot_flexibility or plot_response must be on, this is verified by
     # an assertion at the top of this script.
 
