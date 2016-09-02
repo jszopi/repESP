@@ -9,6 +9,11 @@ import pickle
 import numpy as np
 import matplotlib.pyplot as plt
 
+# The purpose of the script is investigating the change in generated fitting
+# points upon varying IOp 41-43 settings. The first part of this script creates
+# input files and pickles filenames. The user should then run all .com files
+# with Gaussian and run the second part of this script, which produces graphs.
+
 
 def calc_min_max(alist):
     return min(alist), max(alist)
