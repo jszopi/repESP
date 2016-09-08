@@ -3,6 +3,7 @@ from repESP import resp_helpers, graphs
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
+import numpy as np
 
 
 esp_charge_type = 'mk'
@@ -32,6 +33,10 @@ g = resp_helpers.G09_esp(input_esp)
 title = molecule_name + " " + esp_charge_type.upper()
 
 color_span = [min(g.field.values), max(g.field.values)]
+# A symmetric span can also be used:
+# color_limit = max(abs(np.nanmin(g.field.values)), abs(np.nanmax(g.field.values)))
+# color_span = [-color_limit, color_limit]
+
 for dimension in (3, 2):
     graphs.plot_points(
         g.field, dimension, title=title, molecule=g.molecule,
