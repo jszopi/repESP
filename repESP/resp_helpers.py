@@ -3,6 +3,8 @@ from fortranformat import FortranRecordWriter
 from .cube_helpers import InputFormatError, Atom, Molecule, Field
 from .cube_helpers import angstrom_per_bohr
 
+import math
+
 
 class DuplicateEntryError(Exception):
     pass
@@ -147,6 +149,20 @@ class Points(list):
             self.append(self._check_and_create_point(point_coords,
                                                      coords_in_bohr))
 
+    def __eq__(self, other):
+        if len(self) != len(other):
+            return False
+        for own_point, other_point in zip(self, other):
+            for coord in range(3):
+                if not math.isclose(own_point[coord], other_point[coord],
+                                    abs_tol=1e-6):
+                    print(own_point[coord] - other_point[coord])
+                    return False
+        return True
+
+    def __ne__(self, other):
+        return not self == other
+
     def _check_and_create_point(self, point_coords, coords_in_bohr):
         if len(point_coords) != 3:
             raise InputValueError(
@@ -161,6 +177,8 @@ class Points(list):
                         " a list of tuples of *strings*. Encountered type {0} "
                         "instead.".format(type(point_coord)))
 
+            # This is fine because it's a string representation which will be
+            # identical throughout given output file
             if point_coords in self.points_dict:
                 raise DuplicateEntryError("Encountered a duplicate point: {0}"
                                           .format(point_coords))
