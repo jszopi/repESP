@@ -134,7 +134,8 @@ class Atom(object):
                 ('P', 'Phosphorus'),
                 ('S', 'Sulfur'),
                 ('Cl', 'Chlorine'),
-                ('Ar', 'Argon')]
+                ('Ar', 'Argon'),
+                ('XX', 'Unrecognized')]
 
     # Inverse look-up
     inv_periodic = {v[0]: i+1 for i, v in enumerate(periodic)}

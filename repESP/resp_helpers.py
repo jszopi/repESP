@@ -19,22 +19,56 @@ class G09_esp(object):
 
     def _read_in(self, fn, coords_in_bohr, allow_dupes):
         with open(fn, 'r') as f:
-            # Checks two first lines
-            self._read_header(fn, f)
-            self._read_atoms(f, coords_in_bohr)
-            self._read_moments(f)
-            self._read_esp_points(f, coords_in_bohr, allow_dupes)
+            first_line = f.readline().rstrip('\n')
+            file_type = self._read_top(fn, f, first_line)
+            if file_type == 'Gaussian':
+                self._read_header(f)
+                self._read_atoms(f, coords_in_bohr)
+                self._read_moments(f)
+                self._g09_values_header(f)
+                field_info = ['input-Gaussian']
+            else:
+                self._read_header_esp(first_line)
+                self._read_atoms_esp(f, coords_in_bohr)
+                field_info = ['input-repESP']
 
-    def _read_header(self, fn, f):
-        line = f.readline().rstrip('\n')
-        if line != " ESP FILE - ATOMIC UNITS":
-            raise InputFormatError(
-                "The input file {0} does not seem to be the G09 .esp format. "
-                "Generate by specifying Pop=MK/CHelp(G) with IOp(6/50=1)"
-                .format(fn))
+            values, points = self._read_esp_points(f, coords_in_bohr,
+                                                   allow_dupes)
+            self.field = NonGridField(values, points, 'esp',
+                                      field_info=field_info)
+
+    @staticmethod
+    def raiseInputFormatError(fn):
+        raise InputFormatError(
+            "The input file {0} does not seem to be the G09 .esp format "
+            "(generate by specifying Pop=MK/CHelp(G) with IOp(6/50=1) or "
+            "the Antechamber format produced by `repESP`."
+            .format(fn))
+
+    def _read_top(self, fn, f, line):
+        top_line_format_in_esp = FortranRecordWriter('2I5')
+        if line == " ESP FILE - ATOMIC UNITS":
+            return 'Gaussian'
+
+        try:
+            _a, _b = line.split()
+        except ValueError:
+            self.raiseInputFormatError(fn)
+
+        if line == top_line_format_in_esp.write([int(_a), int(_b)]):
+            return 'repESP'
+        else:
+            self.raiseInputFormatError(fn)
+
+    def _read_header(self, f):
         line = f.readline().split()
         self.charge = int(line[2])
         self.multip = int(line[-1])
+
+    def _read_header_esp(self, line):
+        self.atom_count, self.points_count = line.split()
+        self.atom_count = int(self.atom_count)
+        self.points_count = int(self.points_count)
 
     def _read_atoms(self, f, coords_in_bohr):
         line = f.readline().split()
@@ -48,30 +82,42 @@ class G09_esp(object):
             # Neglect the ESP value at atoms, which is given by last value
             self.molecule.append(Atom(i+1, atomic_no, coords, coords_in_bohr))
 
+    def _read_atoms_esp(self, f, coords_in_bohr):
+        self.molecule = Molecule(self)
+        for i in range(self.atom_count):
+            line = f.readline().split()
+            atomic_no = 0  # This will select the last, 'Unrecognized' element
+            coords = [float(coord) for coord in line]
+            self.molecule.append(Atom(i+1, atomic_no, coords, coords_in_bohr))
+
     def _read_moments(self, f):
         assert f.readline().rstrip('\n') == " DIPOLE MOMENT:"
         # Currently not implemented, the lines are just skipped
         for i in range(4):
             f.readline()
 
-    def _read_esp_points(self, f, coords_in_bohr, allow_dupes):
+    def _g09_values_header(self, f):
         line = f.readline().split()
         expected = "ESP VALUES AND GRID POINT COORDINATES. #POINTS ="
         assert ' '.join(line[:-1]) == expected
-        expected_points_count = int(line[-1])
+        self.points_count = int(line[-1])
+
+    def _read_esp_points(self, f, coords_in_bohr, allow_dupes):
 
         points_coords = []
         values = []
         for line in f:
+            # The replace is not necessary in the case of Antechamber files
+            # produced by repESP, but this function is general for both types
             line = [val.replace('D', 'E') for val in line.split()]
             points_coords.append(tuple(line[1:4]))
             values.append(float(line[0]))
 
-        if len(points_coords) != expected_points_count:
+        if len(points_coords) != self.points_count:
             raise InputFormatError(
                 "The number of ESP points {0} does not agree with that "
                 "specified at the top of the input file: {1}".format(
-                    len(points_coords), expected_points_count))
+                    len(points_coords), self.points_count))
 
         try:
             points = Points(points_coords, coords_in_bohr, allow_dupes)
@@ -86,7 +132,7 @@ class G09_esp(object):
             # file format
             raise InputFormatError(e)
 
-        self.field = NonGridField(values, points, 'esp', field_info=['input'])
+        return values, points
 
 
 class Points(list):
