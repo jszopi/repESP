@@ -3,6 +3,7 @@ from mpl_toolkits.mplot3d import Axes3D
 from matplotlib.backends.backend_pdf import PdfPages
 import os
 import numpy as np
+from numpy.linalg import norm as vec_norm
 import random
 import math
 import re
@@ -319,12 +320,9 @@ def _plane_point_dist(equation, point):
         Returning the signed value of this expression allows to distinguish
         between points lying on the opposite sides of the plane.
     """
-    result = equation[3]
-    denom = 0
-    for coef, coord in zip(equation, point):
-        result += coef*coord
-        denom += coef**2
-    return result/np.sqrt(denom)
+    normal = np.array(equation[:3])
+    point = np.array(point)
+    return (np.dot(normal, point) + equation[3])/vec_norm(normal)
 
 
 def _plane_through_points(point1, point2, point3):
