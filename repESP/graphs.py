@@ -347,12 +347,34 @@ def plane_through_atoms(molecule, label1, label2, label3):
     return _plane_through_points(*points)
 
 
-def _project_point_onto_plane(plane, point):
-    """Calculate coordinates of a point perpendicularly projected onto plane"""
+def _project_point_onto_plane(equation, point):
+    """Calculate coordinates of a point perpendicularly projected onto plane
+
+    Parameters
+    ----------
+    equation : List[float]
+        A list of coefficients of the equation describing the plane :math:`Ax +
+        By + Cz + D = 0`. The length should hence be 4. For example, the
+        plane :math:`z = 0` corresponds to the argument ``[0, 0, 1, 0]``.
+
+    point : List[float]
+        The coordinates of the point ``[x, y, z]``. A list of length 3.
+
+    Returns
+    -------
+    np.ndarray[float]
+        The coordinates of the given point projected perpendicularly to the
+        given plane. Calculated according to equation:
+
+        .. math::
+
+            \\vec{OA'} = \\vec{OA} - d \\frac{\mathbf{n}}{\|\mathbf{n}\|},
+
+        where :math:`\mathbf{n}` is the vector normal to the plane.
+    """
+    normal = np.array(equation[:3])
     point = np.array(point)
-    plane = np.array(plane)
-    normal = plane[:3]
-    return point - np.dot(point, normal)*normal/np.linalg.norm(normal)**2
+    return point - _plane_point_dist(equation, point)*normal/vec_norm(normal)
 
 
 def _get_alt_coords(plane_eqn):
