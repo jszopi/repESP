@@ -405,6 +405,9 @@ def _get_alt_coords(plane_eqn):
 
 def _new_coord_matrix(new_coord_system):
     """Calculate matrix of transformation from old to new coordinate system"""
+    # This is an implementation of the formula after 6 on page 10 of:
+    # http://ocw.mit.edu/courses/aeronautics-and-astronautics/16-07-dynamics-fall-2009/lecture-notes/MIT16_07F09_Lec03.pdf
+    # The code below just calculates the elements of the matrix
     old = np.identity(3)
     # The templates are used to create the elements of the desired 3x3 matrix.
     # They are populated in a meshgrid fashion, but I couldn't get it to work

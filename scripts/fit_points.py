@@ -44,11 +44,7 @@ parser.add_argument("esp_file",
 parser.add_argument("dimension",
                     help="""The number of dimensions for the plot. Note that 2D
                     plots require specifying a slicing plane with the
-                    '--slice_dist' option.
-                    LIMITATION:
-                    2D plots with a slicing plane different than one of the
-                    input coordinate planes (xy, xz, yz) will yield distorted
-                    point locations.""",
+                    '--slice_dist' option.""",
                     choices=[2, 3], type=int, metavar="DIMENSION")
 
 parser.add_argument("--limits",
@@ -127,14 +123,9 @@ if args.slice_dist is not None and not (args.slice_atoms or args.slice_eqn):
 if args.output is not None and os.path.exists(args.output):
     raise FileExistsError("Output file exists: " + args.output)
 
-if args.dimension == 2:
-    if args.slice_dist:
-        print("Note that currently 2D plots with a slicing plane different "
-              "than one of the input coordinate planes (xy, xz, yz) will yield"
-              " distorted point locations!")
-    else:
-        raise ValueError("A 2D plot requires a slicing plane to be requested "
-                         "with the '--slice_dist' option.")
+if args.dimension == 2 and not args.slice_dist:
+    raise ValueError("A 2D plot requires a slicing plane to be requested with "
+                     "the '--slice_dist' option.")
 
 g = resp_helpers.G09_esp(args.esp_file)
 
