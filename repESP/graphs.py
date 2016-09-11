@@ -300,19 +300,21 @@ def _plane_point_dist(equation, point):
     Parameters
     ----------
     equation : List[float]
-        A list of coefficients of the equation describing the plane :math:
-        `ax + by + cz + d = 0`. The length should hence be 4. For example, the
-        plane :math: `z = 0` corresponds to the argument `[0, 0, 1, 0]`.
+        A list of coefficients of the equation describing the plane :math:`Ax +
+        By + Cz + D = 0`. The length should hence be 4. For example, the
+        plane :math:`z = 0` corresponds to the argument ``[0, 0, 1, 0]``.
 
     point : List[float]
-        The coordinates of the point `[x, y, z]`. A list of length 3.
+        The coordinates of the point ``[x, y, z]``. A list of length 3.
 
     Returns
     -------
     float
         The calculated distance according to the equation:
 
-        .. math:: \frac{ax + by + cz + d}{\root{a^2 + b^2 + c^2}}
+        .. math::
+
+            d = \\frac{A x + B y + C z + D}{\sqrt{A^2 + B^2 + C^2}}
 
         Returning the signed value of this expression allows to distinguish
         between points lying on the opposite sides of the plane.
