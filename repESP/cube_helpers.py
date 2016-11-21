@@ -405,6 +405,12 @@ class GridField(Field):
                 else:
                     i += 1
 
+    def get_values(self):
+        return list(self.values.flat)
+
+    def get_points(self):
+        return self.grid.get_points()
+
 
 class Grid(object):
 
@@ -441,6 +447,18 @@ class Grid(object):
         axis_to_set = self.axes[axis_number]
         axis_to_set.set_point_count(input_axis.pop(0))
         return axis_to_set.set_intervals(input_axis, coords_in_bohr)
+
+    def get_points(self):
+        result = []
+        for i in range(self.points_on_axes[0]):
+            for j in range(self.points_on_axes[1]):
+                for k in range(self.points_on_axes[2]):
+                    result.append([
+                        self.origin_coords[0] + i*self.dir_intervals[0],
+                        self.origin_coords[1] + j*self.dir_intervals[1],
+                        self.origin_coords[2] + k*self.dir_intervals[2]
+                        ])
+        return result
 
 
 class GridAxis(object):

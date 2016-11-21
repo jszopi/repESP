@@ -241,3 +241,9 @@ class NonGridField(Field):
                     point_coords = [point_coord/angstrom_per_bohr for
                                     point_coord in point_coords]
                 f.write(esp_points_format.write([esp_val] + point_coords)+"\n")
+
+    def get_values(self):
+        return self.values
+
+    def get_points(self):
+        return self.points
