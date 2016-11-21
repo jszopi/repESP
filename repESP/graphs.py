@@ -184,7 +184,8 @@ def plot_points(points_field, dimension, title=None, color_span=None,
 
     # Skimming, filtering and projecting
     points, values = _points_dist_filter(
-        points_field.points, points_field.values, plane_eqn, dist_thresh)
+        points_field.get_points(), points_field.get_values(), plane_eqn,
+        dist_thresh)
     points, values = _points_rand_skim(points, values, rand_skim)
     points = _project_points(points, project_onto_plane, dimension, plane_eqn)
 
