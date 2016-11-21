@@ -177,6 +177,93 @@ def plot_points(points_field, dimension, title=None, color_span=None,
                 axes_limits=None, save_to=None, rand_skim=1, plane_eqn=None,
                 dist_thresh=None, molecule=None, atom_dist_threshs=None,
                 atom_format=None, show_all_atoms=False):
+    """Plot fitting or cube points in 2 or 3D coloured by values
+
+    Parameters
+    ----------
+    points_field : Field
+        The ``Field`` object containint the points to be plotted.
+
+    dimension : {2, 3}
+        Dimensions of the plot.
+
+    title : str, optional
+        Plot title.
+
+    color_span : [float, float], optional
+        The lower and upper limits for the color range for field values at
+        fitting points. If this option is not specified, the limits will be
+        calculated automatically based on all data points, not only the plotted
+        slice of points.
+
+    axes_limits : [float, float], optional
+        A pair of values for the axes limits in angstroms. The same limits will
+        be applied to all axes, non-square/cubic plots are currently not
+        supported.
+
+    save_to : str, optional
+        The file to which the graph is to be saved. If not specified, the graph
+        will be displayed in interactive mode.
+
+    rand_skim : float, optional
+        For plots with a large number of points, it may be necessary to plot
+        only a fraction of the points. The points to be plotted are selected
+        randomly and this option specifies the probability for a given point to
+        be plotted. Values in the range (0, 1] are allowed, 1 is the default
+        (all points plotted).
+
+    plane_eqn : List[float], optional
+        The equation for the slicing plane specified with a list of parameters
+        of the following plane equation: Ax + By + Cz + D = 0. The default is
+        ``None``.
+
+    dist_thresh : float, optional
+        The distance in angstrom from the slicing plane within which points are
+        to be plotted. If all points are to be plotted, specify a very high
+        number. The default is ``None``.
+
+    molecule : Molecule, optional
+        The molecule to be plotted. The default is ``None``.
+
+    atom_dist_threshs : List[float], optional
+        The thresholds for atom distance from slicing plane, which will be used
+        to choose the formatting of atom labels as specified in
+        ``atom_format``. The default is ``None`` and results in the thresholds
+        [0, 0.5, 1] i.e. four ranges: equal zero, between 0 and 0.5, between
+        0,.5 and 1, and above 1.
+
+    atom_format : List[dict], optional
+        The formatting for the atom labels for each of the distance ranges
+        specified with the ``atom_dist_thresh`` option. The default is ``None``
+        and results in:
+
+        .. code:: python
+
+            [{
+                'color': 'red',
+                'bbox': dict(
+                    facecolor='none',
+                    edgecolor='red'
+                )
+            }, {
+                'color': 'red',
+                'bbox': dict(
+                    facecolor='none',
+                    edgecolor='red',
+                    linestyle='dashed'
+                )
+            }, {
+                'color': 'grey',
+            }, {
+                'color': 'grey',
+            }]
+
+    show_all_atoms : bool, optional
+        If the ``atom_format`` option specifies a formatting option for the
+        last, open range specified by ``atom_dist_threshs``, this option
+        decides whether atoms in that range are to be plotted. The default is
+        ``False``.
+    """
 
     project_onto_plane = _check_args(dimension, plane_eqn, dist_thresh)
     field_comparison._check_fields_for_nans(points_field)
@@ -243,6 +330,9 @@ def _set_axis_labels2(ax, dimension, project_onto_plane, plane_eqn):
 
 def _plot_atoms(molecule, ax, dimension, plane_eqn, project_onto_plane,
                 atom_dist_threshs, atom_format, show_all_atoms):
+    # When writing docstrings, have a look at plot_points, where some of these
+    # options are already documented.
+
     if molecule is None:
         return
 
