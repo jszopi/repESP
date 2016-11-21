@@ -249,9 +249,25 @@ def _plot_atoms(molecule, ax, dimension, plane_eqn, project_onto_plane,
     # Default values for formatting
     if atom_format is None:
         atom_format = [
-            {'color': 'red', 'bbox': dict(facecolor='none', edgecolor='red')},
-            {'color': 'red', 'bbox': dict(facecolor='none', edgecolor='red',
-             linestyle='dashed')}, {'color': 'grey'}, {'color': 'grey'}]
+            {
+                'color': 'red',
+                'bbox': dict(
+                    facecolor='none',
+                    edgecolor='red'
+                )
+            }, {
+                'color': 'red',
+                'bbox': dict(
+                    facecolor='none',
+                    edgecolor='red',
+                    linestyle='dashed'
+                )
+            }, {
+                'color': 'grey',
+            }, {
+                'color': 'grey',
+            }]
+
     if atom_dist_threshs is None:
         atom_dist_threshs = [0, 0.5, 1]
 
