@@ -279,19 +279,18 @@ def _plot_atoms(molecule, ax, dimension, plane_eqn, project_onto_plane,
     for atom, coord in zip(molecule, coords):
         assert 0 <= len(atom_format) - len(atom_dist_threshs) <= 1
         atom_string = '{0}{1}'.format(atom.identity, atom.label)
+        # Avoid retyping _plot_atom arguments by creating a lambda
+        plot_atom = lambda curr_format, marker_fill: _plot_atom(
+            ax, coord, atom_string, dimension, curr_format,
+            marker_fill=marker_fill)
         if plane_eqn is None:
-            _plot_atom(ax, coord, atom_string, dimension, {'color': 'red'},
-                       marker_fill='k')
+            plot_atom({'color': 'red'}, 'k')
         else:
             # This big for-else loop checks into which threshold range fits the
             # atom's distance
             for curr_thresh, curr_format in zip(atom_dist_threshs,
                                                 atom_format):
                 dist = _plane_point_dist(plane_eqn, atom.coords)
-                # Prevent retyping _plot_atom arguments by creating a lambda
-                plot_atom = lambda curr_format, marker_fill: _plot_atom(
-                    ax, coord, atom_string, dimension, curr_format,
-                    marker_fill=marker_fill)
                 if _check_dist(dist, curr_thresh):
                     plot_atom(curr_format, 'k')
                     break
