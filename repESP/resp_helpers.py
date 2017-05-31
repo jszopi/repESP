@@ -1,9 +1,17 @@
-from fortranformat import FortranRecordWriter
+from fortranformat import FortranRecordWriter as FW, FortranRecordReader as FR
 
 from .cube_helpers import InputFormatError, Atom, Molecule, Field
 from .cube_helpers import angstrom_per_bohr
 
 import math
+
+
+class RespFormats(object):
+    # Numeric Fortran formats specified in resp input specification
+    # http://upjv.q4md-forcefieldtools.org/RED/resp/#other3
+    header = '2I5'
+    atoms = '17X,3E16.7'
+    points = '1X,4E16.7'
 
 
 class DuplicateEntryError(Exception):
@@ -48,19 +56,18 @@ class G09_esp(object):
             .format(fn))
 
     def _read_top(self, fn, f, line):
-        top_line_format_in_esp = FortranRecordWriter('2I5')
         if line == " ESP FILE - ATOMIC UNITS":
             return 'Gaussian'
 
         try:
-            _a, _b = line.split()
+            parsed = FR(RespFormats.header).read(line)
         except ValueError:
-            self.raiseInputFormatError(fn)
-
-        if line == top_line_format_in_esp.write([int(_a), int(_b)]):
-            return 'repESP'
+            pass
         else:
-            self.raiseInputFormatError(fn)
+            if None not in parsed:
+                return 'repESP'
+
+        self.raiseInputFormatError(fn)
 
     def _read_header(self, f):
         line = f.readline().split()
@@ -68,7 +75,7 @@ class G09_esp(object):
         self.multip = int(line[-1])
 
     def _read_header_esp(self, line):
-        self.atom_count, self.points_count = line.split()
+        self.atom_count, self.points_count = FR(RespFormats.header).read(line)
         self.atom_count = int(self.atom_count)
         self.points_count = int(self.points_count)
 
@@ -220,27 +227,28 @@ class NonGridField(Field):
                                                             len(values)))
 
     def write_to_file(self, output_fn, molecule, write_coords_in_bohr=True):
-        # Numeric formats specified in resp input specification
-        # http://upjv.q4md-forcefieldtools.org/RED/resp/#other3
-        header_format = FortranRecordWriter('2I5')
-        atoms_format = FortranRecordWriter('17X,3E16.7')
-        esp_points_format = FortranRecordWriter('1X,4E16.7')
-
         with open(output_fn, 'x') as f:
-            f.write(header_format.write([len(molecule),
-                                         len(self.points)]) + "\n")
+            f.write(
+                FW(RespFormats.header).write(
+                    [len(molecule), len(self.points)]
+                ) + "\n"
+            )
             for atom in molecule:
                 if write_coords_in_bohr:
                     coords = [atom_coord/angstrom_per_bohr for atom_coord in
                               atom.coords]
                 else:
                     coords = atom.coords
-                f.write(atoms_format.write(coords) + "\n")
+                f.write(FW(RespFormats.atoms).write(coords) + "\n")
             for point_coords, esp_val in zip(self.points, self.values):
                 if write_coords_in_bohr:
                     point_coords = [point_coord/angstrom_per_bohr for
                                     point_coord in point_coords]
-                f.write(esp_points_format.write([esp_val] + point_coords)+"\n")
+                f.write(
+                    FW(RespFormats.points).write(
+                        [esp_val] + point_coords
+                    ) + "\n"
+                )
 
     def get_values(self):
         return self.values
