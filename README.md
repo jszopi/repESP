@@ -73,8 +73,10 @@ To create the necessary input for a methane molecule, first create the `.ac` fil
 
 Then run `respgen` twice:
 
-`respgen -i methane.ac -o methane.respin1 -f resp1`
-`respgen -i methane.ac -o methane.respin2 -f resp2`
+```sh
+respgen -i methane.ac -o methane.respin1 -f resp1
+respgen -i methane.ac -o methane.respin2 -f resp2
+```
 
 ## Install
 
