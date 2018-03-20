@@ -1,5 +1,7 @@
+from exceptions import InputFormatError
+
 from abc import ABC, abstractmethod
-from typing import Iterable, Iterator, List, NamedTuple, Tuple
+from typing import Collection, Generic, Iterator, List, NamedTuple, Tuple, TypeVar
 
 import math
 
@@ -28,7 +30,23 @@ class Molecule(NamedTuple):
     atoms: List[Atom]
 
 
-class Points(ABC):
+class Charges:
+
+    def __init__(self, molecule: Molecule, charge_list: Collection[float]) -> None:
+        if len(molecule.atoms) != len(charge_list):
+            raise InputFormatError(
+                "Construction of Charges failed due to mismatch between the "
+                "number of atoms in molecule ({}) and the number of charges ({})".format(
+                    len(molecule.atoms),
+                    len(charge_list)
+                )
+            )
+
+        self.values = list(charge_list)
+        self.molecule = molecule
+
+
+class Mesh(ABC):
 
     @abstractmethod
     def points(self) -> Iterator[Coords]:
@@ -41,19 +59,49 @@ class Points(ABC):
     def __ne__(self, other):
         return not self == other
 
+    @abstractmethod
+    def __len__(self) -> int:
+        pass
 
-class Mesh(Points):
 
-    def __init__(self, points_coords: Iterable[Coords]) -> None:
-        self._points = list(points_coords)
+class NonGridMesh(Mesh):
 
-    def __eq__(self, other) -> bool:
-        return self._points == other._points
+    def __init__(self, points_coords: Collection[Coords]) -> None:
+        self._points_coords = list(points_coords)
 
     def points(self) -> Iterator[Coords]:
-        return iter(self._points)
+        return iter(self._points_coords)
+
+    def __eq__(self, other) -> bool:
+        return self._points_coords == other._points_coords
+
+    def __len__(self) -> int:
+        return len(self._points_coords)
 
 
-# class Grid(Points):
+# class Grid(Mesh):
 #     pass
-#
+
+
+FieldValue = TypeVar('FieldValue')
+
+class Field(Generic[FieldValue]):
+
+    def __init__(self, mesh: Mesh, values: Collection[FieldValue]) -> None:
+
+        if len(values) != len(mesh):
+            raise InputFormatError(
+                "Construction of a Field failed due to mismatch between the "
+                "number of points ({}) and the number of values ({})".format(
+                    len(mesh),
+                    len(values)
+                )
+            )
+
+        self._mesh = mesh
+        self._values = values
+
+    def __eq__(self, other):
+
+        self._mesh == other._mesh
+        self._values == other._values
