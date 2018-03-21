@@ -3,7 +3,9 @@ from exceptions import InputFormatError
 from abc import ABC, abstractmethod
 from typing import Collection, Generic, Iterator, List, NamedTuple, Tuple, TypeVar
 
+import functools
 import math
+import operator
 
 
 class _Coord(float):
@@ -79,9 +81,45 @@ class NonGridMesh(Mesh):
         return len(self._points_coords)
 
 
-# class Grid(Mesh):
-#     pass
+class GridAxis(NamedTuple):
+    vector: Coords  # Unit vector in xyz coordinates
+    interval: float  # In multiples of unit vector
+    point_count: int
 
+
+GridAxes = Tuple[GridAxis, GridAxis, GridAxis]
+
+class GridMesh(Mesh):
+
+    def __init__(self, origin: Coords, axes: GridAxes) -> None:
+        if axes != (Coords(1, 0, 0), Coords(0, 1, 0), Coords(0, 0, 1)):
+            raise NotImplementedError(
+                "GridMesh cannot currently be constructed with axes not aligned"
+                " to coordinate axes. The provided axes are: {}".format(axes)
+            )
+
+        self.origin = origin
+        self.axes = axes
+
+
+    def points(self) -> Iterator[Coords]:
+        for i in range(self.axes[0].point_count):
+            for j in range(self.axes[1].point_count):
+                for k in range(self.axes[2].point_count):
+                    yield (
+                        self.origin[0] + i*self.axes[0].interval,
+                        self.origin[1] + j*self.axes[1].interval,
+                        self.origin[2] + k*self.axes[2].interval
+                    )
+
+    def __eq__(self, other) -> bool:
+        return self.origin == other.origin and self.axes == other.axes
+
+    def __len__(self) -> int:
+        return functools.reduce(
+            operator.mul,
+            (axis.point_count for axis in self.axes)
+        )
 
 FieldValue = TypeVar('FieldValue')
 
