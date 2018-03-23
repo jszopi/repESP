@@ -1,7 +1,7 @@
-from exceptions import InputFormatError
+from .exceptions import InputFormatError
 
 from abc import ABC, abstractmethod
-from typing import Collection, Generic, Iterator, List, NamedTuple, Tuple, TypeVar
+from typing import Callable, Collection, Generic, Iterator, List, NamedTuple, Tuple, TypeVar
 
 import functools
 import math
@@ -48,6 +48,11 @@ class Charges:
         self.molecule = molecule
 
 
+FieldValue = TypeVar('FieldValue')
+
+class Field(Generic[FieldValue]):
+    pass
+
 class Mesh(ABC):
 
     @abstractmethod
@@ -65,6 +70,22 @@ class Mesh(ABC):
     def __len__(self) -> int:
         pass
 
+    def calc_field(
+        self,
+        field_at_point: Callable[[Coords], FieldValue]
+    ) -> Field[FieldValue]:
+        """Calculate values at points to a function"""
+
+        # This is an inefficient implementation
+        values: List[FieldValue] = []
+
+        for point in self.points():
+            values.append(
+                field_at_point(point)
+            )
+
+        return Field(self, values)
+
 
 class NonGridMesh(Mesh):
 
@@ -81,18 +102,19 @@ class NonGridMesh(Mesh):
         return len(self._points_coords)
 
 
-class GridAxis(NamedTuple):
+class GridMeshAxis(NamedTuple):
     vector: Coords  # Unit vector in xyz coordinates
     interval: float  # In multiples of unit vector
     point_count: int
 
 
-GridAxes = Tuple[GridAxis, GridAxis, GridAxis]
+GridMeshAxes = Tuple[GridMeshAxis, GridMeshAxis, GridMeshAxis]
+
 
 class GridMesh(Mesh):
 
-    def __init__(self, origin: Coords, axes: GridAxes) -> None:
-        if axes != (Coords(1, 0, 0), Coords(0, 1, 0), Coords(0, 0, 1)):
+    def __init__(self, origin: Coords, axes: GridMeshAxes) -> None:
+        if (axis.vector for axis in axes) != coordinate_axes_vectors:
             raise NotImplementedError(
                 "GridMesh cannot currently be constructed with axes not aligned"
                 " to coordinate axes. The provided axes are: {}".format(axes)
@@ -121,7 +143,6 @@ class GridMesh(Mesh):
             (axis.point_count for axis in self.axes)
         )
 
-FieldValue = TypeVar('FieldValue')
 
 class Field(Generic[FieldValue]):
 
@@ -141,5 +162,4 @@ class Field(Generic[FieldValue]):
 
     def __eq__(self, other):
 
-        self._mesh == other._mesh
-        self._values == other._values
+        return (self._mesh == other._mesh and self._values == other._values)

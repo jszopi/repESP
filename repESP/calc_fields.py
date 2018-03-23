@@ -1,22 +1,7 @@
 from .types import Charges, Coords, Field, FieldValue, Mesh, Molecule
 
 from scipy.spatial.distance import euclidean
-from typing import Callable, List, Tuple
-
-
-def calc_field(
-    mesh: Mesh,
-    field_at_point: Callable[[Coords], FieldValue]
-) -> Field[FieldValue]:
-
-    values: List[FieldValue] = []
-
-    for point in mesh.points():
-        values.append(
-            field_at_point(point)
-        )
-
-    return Field(mesh, values)
+from typing import List, Tuple
 
 
 def _esp_from_charges_at_point(coords: Coords, charges: Charges) -> float:
@@ -29,9 +14,8 @@ def _esp_from_charges_at_point(coords: Coords, charges: Charges) -> float:
 
 
 def esp_from_charges(mesh: Mesh, charges: Charges) -> Field[float]:
-
-    return calc_field(
-        mesh,
+    """Calculate ESP value at given point due to charges on atoms"""
+    return mesh.calc_field(
         lambda coords: _esp_from_charges_at_point(coords, charges)
     )
 
@@ -50,7 +34,6 @@ def _voronoi_at_point(coords: Coords, molecule: Molecule) -> Tuple[int, float]:
 
 def voronoi(mesh: Mesh, molecule: Molecule):
     # Voronoi means closest-atom in molecular partitioning lingo
-    return calc_field(
-        mesh,
+    return mesh.calc_field(
         lambda coords: _voronoi_at_point(coords, molecule)
     )
