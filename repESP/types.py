@@ -50,8 +50,16 @@ class Charges:
 
 FieldValue = TypeVar('FieldValue')
 
+
 class Field(Generic[FieldValue]):
     pass
+
+
+class FloatFieldValue(float):
+
+    def __eq__(self, other) -> bool:
+        return math.isclose(self, other, abs_tol=1e-6)
+
 
 class Mesh(ABC):
 

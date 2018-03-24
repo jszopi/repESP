@@ -1,26 +1,26 @@
-from .types import Charges, Coords, Field, FieldValue, Mesh, Molecule
+from .types import Charges, Coords, Field, FloatFieldValue, Mesh, Molecule
 
 from scipy.spatial.distance import euclidean
 from typing import List, Tuple
 
 
-def _esp_from_charges_at_point(coords: Coords, charges: Charges) -> float:
+def _esp_from_charges_at_point(coords: Coords, charges: Charges) -> FloatFieldValue:
 
     return sum(
         # NOTE: I've removed the conversion from angstrom to bohr
-        charge/(euclidean(coords, atom.coords))
+        FloatFieldValue(charge/(euclidean(coords, atom.coords)))
         for atom, charge in zip(charges.molecule.atoms, charges.values)
     )
 
 
-def esp_from_charges(mesh: Mesh, charges: Charges) -> Field[float]:
+def esp_from_charges(mesh: Mesh, charges: Charges) -> Field[FloatFieldValue]:
     """Calculate ESP value at given point due to charges on atoms"""
     return mesh.calc_field(
         lambda coords: _esp_from_charges_at_point(coords, charges)
     )
 
 
-def _voronoi_at_point(coords: Coords, molecule: Molecule) -> Tuple[int, float]:
+def _voronoi_at_point(coords: Coords, molecule: Molecule) -> Tuple[int, FloatFieldValue]:
     """For a given point, find the closest atom and its distance"""
     min_dist = float('inf')
     min_atom = None
