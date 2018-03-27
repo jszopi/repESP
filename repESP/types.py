@@ -10,11 +10,11 @@ import operator
 
 class _Coord(float):
 
-    # TODO: Should probably implement __gt__ because otherwise non-equality
-    # comparisons will not honour approximate equality.
     def __eq__(self, other):
-        print("Cmp: {} v {}".format(self, other))
         return math.isclose(self, other, abs_tol=1e-6)
+
+    def __lt__(self, other):
+        return self - 1e-6 < other
 
 
 class Coords(tuple):
@@ -53,12 +53,6 @@ FieldValue = TypeVar('FieldValue')
 
 class Field(Generic[FieldValue]):
     pass
-
-
-class FloatFieldValue(float):
-
-    def __eq__(self, other) -> bool:
-        return math.isclose(self, other, abs_tol=1e-6)
 
 
 class Mesh(ABC):
@@ -112,7 +106,6 @@ class NonGridMesh(Mesh):
 
 class GridMeshAxis(NamedTuple):
     vector: Coords  # Unit vector in xyz coordinates
-    interval: float  # In multiples of unit vector
     point_count: int
 
 
@@ -122,7 +115,8 @@ GridMeshAxes = Tuple[GridMeshAxis, GridMeshAxis, GridMeshAxis]
 class GridMesh(Mesh):
 
     def __init__(self, origin: Coords, axes: GridMeshAxes) -> None:
-        if (axis.vector for axis in axes) != coordinate_axes_vectors:
+        # TODO: Remove this assumption (affects implementation of self.points)
+        if (not self._axes_are_aligned_to_coordinate_axes(axes)):
             raise NotImplementedError(
                 "GridMesh cannot currently be constructed with axes not aligned"
                 " to coordinate axes. The provided axes are: {}".format(axes)
@@ -131,15 +125,24 @@ class GridMesh(Mesh):
         self.origin = origin
         self.axes = axes
 
+    def _axes_are_aligned_to_coordinate_axes(self, axes: GridMeshAxes) -> bool:
+        return (
+            axes[0].vector[1] == _Coord(0) and
+            axes[0].vector[2] == _Coord(0) and
+            axes[1].vector[0] == _Coord(0) and
+            axes[1].vector[2] == _Coord(0) and
+            axes[2].vector[0] == _Coord(0) and
+            axes[2].vector[1] == _Coord(0)
+        )
 
     def points(self) -> Iterator[Coords]:
         for i in range(self.axes[0].point_count):
             for j in range(self.axes[1].point_count):
                 for k in range(self.axes[2].point_count):
-                    yield (
-                        self.origin[0] + i*self.axes[0].interval,
-                        self.origin[1] + j*self.axes[1].interval,
-                        self.origin[2] + k*self.axes[2].interval
+                    yield Coords(
+                        self.origin[0] + i*self.axes[0].vector[0],
+                        self.origin[1] + j*self.axes[1].vector[1],
+                        self.origin[2] + k*self.axes[2].vector[2]
                     )
 
     def __eq__(self, other) -> bool:
@@ -165,9 +168,8 @@ class Field(Generic[FieldValue]):
                 )
             )
 
-        self._mesh = mesh
-        self._values = values
+        self.mesh = mesh
+        self.values = values
 
     def __eq__(self, other):
-
-        return (self._mesh == other._mesh and self._values == other._values)
+        return (self._mesh == other.mesh and self.values == other.values)
