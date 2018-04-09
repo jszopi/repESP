@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from repESP import resp, resp_helpers, rep_esp, charges
 from repESP.field_comparison import difference, rms_and_rep
 from repESP.resp import get_atom_signature

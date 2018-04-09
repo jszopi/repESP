@@ -7,7 +7,7 @@ parser.add_argument("--respin_location",
                     files. Their names are expected to end with '.respin1' and
                     '.respin2'. They can be generated using the 'respgen'
                     program (see 'instructions.md').""",
-                    default='.', metavar="RESPIN_LOCATION")
+                    default='.', metavar="DIRECTORY")
 
 esp_file_help = """The name of the 'esp' file with ESP fitting points.
     This file must be in the same directory as the 'respin' files. The file can
