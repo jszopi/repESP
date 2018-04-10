@@ -16,6 +16,13 @@ help_description = """
 
     Don't forget to specify the --equivalent option if there are other atoms
     equivalent to the investigated one.
+
+    This script assumes that the ESP fit error as a function of the charge on
+    the selected atom has a single minimum and the error increases
+    monotonically in both directions away from the minimum. As flexibility is a
+    new concept, this may not be the case in all molecules. To study the
+    dependence of the ESP fit on the charge of an atom, please use the
+    `fit_dependence` script.
     """
 
 parser = argparse.ArgumentParser(
