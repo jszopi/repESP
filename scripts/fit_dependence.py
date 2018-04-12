@@ -90,10 +90,21 @@ atom2_group.add_argument(
     default=[]
 )
 
-atom2_group.add_argument("--limits2",
-                         help="""range of atom2 charge values to be sampled""",
-                         nargs=2, type=float,
-                         default=(-1, 1), metavar=("LOWER", "UPPER"))
+atom2_group.add_argument(
+    "--limits2",
+    help="""range of atom2 charge values to be sampled""",
+    nargs=2,
+    type=float,
+    default=(-1, 1),
+    metavar=("LOWER", "UPPER")
+)
 
+atom2_group.add_argument(
+    "--sampling2",
+    help="""number of data points to be sampled for atom2 charges""",
+    type=float,
+    default=11,
+    metavar="POINTS"
+)
 
 args = parser.parse_args()
