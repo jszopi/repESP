@@ -24,15 +24,49 @@ parser.add_argument("esp_file",
                     help=resp_parser.esp_file_help,
                     metavar="FILENAME")
 
-parser.add_argument("atom1",
-                    help="""The label of the first atom which charge is to be varied""",
-                    type=int, metavar="LABEL")
-
-parser.add_argument("--equivalent1",
-                    help="""If in the molecule there are atoms equivalent to
-                    the atom1, specify their labels. This ensures that the
-                    atoms cannot vary independently.""",
+parser.add_argument("--monitor",
+                    help="""labels of atoms which charges are to be monitored
+                    while the charge on atom1 (and optionally atom2) are varied""",
                     type=int, nargs="*", metavar="LABELS", default=[])
+
+atom1_group = parser.add_argument_group(
+    title="options regarding the first varied atom",
+    description="Charge on this atom will be varied"
+)
+
+atom1_group.add_argument(
+    "atom1",
+    help="""label of the first atom which charge is to be varied""",
+    type=int,
+    metavar="LABEL"
+)
+
+atom1_group.add_argument(
+    "--equivalent1",
+    help="""If in the molecule there are atoms equivalent to the atom1, specify
+    their labels. This ensures that the atoms cannot vary independently.""",
+    type=int,
+    nargs="*",
+    metavar="LABELS",
+    default=[]
+)
+
+atom1_group.add_argument(
+    "--limits1",
+    help="""range of atom1 charge values to be sampled""",
+    nargs=2,
+    type=float,
+    default=(-1, 1),
+    metavar=("LOWER", "UPPER")
+)
+
+atom1_group.add_argument(
+    "--sampling1",
+    help="""number of data points to be sampled for atom1 charges""",
+    type=float,
+    default=11,
+    metavar="POINTS"
+)
 
 atom2_group = parser.add_argument_group(
     title="options regarding the second varied atom",
@@ -41,7 +75,7 @@ atom2_group = parser.add_argument_group(
 
 atom2_group.add_argument(
     "--atom2",
-    help="""The label of the second atom which charge is to be varied""",
+    help="""label of the second atom which charge is to be varied""",
     type=int,
     metavar="LABEL"
 )
@@ -55,5 +89,11 @@ atom2_group.add_argument(
     metavar="LABELS",
     default=[]
 )
+
+atom2_group.add_argument("--limits2",
+                         help="""range of atom2 charge values to be sampled""",
+                         nargs=2, type=float,
+                         default=(-1, 1), metavar=("LOWER", "UPPER"))
+
 
 args = parser.parse_args()
