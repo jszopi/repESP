@@ -2,6 +2,9 @@
 
 from repESP import resp, resp_helpers, rep_esp, charges
 from repESP.field_comparison import difference, rms_and_rep
+from repESP.resp import get_atom_signature
+
+from numpy import linspace, meshgrid
 
 import resp_parser
 
@@ -108,3 +111,83 @@ atom2_group.add_argument(
 )
 
 args = parser.parse_args()
+
+input_esp = args.respin_location + "/" + args.esp_file
+
+temp_dir = "fit-dependence_temp_dir-dont_remove/"
+
+if os.path.exists(temp_dir):
+    raise FileExistsError("Output directory exists: " + temp_dir)
+
+os.mkdir(temp_dir)
+
+# Read the .esp file
+info_from_esp = resp_helpers.G09_esp(input_esp)
+# Write the .esp file in the correct format expected by the `resp` program
+info_from_esp.field.write_to_file(temp_dir + "corrected.esp", info_from_esp.molecule)
+
+
+def interpret(molecule, charge_dict, vary_label1, vary_label2=None):
+    if vary_label2 is None:
+        dictio = charge_dict(1)  # Example number to get the dict
+    else:
+        dictio = charge_dict(1, 2)  # Example numbers to get the dict
+    print("\nCharges on these atoms will be varied:")
+    for vary_label in vary_label1, vary_label2:
+        if vary_label is None:
+            break
+        print('*', molecule[vary_label-1])
+        equiv = [label for label in dictio if
+                 dictio[label] == dictio[vary_label] and label != vary_label]
+        if equiv:
+            print("  with the following atoms equivalenced to it:")
+            for equiv_label in sorted(equiv):
+                print("  -", molecule[equiv_label-1])
+    print("\nSee below for equivalence information of other atoms.")
+
+
+def get_monitored(molecule, labels):
+    return [atom.charges['resp'] for i, atom in enumerate(molecule) if i + 1 in labels]
+
+
+def vary_one_atom():
+
+    charge_dict = lambda x: {a: x for a in args.equivalent1 + [args.atom1]}
+    interpret(info_from_esp.molecule, charge_dict, args.atom1)
+
+    charges = linspace(args.limits1[0], args.limits1[1], num=args.sampling1)
+
+    result = []
+
+    for i, charge in enumerate(charges):
+
+        inp_charges = resp.charges_from_dict(
+            charge_dict(charge),
+            len(info_from_esp.molecule)
+        )
+
+        _molecule = resp.run_resp(
+            args.respin_location,
+            temp_dir + "{0}{1:+.3f}".format(
+                get_atom_signature(info_from_esp.molecule, args.atom1), charge,
+            ),
+            resp_type='dict',
+            inp_charges=inp_charges,
+            esp_fn=args.esp_file,
+            check_ivary=i==0  # Only for the first iteration
+        )
+
+        rms, rrms, _ = rms_and_rep(info_from_esp.field, _molecule, 'resp')
+
+        sys.stdout.write("\rSampling progress: {0:.2f} %".format(
+            100*(i+1)/args.sampling1))
+        sys.stdout.flush()
+
+        result.append([
+            charge,
+            *get_monitored(_molecule, args.monitor),
+            rms,
+            rrms
+        ])
+
+    return result
