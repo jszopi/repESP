@@ -10,7 +10,7 @@ import pandas
 import re
 
 help_description = """
-    Plot the dependence of the ESP fit and/or values on other charges as a
+    Plot the dependence of the ESP fit and/or values on monitored charges as a
     function of charges on one atom, based on the output of the `fit_dependence`
     script.
     """
@@ -23,67 +23,70 @@ parser.add_argument("scan_output",
                     help="output of the fit_dependence script (csv).",
                     metavar="FILENAME")
 
-parser.add_argument("--varied_label",
-                    help="label of the varied atom to be displayed as x-axis label",
-                    type=str
-)
-
 parser.add_argument("--output",
                     help="""file to save the plot to (without extension, plot
                     will be saved as pdf). If not given, an interactive plot is shown.""",
                     type=str, metavar="FILENAME")
 
 parser.add_argument("--plot_fit",
-                    help="""plot the selected fit statistic (rms, rrms or
-                    none). Note that "none" only makes sense if the `--charges`
-                    options is specified.""",
+                    help="""plot the selected fit statistic (y-axis). Allowed
+                    values are (rms, rrms or none).""",
                     type=str,
                     metavar="STATISTIC",
                     choices=["rms", "rrms", "none"],
                     default="rms")
 
-charges_group = parser.add_argument_group(
-    title="options regarding plotting charges on other atoms",
-    description="""Optionally the charges on other atoms can be plotted
-                   (alongside or instead the ESP fit)."""
+parser.add_argument("--monitored_charges",
+                    help="""labels of atoms which charges were monitored and
+                    are to be plotted (y-axis)""",
+                    type=int,
+                    nargs="*",
+                    metavar="LABELS",
+                    default=[])
+
+plot_appearance_group = parser.add_argument_group(
+    title="options regarding the appearance of the graph""",
+    description="""These options were added to enable creating plots consistent
+                with the original publication."""
 )
 
-charges_group.add_argument(
-    "--charges",
-    help="""labels of atoms which charges are to be plotted""",
-    type=int,
-    nargs="*",
-    metavar="LABELS",
-    default=[]
+plot_appearance_group.add_argument(
+    "--title",
+    help="graph title",
+    type=str,
+    metavar="TITLE"
 )
 
-charges_group.add_argument(
+plot_appearance_group.add_argument(
+    "--varied_label",
+    help="""label of the varied atom to be displayed as x-axis label. If not
+    given, the numeric label will be used.""",
+    type=str
+)
+
+plot_appearance_group.add_argument(
     "--legend_labels",
-    help="""custom legend labels of atoms given in `--charges`. If not given, the
-    numeric labels will be used""",
+    help="""custom legend labels of atoms given in `--monitored_charges`.
+    If not given, the numeric labels will be used""",
     type=str,
     nargs="*",
     metavar="LABELS",
     default=[]
 )
 
-marker_group = parser.add_argument_group(
-    title="options regarding marking additional features on the graph""",
-    description="""These options were added for creating plots consistent
-                with the original publication."""
 )
 
-marker_group.add_argument(
+plot_appearance_group.add_argument(
     "--mark_fit",
     help="""the charge and corresponding value of the selected
-    fit statistic (see --plot_fit option) for a point to be
-    marked on the fit dependence graph (intended to be the minimum)""",
+    fit statistic (see `--plot_fit` option) for a point to be
+    marked on the fit dependence graph (intended to be the fit minimum)""",
     type=float,
     nargs=2,
     metavar=("CHARGE", "VALUE")
 )
 
-marker_group.add_argument(
+plot_appearance_group.add_argument(
     "--shade_region",
     help="region of charge values to be shaded (intended for flexibility range)",
     type=float,
@@ -91,17 +94,10 @@ marker_group.add_argument(
     metavar=("LOWER", "UPPER")
 )
 
-marker_group.add_argument(
-    "--title",
-    help="graph title",
-    type=str,
-    metavar="TITLE"
-)
-
 args = parser.parse_args()
 
 
-def plot_flexibility_func(axis, df, varied, statistic, mark_fit, flex_limits):
+def plot_flexibility_func(axis, df, varied, statistic, mark_fit):
 
     x_values = df[get_col_header(varied)]
     y_values = df[statistic.upper()]
@@ -116,10 +112,6 @@ def plot_flexibility_func(axis, df, varied, statistic, mark_fit, flex_limits):
         # Location of minimum
         axis.plot((mark_fit[0], mark_fit[0]), (0, mark_fit[1]), 'k--')
         axis.plot((x_values.min(), mark_fit[0]), (mark_fit[1], mark_fit[1]), 'k--')
-
-    if flex_limits:
-        # 10% flexibility limits
-        axis.axvspan(flex_limits[0], flex_limits[1], alpha=0.2, color='grey')
 
     axis.set_ylim([0, y_values.max()])
 
@@ -202,7 +194,7 @@ def line_at_zero_x(axis):
     axis.set_ylim(ylim)
 
 
-def plot_common(df, varied, varied_label, title):
+def plot_common(df, varied, varied_label, title, shaded_region):
 
     fig, ax1 = plt.subplots()
 
@@ -214,41 +206,52 @@ def plot_common(df, varied, varied_label, title):
     ax1.set_xlim(x_values.min(), x_values.max())
     line_at_zero_x(ax1)
 
+    if shaded_region:
+        # 10% flexibility limits
+        ax1.axvspan(shaded_region[0], shaded_region[1], alpha=0.2, color='grey')
+
     return ax1
 
 if __name__ == "__main__":
 
     args.plot_fit = args.plot_fit if args.plot_fit != "none" else None
 
-    if not args.plot_fit and not args.charges:
+    if not args.plot_fit and not args.monitored_charges:
         raise KeyError(
-            "Requested plotting neither fit quality (--plot_fit) nor other charges "
-            "(--charges) to be plotted"
+            "Requested plotting neither fit quality (`--plot_fit`) nor"
+            "monitored charges (`--monitored_charges`) to be plotted"
         )
 
     df = pandas.read_csv(args.scan_output)
     varied, _ = interpret_header(df)
 
-    ax1 = plot_common(df, varied, args.varied_label, args.title)
-
+    ax1 = plot_common(df, varied, args.varied_label, args.title, args.shade_region)
     is_first_plot = True
-    if args.plot_fit :
 
-        plot_flexibility_func(ax1, df, varied, args.plot_fit, args.mark_fit, args.shade_region)
+    if args.plot_fit:
+
+        plot_flexibility_func(
+            ax1,
+            df,
+            varied,
+            args.plot_fit,
+            args.mark_fit
+        )
+
         is_first_plot = False
 
-    if args.charges:
+    if args.monitored_charges:
 
-        if args.legend_labels and len(args.legend_labels) != len(args.charges):
+        if args.legend_labels and len(args.legend_labels) != len(args.monitored_charges):
             raise KeyError(
                 "If specified, the length of the argument list passsed as "
-                "`--legend_labels` must equal that of `--charges`"
+                "`--legend_labels` must equal that of `--monitored_charges`"
             )
 
         plot_response_func(
             ax1 if is_first_plot else ax1.twinx(),
             df,
-            args.charges,
+            args.monitored_charges,
             args.legend_labels,
             not is_first_plot
         )
