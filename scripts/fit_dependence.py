@@ -116,26 +116,6 @@ atom2_group.add_argument(
     metavar="POINTS"
 )
 
-args = parser.parse_args()
-
-input_esp = args.respin_location + "/" + args.esp_file
-
-temp_dir = "fit-dependence_temp_dir/"
-
-if args.output and os.path.exists(args.output):
-    raise FileExistsError("Output file exists: " + args.output)
-
-if os.path.exists(temp_dir):
-    shutil.rmtree(temp_dir)
-
-os.mkdir(temp_dir)
-
-# Read the .esp file
-info_from_esp = resp_helpers.G09_esp(input_esp)
-# Write the .esp file in the correct format expected by the `resp` program
-info_from_esp.field.write_to_file(temp_dir + "corrected.esp", info_from_esp.molecule)
-
-
 def interpret(molecule, charge_dict, vary_label1, vary_label2=None):
     if vary_label2 is None:
         dictio = charge_dict(1)  # Example number to get the dict
@@ -193,8 +173,8 @@ def sample_charges(all_charge_variations, inp_charges_func, temp_dir_func):
     return result
 
 
-charge_header = lambda label: "Charge on {}".format(label)
-header_common = ["RMS", "RRMS", *list(map(charge_header, args.monitor))]
+CHARGE_HEADER = lambda label: "Charge on {}".format(label)
+HEADER_COMMON = ["RMS", "RRMS", *list(map(CHARGE_HEADER, args.monitor))]
 
 
 def one_charge_variation():
@@ -217,7 +197,7 @@ def one_charge_variation():
     results = sample_charges(all_charge_variations, inp_charges_func, temp_dir_func)
 
     charges_with_results = [[charges, *result] for charges, result in zip(all_charge_variations, results)]
-    csv_header = [charge_header(args.atom1)] + header_common
+    csv_header = [CHARGE_HEADER(args.atom1)] + HEADER_COMMON
 
     return csv_header, charges_with_results
 
@@ -249,10 +229,29 @@ def two_charge_variation():
     results = sample_charges(all_charge_variations, inp_charges_func, temp_dir_func)
 
     charges_with_results = [[*charges, *result] for charges, result in zip(all_charge_variations, results)]
-    csv_header = [charge_header(args.atom1), charge_header(args.atom2)] + header_common
+    csv_header = [CHARGE_HEADER(args.atom1), CHARGE_HEADER(args.atom2)] + HEADER_COMMON
 
     return csv_header, charges_with_results
 
+
+args = parser.parse_args()
+
+input_esp = args.respin_location + "/" + args.esp_file
+
+temp_dir = "fit-dependence_temp_dir/"
+
+if args.output and os.path.exists(args.output):
+    raise FileExistsError("Output file exists: " + args.output)
+
+if os.path.exists(temp_dir):
+    shutil.rmtree(temp_dir)
+
+os.mkdir(temp_dir)
+
+# Read the .esp file
+info_from_esp = resp_helpers.G09_esp(input_esp)
+# Write the .esp file in the correct format expected by the `resp` program
+info_from_esp.field.write_to_file(temp_dir + "corrected.esp", info_from_esp.molecule)
 
 csv_header, charges_with_results = one_charge_variation() if args.atom2 is None else two_charge_variation()
 
