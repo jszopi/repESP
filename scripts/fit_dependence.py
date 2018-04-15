@@ -9,6 +9,7 @@ from numpy import linspace, meshgrid
 import resp_parser
 
 import argparse
+import csv
 import os
 import shutil
 import sys
@@ -31,6 +32,10 @@ parser.add_argument("--monitor",
                     help="""labels of atoms which charges are to be monitored
                     while the charge on atom1 (and optionally atom2) are varied""",
                     type=int, nargs="*", metavar="LABELS", default=[])
+
+parser.add_argument("--output",
+                    help="file to write the output in the csv format",
+                    type=str, metavar="FILENAME")
 
 atom1_group = parser.add_argument_group(
     title="options regarding the first varied atom",
@@ -153,6 +158,7 @@ def get_monitored(molecule, labels):
 def sample_charges(all_charge_variations, inp_charges_func, temp_dir_func):
 
     result = []
+    print()
 
     for i, varied_charges in enumerate(all_charge_variations):
 
@@ -179,6 +185,7 @@ def sample_charges(all_charge_variations, inp_charges_func, temp_dir_func):
             *get_monitored(_molecule, args.monitor)
         ])
 
+    print()
     return result
 
 
@@ -209,3 +216,19 @@ def one_charge_variation():
     csv_header = [charge_header(args.atom1)] + header_common
 
     return csv_header, charges_with_results
+
+
+csv_header, charges_with_results = one_charge_variation() if args.atom2 is None else two_charge_variation()
+
+if args.output is None:
+    print("\nESP fit dependence scan results:")
+    print(",".join("{:>13}".format(x) for x in csv_header))
+    for result_line in charges_with_results:
+        print(",".join("{:>13.8f}".format(x) for x in result_line))
+else:
+    with open(args.output, "w") as out:
+        csv_writer = csv.writer(out)
+        csv_writer.writerow(csv_header)
+        csv_writer.writerows(charges_with_results)
+
+shutil.rmtree(temp_dir)
