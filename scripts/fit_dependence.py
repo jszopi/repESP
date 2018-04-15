@@ -10,8 +10,8 @@ import resp_parser
 
 import argparse
 import os
-import sys
 import shutil
+import sys
 
 
 help_description = """
@@ -150,27 +150,17 @@ def get_monitored(molecule, labels):
     return [atom.charges['resp'] for i, atom in enumerate(molecule) if i + 1 in labels]
 
 
-def vary_one_atom():
-
-    charge_dict = lambda x: {a: x for a in args.equivalent1 + [args.atom1]}
-    interpret(info_from_esp.molecule, charge_dict, args.atom1)
-
-    charges = linspace(args.limits1[0], args.limits1[1], num=args.sampling1)
+def sample_charges(all_charge_variations, inp_charges_func, temp_dir_func):
 
     result = []
 
-    for i, charge in enumerate(charges):
+    for i, varied_charges in enumerate(all_charge_variations):
 
-        inp_charges = resp.charges_from_dict(
-            charge_dict(charge),
-            len(info_from_esp.molecule)
-        )
+        inp_charges = inp_charges_func(varied_charges)
 
         _molecule = resp.run_resp(
             args.respin_location,
-            temp_dir + "{0}{1:+.3f}".format(
-                get_atom_signature(info_from_esp.molecule, args.atom1), charge,
-            ),
+            temp_dir_func(varied_charges),
             resp_type='dict',
             inp_charges=inp_charges,
             esp_fn=args.esp_file,
@@ -180,14 +170,42 @@ def vary_one_atom():
         rms, rrms, _ = rms_and_rep(info_from_esp.field, _molecule, 'resp')
 
         sys.stdout.write("\rSampling progress: {0:.2f} %".format(
-            100*(i+1)/args.sampling1))
+            100*(i+1)/len(all_charge_variations)))
         sys.stdout.flush()
 
         result.append([
-            charge,
-            *get_monitored(_molecule, args.monitor),
             rms,
-            rrms
+            rrms,
+            *get_monitored(_molecule, args.monitor)
         ])
 
     return result
+
+
+charge_header = lambda label: "Charge on {}".format(label)
+header_common = ["RMS", "RRMS", *list(map(charge_header, args.monitor))]
+
+
+def one_charge_variation():
+
+    charge_dict = lambda x: {a: x for a in args.equivalent1 + [args.atom1]}
+
+    interpret(info_from_esp.molecule, charge_dict, args.atom1)
+
+    all_charge_variations = linspace(args.limits1[0], args.limits1[1], num=args.sampling1)
+
+    inp_charges_func = lambda varied_charge: resp.charges_from_dict(
+        charge_dict(varied_charge),
+        len(info_from_esp.molecule)
+    )
+
+    temp_dir_func = lambda varied_charge: temp_dir + "{0}{1:+.3f}".format(
+        get_atom_signature(info_from_esp.molecule, args.atom1), varied_charge,
+    )
+
+    results = sample_charges(all_charge_variations, inp_charges_func, temp_dir_func)
+
+    charges_with_results = [[charges, *result] for charges, result in zip(all_charge_variations, results)]
+    csv_header = [charge_header(args.atom1)] + header_common
+
+    return csv_header, charges_with_results
