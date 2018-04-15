@@ -173,8 +173,13 @@ def sample_charges(all_charge_variations, inp_charges_func, temp_dir_func):
     return result
 
 
-CHARGE_HEADER = lambda label: "Charge on {}".format(label)
-HEADER_COMMON = ["RMS", "RRMS", *list(map(CHARGE_HEADER, args.monitor))]
+def get_csv_header(monitored, atom1, atom2=None):
+    get_charge_header = lambda label: "Charge on {}".format(label)
+    header_common = ["RMS", "RRMS", *list(map(get_charge_header, monitored))]
+    if atom2 is None:
+        return [get_charge_header(atom1)] + header_common
+    else:
+        return [get_charge_header(atom1), get_charge_header(atom2)] + header_common
 
 
 def one_charge_variation():
@@ -197,7 +202,7 @@ def one_charge_variation():
     results = sample_charges(all_charge_variations, inp_charges_func, temp_dir_func)
 
     charges_with_results = [[charges, *result] for charges, result in zip(all_charge_variations, results)]
-    csv_header = [CHARGE_HEADER(args.atom1)] + HEADER_COMMON
+    csv_header = get_csv_header(args.monitor, args.atom1)
 
     return csv_header, charges_with_results
 
@@ -229,7 +234,7 @@ def two_charge_variation():
     results = sample_charges(all_charge_variations, inp_charges_func, temp_dir_func)
 
     charges_with_results = [[*charges, *result] for charges, result in zip(all_charge_variations, results)]
-    csv_header = [CHARGE_HEADER(args.atom1), CHARGE_HEADER(args.atom2)] + HEADER_COMMON
+    csv_header = get_csv_header(args.monitor, args.atom1, args.atom2)
 
     return csv_header, charges_with_results
 
