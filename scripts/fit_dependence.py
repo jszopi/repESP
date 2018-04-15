@@ -120,10 +120,13 @@ args = parser.parse_args()
 
 input_esp = args.respin_location + "/" + args.esp_file
 
-temp_dir = "fit-dependence_temp_dir-dont_remove/"
+temp_dir = "fit-dependence_temp_dir/"
+
+if args.output and os.path.exists(args.output):
+    raise FileExistsError("Output file exists: " + args.output)
 
 if os.path.exists(temp_dir):
-    raise FileExistsError("Output directory exists: " + temp_dir)
+    shutil.rmtree(temp_dir)
 
 os.mkdir(temp_dir)
 

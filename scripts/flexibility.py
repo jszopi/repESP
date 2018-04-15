@@ -60,12 +60,10 @@ parser.add_argument("--guess",
 args = parser.parse_args()
 input_esp = args.respin_location + "/" + args.esp_file
 
-# May need to take flexibility limits to calculate
-
-temp_dir = "flexibility_temp_dir-dont_remove/"
+temp_dir = "flexibility_temp_dir/"
 
 if os.path.exists(temp_dir):
-    raise FileExistsError("Output directory exists: " + temp_dir)
+    shutil.rmtree(temp_dir)
 
 os.mkdir(temp_dir)
 
