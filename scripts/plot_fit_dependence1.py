@@ -74,6 +74,23 @@ plot_appearance_group.add_argument(
     default=[]
 )
 
+plot_appearance_group.add_argument(
+    "--plot_fit_limits",
+    help="""override for graph limits for the fit statistic y-axis. If not
+    specified the limits are from 0 to maximum value of the fit statistic""",
+    type=float,
+    nargs=2,
+    metavar=("LOWER", "UPPER"),
+)
+
+plot_appearance_group.add_argument(
+    "--monitored_charges_limits",
+    help="""override for graph limits for the monitored charges y-axis. If not
+    specified the values are from minimum to maximum value of charges on the
+    monitored atoms""",
+    type=float,
+    nargs=2,
+    metavar=("LOWER", "UPPER"),
 )
 
 plot_appearance_group.add_argument(
@@ -97,7 +114,7 @@ plot_appearance_group.add_argument(
 args = parser.parse_args()
 
 
-def plot_flexibility_func(axis, df, varied, statistic, mark_fit):
+def plot_flexibility_func(axis, df, varied, statistic, mark_fit, ylim_override):
 
     x_values = df[get_col_header(varied)]
     y_values = df[statistic.upper()]
@@ -113,10 +130,13 @@ def plot_flexibility_func(axis, df, varied, statistic, mark_fit):
         axis.plot((mark_fit[0], mark_fit[0]), (0, mark_fit[1]), 'k--')
         axis.plot((x_values.min(), mark_fit[0]), (mark_fit[1], mark_fit[1]), 'k--')
 
-    axis.set_ylim([0, y_values.max()])
+    if ylim_override is None:
+        axis.set_ylim([0, y_values.max()])
+    else:
+        axis.set_ylim(ylim_override)
 
 
-def plot_response_func(axis, df, monitored, legend_labels, ylabel_see_legend=False):
+def plot_response_func(axis, df, monitored, legend_labels, ylim_override, ylabel_see_legend=False):
     x_values = df[get_col_header(varied)]
 
     monitored_dict = {
@@ -155,7 +175,11 @@ def plot_response_func(axis, df, monitored, legend_labels, ylabel_see_legend=Fal
             y_max = y_values.max()
 
     axis.legend()
-    axis.set_ylim([y_min, y_max])
+
+    if ylim_override is None:
+        axis.set_ylim([y_min, y_max])
+    else:
+        axis.set_ylim(ylim_override)
 
     # Guiding line at zero y2
     axis.plot(axis.get_xlim(), (0, 0), 'k:')
@@ -235,7 +259,8 @@ if __name__ == "__main__":
             df,
             varied,
             args.plot_fit,
-            args.mark_fit
+            args.mark_fit,
+            args.plot_fit_limits
         )
 
         is_first_plot = False
@@ -253,6 +278,7 @@ if __name__ == "__main__":
             df,
             args.monitored_charges,
             args.legend_labels,
+            args.monitored_charges_limits,
             not is_first_plot
         )
 
