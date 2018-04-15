@@ -36,7 +36,7 @@ parser.add_argument("--plot_fit",
                     choices=["rms", "rrms", "none"],
                     default="rms")
 
-parser.add_argument("--monitored_charges",
+parser.add_argument("--monitored_atoms",
                     help="""labels of atoms which charges were monitored and
                     are to be plotted (y-axis)""",
                     type=int,
@@ -66,7 +66,7 @@ plot_appearance_group.add_argument(
 
 plot_appearance_group.add_argument(
     "--legend_labels",
-    help="""custom legend labels of atoms given in `--monitored_charges`.
+    help="""custom legend labels of atoms given in `--monitored_atoms`.
     If not given, the numeric labels will be used""",
     type=str,
     nargs="*",
@@ -84,7 +84,7 @@ plot_appearance_group.add_argument(
 )
 
 plot_appearance_group.add_argument(
-    "--monitored_charges_limits",
+    "--monitored_atoms_limits",
     help="""override for graph limits for the monitored charges y-axis. If not
     specified the values are from minimum to maximum value of charges on the
     monitored atoms""",
@@ -240,10 +240,10 @@ if __name__ == "__main__":
 
     args.plot_fit = args.plot_fit if args.plot_fit != "none" else None
 
-    if not args.plot_fit and not args.monitored_charges:
+    if not args.plot_fit and not args.monitored_atoms:
         raise KeyError(
             "Requested plotting neither fit quality (`--plot_fit`) nor"
-            "monitored charges (`--monitored_charges`) to be plotted"
+            "monitored charges (`--monitored_atoms`) to be plotted"
         )
 
     df = pandas.read_csv(args.scan_output)
@@ -265,20 +265,20 @@ if __name__ == "__main__":
 
         is_first_plot = False
 
-    if args.monitored_charges:
+    if args.monitored_atoms:
 
-        if args.legend_labels and len(args.legend_labels) != len(args.monitored_charges):
+        if args.legend_labels and len(args.legend_labels) != len(args.monitored_atoms):
             raise KeyError(
                 "If specified, the length of the argument list passsed as "
-                "`--legend_labels` must equal that of `--monitored_charges`"
+                "`--legend_labels` must equal that of `--monitored_atoms`"
             )
 
         plot_response_func(
             ax1 if is_first_plot else ax1.twinx(),
             df,
-            args.monitored_charges,
+            args.monitored_atoms,
             args.legend_labels,
-            args.monitored_charges_limits,
+            args.monitored_atoms_limits,
             not is_first_plot
         )
 

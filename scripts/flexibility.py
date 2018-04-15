@@ -30,14 +30,14 @@ parser = argparse.ArgumentParser(
     description=help_description,
     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
+parser.add_argument("esp_file",
+                    help=resp_parser.esp_file_help,
+                    metavar="FILENAME")
+
 parser.add_argument("atom",
                     help="""Label of the atom which flexibility limits are to
                     be evaluated.""",
                     type=int, metavar="LABEL")
-
-parser.add_argument("esp_file",
-                    help=resp_parser.esp_file_help,
-                    metavar="FILENAME")
 
 parser.add_argument("--equivalent",
                     help="""If in the molecule there are atoms equivalent to
