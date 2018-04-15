@@ -16,8 +16,14 @@ parser.add_argument("scan_output",
                     help="output of the fit_dependence script (csv).",
                     metavar="FILENAME")
 
+parser.add_argument("--varied_label",
+                    help="label of the varied atom to be displayed as x-axis label",
+                    type=str
+)
+
 parser.add_argument("--output",
-                    help="file to save the plot to. If not given, an interactive plot is shown.",
+                    help="""file to save the plot to (without extension, plot
+                    will be saved as pdf). If not given, an interactive plot is shown.""",
                     type=str, metavar="FILENAME")
 
 parser.add_argument("--plot_fit",
@@ -45,10 +51,10 @@ charges_group.add_argument(
 )
 
 charges_group.add_argument(
-    "--legend",
+    "--legend_labels",
     help="""custom legend labels of atoms given in `--charges`. If not given, the
     numeric labels will be used""",
-    type=int,
+    type=str,
     nargs="*",
     metavar="LABELS",
     default=[]
@@ -60,18 +66,29 @@ marker_group = parser.add_argument_group(
                 with the original publication."""
 )
 
-marker_group.add_argument("--mark_fit",
-                    help="""the charge and corresponding value of the selected
-                    fit statistic (see --plot_fit option) for a point to be
-                    marked on the fit dependence graph (intended to be the minimum)""",
-                    type=float,
-                    nargs=2,
-                    metavar=("CHARGE", "VALUE"))
+marker_group.add_argument(
+    "--mark_fit",
+    help="""the charge and corresponding value of the selected
+    fit statistic (see --plot_fit option) for a point to be
+    marked on the fit dependence graph (intended to be the minimum)""",
+    type=float,
+    nargs=2,
+    metavar=("CHARGE", "VALUE")
+)
 
-marker_group.add_argument("--shade_region",
-                    help="region of charge values to be shaded (intended for flexibility range)",
-                    type=float,
-                    nargs=2,
-                    metavar=("LOWER", "UPPER"))
+marker_group.add_argument(
+    "--shade_region",
+    help="region of charge values to be shaded (intended for flexibility range)",
+    type=float,
+    nargs=2,
+    metavar=("LOWER", "UPPER")
+)
+
+marker_group.add_argument(
+    "--title",
+    help="graph title",
+    type=str,
+    metavar="TITLE"
+)
 
 args = parser.parse_args()
