@@ -10,6 +10,7 @@ import resp_parser
 
 import argparse
 import csv
+import itertools
 import os
 import shutil
 import sys
@@ -214,6 +215,38 @@ def one_charge_variation():
 
     charges_with_results = [[charges, *result] for charges, result in zip(all_charge_variations, results)]
     csv_header = [charge_header(args.atom1)] + header_common
+
+    return csv_header, charges_with_results
+
+
+def two_charge_variation():
+
+    charge_dict = lambda x, y: {
+        **{a: x for a in args.equivalent1 + [args.atom1]},
+        **{b: y for b in args.equivalent2 + [args.atom2]}
+    }
+
+    interpret(info_from_esp.molecule, charge_dict, args.atom1, args.atom2)
+
+    all_charge_variations = list(itertools.product(
+        linspace(args.limits1[0], args.limits1[1], num=args.sampling1),
+        linspace(args.limits2[0], args.limits2[1], num=args.sampling2)
+    ))
+
+    inp_charges_func = lambda varied_charges: resp.charges_from_dict(
+        charge_dict(*varied_charges),
+        len(info_from_esp.molecule)
+    )
+
+    temp_dir_func = lambda varied_charges: temp_dir + "{0}{1:+.3f}-{2}{3:+.3f}".format(
+        get_atom_signature(info_from_esp.molecule, args.atom1), varied_charges[0],
+        get_atom_signature(info_from_esp.molecule, args.atom2), varied_charges[1],
+    )
+
+    results = sample_charges(all_charge_variations, inp_charges_func, temp_dir_func)
+
+    charges_with_results = [[*charges, *result] for charges, result in zip(all_charge_variations, results)]
+    csv_header = [charge_header(args.atom1), charge_header(args.atom2)] + header_common
 
     return csv_header, charges_with_results
 
