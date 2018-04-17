@@ -5,7 +5,6 @@ from repESP.cube_helpers import InputFormatError
 import matplotlib.pyplot as plt
 
 import argparse
-import itertools
 import pandas
 import re
 
@@ -149,7 +148,7 @@ def plot_response_func(
 
     monitored_dict = {
         label: label if display is None else display
-        for label, display in itertools.zip_longest(monitored_atoms, monitored_atoms_display)
+        for label, display in zip(monitored_atoms, monitored_atoms_display)
     }
 
     ylabel = "Charges on other atoms"
