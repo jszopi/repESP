@@ -1,66 +1,63 @@
 #!/usr/bin/env python3
 
-from plot_fit_dependence_common import get_parser
+from plot_fit_dependence_common import get_parser, preprocess_args
 
 from repESP.cube_helpers import InputFormatError
 
 import matplotlib.pyplot as plt
 
-import argparse
 import pandas
 import re
 
-parser, plot_appearance_group = get_parser(isTwoAtoms=False)
 
-plot_appearance_group.add_argument(
-    "--monitored_atoms_display",
-    help="""display labels for atoms given in `--monitored_atoms` to be used in
-    the legend. If not given, the numeric labels will be used""",
-    type=str,
-    nargs="*",
-    metavar="DISPLAY_LABELS",
-    default=[]
-)
+def add_specific_cli_args(parser, plot_appearance_group):
 
-plot_appearance_group.add_argument(
-    "--plot_fit_limits",
-    help="""override for graph limits for the fit statistic y-axis. If not
-    specified the limits are from 0 to maximum value of the fit statistic""",
-    type=float,
-    nargs=2,
-    metavar=("LOWER", "UPPER"),
-)
+    plot_appearance_group.add_argument(
+        "--monitored_atoms_display",
+        help="""display labels for atoms given in `--monitored_atoms` to be used in
+        the legend. If not given, the numeric labels will be used""",
+        type=str,
+        nargs="*",
+        metavar="DISPLAY_LABELS",
+        default=[]
+    )
 
-plot_appearance_group.add_argument(
-    "--monitored_atoms_limits",
-    help="""override for graph limits for the monitored charges y-axis. If not
-    specified the values are from minimum to maximum value of charges on the
-    monitored atoms""",
-    type=float,
-    nargs=2,
-    metavar=("LOWER", "UPPER"),
-)
+    plot_appearance_group.add_argument(
+        "--plot_fit_limits",
+        help="""override for graph limits for the fit statistic y-axis. If not
+        specified the limits are from 0 to maximum value of the fit statistic""",
+        type=float,
+        nargs=2,
+        metavar=("LOWER", "UPPER"),
+    )
 
-plot_appearance_group.add_argument(
-    "--mark_fit",
-    help="""the charge and corresponding value of the selected
-    fit statistic (see `--plot_fit` option) for a point to be
-    marked on the fit dependence graph (intended to be the fit minimum)""",
-    type=float,
-    nargs=2,
-    metavar=("CHARGE", "VALUE")
-)
+    plot_appearance_group.add_argument(
+        "--monitored_atoms_limits",
+        help="""override for graph limits for the monitored charges y-axis. If not
+        specified the values are from minimum to maximum value of charges on the
+        monitored atoms""",
+        type=float,
+        nargs=2,
+        metavar=("LOWER", "UPPER"),
+    )
 
-plot_appearance_group.add_argument(
-    "--shade_region",
-    help="region of charge values to be shaded (intended for flexibility range)",
-    type=float,
-    nargs=2,
-    metavar=("LOWER", "UPPER")
-)
+    plot_appearance_group.add_argument(
+        "--mark_fit",
+        help="""the charge and corresponding value of the selected
+        fit statistic (see `--plot_fit` option) for a point to be
+        marked on the fit dependence graph (intended to be the fit minimum)""",
+        type=float,
+        nargs=2,
+        metavar=("CHARGE", "VALUE")
+    )
 
-args = parser.parse_args()
-
+    plot_appearance_group.add_argument(
+        "--shade_region",
+        help="region of charge values to be shaded (intended for flexibility range)",
+        type=float,
+        nargs=2,
+        metavar=("LOWER", "UPPER")
+    )
 
 def plot_flexibility_func(axis, df, varied_atom, statistic, mark_fit, ylim_override):
 
@@ -193,13 +190,11 @@ def plot_common(df, varied_atom, varied_atom_display, title, shaded_region):
 
 if __name__ == "__main__":
 
-    args.plot_fit = args.plot_fit if args.plot_fit != "none" else None
+    parser, plot_appearance_group = get_parser(isTwoAtoms=False)
+    add_specific_cli_args(parser, plot_appearance_group)
 
-    if not args.plot_fit and not args.monitored_atoms:
-        raise KeyError(
-            "Requested plotting neither fit quality (`--plot_fit`) nor"
-            "monitored charges (`--monitored_atoms`) to be plotted"
-        )
+    args = parser.parse_args()
+    preprocess_args(args)
 
     df = pandas.read_csv(args.scan_output)
     varied_atom, _ = interpret_header(df)

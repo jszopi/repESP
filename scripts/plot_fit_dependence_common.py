@@ -1,5 +1,17 @@
 import argparse
 
+
+def preprocess_args(args):
+
+    args.plot_fit = args.plot_fit if args.plot_fit != "none" else None
+
+    if not args.plot_fit and not args.monitored_atoms:
+        raise KeyError(
+            "Requested plotting neither fit quality (`--plot_fit`) nor"
+            "monitored charges (`--monitored_atoms`) to be plotted"
+        )
+
+
 def get_parser(isTwoAtoms=False):
 
     help_description = """
