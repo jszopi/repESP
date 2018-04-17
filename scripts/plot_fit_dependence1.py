@@ -58,19 +58,20 @@ plot_appearance_group.add_argument(
 )
 
 plot_appearance_group.add_argument(
-    "--varied_label",
-    help="""label of the varied atom to be displayed as x-axis label. If not
-    given, the numeric label will be used.""",
-    type=str
+    "--varied_atom_display",
+    help="""display label of the varied atom to be used in the x-axis label.
+    If not given, the numeric label will be used.""",
+    type=str,
+    metavar="DISPLAY_LABEL",
 )
 
 plot_appearance_group.add_argument(
-    "--legend_labels",
-    help="""custom legend labels of atoms given in `--monitored_atoms`.
-    If not given, the numeric labels will be used""",
+    "--monitored_atoms_display",
+    help="""display labels for atoms given in `--monitored_atoms` to be used in
+    the legend. If not given, the numeric labels will be used""",
     type=str,
     nargs="*",
-    metavar="LABELS",
+    metavar="DISPLAY_LABELS",
     default=[]
 )
 
@@ -114,9 +115,9 @@ plot_appearance_group.add_argument(
 args = parser.parse_args()
 
 
-def plot_flexibility_func(axis, df, varied, statistic, mark_fit, ylim_override):
+def plot_flexibility_func(axis, df, varied_atom, statistic, mark_fit, ylim_override):
 
-    x_values = df[get_col_header(varied)]
+    x_values = df[get_col_header(varied_atom)]
     y_values = df[statistic.upper()]
     axis.plot(x_values, y_values)
 
@@ -136,12 +137,19 @@ def plot_flexibility_func(axis, df, varied, statistic, mark_fit, ylim_override):
         axis.set_ylim(ylim_override)
 
 
-def plot_response_func(axis, df, monitored, legend_labels, ylim_override, ylabel_see_legend=False):
-    x_values = df[get_col_header(varied)]
+def plot_response_func(
+        axis,
+        df,
+        monitored_atoms,
+        monitored_atoms_display,
+        ylim_override,
+        ylabel_see_legend=False
+):
+    x_values = df[get_col_header(varied_atom)]
 
     monitored_dict = {
-        label: label if legend_label is None else legend_label
-        for label, legend_label in itertools.zip_longest(monitored, legend_labels)
+        label: label if display is None else display
+        for label, display in itertools.zip_longest(monitored_atoms, monitored_atoms_display)
     }
 
     ylabel = "Charges on other atoms"
@@ -199,8 +207,8 @@ def get_col_header(label):
 
 def interpret_header(df):
 
-    varied = get_label(df.columns.values[0])
-    monitored = list(map(get_label, df.columns.values[3:]))
+    varied_atom = get_label(df.columns.values[0])
+    monitored_atoms = list(map(get_label, df.columns.values[3:]))
     _, rms, rrms, *_ = df.columns.values
 
     if rms != "RMS":
@@ -208,7 +216,7 @@ def interpret_header(df):
     if rrms != "RRMS":
         raise InputFormatError("Expected RRMS column but found {}".format(rrms))
 
-    return varied, monitored
+    return varied_atom, monitored_atoms
 
 
 def line_at_zero_x(axis):
@@ -218,15 +226,15 @@ def line_at_zero_x(axis):
     axis.set_ylim(ylim)
 
 
-def plot_common(df, varied, varied_label, title, shaded_region):
+def plot_common(df, varied_atom, varied_atom_display, title, shaded_region):
 
     fig, ax1 = plt.subplots()
 
     if title is not None:
         plt.title(title)
 
-    x_values = df[get_col_header(varied)]
-    ax1.set_xlabel("Charge on " + (varied if varied_label is None else varied_label))
+    x_values = df[get_col_header(varied_atom)]
+    ax1.set_xlabel("Charge on " + (varied_atom if varied_atom_display is None else varied_atom_display))
     ax1.set_xlim(x_values.min(), x_values.max())
     line_at_zero_x(ax1)
 
@@ -247,9 +255,9 @@ if __name__ == "__main__":
         )
 
     df = pandas.read_csv(args.scan_output)
-    varied, _ = interpret_header(df)
+    varied_atom, _ = interpret_header(df)
 
-    ax1 = plot_common(df, varied, args.varied_label, args.title, args.shade_region)
+    ax1 = plot_common(df, varied_atom, args.varied_atom_display, args.title, args.shade_region)
     is_first_plot = True
 
     if args.plot_fit:
@@ -257,7 +265,7 @@ if __name__ == "__main__":
         plot_flexibility_func(
             ax1,
             df,
-            varied,
+            varied_atom,
             args.plot_fit,
             args.mark_fit,
             args.plot_fit_limits
@@ -267,17 +275,17 @@ if __name__ == "__main__":
 
     if args.monitored_atoms:
 
-        if args.legend_labels and len(args.legend_labels) != len(args.monitored_atoms):
+        if args.monitored_atoms_display and len(args.monitored_atoms_display) != len(args.monitored_atoms):
             raise KeyError(
                 "If specified, the length of the argument list passsed as "
-                "`--legend_labels` must equal that of `--monitored_atoms`"
+                "`--monitored_atoms_display` must equal that of `--monitored_atoms`"
             )
 
         plot_response_func(
             ax1 if is_first_plot else ax1.twinx(),
             df,
             args.monitored_atoms,
-            args.legend_labels,
+            args.monitored_atoms_display,
             args.monitored_atoms_limits,
             not is_first_plot
         )
