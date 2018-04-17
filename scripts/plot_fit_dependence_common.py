@@ -4,9 +4,9 @@ def get_parser(isTwoAtoms=False):
 
     help_description = """
         Plot the dependence of the ESP fit and/or values on monitored charges as a
-        function of charges on one atom, based on the output of the `fit_dependence`
+        function of charges on {}, based on the output of the `fit_dependence`
         script.
-        """
+        """.format("two atoms" if isTwoAtoms else "one atom")
 
     parser = argparse.ArgumentParser(
         description=help_description,
@@ -23,20 +23,29 @@ def get_parser(isTwoAtoms=False):
                         type=str, metavar="FILENAME")
 
     parser.add_argument("--plot_fit",
-                        help="""plot the selected fit statistic (y-axis). Allowed
-                        values are (rms, rrms or none).""",
+                        help="""plot the selected fit statistic ({}). Allowed
+                        values are (rms, rrms or none).""".format(
+                            "z-axis" if isTwoAtoms else "y-axis"
+                        ),
                         type=str,
                         metavar="STATISTIC",
                         choices=["rms", "rrms", "none"],
                         default="rms")
 
-    parser.add_argument("--monitored_atoms",
-                        help="""labels of atoms which charges were monitored and
-                        are to be plotted (y-axis)""",
-                        type=int,
-                        nargs="*",
-                        metavar="LABELS",
-                        default=[])
+    if not isTwoAtoms:
+        parser.add_argument("--monitored_atoms",
+                            help="""labels of atoms which charges were monitored and
+                            are to be plotted (y-axis)""",
+                            type=int,
+                            nargs="*",
+                            metavar="LABELS",
+                            default=[])
+    else:
+        parser.add_argument("--monitored_atom",
+                            help="""label of atom which charge was monitored and
+                            is to be plotted (z-axis)""",
+                            type=int,
+                            metavar="LABEL")
 
     plot_appearance_group = parser.add_argument_group(
         title="options regarding the appearance of the graph""",
@@ -51,12 +60,23 @@ def get_parser(isTwoAtoms=False):
         metavar="TITLE"
     )
 
-    plot_appearance_group.add_argument(
-        "--varied_atom_display",
-        help="""display label of the varied atom to be used in the x-axis label.
-        If not given, the numeric label will be used.""",
-        type=str,
-        metavar="DISPLAY_LABEL",
-    )
+    if not isTwoAtoms:
+        plot_appearance_group.add_argument(
+            "--varied_atom_display",
+            help="""display label of the varied atom to be used in the x-axis label.
+            If not given, the numeric label will be used.""",
+            type=str,
+            metavar="DISPLAY_LABEL",
+        )
+    else:
+        plot_appearance_group.add_argument(
+            "--varied_atoms_display",
+            help="""display labels of the varied atoms to be used in the x-axis x- and y-axis labels.
+            If not given, the numeric labels will be used.""",
+            type=str,
+            nargs=2,
+            metavar=("DISPLAY_LABEL1", "DISPLAY_LABEL2"),
+            default=[]
+        )
 
     return parser, plot_appearance_group
