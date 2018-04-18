@@ -1,4 +1,7 @@
+from repESP.cube_helpers import InputFormatError
+
 import argparse
+import re
 
 
 def preprocess_args(args):
@@ -92,3 +95,34 @@ def get_parser(isTwoAtoms=False):
         )
 
     return parser, plot_appearance_group
+
+
+def get_label(col):
+    regex = re.compile("Charge on ([0-9]*)")
+    match = regex.match(col)
+    if match is None:
+        raise InputFormatError("Expected charge column but found {}".format(col))
+    return match.group(1)
+
+
+def get_col_header(label):
+    return "Charge on {}".format(label)
+
+
+def interpret_header(df, isTwoAtoms=False):
+
+    rms_index = 2 if isTwoAtoms else 1
+    rrms_index = rms_index + 1
+
+    rms = df.columns.values[rms_index]
+    rrms = df.columns.values[rrms_index]
+
+    if rms != "RMS":
+        raise InputFormatError("Expected RMS column but found {}".format(rms))
+    if rrms != "RRMS":
+        raise InputFormatError("Expected RRMS column but found {}".format(rrms))
+
+    varied_atoms = list(map(get_label, df.columns.values[0:rms_index]))
+    monitored_atoms = list(map(get_label, df.columns.values[rrms_index+1:]))
+
+    return varied_atoms, monitored_atoms

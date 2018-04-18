@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from plot_fit_dependence_common import get_parser, preprocess_args
+from plot_fit_dependence_common import *
 
 import pandas
 
@@ -12,3 +12,4 @@ if __name__ == "__main__":
     preprocess_args(args)
 
     df = pandas.read_csv(args.scan_output)
+    varied_atoms, _ = interpret_header(df, isTwoAtoms=True)

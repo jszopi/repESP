@@ -1,13 +1,10 @@
 #!/usr/bin/env python3
 
-from plot_fit_dependence_common import get_parser, preprocess_args
-
-from repESP.cube_helpers import InputFormatError
+from plot_fit_dependence_common import *
 
 import matplotlib.pyplot as plt
 
 import pandas
-import re
 
 
 def add_specific_cli_args(parser, plot_appearance_group):
@@ -137,32 +134,6 @@ def plot_response_func(
     axis.plot(axis.get_xlim(), (0, 0), 'k:')
 
 
-def get_label(col):
-    regex = re.compile("Charge on ([0-9]*)")
-    match = regex.match(col)
-    if match is None:
-        raise InputFormatError("Expected charge column but found {}".format(col))
-    return match.group(1)
-
-
-def get_col_header(label):
-    return "Charge on {}".format(label)
-
-
-def interpret_header(df):
-
-    varied_atom = get_label(df.columns.values[0])
-    monitored_atoms = list(map(get_label, df.columns.values[3:]))
-    _, rms, rrms, *_ = df.columns.values
-
-    if rms != "RMS":
-        raise InputFormatError("Expected RMS column but found {}".format(rms))
-    if rrms != "RRMS":
-        raise InputFormatError("Expected RRMS column but found {}".format(rrms))
-
-    return varied_atom, monitored_atoms
-
-
 def line_at_zero_x(axis):
     ylim = axis.get_ylim()
     axis.plot((0, 0), ylim, 'k:')
@@ -197,7 +168,8 @@ if __name__ == "__main__":
     preprocess_args(args)
 
     df = pandas.read_csv(args.scan_output)
-    varied_atom, _ = interpret_header(df)
+    varied_atoms, _ = interpret_header(df, isTwoAtoms=False)
+    varied_atom = varied_atoms[0]
 
     ax1 = plot_common(df, varied_atom, args.varied_atom_display, args.title, args.shade_region)
     is_first_plot = True
