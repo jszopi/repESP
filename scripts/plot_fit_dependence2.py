@@ -49,7 +49,7 @@ if __name__ == "__main__":
     add_specific_cli_args(parser, plot_appearance_group)
 
     args = parser.parse_args()
-    preprocess_args(args)
+    preprocess_args(args, isTwoAtoms=True)
 
     df = pandas.read_csv(args.scan_output)
     varied_atoms, _ = interpret_header(df, isTwoAtoms=True)
