@@ -2,6 +2,11 @@
 
 from plot_fit_dependence_common import *
 
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+from matplotlib import cm
+import matplotlib.tri as mtri
+
 import pandas
 
 
@@ -43,6 +48,31 @@ def add_specific_cli_args(parser, plot_appearance_group):
     )
 
 
+def plot_common(varied_atoms, varied_atoms_display, title):
+
+    if title is not None:
+        plt.title(title)
+
+    label = lambda firstOrSecond: (
+        varied_atoms_display[firstOrSecond]
+        if varied_atoms_display
+        else varied_atoms[firstOrSecond]
+    )
+
+    plt.xlabel("Charge on " + label(0))
+    plt.ylabel("Charge on " + label(1))
+
+
+def plot_3d(x_axis, y_axis, z_axis, colorbar_label):
+
+    fig = plt.figure()
+    ax = fig.gca(projection='3d')
+
+    tri = mtri.Triangulation(x_axis, y_axis)
+    surf = ax.plot_trisurf(x_axis, y_axis, z_axis, triangles=tri.triangles, cmap=cm.plasma)
+    fig.colorbar(surf, label=colorbar_label)
+
+
 def get_data(df, varied_atoms, plot_fit, plot_relative, monitored_atom, swap_axes):
 
     x_axis = df[get_col_header(varied_atoms[0])]
@@ -78,3 +108,14 @@ if __name__ == "__main__":
         args.monitored_atom,
         args.swap_axes
     )
+
+    if args.contour is None:
+        plot_3d(*data)
+
+    plot_common(varied_atoms, args.varied_atoms_display, args.title)
+
+    if args.output is None :
+        plt.show()
+        plt.close()
+    else:
+        plt.savefig(args.output + ".pdf", format='pdf')
