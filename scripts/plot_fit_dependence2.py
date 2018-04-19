@@ -89,6 +89,14 @@ def get_data(df, varied_atoms, plot_fit, plot_relative, monitored_atom, swap_axe
     return x_axis, y_axis, z_axis, z_label
 
 
+def plot_contours(x_axis, y_axis, z_axis, contours):
+
+    fig, ax1 = plt.subplots()
+    contours = plt.tricontour(x_axis, y_axis, z_axis, sorted(contours), colors='k', zorder=1)
+    plt.clabel(contours, fmt="%1.0f", inline=1, fontsize=15, colors='b')
+    ax1.set_aspect('equal')
+
+
 if __name__ == "__main__":
 
     parser, plot_appearance_group = get_parser(isTwoAtoms=True)
@@ -111,6 +119,8 @@ if __name__ == "__main__":
 
     if args.contours is None:
         plot_3d(*data)
+    else:
+        plot_contours(*data[:3], args.contours)
 
     plot_common(varied_atoms, args.varied_atoms_display, args.title)
 
