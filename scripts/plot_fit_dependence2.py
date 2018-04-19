@@ -82,9 +82,10 @@ def get_data(df, varied_atoms, plot_fit, plot_relative, monitored_atom, swap_axe
         x_axis, y_axis = y_axis, x_axis
 
     z_axis = df[get_col_header(monitored_atom)] if plot_fit is None else df[plot_fit.upper()]
-    z_axis = z_axis if plot_relative is None else [100*z/plot_relative for z in z_axis]
+    z_axis = z_axis if plot_relative is None else [100*(z/plot_relative-1) for z in z_axis]
 
     z_label = get_col_header(monitored_atom) if plot_fit is None else plot_fit.upper()
+    z_label = "% increase in {} from {}".format(z_label, plot_relative) if plot_relative else z_label
 
     return x_axis, y_axis, z_axis, z_label
 
@@ -108,7 +109,7 @@ if __name__ == "__main__":
     df = pandas.read_csv(args.scan_output)
     varied_atoms, _ = interpret_header(df, isTwoAtoms=True)
 
-    data = get_data(
+    *data, colorbar = get_data(
         df,
         varied_atoms,
         args.plot_fit,
@@ -118,9 +119,9 @@ if __name__ == "__main__":
     )
 
     if args.contours is None:
-        plot_3d(*data)
+        plot_3d(*data, colorbar)
     else:
-        plot_contours(*data[:3], args.contours)
+        plot_contours(*data, args.contours)
 
     plot_common(varied_atoms, args.varied_atoms_display, args.title)
 

@@ -105,7 +105,7 @@ def plot_response_func(
         try:
             y_values = df[get_col_header(label)]
         except KeyError:
-            raise KeyError(
+            raise ValueError(
                 "Requested charge on atom {} which is not in the scan output file".format(
                     label
                 )
@@ -190,7 +190,7 @@ if __name__ == "__main__":
     if args.monitored_atoms:
 
         if args.monitored_atoms_display and len(args.monitored_atoms_display) != len(args.monitored_atoms):
-            raise KeyError(
+            raise ValueError(
                 "If specified, the length of the argument list passsed as "
                 "`--monitored_atoms_display` must equal that of `--monitored_atoms`"
             )

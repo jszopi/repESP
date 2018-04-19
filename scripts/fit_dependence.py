@@ -34,7 +34,7 @@ parser.add_argument("--monitor",
                     while the charge on atom1 (and optionally atom2) are varied""",
                     type=int, nargs="*", metavar="LABELS", default=[])
 
-parser.add_argument("--output",
+parser.add_argument("-o", "--output",
                     help="file to write the output in the csv format",
                     type=str, metavar="FILENAME")
 

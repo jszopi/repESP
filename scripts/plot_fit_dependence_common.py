@@ -11,13 +11,17 @@ def preprocess_args(args, isTwoAtoms=False):
     monitored_plot = args.monitored_atom if isTwoAtoms else args.monitored_atoms
 
     if not args.plot_fit and not monitored_plot:
-        raise KeyError(
+        raise ValueError(
             "Requested plotting neither fit quality (`--plot_fit`) nor"
             "monitored charges (`--monitored_atoms`) to be plotted"
         )
 
-    if isTwoAtoms and args.plot_fit is not None and args.monitored_atom is not None:
-        raise KeyError('`--monitored_atom` can only be specified if `--plot_fit` is set to "none".')
+    if isTwoAtoms:
+        if args.plot_fit is not None and args.monitored_atom is not None:
+            raise ValueError('`--monitored_atom` can only be specified if `--plot_fit` is set to "none".')
+
+        if args.monitored_atom is not None and args.plot_relative:
+            raise ValueError('`--plot_relative` cannot be specified with `--monitored_atom`.')
 
 
 def get_parser(isTwoAtoms=False):
@@ -37,7 +41,7 @@ def get_parser(isTwoAtoms=False):
                         help="output of the fit_dependence script (csv).",
                         metavar="FILENAME")
 
-    parser.add_argument("--output",
+    parser.add_argument("-o", "--output",
                         help="""file to save the plot to (without extension, plot
                         will be saved as pdf). If not given, an interactive plot is shown.""",
                         type=str, metavar="FILENAME")
