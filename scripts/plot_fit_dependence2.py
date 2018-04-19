@@ -23,7 +23,7 @@ def add_specific_cli_args(parser, plot_appearance_group):
     )
 
     parser.add_argument(
-        "--contour",
+        "--contours",
         help="""Specify this option if you want a 2D contour plot instead of a
         3D plot. The values given to this option will be used as the contour values.""",
         type=float,
@@ -109,7 +109,7 @@ if __name__ == "__main__":
         args.swap_axes
     )
 
-    if args.contour is None:
+    if args.contours is None:
         plot_3d(*data)
 
     plot_common(varied_atoms, args.varied_atoms_display, args.title)
