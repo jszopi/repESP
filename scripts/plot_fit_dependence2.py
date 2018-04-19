@@ -43,6 +43,22 @@ def add_specific_cli_args(parser, plot_appearance_group):
     )
 
 
+def get_data(df, varied_atoms, plot_fit, plot_relative, monitored_atom, swap_axes):
+
+    x_axis = df[get_col_header(varied_atoms[0])]
+    y_axis = df[get_col_header(varied_atoms[1])]
+
+    if swap_axes:
+        x_axis, y_axis = y_axis, x_axis
+
+    z_axis = df[get_col_header(monitored_atom)] if plot_fit is None else df[plot_fit.upper()]
+    z_axis = z_axis if plot_relative is None else [100*z/plot_relative for z in z_axis]
+
+    z_label = get_col_header(monitored_atom) if plot_fit is None else plot_fit.upper()
+
+    return x_axis, y_axis, z_axis, z_label
+
+
 if __name__ == "__main__":
 
     parser, plot_appearance_group = get_parser(isTwoAtoms=True)
@@ -53,3 +69,12 @@ if __name__ == "__main__":
 
     df = pandas.read_csv(args.scan_output)
     varied_atoms, _ = interpret_header(df, isTwoAtoms=True)
+
+    data = get_data(
+        df,
+        varied_atoms,
+        args.plot_fit,
+        args.plot_relative,
+        args.monitored_atom,
+        args.swap_axes
+    )
