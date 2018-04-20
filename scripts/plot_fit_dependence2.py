@@ -96,6 +96,15 @@ def plot_contours(x_axis, y_axis, z_axis, contours):
     contours = plt.tricontour(x_axis, y_axis, z_axis, sorted(contours), colors='k', zorder=1)
     plt.clabel(contours, fmt="%1.0f", inline=1, fontsize=15, colors='b')
     ax1.set_aspect('equal')
+    return ax1
+
+
+def plot_ratio_line(ax, coords, swap_axes):
+    tangent = coords[1]/coords[0] if not swap_axes else coords[0]/coords[1]
+    xlim = ax.get_xlim()
+    ylim = ax.get_xlim()
+    plt.plot(xlim, list(tangent*x for x in xlim), 'r--', zorder=1)
+    ax.set_ylim(*ylim)
 
 
 if __name__ == "__main__":
@@ -121,7 +130,10 @@ if __name__ == "__main__":
     if args.contours is None:
         plot_3d(*data, colorbar)
     else:
-        plot_contours(*data, args.contours)
+        ax = plot_contours(*data, args.contours)
+
+        if args.draw_ratio_line:
+            plot_ratio_line(ax, args.draw_ratio_line, args.swap_axes)
 
     plot_common(varied_atoms, args.varied_atoms_display, args.title)
 
