@@ -24,6 +24,15 @@ def preprocess_args(args, isTwoAtoms=False):
             raise ValueError('`--plot_relative` cannot be specified with `--monitored_atom`.')
 
 
+# https://stackoverflow.com/a/22157136
+class SmartFormatter(argparse.HelpFormatter):
+    def _split_lines(self, text, width):
+        if text.startswith('R|'):
+            return text[2:].splitlines()
+        # this is the RawTextHelpFormatter._split_lines
+        return argparse.HelpFormatter._split_lines(self, text, width)
+
+
 def get_parser(isTwoAtoms=False):
 
     help_description = """
@@ -34,7 +43,7 @@ def get_parser(isTwoAtoms=False):
 
     parser = argparse.ArgumentParser(
         description=help_description,
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter
+        formatter_class=SmartFormatter
     )
 
     parser.add_argument("scan_output",

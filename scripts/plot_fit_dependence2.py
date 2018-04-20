@@ -7,7 +7,40 @@ from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
 import matplotlib.tri as mtri
 
+import json
 import pandas
+import textwrap
+
+
+def interpret_point_marker(string):
+
+    try:
+        coord1, coord2, *marker_split_json = string.split()
+        coord1, coord2 = float(coord1), float(coord2)
+    except ValueError as e:
+        print(e)
+        raise argparse.ArgumentTypeError(
+            "Incorrect point marker specification. (Is the argument enclosed in "
+            "single quotes and are the first two arguments floating point "
+            "numbers?: {}".format(e)
+        )
+
+    if marker_split_json == []:
+        marker_spec = {
+            "marker": "x",
+            "s": 50,
+            "lw": 0.8
+        }
+    else:
+        marker_json = " ".join(marker_split_json)
+        try:
+            marker_spec = json.loads(marker_json)
+        except ValueError:
+            raise argparse.ArgumentTypeError(
+                "Failed parsing the JSON marker specification"
+            )
+
+    return coord1, coord2, marker_spec
 
 
 def add_specific_cli_args(parser, plot_appearance_group):
@@ -45,6 +78,41 @@ def add_specific_cli_args(parser, plot_appearance_group):
         type=float,
         nargs=2,
         metavar=("COORD1", "COORD2")
+    )
+
+    plot_appearance_group.add_argument(
+        "--mark_point",
+        help="R|" + textwrap.dedent("""\
+        If there are any extra points to be marked on the
+        graph, their coordinates and optionally JSON
+        specifications of the plot marker should be given here.
+        Note that this argument group must be wrapped in single
+        quotes (then double quotes can be freely used in the
+        JSON specification without escaping). Multiple points
+        can be marked by specifying this option multiple times.
+
+        Coordinates should be given in the same order as the
+        columns in the input file, i.e. first the charge on the
+        atom in the first column. A simple example of a valid
+        argument is: '0.5 -0.7'.
+
+        The marker specification is optional and should be a
+        JSON-encoded list of keyword arguments passed to the
+        `matplotlib.pyplot.scatter` function. If the JSON
+        specification is not given, the following default will
+        be used:
+
+        '{"marker": x", s": 50, "lw": 0.8}'
+
+        where the "marker" key specifies the pictorial type of
+        the marker, "s" specifies the size and "lw" the
+        linewidth. For a full list of possible keyword
+        arguments please refer to matplotlib documentation at:
+        https://matplotlib.org/api/_as_gen/matplotlib.pyplot.scatter.html
+        """),
+        type=interpret_point_marker,
+        action='append',
+        metavar="'COORD1 COORD2 JSON_MARKER_SPEC'"
     )
 
 
@@ -107,6 +175,11 @@ def plot_ratio_line(ax, coords, swap_axes):
     ax.set_ylim(*ylim)
 
 
+def mark_point(ax, coords, marker_spec, swap_axes):
+    coords = coords if not swap_axes else (coords[1], coords[0])
+    ax.scatter(coords[0], coords[1], **marker_spec)
+
+
 if __name__ == "__main__":
 
     parser, plot_appearance_group = get_parser(isTwoAtoms=True)
@@ -134,6 +207,11 @@ if __name__ == "__main__":
 
         if args.draw_ratio_line:
             plot_ratio_line(ax, args.draw_ratio_line, args.swap_axes)
+
+        if args.mark_point:
+            for mark_points in args.mark_point:
+                *coords, marker_spec = mark_points
+                mark_point(ax, coords, marker_spec, args.swap_axes)
 
     plot_common(varied_atoms, args.varied_atoms_display, args.title)
 
