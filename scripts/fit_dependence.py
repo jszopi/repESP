@@ -147,10 +147,11 @@ def sample_charges(all_charge_variations, inp_charges_func, temp_dir_func):
     for i, varied_charges in enumerate(all_charge_variations):
 
         inp_charges = inp_charges_func(varied_charges)
+        temp_dir = temp_dir_func(varied_charges)
 
         _molecule = resp.run_resp(
             args.respin_location,
-            temp_dir_func(varied_charges),
+            temp_dir,
             resp_type='dict',
             inp_charges=inp_charges,
             esp_fn=args.esp_file,
@@ -168,6 +169,9 @@ def sample_charges(all_charge_variations, inp_charges_func, temp_dir_func):
             rrms,
             *get_monitored(_molecule, args.monitor)
         ])
+
+        # For large resolutions this directory can become impractically large
+        shutil.rmtree(temp_dir)
 
     print()
     return result
