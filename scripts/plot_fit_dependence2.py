@@ -116,7 +116,7 @@ def add_specific_cli_args(parser, plot_appearance_group):
     )
 
 
-def plot_common(varied_atoms, varied_atoms_display, title):
+def plot_common(varied_atoms, varied_atoms_display, swap_axes, title):
 
     if title is not None:
         plt.title(title)
@@ -127,8 +127,10 @@ def plot_common(varied_atoms, varied_atoms_display, title):
         else varied_atoms[firstOrSecond]
     )
 
-    plt.xlabel("Charge on " + label(0))
-    plt.ylabel("Charge on " + label(1))
+    labels = (label(0), label(1)) if not swap_axes else (label(1), label(0))
+
+    plt.xlabel("Charge on " + labels[0])
+    plt.ylabel("Charge on " + labels[1])
 
 
 def plot_3d(x_axis, y_axis, z_axis, colorbar_label):
@@ -170,7 +172,7 @@ def plot_contours(x_axis, y_axis, z_axis, contours):
 def plot_ratio_line(ax, coords, swap_axes):
     tangent = coords[1]/coords[0] if not swap_axes else coords[0]/coords[1]
     xlim = ax.get_xlim()
-    ylim = ax.get_xlim()
+    ylim = ax.get_ylim()
     plt.plot(xlim, list(tangent*x for x in xlim), 'r--', zorder=1)
     ax.set_ylim(*ylim)
 
@@ -213,7 +215,7 @@ if __name__ == "__main__":
                 *coords, marker_spec = mark_points
                 mark_point(ax, coords, marker_spec, args.swap_axes)
 
-    plot_common(varied_atoms, args.varied_atoms_display, args.title)
+    plot_common(varied_atoms, args.varied_atoms_display, args.swap_axes, args.title)
 
     if args.output is None :
         plt.show()
