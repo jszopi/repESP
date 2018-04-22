@@ -33,6 +33,35 @@ The monospaced text above arrows shows the names of the relevant command line sc
 Remember to run the scripts with the `.py` extension.
 Start by running with the option `-h` to see a help message and usage instructions.
 
+## Documentation
+
+### Library
+
+The library is in the process of being rewritten to provide a better organized interface and be useful in applications beyond the original research problem.
+If you want to see the documentation for the current version, check if you have `sphinx` installed:
+
+```sh
+sphinx-build --version
+```
+
+I'm not sure if installing the `repESP` package provides the command line tools, so this may or may not work out of the box.
+If it's not installed, please follow [these instructions](http://www.sphinx-doc.org/en/master/usage/installation.html).
+When that's ready, run these commands in the `docs` directory:
+
+```sh
+sphinx-apidoc -fMe -o source ../repESP
+make html
+```
+
+The documentation is available to view in the `build/html` subdirectory.
+You can open the `index.html` or `modules.html` file in any browser and navigate from there.
+
+### Scripts
+
+Scripts are available in the `scripts` directory.
+Only the scripts which work with the `--help` option are supported and the help message should provide comprehensive instructions on the usage.
+If anything is unclear, please see the [Contributing](#contributing) section.
+
 # Where is `repESP` going?
 
 Every research project is different and the CLI scripts cannot cater for all but the most standard purposes.
@@ -53,7 +82,7 @@ To run, `repESP` requires Python with certain packages and two other free progra
 ### Python
 
 * Python 3.5
-* Packages: `scipy`, `matplotlib`, `fortranformat` (install using `pip3.5`, which comes with your Python)
+* Packages: `scipy`, `matplotlib`, `fortranformat` (install using `pip3.5`, which comes with your Python) and others
 
 ### `resp` 
 

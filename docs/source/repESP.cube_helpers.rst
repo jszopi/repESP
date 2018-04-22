@@ -1,5 +1,5 @@
-repESP.cube_helpers module
-==========================
+repESP.cube\_helpers module
+===========================
 
 .. automodule:: repESP.cube_helpers
     :members:
