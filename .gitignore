@@ -1,10 +1,9 @@
+# Python artifacts
 __pycache__
-*.swp
-*.swo
-.DS_Store
 *.pyc
-scripts/*.p
-scripts/*.pdf
-docs/build/
+
+# Build/install artifacts
 build
 dist
+repESP.egg-info
+docs/build/
