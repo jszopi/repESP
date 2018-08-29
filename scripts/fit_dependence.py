@@ -79,7 +79,7 @@ atom1_group.add_argument(
 
 atom2_group = parser.add_argument_group(
     title="options regarding the second varied atom",
-    description="Optionally the charge on another atom can be simultanously varied."
+    description="Optionally the charge on another atom can be simultaneously varied."
 )
 
 atom2_group.add_argument(
