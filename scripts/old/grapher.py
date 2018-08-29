@@ -1,18 +1,15 @@
-# Imports from the package rather than relative, so the package  must be
-# installed with setup.py beforehand.
 from repESP import cube_helpers
 from repESP.charges import update_with_charges
 from repESP.field_comparison import difference, filter_by_dist, filter_by_atom
 from repESP.field_comparison import rms_and_rrms
 from repESP.graphs import plot
 from repESP.rep_esp import calc_grid_field
-# For development, use ``sudo python3 setup.py develop``, to link the files in
-# repESP directory and hence avoid reinstalling the package after every change.
-# http://tjelvarolsson.com/blog/begginers-guide-creating-clean-python-development-environments/
 
 import os
 import copy
 import numpy as np
+
+# NOTE: This ad-hoc script has been replaced with the more general fit_points.py
 
 molecule_name = 'methane'
 path = '../data/' + molecule_name + '/'
