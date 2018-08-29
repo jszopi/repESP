@@ -1,5 +1,5 @@
-repESP.rep_esp module
-=====================
+repESP.rep\_esp module
+======================
 
 .. automodule:: repESP.rep_esp
     :members:

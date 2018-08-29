@@ -1,3 +1,5 @@
+# Developer notes
+
 In scripts use imports from the package (rather than relative), e.g.:
 
 	from repESP import cube_helpers
@@ -10,3 +12,4 @@ For development, run only once
 
 to link the files in the `repESP` directory and hence avoid reinstalling the package after every change.
 [Source](http://tjelvarolsson.com/blog/begginers-guide-creating-clean-python-development-environments/).
+

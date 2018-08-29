@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.5
+#!/usr/bin/env python3
 
 from repESP.resp_helpers import G09_esp
 from repESP import charges, rep_esp

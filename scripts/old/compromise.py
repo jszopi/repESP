@@ -8,6 +8,8 @@ import matplotlib.pyplot as plt
 import math
 import shutil
 
+# NOTE: This ad-hoc script has been replaced with the more general field_diff.py
+
 # This was necessary to prevent title from being cut-off when it's shifted up
 # due to the second x-axis label.
 from matplotlib import rcParams

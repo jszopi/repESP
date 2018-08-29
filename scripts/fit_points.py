@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from repESP import resp_helpers, cube_helpers, graphs
 
 import matplotlib.pyplot as plt

@@ -11,7 +11,7 @@ import os
 import shutil
 
 help_description = """Run 2-stage RESP. Running this wrapper is arguably easier
-    than runnning the `resp` program manually."""
+    than running the `resp` program manually."""
 
 parser = argparse.ArgumentParser(
     parents=[resp_parser.parser],

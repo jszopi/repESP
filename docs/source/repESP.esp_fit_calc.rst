@@ -1,5 +1,5 @@
-repESP.esp_fit_calc module
-==========================
+repESP.esp\_fit\_calc module
+============================
 
 .. automodule:: repESP.esp_fit_calc
     :members:

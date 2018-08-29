@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from repESP import resp, resp_helpers, rep_esp, charges
 from repESP.field_comparison import difference, rms_and_rep
 from repESP.resp import get_atom_signature
@@ -12,6 +14,9 @@ import sys
 
 import numpy as np
 import pickle
+
+# NOTE: This ad-hoc script has been replaced with the more general flexibility.py
+# fit_dependence.py and plot_fit_dependence[12].py
 
 esp_charge_type = 'mk'
 alt_esp_charge_type = 'chelpg'
