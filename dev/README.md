@@ -4,7 +4,7 @@
 
 ### During development
 
-[`checks-dev.sh`](./checks-dev.sh) contains tests which should be run when developing.
+[`checks.sh`](./checks.sh) executes tests which should be run when developing.
 You should run these during development as frequently as suits you.
 
 It is advised to be aware of the state of the tests when making a commit, which is best automated by setting up a pre-commit hook.
@@ -12,7 +12,7 @@ When you clone this repo, please make sure to set this script up as your pre-com
 
 ```sh
 cd ../.git/hooks
-ln -s pre-commit ../../dev/checks-dev.sh
+ln -s pre-commit ../../dev/pre-commit.sh
 ```
 
 You may choose to ignore these checks during development.
@@ -24,7 +24,7 @@ To ensure you don't mistakenly push a branch with failing tests, you're advised 
 
 ```sh
 cd ../.git/hooks
-ln -s pre-push ../../dev/checks.sh
+ln -s pre-push ../../dev/pre-push.sh
 ```
 
 Unit tests are required to pass.
