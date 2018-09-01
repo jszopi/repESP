@@ -31,8 +31,12 @@ Unit tests are required to pass.
 
 `mypy` typings tend to be flaky in my experience and thus are not all required to pass.
 They are tested against a snapshot of the existing errors instead.
+Note that line number changes are ignored in dev mode, so you may see changes which weren't flagged before.
+You should update the snapshot with new line numbers before pushing.
+
 If your changes diverge from the snapshot, you should update and commit it to the repo, so that the new errors can be discussed in the PR:
 
 ```sh
 ./update-mypy.sh
+git add mypy_snapshot.out
 ```

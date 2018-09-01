@@ -34,13 +34,19 @@ echo
 
 ## MYPY SNAPSHOT
 
-MYPY_DIFF=$(diff -uN "$MYPY_SNAPSHOT" <(run_mypy))
+if [[ "$DEV_MODE" -eq 0 ]] ; then
+    MYPY_DIFF=$(diff -uN "$MYPY_SNAPSHOT" <(run_mypy))
+else
+    MYPY_DIFF=$(diff -uN <(cat "$MYPY_SNAPSHOT" | replace_numbers) <(run_mypy | replace_numbers))
+fi
 
 if [[ -n "$MYPY_DIFF" ]] ; then
     echo -e "mypy snapshot check failed with the following diff:\n"
     echo "$MYPY_DIFF"
     if [[ "$DEV_MODE" -eq 0 ]] ; then
         exit 2
+    else
+        echo -e "\n(run without dev mode to see line numbers)"
     fi
 else
     echo "mypy snapshot check OK"
