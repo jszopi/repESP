@@ -1,0 +1,6 @@
+repESP/types.py:143: error: Too many arguments for "Coords"
+repESP/types.py:159: error: Name 'Field' already defined on line 55
+repESP/calc_fields.py:1: error: Module 'repESP.types' has no attribute 'FloatFieldValue'
+repESP/calc_fields.py:3: error: No library stub file for module 'scipy.spatial.distance'
+repESP/calc_fields.py:3: note: (Stub files are from https://github.com/python/typeshed)
+repESP/calc_fields.py:32: error: Incompatible return value type (got "Tuple[Optional[int], float]", expected "Tuple[int, Any]")

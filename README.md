@@ -64,6 +64,8 @@ If anything is unclear, please see the [Contributing](#contributing) section.
 
 # Where is `repESP` going?
 
+> **Note:** Work on version 0.2.0 is currently ongoing.
+
 Every research project is different and the CLI scripts cannot cater for all but the most standard purposes.
 Therefore, `repESP` will also attempt to provide an API/library, so that researchers can write their own Python scripts.
 They will be able to take advantage of the general capabilities of `repESP`, e.g. reading in charges from Gaussian output and reproducing the ESP.
@@ -142,8 +144,5 @@ First, have a look at GitHub's ["How to contribute"](https://guides.github.com/a
 ## If you can program
 
 This program needs some work to get [where it wants to be](#where-is-repesp-going).
-The most burning need is defining the API and filling the discovered gaps.
-This will allow to release a stable version of `repESP`.
-
-The remaining kludgey scripts need to be rewritten as standalone CLI scripts.
-This is crucial to make the program less user-hostile.
+If you want to help out, please coordinate with the maintainer.
+Developer instructions can be found [here](dev/README.md).
