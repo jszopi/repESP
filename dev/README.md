@@ -32,6 +32,12 @@ ln -s pre-push ../../dev/internal/pre-push.sh
 #### Unit tests
 
 Unit tests are required to pass.
+To run tests:
+
+```sh
+./run_tests.sh
+```
+
 
 #### Static type analysis
 
