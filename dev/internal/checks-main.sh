@@ -1,4 +1,9 @@
-source "$SCRIPT_DIR"/common.sh
+if [[ -z "$DEV_DIR" ]] ; then
+    echo "Calling script did not specify DEV_DIR. Aborting."
+    exit 1
+fi
+
+source "$DEV_DIR"/internal/common.sh
 
 ALL_TESTS_PASSED=1
 
@@ -17,7 +22,7 @@ if [[ "$TESTS_RC" -ne 0 ]] ; then
     echo "[FAIL] Unit tests: failed with return code $TESTS_RC and output:"
     echo "$TESTS_OUTPUT"
     if [[ "$STRICT_MODE" -eq 1 ]] ; then
-        exit 1
+        exit 2
     else
         echo
     fi
@@ -41,7 +46,7 @@ if [[ -n "$MYPY_DIFF" ]] ; then
     echo "$MYPY_DIFF"
 
     if [[ "$STRICT_MODE" -eq 1 ]] ; then
-        exit 2
+        exit 3
     else
         echo -e "\n(run without dev mode to see line numbers)\n"
     fi
