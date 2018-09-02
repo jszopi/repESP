@@ -24,3 +24,15 @@ run_mypy() {
 run_tests() {
     nosetests3 -s "$ROOT_DIR" 2>&1
 }
+
+run_coverage() {
+    nosetests3 -s --with-coverage --cover-package repESP "$ROOT_DIR" 2>&1
+}
+
+get_coverage() {
+    run_coverage  | grep "^repESP" | tr -s " " | cut -f1,4 -d" "
+}
+
+run_coverage_snapshot() {
+    "$INTERNAL_DIR"/coverage_snapshot.py "$COVERAGE_SNAPSHOT" <(get_coverage)
+}

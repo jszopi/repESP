@@ -5,5 +5,7 @@ __pycache__
 # Build/install artifacts
 build
 dist
+cover
+.coverage
 repESP.egg-info
 docs/build/

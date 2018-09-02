@@ -38,6 +38,26 @@ To run tests:
 ./run_tests.sh
 ```
 
+#### Test coverage
+
+To check the current test coverage, run:
+
+```sh
+./run_coverage.sh
+```
+
+A html version including line breakdown can be found in [`../cover/index.html`](../cover/index.html).
+Test coverage is not required to be equal to 100% due to not being practical.
+Instead, percentage coverage of each file is required to improve compared to a snapshot file.
+`run_coverage.sh` automatically reports the comparison with the snapshot.
+
+Even small changes to the repository are likely to affect the percentages.
+Before submitting a PR, you should update the snapshot file and commit it to the repo:
+
+```sh
+./update_coverage.sh
+git add internal/coverage_snapshot.out
+```
 
 #### Static type analysis
 

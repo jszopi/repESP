@@ -29,6 +29,25 @@ if [[ "$TESTS_RC" -ne 0 ]] ; then
     ALL_TESTS_PASSED=0
 else
     echo "[PASS] Unit tests"
+
+    ## TEST COVERAGE SNAPSHOT
+
+    COVERAGE_DIFF=$(run_coverage_snapshot)
+    COVERAGE_RC="$?"
+
+    if [[ "$COVERAGE_RC" -ne 0 ]] ; then
+        echo "[FAIL] Test coverage: failed with return code $COVERAGE_RC and output:"
+        echo "$COVERAGE_DIFF"
+        if [[ "$STRICT_MODE" -eq 1 ]] ; then
+            exit 3
+        else
+            echo
+        fi
+        ALL_TESTS_PASSED=0
+    else
+        echo "[PASS] Test coverage"
+    fi
+
 fi
 
 # STATIC ANALYSIS
@@ -46,7 +65,7 @@ if [[ -n "$MYPY_DIFF" ]] ; then
     echo "$MYPY_DIFF"
 
     if [[ "$STRICT_MODE" -eq 1 ]] ; then
-        exit 3
+        exit 4
     else
         echo -e "\n(run without dev mode to see line numbers)\n"
     fi
