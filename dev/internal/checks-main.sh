@@ -23,9 +23,9 @@ if [[ "$TESTS_RC" -ne 0 ]] ; then
     echo "$TESTS_OUTPUT"
     if [[ "$STRICT_MODE" -eq 1 ]] ; then
         exit 2
-    else
-        echo
     fi
+
+    echo
     ALL_TESTS_PASSED=0
 else
     echo "[PASS] Unit tests"
@@ -40,9 +40,9 @@ else
         echo "$COVERAGE_DIFF"
         if [[ "$STRICT_MODE" -eq 1 ]] ; then
             exit 3
-        else
-            echo
         fi
+
+        echo
         ALL_TESTS_PASSED=0
     else
         echo "[PASS] Test coverage"
