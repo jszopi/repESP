@@ -2,7 +2,7 @@
 
 import argparse
 import math
-from typing import Any, List, Dict, NamedTuple, Optional, TextIO
+from typing import List, Dict, NamedTuple, Optional, TextIO
 import sys
 
 
@@ -17,36 +17,38 @@ class FileDiff(NamedTuple):
 
 def parse_report(file: TextIO) -> CoveredFiles:
     covered_files: CoveredFiles = {}
-    for line in file:
-        line = line.strip()
-        assert line[-1] == "%"
+    for i, line in enumerate(file):
+        try:
+            line = line.strip()
+            assert line[-1] == "%"
 
-        line_split = line[:-1].split()
-        assert len(line_split) == 2
+            line_split = line[:-1].split()
+            assert len(line_split) == 2
 
-        filename, coverage = line_split
+            filename, coverage = line_split
 
-        assert filename not in covered_files
-        covered_files[filename] = float(coverage)
+            assert filename not in covered_files
+            covered_files[filename] = float(coverage)
+        except (AssertionError, ValueError):
+            print(
+                f"Skiping line {i+1} of file {file.name}. The malformed line is:\n{line}",
+                file=sys.stderr
+            )
 
     return covered_files
 
 
 def diff_reports(old_report: CoveredFiles, new_report: CoveredFiles) -> List[FileDiff]:
 
-    file_diffs: List[FileDiff] = []
     all_keys = {*list(old_report.keys()), *list(new_report.keys())}
 
-    for filename in sorted(all_keys):
-        if filename not in new_report:
-            file_diffs.append(FileDiff(filename, old_report[filename], None))
-            continue
-        if filename not in old_report:
-            file_diffs.append(FileDiff(filename, None, new_report[filename]))
-            continue
-        file_diffs.append(FileDiff(filename, old_report[filename], new_report[filename]))
-
-    return file_diffs
+    return [
+        FileDiff(
+            filename,
+            old_report[filename] if filename in old_report else None,
+            new_report[filename] if filename in new_report else None
+        ) for filename in sorted(all_keys)
+    ]
 
 
 def compare_reports(file_diffs: List[FileDiff]) -> bool:
@@ -71,9 +73,12 @@ def compare_reports(file_diffs: List[FileDiff]) -> bool:
     return new_report_is_worse
 
 
-def parse_args() -> List[Any]:
+def parse_args():
     parser = argparse.ArgumentParser(
-        description='Diff two coverage reports, where each line is "$FILENAME $COVERAGE%"'
+        description="""
+            Diff two coverage reports, where each line is "$FILENAME $COVERAGE%".
+            The exit code is 1 if the coverage worsened, 0 otherwise.
+        """
     )
 
     parser.add_argument('old_report', metavar='OLD', help="old report", type=argparse.FileType('r'))
