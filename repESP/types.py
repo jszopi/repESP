@@ -1,26 +1,15 @@
 from .exceptions import InputFormatError
 
 from abc import ABC, abstractmethod
-from typing import Callable, Collection, Generic, Iterator, List, NamedTuple, Tuple, TypeVar
+from typing import Callable, Collection, Generic, Iterator, List, NewType, NamedTuple, Tuple, TypeVar
 
 import functools
 import math
 import operator
 
 
-class _Coord(float):
-
-    def __eq__(self, other):
-        return math.isclose(self, other, abs_tol=1e-6)
-
-    def __lt__(self, other):
-        return self - 1e-6 < other
-
-
-class Coords(tuple):
-
-    def __new__(cls, x: float, y: float, z: float):
-        return super().__new__(cls, (_Coord(x), _Coord(y), _Coord(z)))
+Coord = NewType("Coord", float)
+Coords = NewType("Coords", Tuple[Coord, Coord, Coord])
 
 
 class Atom(NamedTuple):
@@ -62,13 +51,6 @@ class Mesh(ABC):
         pass
 
     @abstractmethod
-    def __eq__(self, other):
-        pass
-
-    def __ne__(self, other):
-        return not self == other
-
-    @abstractmethod
     def __len__(self) -> int:
         pass
 
@@ -97,9 +79,6 @@ class NonGridMesh(Mesh):
     def points(self) -> Iterator[Coords]:
         return iter(self._points_coords)
 
-    def __eq__(self, other) -> bool:
-        return self._points_coords == other._points_coords
-
     def __len__(self) -> int:
         return len(self._points_coords)
 
@@ -126,27 +105,27 @@ class GridMesh(Mesh):
         self.axes = axes
 
     def _axes_are_aligned_to_coordinate_axes(self, axes: GridMeshAxes) -> bool:
-        return (
-            axes[0].vector[1] == _Coord(0) and
-            axes[0].vector[2] == _Coord(0) and
-            axes[1].vector[0] == _Coord(0) and
-            axes[1].vector[2] == _Coord(0) and
-            axes[2].vector[0] == _Coord(0) and
-            axes[2].vector[1] == _Coord(0)
+        return functools.reduce(
+            operator.and_,
+            (math.isclose(vector_component, Coord(0)) for vector_component in [
+                axes[0].vector[1],
+                axes[0].vector[2],
+                axes[1].vector[0],
+                axes[1].vector[2],
+                axes[2].vector[0],
+                axes[2].vector[1],
+            ])
         )
 
     def points(self) -> Iterator[Coords]:
         for i in range(self.axes[0].point_count):
             for j in range(self.axes[1].point_count):
                 for k in range(self.axes[2].point_count):
-                    yield Coords(
-                        self.origin[0] + i*self.axes[0].vector[0],
-                        self.origin[1] + j*self.axes[1].vector[1],
-                        self.origin[2] + k*self.axes[2].vector[2]
-                    )
-
-    def __eq__(self, other) -> bool:
-        return self.origin == other.origin and self.axes == other.axes
+                    yield Coords((
+                        Coord(self.origin[0] + i*self.axes[0].vector[0]),
+                        Coord(self.origin[1] + j*self.axes[1].vector[1]),
+                        Coord(self.origin[2] + k*self.axes[2].vector[2])
+                    ))
 
     def __len__(self) -> int:
         return functools.reduce(
@@ -170,6 +149,3 @@ class Field(Generic[FieldValue]):
 
         self.mesh = mesh
         self.values = values
-
-    def __eq__(self, other):
-        return (self._mesh == other.mesh and self.values == other.values)
