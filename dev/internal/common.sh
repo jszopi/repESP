@@ -26,7 +26,7 @@ run_tests() {
 }
 
 run_coverage() {
-    nosetests3 -s --with-coverage --cover-package repESP "$ROOT_DIR" 2>&1
+    nosetests3 -s --with-coverage --cover-package repESP --cover-html 2>&1
 }
 
 get_coverage() {
