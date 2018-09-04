@@ -41,7 +41,20 @@ FieldValue = TypeVar('FieldValue')
 
 
 class Field(Generic[FieldValue]):
-    pass
+
+    def __init__(self, mesh: 'Mesh', values: Collection[FieldValue]) -> None:
+
+        if len(values) != len(mesh):
+            raise InputFormatError(
+                "Construction of a Field failed due to mismatch between the "
+                "number of points ({}) and the number of values ({})".format(
+                    len(mesh),
+                    len(values)
+                )
+            )
+
+        self.mesh = mesh
+        self.values = values
 
 
 class Mesh(ABC):
@@ -60,7 +73,7 @@ class Mesh(ABC):
     ) -> Field[FieldValue]:
         """Calculate values at points to a function"""
 
-        # This is an inefficient implementation
+        # This is a default, inefficient implementation
         values: List[FieldValue] = []
 
         for point in self.points():
@@ -83,15 +96,13 @@ class NonGridMesh(Mesh):
         return len(self._points_coords)
 
 
-class GridMeshAxis(NamedTuple):
-    vector: Coords  # Unit vector in xyz coordinates
-    point_count: int
-
-
-GridMeshAxes = Tuple[GridMeshAxis, GridMeshAxis, GridMeshAxis]
-
-
 class GridMesh(Mesh):
+
+    class GridMeshAxis(NamedTuple):
+        vector: Coords  # Unit vector in xyz coordinates
+        point_count: int
+
+    GridMeshAxes = Tuple[GridMeshAxis, GridMeshAxis, GridMeshAxis]
 
     def __init__(self, origin: Coords, axes: GridMeshAxes) -> None:
         # TODO: Remove this assumption (affects implementation of self.points)
@@ -132,20 +143,3 @@ class GridMesh(Mesh):
             operator.mul,
             (axis.point_count for axis in self.axes)
         )
-
-
-class Field(Generic[FieldValue]):
-
-    def __init__(self, mesh: Mesh, values: Collection[FieldValue]) -> None:
-
-        if len(values) != len(mesh):
-            raise InputFormatError(
-                "Construction of a Field failed due to mismatch between the "
-                "number of points ({}) and the number of values ({})".format(
-                    len(mesh),
-                    len(values)
-                )
-            )
-
-        self.mesh = mesh
-        self.values = values

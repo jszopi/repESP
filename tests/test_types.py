@@ -31,15 +31,15 @@ class TestGridMesh(TestCase):
     def setUp(self):
         origin = makeCoords(0.1, 0.2, 0.3)
         axes = (
-            GridMeshAxis(
+            GridMesh.GridMeshAxis(
                 vector=makeCoords(0.2, 0, 0),
                 point_count=3
             ),
-            GridMeshAxis(
+            GridMesh.GridMeshAxis(
                 vector=makeCoords(0, 0.3, 0),
                 point_count=3
             ),
-            GridMeshAxis(
+            GridMesh.GridMeshAxis(
                 vector=makeCoords(0, 0, 0.4),
                 point_count=3
             ),
@@ -81,6 +81,7 @@ class TestGridMesh(TestCase):
         self.assertListsAlmostEqualRecursive(list(self.mesh.points()), points)
 
     def test_calc_field(self):
+        # For testing convenience, the field function is a sum of coordinates.
         func = lambda coords: sum(coords)
         field = self.mesh.calc_field(func)
 
