@@ -72,16 +72,8 @@ class Mesh(ABC):
         field_at_point: Callable[[Coords], FieldValue]
     ) -> Field[FieldValue]:
         """Calculate values at points to a function"""
-
-        # This is a default, inefficient implementation
-        values: List[FieldValue] = []
-
-        for point in self.points():
-            values.append(
-                field_at_point(point)
-            )
-
-        return Field(self, values)
+        # A default, possibly inefficient implementation
+        return Field(self, [field_at_point(point) for point in self.points()])
 
 
 class NonGridMesh(Mesh):
