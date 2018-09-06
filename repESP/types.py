@@ -8,8 +8,8 @@ import math
 import operator
 
 
-Coord = NewType("Coord", float)
-Coords = NewType("Coords", Tuple[Coord, Coord, Coord])
+Dist = NewType("Dist", float)  # Distance [bohr]
+Coords = NewType("Coords", Tuple[Dist, Dist, Dist])
 
 
 class Atom(NamedTuple):
@@ -110,7 +110,7 @@ class GridMesh(Mesh):
     def _axes_are_aligned_to_coordinate_axes(self, axes: GridMeshAxes) -> bool:
         return functools.reduce(
             operator.and_,
-            (math.isclose(vector_component, Coord(0)) for vector_component in [
+            (math.isclose(vector_component, Dist(0)) for vector_component in [
                 axes[0].vector[1],
                 axes[0].vector[2],
                 axes[1].vector[0],
@@ -125,9 +125,9 @@ class GridMesh(Mesh):
             for j in range(self.axes[1].point_count):
                 for k in range(self.axes[2].point_count):
                     yield Coords((
-                        Coord(self.origin[0] + i*self.axes[0].vector[0]),
-                        Coord(self.origin[1] + j*self.axes[1].vector[1]),
-                        Coord(self.origin[2] + k*self.axes[2].vector[2])
+                        Dist(self.origin[0] + i*self.axes[0].vector[0]),
+                        Dist(self.origin[1] + j*self.axes[1].vector[1]),
+                        Dist(self.origin[2] + k*self.axes[2].vector[2])
                     ))
 
     def __len__(self) -> int:

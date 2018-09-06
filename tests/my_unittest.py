@@ -6,7 +6,7 @@ import unittest
 
 
 def makeCoords(x: float, y: float, z: float) -> Coords:
-    return Coords((Coord(x), Coord(y), Coord(z)))
+    return Coords((Dist(x), Dist(y), Dist(z)))
 
 
 class TestCase(unittest.TestCase):
