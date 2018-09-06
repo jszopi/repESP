@@ -16,8 +16,7 @@ replace_numbers() {
 run_mypy() {
     pushd "$ROOT_DIR" > /dev/null
     mypy repESP/*.py
-    # TODO: mypy check on the tests doesn't seem to be working:
-    # mypy tests/*.py
+    mypy tests/*.py
     popd > /dev/null
 }
 

@@ -5,7 +5,7 @@ from my_unittest import TestCase, makeCoords
 
 class TestCharges(TestCase):
 
-    def setUp(self):
+    def setUp(self) -> None:
         self.molecule = Molecule(
             atoms=[
                 Atom(1, makeCoords(1, 1, 2)),
@@ -13,11 +13,11 @@ class TestCharges(TestCase):
             ]
         )
 
-    def test_construction(self):
+    def test_construction(self) -> None:
         values = [0, 1]
         Charges(molecule=self.molecule, charge_list=values)
 
-    def test_construction_fails_for_mismatched_data(self):
+    def test_construction_fails_for_mismatched_data(self) -> None:
         values = [0, 1, 2, 4]
         with self.assertRaises(InputFormatError):
             Charges(molecule=self.molecule, charge_list=values)
@@ -25,23 +25,23 @@ class TestCharges(TestCase):
 
 class TestNonGridMesh(TestCase):
 
-    def setUp(self):
+    def setUp(self) -> None:
 
         self.mesh = NonGridMesh([
             makeCoords(1, 1, 1),
             makeCoords(-1, 0, -0.9)
         ])
 
-    def test_points(self):
+    def test_points(self) -> None:
 
         points = self.mesh.points()
         self.assertListsAlmostEqual(next(points), makeCoords(1, 1, 1))
         self.assertListsAlmostEqual(next(points), makeCoords(-1, 0, -0.9))
 
-    def test_calc_field(self):
+    def test_calc_field(self) -> None:
         # For testing convenience, the field function is a sum of coordinates.
         func = lambda coords: sum(coords)
-        self.assertAlmostEqual(
+        self.assertListsAlmostEqual(
             self.mesh.calc_field(func).values,
             [3, -1.9]
         )
@@ -49,7 +49,7 @@ class TestNonGridMesh(TestCase):
 
 class TestGridMesh(TestCase):
 
-    def setUp(self):
+    def setUp(self) -> None:
         self.origin = makeCoords(0.1, 0.2, 0.3)
         self.axes = (
             GridMesh.GridMeshAxis(
@@ -68,7 +68,7 @@ class TestGridMesh(TestCase):
 
         self.mesh = GridMesh(origin=self.origin, axes=self.axes)
 
-    def test_construction_fails_with_misaligned_axes(self):
+    def test_construction_fails_with_misaligned_axes(self) -> None:
         axes = (
             GridMesh.GridMeshAxis(
                 vector=makeCoords(0.2, 0, 0.0001),
@@ -81,7 +81,7 @@ class TestGridMesh(TestCase):
         with self.assertRaises(NotImplementedError):
             GridMesh(origin=self.origin, axes=axes)
 
-    def test_points(self):
+    def test_points(self) -> None:
         points = [
             makeCoords(0.1, 0.2, 0.3),
             makeCoords(0.1, 0.2, 0.7),
@@ -114,7 +114,7 @@ class TestGridMesh(TestCase):
 
         self.assertListsAlmostEqualRecursive(list(self.mesh.points()), points)
 
-    def test_calc_field(self):
+    def test_calc_field(self) -> None:
         # For testing convenience, the field function is a sum of coordinates.
         func = lambda coords: sum(coords)
         field = self.mesh.calc_field(func)

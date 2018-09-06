@@ -1,5 +1,7 @@
 from repESP.types import *
 
+from typing import Any, List
+
 import unittest
 
 
@@ -7,17 +9,28 @@ def makeCoords(x: float, y: float, z: float) -> Coords:
     return Coords((Coord(x), Coord(y), Coord(z)))
 
 
-
 class TestCase(unittest.TestCase):
     '''Extend TestCase to include own assertion methods'''
 
-    def assertListsEqualWhenSorted(self, first, second, msg=None):
+    def assertListsEqualWhenSorted(
+            self,
+            first: List[Any],
+            second: List[Any],
+            msg=None
+    ):
 
         self.assertEqual(len(first), len(second), msg)
         for a, b in zip(sorted(first), sorted(second)):
             self.assertEqual(a, b, msg)
 
-    def assertListsAlmostEqual(self, first, second, places=None, msg=None, delta=None):
+    def assertListsAlmostEqual(
+            self,
+            first: Collection[float],
+            second: Collection[float],
+            places=None,
+            msg=None,
+            delta=None
+    ):
         '''Element-wise float collection comparison
 
         http://stackoverflow.com/a/8312110
@@ -26,7 +39,14 @@ class TestCase(unittest.TestCase):
         for a, b in zip(first, second):
             self.assertAlmostEqual(a, b, places, msg, delta)
 
-    def assertListsAlmostEqualRecursive(self, first, second, places=None, msg=None, delta=None):
+    def assertListsAlmostEqualRecursive(
+            self,
+            first: Collection[Any],
+            second: Collection[Any],
+            places=None,
+            msg=None,
+            delta=None
+    ):
         self.assertEqual(len(first), len(second))
         for a, b in zip(first, second):
             try:
