@@ -83,8 +83,8 @@ To run, `repESP` requires Python with certain packages and two other free progra
 
 ### Python
 
-* Python 3.5
-* Packages: `scipy`, `matplotlib`, `fortranformat` (install using `pip3.5`, which comes with your Python) and others
+* Python 3.7
+* Packages: `scipy`, `matplotlib`, `fortranformat` (install using `pip3`, which comes with your Python) and others
 
 ### `resp` 
 
@@ -115,7 +115,7 @@ The following instructions are for UNIX-like systems, like MacOS and Linux.
 
 * Choose and go to installation directory (e.g. `~/bin`)
 * Get the code: `git clone https://github.com/jszopi/repESP`
-* From inside the repESP directory run: `python3.5 setup.py develop`
+* From inside the repESP directory run: `python3.7 setup.py develop`
 * Make the scripts callable: `export PATH=$PATH:your_scripts_path`
 
 To update the code to latest version run: `git fetch --all ; git pull`

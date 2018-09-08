@@ -16,6 +16,7 @@ config = {
     'url': 'https://github.com/jszopi/repESP',
     'packages': ['repESP'],
     'install_requires': ['scipy', 'matplotlib', 'fortranformat', 'pandas', 'sphinx'],
+    'python_requires':'>=3.7.0',
     'license': 'GPLv3',
 }
 
