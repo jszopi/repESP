@@ -1,2 +1,6 @@
+repESP/cube_parsers.py:75: error: Generic tuple types not supported
+repESP/cube_parsers.py:104: error: Argument 2 to "Field" has incompatible type "List[FieldValue]"; expected "Collection[Tuple[CubeInfo, Molecule, Field[FieldValue]]]"
+repESP/cube_parsers.py:125: error: Generic tuple types not supported
+repESP/cube_parsers.py:132: error: Generic tuple types not supported
 repESP/calc_fields.py:3: error: No library stub file for module 'scipy.spatial.distance'
 repESP/calc_fields.py:3: note: (Stub files are from https://github.com/python/typeshed)
