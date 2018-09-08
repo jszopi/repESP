@@ -1,6 +1,7 @@
 from repESP.types import *
-from repESP.cube_util import parse_ed_cube
+from repESP.cube_util import parse_ed_cube, write_cube
 
+from io import StringIO
 from my_unittest import TestCase, make_coords
 
 class TestCubeParser(TestCase):
@@ -70,3 +71,18 @@ class TestCubeParser(TestCase):
             ed_values,
             self.cube.field.values
         )
+
+class TestCubeWriter(TestCase):
+
+    def setUp(self) -> None:
+        with open("tests/test_mol_den.cub", 'r') as f:
+            self.cube = parse_ed_cube(f)
+            f.seek(0)
+            self.input = f.readlines()
+
+    def test_compare_input_to_written_cube(self) -> None:
+        stringIO = StringIO()
+        write_cube(stringIO, self.cube)
+        stringIO.seek(0)
+        output = stringIO.readlines()
+        self.assertListEqual(self.input, output)

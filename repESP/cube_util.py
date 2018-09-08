@@ -152,3 +152,38 @@ def parse_ed_cube(f: TextIO, verify_title=True) -> Cube[Ed]:
         f,
         _parse_cube_by_title_common(" Electron density", make_ed, verify_title)
     )
+
+def write_cube(f: TextIO, cube: Cube):
+
+    f.write(f"{cube.cube_info.input_line}\n{cube.cube_info.title_line}\n")
+
+    assert isinstance(cube.field.mesh, GridMesh)
+
+    f.write(' {0:4}   {1: .6f}   {2: .6f}   {3: .6f}    1\n'.format(
+        len(cube.molecule.atoms),
+        *cube.field.mesh._origin
+    ))
+
+    for axis in cube.field.mesh._axes:
+        f.write(' {0:4}   {1: .6f}   {2: .6f}   {3: .6f}\n'.format(
+            axis.point_count,
+            *axis.vector
+        ))
+
+    for atom, electron_count in zip(cube.molecule.atoms, cube.electrons_on_atoms.values):
+        f.write(' {0:4}   {1: .6f}   {2: .6f}   {3: .6f}   {4: .6f}\n'.format(
+            atom.identity,
+            electron_count,
+            *atom.coords
+        ))
+
+    i = 1
+    for value in cube.field.values:
+        f.write(' {0: .5E}'.format(value))
+        if not i % 6:
+            f.write('\n')
+        if not i % cube.field.mesh._axes[2].point_count:
+            f.write('\n')
+            i = 1
+        else:
+            i += 1
