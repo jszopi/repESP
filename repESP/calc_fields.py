@@ -1,10 +1,7 @@
-from .types import Charges, Coords, Dist, Field, Mesh, Molecule
+from .types import Charges, Coords, Dist, Esp, Field, Mesh, Molecule
 
 from scipy.spatial.distance import euclidean
 from typing import List, NewType, Optional, Tuple
-
-
-Esp = NewType("Esp", float)  # Electrostatic potential [atomic units]
 
 
 def _esp_from_charges_at_point(coords: Coords, charges: Charges) -> Esp:

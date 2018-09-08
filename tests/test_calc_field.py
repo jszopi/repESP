@@ -11,15 +11,15 @@ nonGridMesh = NonGridMesh([
 gridMesh = GridMesh(
     origin=makeCoords(0.1, 0.2, 0.3),
     axes=(
-        GridMesh.GridMeshAxis(
+        GridMesh.Axis(
             vector=makeCoords(0.2, 0, 0),
             point_count=3
         ),
-        GridMesh.GridMeshAxis(
+        GridMesh.Axis(
             vector=makeCoords(0, 0.3, 0),
             point_count=3
         ),
-        GridMesh.GridMeshAxis(
+        GridMesh.Axis(
             vector=makeCoords(0, 0, 0.4),
             point_count=3
         ),

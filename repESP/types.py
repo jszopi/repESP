@@ -11,6 +11,9 @@ import operator
 Dist = NewType("Dist", float)  # Distance [bohr]
 Coords = NewType("Coords", Tuple[Dist, Dist, Dist])
 
+Esp = NewType("Esp", float)  # Electrostatic potential [atomic units]
+Ed = NewType("Ed", float)  # Electron density [atomic units]
+
 
 class Atom(NamedTuple):
     identity: int  # Atomic number
@@ -90,13 +93,13 @@ class NonGridMesh(Mesh):
 
 class GridMesh(Mesh):
 
-    class GridMeshAxis(NamedTuple):
+    class Axis(NamedTuple):
         vector: Coords  # Unit vector in xyz coordinates
         point_count: int
 
-    GridMeshAxes = Tuple[GridMeshAxis, GridMeshAxis, GridMeshAxis]
+    Axes = NewType("Axes", Tuple[Axis, Axis, Axis])
 
-    def __init__(self, origin: Coords, axes: GridMeshAxes) -> None:
+    def __init__(self, origin: Coords, axes: Axes) -> None:
         # TODO: Remove this assumption (affects implementation of self.points)
         if (not self._axes_are_aligned_to_coordinate_axes(axes)):
             raise NotImplementedError(
@@ -104,10 +107,11 @@ class GridMesh(Mesh):
                 " to coordinate axes. The provided axes are: {}".format(axes)
             )
 
-        self.origin = origin
-        self.axes = axes
+        self._origin = origin
+        self._axes = axes
 
-    def _axes_are_aligned_to_coordinate_axes(self, axes: GridMeshAxes) -> bool:
+    @staticmethod
+    def _axes_are_aligned_to_coordinate_axes(axes: Axes) -> bool:
         return functools.reduce(
             operator.and_,
             (math.isclose(vector_component, Dist(0)) for vector_component in [
@@ -121,17 +125,17 @@ class GridMesh(Mesh):
         )
 
     def points(self) -> Iterator[Coords]:
-        for i in range(self.axes[0].point_count):
-            for j in range(self.axes[1].point_count):
-                for k in range(self.axes[2].point_count):
+        for i in range(self._axes[0].point_count):
+            for j in range(self._axes[1].point_count):
+                for k in range(self._axes[2].point_count):
                     yield Coords((
-                        Dist(self.origin[0] + i*self.axes[0].vector[0]),
-                        Dist(self.origin[1] + j*self.axes[1].vector[1]),
-                        Dist(self.origin[2] + k*self.axes[2].vector[2])
+                        Dist(self._origin[0] + i*self._axes[0].vector[0]),
+                        Dist(self._origin[1] + j*self._axes[1].vector[1]),
+                        Dist(self._origin[2] + k*self._axes[2].vector[2])
                     ))
 
     def __len__(self) -> int:
         return functools.reduce(
             operator.mul,
-            (axis.point_count for axis in self.axes)
+            (axis.point_count for axis in self._axes)
         )
