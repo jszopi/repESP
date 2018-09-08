@@ -5,7 +5,7 @@ from typing import Any, List
 import unittest
 
 
-def makeCoords(x: float, y: float, z: float) -> Coords:
+def make_coords(x: float, y: float, z: float) -> Coords:
     return Coords((Dist(x), Dist(y), Dist(z)))
 
 

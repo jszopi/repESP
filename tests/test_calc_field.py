@@ -1,26 +1,27 @@
 from repESP.calc_fields import *
 from repESP.types import *
 
-from my_unittest import TestCase, makeCoords
+from my_unittest import TestCase, make_coords
+
 
 nonGridMesh = NonGridMesh([
-    makeCoords(1, 1, 1),
-    makeCoords(-1, 0, -0.9)
+    make_coords(1, 1, 1),
+    make_coords(-1, 0, -0.9)
 ])
 
 gridMesh = GridMesh(
-    origin=makeCoords(0.1, 0.2, 0.3),
+    origin=make_coords(0.1, 0.2, 0.3),
     axes=(
         GridMesh.Axis(
-            vector=makeCoords(0.2, 0, 0),
+            vector=make_coords(0.2, 0, 0),
             point_count=3
         ),
         GridMesh.Axis(
-            vector=makeCoords(0, 0.3, 0),
+            vector=make_coords(0, 0.3, 0),
             point_count=3
         ),
         GridMesh.Axis(
-            vector=makeCoords(0, 0, 0.4),
+            vector=make_coords(0, 0, 0.4),
             point_count=3
         ),
     )
@@ -28,10 +29,11 @@ gridMesh = GridMesh(
 
 molecule = Molecule(
     atoms=[
-        Atom(identity=1, coords=makeCoords(0, 1, 0.5)),
-        Atom(identity=1, coords=makeCoords(-0.4, 0.2, 0.5))
+        Atom(identity=1, coords=make_coords(0, 1, 0.5)),
+        Atom(identity=1, coords=make_coords(-0.4, 0.2, 0.5))
     ]
 )
+
 
 class TestEspFromCharges(TestCase):
 

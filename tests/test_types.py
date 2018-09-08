@@ -1,6 +1,6 @@
 from repESP.types import *
 
-from my_unittest import TestCase, makeCoords
+from my_unittest import TestCase, make_coords
 
 
 class TestCharges(TestCase):
@@ -8,8 +8,8 @@ class TestCharges(TestCase):
     def setUp(self) -> None:
         self.molecule = Molecule(
             atoms=[
-                Atom(1, makeCoords(1, 1, 2)),
-                Atom(2, makeCoords(2, 0, 2)),
+                Atom(1, make_coords(1, 1, 2)),
+                Atom(2, make_coords(2, 0, 2)),
             ]
         )
 
@@ -28,15 +28,15 @@ class TestNonGridMesh(TestCase):
     def setUp(self) -> None:
 
         self.mesh = NonGridMesh([
-            makeCoords(1, 1, 1),
-            makeCoords(-1, 0, -0.9)
+            make_coords(1, 1, 1),
+            make_coords(-1, 0, -0.9)
         ])
 
     def test_points(self) -> None:
 
         points = self.mesh.points()
-        self.assertListsAlmostEqual(next(points), makeCoords(1, 1, 1))
-        self.assertListsAlmostEqual(next(points), makeCoords(-1, 0, -0.9))
+        self.assertListsAlmostEqual(next(points), make_coords(1, 1, 1))
+        self.assertListsAlmostEqual(next(points), make_coords(-1, 0, -0.9))
 
     def test_calc_field(self) -> None:
         # For testing convenience, the field function is a sum of coordinates.
@@ -50,18 +50,18 @@ class TestNonGridMesh(TestCase):
 class TestGridMesh(TestCase):
 
     def setUp(self) -> None:
-        self.origin = makeCoords(0.1, 0.2, 0.3)
+        self.origin = make_coords(0.1, 0.2, 0.3)
         self.axes = (
             GridMesh.Axis(
-                vector=makeCoords(0.2, 0, 0),
+                vector=make_coords(0.2, 0, 0),
                 point_count=3
             ),
             GridMesh.Axis(
-                vector=makeCoords(0, 0.3, 0),
+                vector=make_coords(0, 0.3, 0),
                 point_count=3
             ),
             GridMesh.Axis(
-                vector=makeCoords(0, 0, 0.4),
+                vector=make_coords(0, 0, 0.4),
                 point_count=3
             ),
         )
@@ -71,7 +71,7 @@ class TestGridMesh(TestCase):
     def test_construction_fails_with_misaligned_axes(self) -> None:
         axes = (
             GridMesh.Axis(
-                vector=makeCoords(0.2, 0, 0.0001),
+                vector=make_coords(0.2, 0, 0.0001),
                 point_count=3
             ),
             self.axes[1],
@@ -83,33 +83,33 @@ class TestGridMesh(TestCase):
 
     def test_points(self) -> None:
         points = [
-            makeCoords(0.1, 0.2, 0.3),
-            makeCoords(0.1, 0.2, 0.7),
-            makeCoords(0.1, 0.2, 1.1),
-            makeCoords(0.1, 0.5, 0.3),
-            makeCoords(0.1, 0.5, 0.7),
-            makeCoords(0.1, 0.5, 1.1),
-            makeCoords(0.1, 0.8, 0.3),
-            makeCoords(0.1, 0.8, 0.7),
-            makeCoords(0.1, 0.8, 1.1),
-            makeCoords(0.3, 0.2, 0.3),
-            makeCoords(0.3, 0.2, 0.7),
-            makeCoords(0.3, 0.2, 1.1),
-            makeCoords(0.3, 0.5, 0.3),
-            makeCoords(0.3, 0.5, 0.7),
-            makeCoords(0.3, 0.5, 1.1),
-            makeCoords(0.3, 0.8, 0.3),
-            makeCoords(0.3, 0.8, 0.7),
-            makeCoords(0.3, 0.8, 1.1),
-            makeCoords(0.5, 0.2, 0.3),
-            makeCoords(0.5, 0.2, 0.7),
-            makeCoords(0.5, 0.2, 1.1),
-            makeCoords(0.5, 0.5, 0.3),
-            makeCoords(0.5, 0.5, 0.7),
-            makeCoords(0.5, 0.5, 1.1),
-            makeCoords(0.5, 0.8, 0.3),
-            makeCoords(0.5, 0.8, 0.7),
-            makeCoords(0.5, 0.8, 1.1),
+            make_coords(0.1, 0.2, 0.3),
+            make_coords(0.1, 0.2, 0.7),
+            make_coords(0.1, 0.2, 1.1),
+            make_coords(0.1, 0.5, 0.3),
+            make_coords(0.1, 0.5, 0.7),
+            make_coords(0.1, 0.5, 1.1),
+            make_coords(0.1, 0.8, 0.3),
+            make_coords(0.1, 0.8, 0.7),
+            make_coords(0.1, 0.8, 1.1),
+            make_coords(0.3, 0.2, 0.3),
+            make_coords(0.3, 0.2, 0.7),
+            make_coords(0.3, 0.2, 1.1),
+            make_coords(0.3, 0.5, 0.3),
+            make_coords(0.3, 0.5, 0.7),
+            make_coords(0.3, 0.5, 1.1),
+            make_coords(0.3, 0.8, 0.3),
+            make_coords(0.3, 0.8, 0.7),
+            make_coords(0.3, 0.8, 1.1),
+            make_coords(0.5, 0.2, 0.3),
+            make_coords(0.5, 0.2, 0.7),
+            make_coords(0.5, 0.2, 1.1),
+            make_coords(0.5, 0.5, 0.3),
+            make_coords(0.5, 0.5, 0.7),
+            make_coords(0.5, 0.5, 1.1),
+            make_coords(0.5, 0.8, 0.3),
+            make_coords(0.5, 0.8, 0.7),
+            make_coords(0.5, 0.8, 1.1),
         ]
 
         self.assertListsAlmostEqualRecursive(list(self.mesh.points()), points)
