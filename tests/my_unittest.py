@@ -5,10 +5,6 @@ from typing import Any, List
 import unittest
 
 
-def make_coords(x: float, y: float, z: float) -> Coords:
-    return Coords((Dist(x), Dist(y), Dist(z)))
-
-
 class TestCase(unittest.TestCase):
     '''Extend TestCase to include own assertion methods'''
 

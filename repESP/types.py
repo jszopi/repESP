@@ -1,7 +1,7 @@
 from .exceptions import InputFormatError
 
 from abc import ABC, abstractmethod
-from typing import Callable, Collection, Generic, Iterator, List, NewType, NamedTuple, Tuple, TypeVar
+from typing import Any, Callable, Collection, Generic, Iterator, List, NewType, NamedTuple, Tuple, TypeVar
 
 import functools
 import math
@@ -11,8 +11,27 @@ import operator
 Dist = NewType("Dist", float)  # Distance [bohr]
 Coords = NewType("Coords", Tuple[Dist, Dist, Dist])
 
+# NewType allows to avoid the overhead of creating a class, but that's at the
+# cost of having custom constructors.
+# https://github.com/python/typing/issues/415#issuecomment-297401553
+def make_dist(x: Any) -> Dist:
+    return Dist(float(x))
+
+
+def make_coords(x: Any, y: Any, z: Any) -> Coords:
+    return Coords((make_dist(x), make_dist(y), make_dist(z)))
+
+
 Esp = NewType("Esp", float)  # Electrostatic potential [atomic units]
 Ed = NewType("Ed", float)  # Electron density [atomic units]
+
+
+def make_esp(x: Any) -> Esp:
+    return Esp(float(x))
+
+
+def make_ed(x: Any) -> Ed:
+    return Ed(float(x))
 
 
 class Atom(NamedTuple):
