@@ -11,7 +11,7 @@ nonGridMesh = NonGridMesh([
 
 gridMesh = GridMesh(
     origin=make_coords(0.1, 0.2, 0.3),
-    axes=(
+    axes=GridMesh.Axes((
         GridMesh.Axis(
             vector=make_coords(0.2, 0, 0),
             point_count=3
@@ -24,7 +24,7 @@ gridMesh = GridMesh(
             vector=make_coords(0, 0, 0.4),
             point_count=3
         ),
-    )
+    ))
 )
 
 molecule = Molecule(

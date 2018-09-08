@@ -51,7 +51,7 @@ class TestGridMesh(TestCase):
 
     def setUp(self) -> None:
         self.origin = make_coords(0.1, 0.2, 0.3)
-        self.axes = (
+        self.axes = GridMesh.Axes((
             GridMesh.Axis(
                 vector=make_coords(0.2, 0, 0),
                 point_count=3
@@ -64,19 +64,19 @@ class TestGridMesh(TestCase):
                 vector=make_coords(0, 0, 0.4),
                 point_count=3
             ),
-        )
+        ))
 
         self.mesh = GridMesh(origin=self.origin, axes=self.axes)
 
     def test_construction_fails_with_misaligned_axes(self) -> None:
-        axes = (
+        axes = GridMesh.Axes((
             GridMesh.Axis(
                 vector=make_coords(0.2, 0, 0.0001),
                 point_count=3
             ),
             self.axes[1],
             self.axes[2]
-        )
+        ))
 
         with self.assertRaises(NotImplementedError):
             GridMesh(origin=self.origin, axes=axes)
