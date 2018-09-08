@@ -121,3 +121,22 @@ class TestGridMesh(TestCase):
 
         for coords, value in zip(self.mesh.points(), field.values):
             self.assertAlmostEqual(sum(coords), value)
+
+
+class TestField(TestCase):
+
+    def setUp(self) -> None:
+
+        self.mesh = NonGridMesh([
+            make_coords(1, 1, 1),
+            make_coords(-1, 0, -0.9)
+        ])
+
+        self.values = [Esp(float(0.5)), Esp(float(-0.7))]
+
+    def test_construction(self) -> None:
+        Field(self.mesh, self.values)
+
+    def test_construction_fails_when_lengths_mismatched(self) -> None:
+        with self.assertRaises(InputFormatError):
+            Field(self.mesh, [Esp(float(0.5))])
