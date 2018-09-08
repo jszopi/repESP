@@ -1,5 +1,5 @@
 from repESP.types import *
-from repESP.cube_parsers import parse_ed_cube
+from repESP.cube_util import parse_ed_cube
 
 from my_unittest import TestCase, make_coords
 
@@ -46,7 +46,7 @@ class TestCubeParser(TestCase):
 
     def test_molecule(self) -> None:
 
-        self.assertEqual(len(self.cube.molecule), 1)
+        self.assertEqual(len(self.cube.molecule.atoms), 1)
         self.assertEqual(self.cube.molecule.atoms[0].identity, 1)
         self.assertEqual(self.cube.molecule.atoms[0].coords, make_coords(0.1, 0.2, 0.4))
 

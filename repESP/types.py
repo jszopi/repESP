@@ -1,7 +1,8 @@
 from .exceptions import InputFormatError
 
 from abc import ABC, abstractmethod
-from typing import Any, Callable, Collection, Generic, Iterator, List, NewType, NamedTuple, Tuple, TypeVar
+from dataclasses import dataclass
+from typing import Any, Callable, Collection, Generic, Iterator, List, NewType, Tuple, TypeVar
 
 import functools
 import math
@@ -34,12 +35,14 @@ def make_ed(x: Any) -> Ed:
     return Ed(float(x))
 
 
-class Atom(NamedTuple):
+@dataclass
+class Atom:
     identity: int  # Atomic number
     coords: Coords
 
 
-class Molecule(NamedTuple):
+@dataclass
+class Molecule:
     atoms: List[Atom]
 
 
@@ -112,7 +115,8 @@ class NonGridMesh(Mesh):
 
 class GridMesh(Mesh):
 
-    class Axis(NamedTuple):
+    @dataclass
+    class Axis:
         vector: Coords  # Unit vector in xyz coordinates
         point_count: int
 

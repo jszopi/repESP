@@ -3,24 +3,28 @@ from .types import make_coords, make_ed, make_esp
 from .exceptions import InputFormatError
 
 from enum import Enum
-from typing import Any, Callable, Generic, List, Mapping, NamedTuple, NewType, Optional, TextIO, Tuple, TypeVar, Union
+from dataclasses import dataclass
+from typing import Any, Callable, Generic, List, Mapping, NewType, Optional, TextIO, Tuple, TypeVar, Union
 
 
 FieldValue = TypeVar('FieldValue')
 
 
-class CubeInfo(NamedTuple):
+@dataclass
+class CubeInfo:
     input_line: str
     title_line: str
 
 
-class Cube(NamedTuple, Generic[FieldValue]):
+@dataclass
+class Cube(Generic[FieldValue]):
     cube_info: CubeInfo
     molecule: Molecule
     field: Field[FieldValue]
 
 
-class _GridPrelude(NamedTuple):
+@dataclass
+class _GridPrelude:
     atom_count: int
     origin: Coords
     nval: float
@@ -72,7 +76,7 @@ def _parse_atom(line: str) -> Atom:
 def parse_cube(
     f: TextIO,
     make_value: Callable[[CubeInfo, str], FieldValue]
-) -> 'Cube[FieldValue]':
+) -> Cube[FieldValue]:
     # Assumption: coordinates in bohr
 
     get_line = lambda: f.readline().rstrip('\n')
@@ -81,17 +85,17 @@ def parse_cube(
     cube_info = CubeInfo(input_line=get_line(), title_line=get_line())
 
     # Line 3
-    atom_count, origin, nval = _parse_grid_prelude(get_line())
+    grid_prelude = _parse_grid_prelude(get_line())
 
-    if float(nval) != 1:
+    if float(grid_prelude.nval) != 1:
         # I don't know what NVal means, haven't seen it to be different than 1.
         raise InputFormatError("NVal is different than 1.")
 
     # Lines 4-6
-    grid = _parse_grid(origin, [get_line() for i in range(3)])
+    grid = _parse_grid(grid_prelude.origin, [get_line() for i in range(3)])
 
     # Molecule
-    molecule = Molecule(list(_parse_atom(get_line()) for i in range(atom_count)))
+    molecule = Molecule(list(_parse_atom(get_line()) for i in range(grid_prelude.atom_count)))
 
     # Field values
     value_ctor = lambda x: make_value(cube_info, x)
@@ -122,14 +126,14 @@ def _parse_cube_by_title_common(
     return make_value
 
 
-def parse_esp_cube(f: TextIO, verify_title=True) -> 'Cube[Esp]':
+def parse_esp_cube(f: TextIO, verify_title=True) -> Cube[Esp]:
     return parse_cube(
         f,
         _parse_cube_by_title_common(" Electrostatic potential", make_esp, verify_title)
     )
 
 
-def parse_ed_cube(f: TextIO, verify_title=True) -> 'Cube[Ed]':
+def parse_ed_cube(f: TextIO, verify_title=True) -> Cube[Ed]:
     return parse_cube(
         f,
         _parse_cube_by_title_common(" Electron density", make_ed, verify_title)
