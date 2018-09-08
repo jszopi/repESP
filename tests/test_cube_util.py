@@ -50,6 +50,9 @@ class TestCubeParser(TestCase):
         self.assertEqual(self.cube.molecule.atoms[0].identity, 1)
         self.assertEqual(self.cube.molecule.atoms[0].coords, make_coords(0.1, 0.2, 0.4))
 
+    def test_electron_counts(self) -> None:
+        self.assertListEqual(self.cube.electrons_on_atoms.values, [0.9])
+
     def test_field_values(self) -> None:
 
         values = [
