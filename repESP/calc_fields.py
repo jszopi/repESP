@@ -1,21 +1,21 @@
-from .types import Charges, Coords, Dist, Esp, Field, Mesh, Molecule
+from .types import MoleculeWithCharges, Coords, Dist, Esp, Field, Mesh, Molecule
 
 from scipy.spatial.distance import euclidean
 from typing import List, NewType, Optional, Tuple
 
 
-def _esp_from_charges_at_point(coords: Coords, charges: Charges) -> Esp:
+def _esp_from_charges_at_point(coords: Coords, molecule_with_charges: MoleculeWithCharges) -> Esp:
 
     return Esp(sum(
         charge/(euclidean(coords, atom.coords))
-        for atom, charge in zip(charges.molecule.atoms, charges.values)
+        for atom, charge in zip(molecule_with_charges.molecule.atoms, molecule_with_charges.charges)
     ))
 
 
-def esp_from_charges(mesh: Mesh, charges: Charges) -> Field[Esp]:
+def esp_from_charges(mesh: Mesh, molecule_with_charges: MoleculeWithCharges) -> Field[Esp]:
     """Calculate ESP value at given point due to charges on atoms"""
     return mesh.calc_field(
-        lambda coords: _esp_from_charges_at_point(coords, charges)
+        lambda coords: _esp_from_charges_at_point(coords, molecule_with_charges)
     )
 
 

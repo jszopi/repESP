@@ -3,7 +3,7 @@ from repESP.types import *
 from my_unittest import TestCase, make_coords
 
 
-class TestCharges(TestCase):
+class TestMoleculeWithCharges(TestCase):
 
     def setUp(self) -> None:
         self.molecule = Molecule(
@@ -14,13 +14,13 @@ class TestCharges(TestCase):
         )
 
     def test_construction(self) -> None:
-        values = [0, 1]
-        Charges(molecule=self.molecule, charge_list=values)
+        values = [make_charge(x) for x in [0, 1]]
+        MoleculeWithCharges(molecule=self.molecule, charges=values)
 
     def test_construction_fails_for_mismatched_data(self) -> None:
-        values = [0, 1, 2, 4]
+        values = [make_charge(x) for x in [0, 1, 2, 4]]
         with self.assertRaises(InputFormatError):
-            Charges(molecule=self.molecule, charge_list=values)
+            MoleculeWithCharges(molecule=self.molecule, charges=values)
 
 
 class TestNonGridMesh(TestCase):

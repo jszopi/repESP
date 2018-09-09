@@ -1,4 +1,4 @@
-from .types import Atom, Ed, Esp, Charges, Coords, Field, GridMesh, Molecule
+from .types import Atom, Ed, Esp, Coords, Field, GridMesh, Molecule
 from .types import make_coords, make_ed, make_esp
 from .exceptions import InputFormatError
 
@@ -20,7 +20,7 @@ class CubeInfo:
 class Cube(Generic[FieldValue]):
     cube_info: CubeInfo
     molecule: Molecule
-    electrons_on_atoms: Charges
+    electrons_on_atoms: List[float]
     field: Field[FieldValue]
 
 
@@ -118,7 +118,7 @@ def parse_cube(
     return Cube(
         cube_info,
         molecule,
-        Charges(molecule, electrons_on_atoms),
+        electrons_on_atoms,
         Field(grid, values)
     )
 
@@ -170,7 +170,7 @@ def write_cube(f: TextIO, cube: Cube):
             *axis.vector
         ))
 
-    for atom, electron_count in zip(cube.molecule.atoms, cube.electrons_on_atoms.values):
+    for atom, electron_count in zip(cube.molecule.atoms, cube.electrons_on_atoms):
         f.write(' {0:4}   {1: .6f}   {2: .6f}   {3: .6f}   {4: .6f}\n'.format(
             atom.identity,
             electron_count,

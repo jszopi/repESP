@@ -38,11 +38,14 @@ molecule = Molecule(
 class TestEspFromCharges(TestCase):
 
     def setUp(self) -> None:
-        self.charges = Charges(molecule, [0.5, -0.9])
+        self.molecule_with_charges = MoleculeWithCharges(
+            molecule,
+            [make_charge(x) for x in [0.5, -0.9]]
+        )
 
     def test_non_grid_esp(self) -> None:
 
-        result = esp_from_charges(nonGridMesh, self.charges)
+        result = esp_from_charges(nonGridMesh, self.molecule_with_charges)
         expected = Field(
             nonGridMesh,
             [
@@ -66,7 +69,7 @@ class TestEspFromCharges(TestCase):
         ]
 
         expected = Field(gridMesh, [Esp(x) for x in expected_floats])
-        result = esp_from_charges(gridMesh, self.charges)
+        result = esp_from_charges(gridMesh, self.molecule_with_charges)
 
         self.assertEqual(result.mesh, expected.mesh)
         self.assertListsAlmostEqual(result.values, expected.values)

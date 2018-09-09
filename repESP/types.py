@@ -46,19 +46,26 @@ class Molecule:
     atoms: List[Atom]
 
 
-class Charges:
+Charge = NewType("Charge", float)  # Atomic charge [elementary charge]
 
-    def __init__(self, molecule: Molecule, charge_list: Collection[float]) -> None:
-        if len(molecule.atoms) != len(charge_list):
+
+def make_charge(x: Any) -> Charge:
+    return Charge(float(x))
+
+
+class MoleculeWithCharges:
+
+    def __init__(self, molecule: Molecule, charges: Collection[Charge]) -> None:
+        if len(molecule.atoms) != len(charges):
             raise InputFormatError(
-                "Construction of Charges failed due to mismatch between the "
+                "Construction of MoleculeWithCharges failed due to mismatch between the "
                 "number of atoms in molecule ({}) and the number of charges ({})".format(
                     len(molecule.atoms),
-                    len(charge_list)
+                    len(charges)
                 )
             )
 
-        self.values = list(charge_list)
+        self.charges = list(charges)
         self.molecule = molecule
 
 
