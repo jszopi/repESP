@@ -2,7 +2,7 @@ from repESP.types import *
 from repESP.cube_util import parse_ed_cube, write_cube
 
 from io import StringIO
-from my_unittest import TestCase, make_coords
+from my_unittest import TestCase
 
 class TestCubeParser(TestCase):
 

@@ -1,7 +1,7 @@
 from repESP.calc_fields import *
 from repESP.types import *
 
-from my_unittest import TestCase, make_coords
+from my_unittest import TestCase
 
 
 nonGridMesh = NonGridMesh([

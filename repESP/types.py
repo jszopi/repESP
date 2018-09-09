@@ -9,6 +9,8 @@ import math
 import operator
 
 
+# TODO: It would be neat if the __repr__ of these could be overriden, so that
+# it's different from float. May not be possible without creating a class though.
 Dist = NewType("Dist", float)  # Distance [bohr]
 Coords = NewType("Coords", Tuple[Dist, Dist, Dist])
 
@@ -53,7 +55,11 @@ def make_charge(x: Any) -> Charge:
     return Charge(float(x))
 
 
+@dataclass(init=False)
 class MoleculeWithCharges:
+
+    molecule: Molecule
+    charges: List[Charge]
 
     def __init__(self, molecule: Molecule, charges: Collection[Charge]) -> None:
         if len(molecule.atoms) != len(charges):
@@ -72,7 +78,11 @@ class MoleculeWithCharges:
 FieldValue = TypeVar('FieldValue')
 
 
+@dataclass(init=False)
 class Field(Generic[FieldValue]):
+
+    mesh: 'Mesh'
+    values: Collection[FieldValue]
 
     def __init__(self, mesh: 'Mesh', values: Collection[FieldValue]) -> None:
 

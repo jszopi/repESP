@@ -1,6 +1,6 @@
 from repESP.types import *
 
-from my_unittest import TestCase, make_coords
+from my_unittest import TestCase
 
 
 class TestMoleculeWithCharges(TestCase):
