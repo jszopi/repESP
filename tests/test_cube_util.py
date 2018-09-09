@@ -12,11 +12,11 @@ class TestCubeParser(TestCase):
 
     def test_cube_data(self) -> None:
         self.assertEqual(
-            self.cube.cube_info.input_line,
+            self.cube.info.input_line,
             " Test molecule density=mp2"
         )
         self.assertEqual(
-            self.cube.cube_info.title_line,
+            self.cube.info.title_line,
             " Electron density from Total MP2 Density"
         )
 

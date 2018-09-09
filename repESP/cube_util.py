@@ -11,14 +11,14 @@ FieldValue = TypeVar('FieldValue')
 
 
 @dataclass
-class CubeInfo:
-    input_line: str
-    title_line: str
-
-
-@dataclass
 class Cube(Generic[FieldValue]):
-    cube_info: CubeInfo
+
+    @dataclass
+    class Info:
+        input_line: str
+        title_line: str
+
+    info: Info
     molecule: Molecule
     electrons_on_atoms: List[float]
     field: Field[FieldValue]
@@ -85,14 +85,14 @@ def _parse_atom(line: str) -> _AtomWithElectrons:
 
 def parse_cube(
     f: TextIO,
-    make_value: Callable[[CubeInfo, str], FieldValue]
+    make_value: Callable[[Cube.Info, str], FieldValue]
 ) -> Cube[FieldValue]:
     # Assumption: coordinates in bohr
 
     get_line = lambda: f.readline().rstrip('\n')
 
     # Lines 1-2
-    cube_info = CubeInfo(input_line=get_line(), title_line=get_line())
+    info = Cube.Info(input_line=get_line(), title_line=get_line())
 
     # Line 3
     grid_prelude = _parse_grid_prelude(get_line())
@@ -111,12 +111,12 @@ def parse_cube(
     molecule = Molecule(atoms)
 
     # Field values
-    value_ctor = lambda x: make_value(cube_info, x)
+    value_ctor = lambda x: make_value(info, x)
     # TODO: this may be unfeasible for very large cubes
     values = [value_ctor(x) for x in f.read().split()]
 
     return Cube(
-        cube_info,
+        info,
         molecule,
         electrons_on_atoms,
         Field(grid, values)
@@ -127,11 +127,11 @@ def _parse_cube_by_title_common(
     expected_title_start: str,
     value_ctor: Callable[[str], FieldValue],
     verify_title: bool
-) -> Callable[[CubeInfo, str], FieldValue]:
+) -> Callable[[Cube.Info, str], FieldValue]:
 
-    def make_value(cube_info: CubeInfo, value: str) -> FieldValue:
+    def make_value(info: Cube.Info, value: str) -> FieldValue:
         check_title = lambda title: title.startswith(expected_title_start)
-        if verify_title and not check_title(cube_info.title_line):
+        if verify_title and not check_title(info.title_line):
             raise InputFormatError(
                 f'Title of cube file does not start with "{expected_title_start}".'
             )
@@ -155,7 +155,7 @@ def parse_ed_cube(f: TextIO, verify_title=True) -> Cube[Ed]:
 
 def write_cube(f: TextIO, cube: Cube):
 
-    f.write(f"{cube.cube_info.input_line}\n{cube.cube_info.title_line}\n")
+    f.write(f"{cube.info.input_line}\n{cube.info.title_line}\n")
 
     assert isinstance(cube.field.mesh, GridMesh)
 
