@@ -13,6 +13,22 @@ def make_charge(x: Any) -> Charge:
     return Charge(float(x))
 
 
+# As per Python docs
+class NoValue(Enum):
+    def __repr__(self):
+        return '<%s.%s>' % (self.__class__.__name__, self.name)
+
+
+class ChargeType(NoValue):
+    MULLIKEN = auto()
+    MK = auto()
+    CHELP = auto()
+    CHELPG = auto()
+    HLY = auto()
+    NPA = auto()
+    AIM = auto()
+
+
 @dataclass(init=False)
 class MoleculeWithCharges:
 
