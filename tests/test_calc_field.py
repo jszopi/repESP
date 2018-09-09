@@ -1,4 +1,5 @@
 from repESP.calc_fields import *
+from repESP.charges import *
 from repESP.types import *
 
 from my_unittest import TestCase

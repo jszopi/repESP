@@ -1,4 +1,5 @@
-from .types import MoleculeWithCharges, Coords, Dist, Esp, Field, Mesh, Molecule
+from .charges import MoleculeWithCharges
+from .types import Coords, Dist, Esp, Field, Mesh, Molecule
 
 from scipy.spatial.distance import euclidean
 from typing import List, NewType, Optional, Tuple
