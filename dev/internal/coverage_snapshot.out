@@ -1,5 +1,7 @@
 repESP/__init__.py 100%
 repESP/calc_fields.py 100%
-repESP/cube_util.py 93%
+repESP/charges.py 100%
+repESP/cube_util.py 100%
 repESP/exceptions.py 100%
-repESP/types.py 99%
+repESP/gaussian_util.py 90%
+repESP/types.py 100%
