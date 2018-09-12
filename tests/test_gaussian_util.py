@@ -30,12 +30,12 @@ class TestGetChargesFromLog(TestFromLog):
 
     def common(
         self,
-        filenames: List[str],
+        f: TextIO,
         charge_type: ChargeType,
         expected: List[float]
     ) -> None:
         charges = get_charges_from_log(
-            self.concatenate(filenames),
+            f,
             charge_type,
             verify_against=self.molecule
         )
@@ -44,57 +44,61 @@ class TestGetChargesFromLog(TestFromLog):
         self.assertListsAlmostEqual(charges, expected_charges)
 
     def test_mulliken(self) -> None:
-        self.common(
-            ["data/methane/methane_mk.log"],
-            ChargeType.MULLIKEN,
-            [-0.437226, 0.109307, 0.109307, 0.109307, 0.109307]
-        )
+        with open("data/methane/methane_mk.log") as f:
+            self.common(
+                f,
+                ChargeType.MULLIKEN,
+                [-0.437226, 0.109307, 0.109307, 0.109307, 0.109307]
+            )
 
     def test_mk(self) -> None:
-        self.common(
-            ["data/methane/methane_mk.log"],
-            ChargeType.MK,
-            [-0.500314, 0.125323, 0.124834, 0.124834, 0.125323]
-        )
+        with open("data/methane/methane_mk.log") as f:
+            self.common(
+                f,
+                ChargeType.MK,
+                [-0.500314, 0.125323, 0.124834, 0.124834, 0.125323]
+            )
 
     def test_chelpg(self) -> None:
-        self.common(
-            ["data/methane/methane_chelpg.log"],
-            ChargeType.CHELPG,
-            [-0.344877, 0.086219, 0.086219, 0.086219, 0.086219]
-        )
+        with open("data/methane/methane_chelpg.log") as f:
+            self.common(
+                f,
+                ChargeType.CHELPG,
+                [-0.344877, 0.086219, 0.086219, 0.086219, 0.086219]
+            )
 
     def test_npa(self) -> None:
-        self.common(
-            ["data/methane/methane_nbo.log"],
-            ChargeType.NPA,
-            [-0.79151, 0.19788, 0.19788, 0.19788, 0.19788]
-        )
+        with open("data/methane/methane_nbo.log") as f:
+            self.common(
+                f,
+                ChargeType.NPA,
+                [-0.79151, 0.19788, 0.19788, 0.19788, 0.19788]
+            )
 
     def test_mk_from_combined_mk_and_npa(self) -> None:
         self.common(
-            ["data/methane/methane_mk.log", "data/methane/methane_nbo.log"],
+            self.concatenate(["data/methane/methane_mk.log", "data/methane/methane_nbo.log"]),
             ChargeType.MK,
             [-0.500314, 0.125323, 0.124834, 0.124834, 0.125323]
         )
 
     def test_npa_from_combined_mk_and_npa(self) -> None:
         self.common(
-            ["data/methane/methane_mk.log", "data/methane/methane_nbo.log"],
+            self.concatenate(["data/methane/methane_mk.log", "data/methane/methane_nbo.log"]),
             ChargeType.NPA,
             [-0.79151, 0.19788, 0.19788, 0.19788, 0.19788]
         )
 
     def test_mk_from_combined_mk_and_chelpg(self) -> None:
         self.common(
-            ["data/methane/methane_mk.log", "data/methane/methane_chelpg.log"],
+            self.concatenate(["data/methane/methane_mk.log", "data/methane/methane_chelpg.log"]),
             ChargeType.MK,
             [-0.500314, 0.125323, 0.124834, 0.124834, 0.125323]
         )
 
     def test_chelpg_from_combined_mk_and_chelpg(self) -> None:
         self.common(
-            ["data/methane/methane_mk.log", "data/methane/methane_chelpg.log"],
+            self.concatenate(["data/methane/methane_mk.log", "data/methane/methane_chelpg.log"]),
             ChargeType.CHELPG,
             [-0.344877, 0.086219, 0.086219, 0.086219, 0.086219]
         )
@@ -104,12 +108,12 @@ class TestGetEspFitStatsFromLog(TestFromLog):
 
     def common(
         self,
-        filenames: List[str],
+        f: TextIO,
         charge_type: ChargeType,
         expected: Tuple[float, float]
     ) -> None:
         rms, rrms = get_esp_fit_stats_from_log(
-            self.concatenate(filenames),
+            f,
             charge_type,
             verify_against=self.molecule
         )
@@ -121,36 +125,38 @@ class TestGetEspFitStatsFromLog(TestFromLog):
         self.assertAlmostEqual(rrms, expected_rrms)
 
     def test_mk(self) -> None:
-        self.common(
-            ["data/methane/methane_mk.log"],
-            ChargeType.MK,
-            (0.00069, 0.35027)
-        )
+        with open("data/methane/methane_mk.log") as f:
+            self.common(
+                f,
+                ChargeType.MK,
+                (0.00069, 0.35027)
+            )
 
     def test_chelpg(self) -> None:
-        self.common(
-            ["data/methane/methane_chelpg.log"],
-            ChargeType.CHELPG,
-            (0.00121, 0.62228)
-        )
+        with open("data/methane/methane_chelpg.log") as f:
+            self.common(
+                f,
+                ChargeType.CHELPG,
+                (0.00121, 0.62228)
+            )
 
     def test_mk_from_combined_mk_and_npa(self) -> None:
         self.common(
-            ["data/methane/methane_mk.log", "data/methane/methane_nbo.log"],
+            self.concatenate(["data/methane/methane_mk.log", "data/methane/methane_nbo.log"]),
             ChargeType.MK,
             (0.00069, 0.35027)
         )
 
     def test_mk_from_combined_mk_and_chelpg(self) -> None:
         self.common(
-            ["data/methane/methane_mk.log", "data/methane/methane_chelpg.log"],
+            self.concatenate(["data/methane/methane_mk.log", "data/methane/methane_chelpg.log"]),
             ChargeType.MK,
             (0.00069, 0.35027)
         )
 
     def test_chelpg_from_combined_mk_and_chelpg(self) -> None:
         self.common(
-            ["data/methane/methane_mk.log", "data/methane/methane_chelpg.log"],
+            self.concatenate(["data/methane/methane_mk.log", "data/methane/methane_chelpg.log"]),
             ChargeType.CHELPG,
             (0.00121, 0.62228)
         )
