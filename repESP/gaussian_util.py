@@ -1,6 +1,6 @@
 from .charges import Charge, ChargeType, make_charge
 from .exceptions import InputFormatError
-from .types import Atom, Coords, Molecule
+from .types import Atom, Coords, Esp, Molecule, make_esp
 
 from dataclasses import dataclass
 import re
@@ -87,10 +87,44 @@ def get_charges_from_log(
     return _get_charges_section_from_log(f, charge_type, verify_against, occurrence).charges
 
 
+def get_esp_fit_stats_from_log(
+    f: TextIO,
+    charge_type: ChargeType,
+    verify_against: Optional[Molecule]=None,
+    occurrence: int=-1
+) -> Tuple[Esp, float]:
+    """Extract ESP fit statistics from charges in Gaussian output
+
+    See documentation of `get_charges_from_log` for parameters and raised exceptions.
+
+    Returns
+    -------
+    Tuple[Esp, float]
+        RMS and RRMS.
+    """
+    if charge_type not in esp_charge_types:
+        raise ValueError(
+            f"ESP fit statistics can only be extracted for ESP charges, got "
+            f"{charge_type} instead."
+        )
+
+    charges_section = _get_charges_section_from_log(f, charge_type, verify_against, occurrence)
+
+    assert isinstance(charges_section, _EspChargesSectionData)
+    return (charges_section.rms, charges_section.rrms)
+
+
 @dataclass
 class _ChargesSectionData:
     charge_type: ChargeType
     charges: List[Charge]
+
+
+@dataclass
+class _EspChargesSectionData(_ChargesSectionData):
+    rms: Esp
+    rrms: float
+    # TODO: Could be extended with number of points and molecule
 
 
 def _get_charges_section_from_log(
@@ -208,7 +242,7 @@ def _parse_charges_section(section: List[str], charge_type: ChargeType) -> _Char
         )
 
 
-def _parse_esp_charge_section(section: List[str]) -> _ChargesSectionData:
+def _parse_esp_charge_section(section: List[str]) -> _EspChargesSectionData:
 
     try:
         charge_type = identifier_line_to_charge_type[section[0]]
@@ -219,9 +253,13 @@ def _parse_esp_charge_section(section: List[str]) -> _ChargesSectionData:
             " a bug report attaching the input file that failed parsing."
         )
 
+    charges_and_stats_re = re.compile(" Charges from ESP fit, RMS=\s+(\d+\.\d+) RRMS=\s+(\d+\.\d+):$")
 
     for i, line in enumerate(section):
-        if line.startswith(" Charges from ESP fit,"):
+        matched_charges_and_stats = charges_and_stats_re.match(line)
+        if matched_charges_and_stats is not None:
+            rms = make_esp(matched_charges_and_stats.group(1))
+            rrms = float(matched_charges_and_stats.group(2))
             break
 
     charges = []
@@ -231,9 +269,11 @@ def _parse_esp_charge_section(section: List[str]) -> _ChargesSectionData:
         _label, _symbol, charge = line.split()
         charges.append(make_charge(charge))
 
-    return _ChargesSectionData(
+    return _EspChargesSectionData(
         charge_type,
         charges,
+        rms,
+        rrms
     )
 
 
