@@ -133,11 +133,11 @@ class TestField(TestCase):
             make_coords(-1, 0, -0.9)
         ])
 
-        self.values = [Esp(float(0.5)), Esp(float(-0.7))]
+        self.values = [make_esp(0.5), make_esp(-0.7)]
 
     def test_construction(self) -> None:
         Field(self.mesh, self.values)
 
     def test_construction_fails_when_lengths_mismatched(self) -> None:
         with self.assertRaises(InputFormatError):
-            Field(self.mesh, [Esp(float(0.5))])
+            Field(self.mesh, [make_esp(0.5)])

@@ -46,6 +46,8 @@ class Atom:
 @dataclass
 class Molecule:
     atoms: List[Atom]
+
+
 FieldValue = TypeVar('FieldValue')
 
 
@@ -53,7 +55,7 @@ FieldValue = TypeVar('FieldValue')
 class Field(Generic[FieldValue]):
 
     mesh: 'Mesh'
-    values: Collection[FieldValue]
+    values: List[FieldValue]
 
     def __init__(self, mesh: 'Mesh', values: Collection[FieldValue]) -> None:
 
@@ -67,7 +69,7 @@ class Field(Generic[FieldValue]):
             )
 
         self.mesh = mesh
-        self.values = values
+        self.values = list(values)
 
 
 class Mesh(ABC):

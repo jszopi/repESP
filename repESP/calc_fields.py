@@ -1,5 +1,6 @@
 from .charges import MoleculeWithCharges
 from .types import Coords, Dist, Esp, Field, Mesh, Molecule
+from .types import make_esp
 
 from scipy.spatial.distance import euclidean
 from typing import List, NewType, Optional, Tuple
@@ -7,7 +8,7 @@ from typing import List, NewType, Optional, Tuple
 
 def _esp_from_charges_at_point(coords: Coords, molecule_with_charges: MoleculeWithCharges) -> Esp:
 
-    return Esp(sum(
+    return make_esp(sum(
         charge/(euclidean(coords, atom.coords))
         for atom, charge in zip(molecule_with_charges.molecule.atoms, molecule_with_charges.charges)
     ))
