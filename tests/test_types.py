@@ -3,6 +3,8 @@ from repESP.types import *
 
 from my_unittest import TestCase
 
+from copy import copy
+
 
 class TestMoleculeWithCharges(TestCase):
 
@@ -141,3 +143,29 @@ class TestField(TestCase):
     def test_construction_fails_when_lengths_mismatched(self) -> None:
         with self.assertRaises(InputFormatError):
             Field(self.mesh, [make_esp(0.5)])
+
+    def test_addition_fails_for_different_meshes(self) -> None:
+
+        field1 = NumericField(self.mesh, self.values)
+        field2 = NumericField(copy(self.mesh), self.values)
+
+        with self.assertRaises(ValueError):
+            field3 = field1 + field2
+
+    def test_addition(self) -> None:
+
+        field1 = NumericField(self.mesh, self.values)
+        field2 = NumericField(self.mesh, [make_esp(0.1), make_esp(1) ])
+        field3 = field1 + field2
+
+        self.assertEqual(field1.mesh, field3.mesh)
+        self.assertListsAlmostEqual(field3.values, [make_esp(0.6), make_esp(0.3)])
+
+    def test_subtraction(self) -> None:
+
+        field1 = NumericField(self.mesh, self.values)
+        field2 = NumericField(self.mesh, [make_esp(0.1), make_esp(1) ])
+        field3 = field1 - field2
+
+        self.assertEqual(field1.mesh, field3.mesh)
+        self.assertListsAlmostEqual(field3.values, [make_esp(0.4), make_esp(-1.7)])

@@ -2,7 +2,7 @@ from .exceptions import InputFormatError
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Any, Callable, Collection, Generic, Iterator, List, NewType, Tuple, TypeVar
+from typing import Any, Callable, cast, Collection, Generic, Iterator, List, NewType, Tuple, TypeVar
 
 import functools
 import math
@@ -70,6 +70,45 @@ class Field(Generic[FieldValue]):
 
         self.mesh = mesh
         self.values = list(values)
+
+
+# TODO: This would ideally be extended to numbers.Number but mypy throws errors.
+NumericFieldValue = TypeVar('NumericFieldValue', bound=float)
+
+
+class NumericField(Field[NumericFieldValue]):
+
+    def __add__(self, other: 'NumericField[NumericFieldValue]') -> 'NumericField[NumericFieldValue]':
+
+        if not isinstance(other, NumericField):
+            raise TypeError(
+                "unsupported operand type(s) for +: 'NumericField' and 'type(other)"
+            )
+
+        if self.mesh != other.mesh:
+            raise ValueError(
+                "Cannot add or subtract Fields with different meshes."
+            )
+
+        return NumericField(
+            self.mesh,
+            [
+                cast(NumericFieldValue, value_self + value_other)
+                for value_self, value_other in zip(self.values, other.values)
+            ]
+        )
+
+    def __neg__(self) -> 'NumericField[NumericFieldValue]':
+        return NumericField(
+            self.mesh,
+            [
+                cast(NumericFieldValue, -value)
+                for value in self.values
+            ]
+        )
+
+    def __sub__(self, other: 'NumericField[NumericFieldValue]') -> 'NumericField[NumericFieldValue]':
+        return self + (-other)
 
 
 class Mesh(ABC):
