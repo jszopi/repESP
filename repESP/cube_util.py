@@ -1,4 +1,4 @@
-from .types import Atom, Ed, Esp, Coords, Field, GridMesh, Molecule
+from .types import Atom, Ed, Esp, Coords, Field, GridMesh, Molecule, NumericField, NumericFieldValue
 from .types import make_coords, make_ed, make_esp
 from .exceptions import InputFormatError
 
@@ -7,11 +7,8 @@ from dataclasses import dataclass
 from typing import Any, Callable, Generic, List, Mapping, NewType, Optional, TextIO, Tuple, TypeVar, Union
 
 
-FieldValue = TypeVar('FieldValue')
-
-
 @dataclass
-class Cube(Generic[FieldValue]):
+class Cube(Generic[NumericFieldValue]):
 
     @dataclass
     class Info:
@@ -21,7 +18,7 @@ class Cube(Generic[FieldValue]):
     info: Info
     molecule: Molecule
     electrons_on_atoms: List[float]
-    field: Field[FieldValue]
+    field: NumericField[NumericFieldValue]
 
 
 @dataclass
@@ -85,8 +82,8 @@ def _parse_atom(line: str) -> _AtomWithElectrons:
 
 def parse_cube(
     f: TextIO,
-    make_value: Callable[[Cube.Info, str], FieldValue]
-) -> Cube[FieldValue]:
+    make_value: Callable[[Cube.Info, str], NumericFieldValue]
+) -> Cube[NumericFieldValue]:
     # Assumption: coordinates in bohr
 
     get_line = lambda: f.readline().rstrip('\n')
@@ -119,17 +116,17 @@ def parse_cube(
         info,
         molecule,
         electrons_on_atoms,
-        Field(grid, values)
+        NumericField(grid, values)
     )
 
 
 def _parse_cube_by_title_common(
     expected_title_start: str,
-    value_ctor: Callable[[str], FieldValue],
+    value_ctor: Callable[[str], NumericFieldValue],
     verify_title: bool
-) -> Callable[[Cube.Info, str], FieldValue]:
+) -> Callable[[Cube.Info, str], NumericFieldValue]:
 
-    def make_value(info: Cube.Info, value: str) -> FieldValue:
+    def make_value(info: Cube.Info, value: str) -> NumericFieldValue:
         check_title = lambda title: title.startswith(expected_title_start)
         if verify_title and not check_title(info.title_line):
             raise InputFormatError(
