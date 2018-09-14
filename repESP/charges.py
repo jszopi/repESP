@@ -47,3 +47,34 @@ class MoleculeWithCharges:
 
         self.charges = list(charges)
         self.molecule = molecule
+
+
+DipoleMoment = NewType("DipoleMoment", float)  # Dipole moment [bohr * fundamental charge]
+
+
+def make_dipole_moment(x: Any) -> DipoleMoment:
+    return DipoleMoment(float(x))
+
+
+@dataclass
+class Dipole:
+    x: DipoleMoment
+    y: DipoleMoment
+    z: DipoleMoment
+
+
+QuadrupoleMoment = NewType("QuadrupoleMoment", float)  # Quadrupole moment [bohr^2 * fundamental charge]
+
+
+def make_quadrupole_moment(x: Any) -> QuadrupoleMoment:
+    return QuadrupoleMoment(float(x))
+
+
+@dataclass
+class Quadrupole:
+    xx: QuadrupoleMoment
+    yy: QuadrupoleMoment
+    zz: QuadrupoleMoment
+    xy: QuadrupoleMoment
+    xz: QuadrupoleMoment
+    yz: QuadrupoleMoment
