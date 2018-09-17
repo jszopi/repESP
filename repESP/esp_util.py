@@ -133,8 +133,8 @@ def _parse_esp_points(f: TextIO) -> NumericField[Esp]:
     values = []
     for line in f:
         line_split = [val.replace('D', 'E') for val in line.split()]
-        points.append(make_coords(*line_split[:3]))
-        values.append(make_esp(line_split[3]))
+        points.append(make_coords(*line_split[1:4]))
+        values.append(make_esp(line_split[0]))
 
     return NumericField(
         NonGridMesh(points),

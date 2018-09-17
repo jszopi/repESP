@@ -36,15 +36,15 @@ class TestGaussianEspData(TestCase):
             NumericField(
                 NonGridMesh(
                     [
-                        make_coords(-0.26293556e-2, 0, 0),
-                        make_coords(-0.28665426e-2, -0.99210622,  1.7183784),
-                        make_coords(-0.28665426e-2,  0.99210622, -1.7183784)
+                        make_coords(3.9684249, 0, 0),
+                        make_coords(3.4367568, -0.99210622,  1.7183784),
+                        make_coords(3.4367568,  0.99210622, -1.7183784)
                     ],
                 ),
                 [
-                    make_esp(3.9684249),
-                    make_esp(3.4367568),
-                    make_esp(3.4367568)
+                    make_esp(-0.26293556e-2),
+                    make_esp(-0.28665426e-2),
+                    make_esp(-0.28665426e-2)
                 ]
             )
         )
