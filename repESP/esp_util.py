@@ -1,6 +1,7 @@
 from .types import Atom, Esp, Coords, NonGridMesh, Molecule, NumericField, NumericFieldValue
 from .types import make_coords, make_esp
-from .charges import Dipole, Quadrupole, make_dipole_moment, make_quadrupole_moment
+from .charges import Charge, Dipole, MoleculeWithCharges, Quadrupole
+from .charges import make_charge, make_dipole_moment, make_quadrupole_moment
 from .exceptions import InputFormatError
 
 from dataclasses import dataclass
@@ -14,7 +15,7 @@ class GaussianEspData:
     # Gaussian 09 .esp file format generated with IOp(6/50=1).
     charge: float
     multiplicity: int
-    molecule: Molecule
+    molecule_with_charges: MoleculeWithCharges
     dipole: Dipole
     quadrupole: Quadrupole
     field: NumericField
@@ -25,7 +26,12 @@ def parse_gaussian_esp(f: TextIO) -> GaussianEspData:
     get_line = lambda: f.readline().rstrip('\n')
 
     charge, multiplicity, atom_count = _parse_prelude([get_line() for i in range(3)])
-    molecule = Molecule([_parse_atom(get_line()) for _ in range(atom_count)])
+
+    atoms_and_charges = [_parse_atom(get_line()) for _ in range(atom_count)]
+    molecule_with_charges = MoleculeWithCharges(
+        Molecule([atom_and_charge[0] for atom_and_charge in atoms_and_charges]),
+        [atom_and_charge[1] for atom_and_charge in atoms_and_charges]
+    )
 
     if get_line() != " DIPOLE MOMENT:":
         raise InputFormatError("Expected dipole moment section header.")
@@ -52,7 +58,7 @@ def parse_gaussian_esp(f: TextIO) -> GaussianEspData:
             f"specified in section header ({point_count})."
         )
 
-    return GaussianEspData(charge, multiplicity, molecule, dipole, quadrupole, field)
+    return GaussianEspData(charge, multiplicity, molecule_with_charges, dipole, quadrupole, field)
 
 
 def _parse_prelude(lines: List[str]) -> Tuple[float, int, int]:
@@ -80,12 +86,14 @@ def _parse_prelude(lines: List[str]) -> Tuple[float, int, int]:
     return charge, multiplicity, int(atom_count.group(1))
 
 
-def _parse_atom(line: str) -> Atom:
-    # ESP value at atom coordinates (last value on line) is ignored.
+def _parse_atom(line: str) -> Tuple[Atom, Charge]:
     line_split = line.split()
-    return Atom.from_symbol(
-        line_split[0],
-        make_coords(*(coord.replace('D', 'E') for coord in line_split[1:4]))
+    return (
+        Atom.from_symbol(
+            line_split[0],
+            make_coords(*(coord.replace('D', 'E') for coord in line_split[1:4]))
+        ),
+        make_charge(line_split[4].replace('D', 'E'))
     )
 
 
