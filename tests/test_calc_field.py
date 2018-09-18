@@ -5,50 +5,55 @@ from repESP.types import *
 from my_unittest import TestCase
 
 
-nonGridMesh = NonGridMesh([
-    make_coords(1, 1, 1),
-    make_coords(-1, 0, -0.9)
-])
-
-gridMesh = GridMesh(
-    origin=make_coords(0.1, 0.2, 0.3),
-    axes=GridMesh.Axes((
-        GridMesh.Axis(
-            vector=make_coords(0.2, 0, 0),
-            point_count=3
-        ),
-        GridMesh.Axis(
-            vector=make_coords(0, 0.3, 0),
-            point_count=3
-        ),
-        GridMesh.Axis(
-            vector=make_coords(0, 0, 0.4),
-            point_count=3
-        ),
-    ))
-)
-
-molecule = Molecule(
-    atoms=[
-        Atom(identity=1, coords=make_coords(0, 1, 0.5)),
-        Atom(identity=1, coords=make_coords(-0.4, 0.2, 0.5))
-    ]
-)
-
-
-class TestEspFromCharges(TestCase):
+class SmallTestCase(TestCase):
 
     def setUp(self) -> None:
+
+        self.nonGridMesh = NonGridMesh([
+            make_coords(1, 1, 1),
+            make_coords(-1, 0, -0.9)
+        ])
+
+        self.gridMesh = GridMesh(
+            origin=make_coords(0.1, 0.2, 0.3),
+            axes=GridMesh.Axes((
+                GridMesh.Axis(
+                    vector=make_coords(0.2, 0, 0),
+                    point_count=3
+                ),
+                GridMesh.Axis(
+                    vector=make_coords(0, 0.3, 0),
+                    point_count=3
+                ),
+                GridMesh.Axis(
+                    vector=make_coords(0, 0, 0.4),
+                    point_count=3
+                ),
+            ))
+        )
+
+        self.molecule = Molecule(
+            atoms=[
+                Atom(identity=1, coords=make_coords(0, 1, 0.5)),
+                Atom(identity=1, coords=make_coords(-0.4, 0.2, 0.5))
+            ]
+        )
+
+
+class TestEspFromCharges(SmallTestCase):
+
+    def setUp(self) -> None:
+        super().setUp()
         self.molecule_with_charges = MoleculeWithCharges(
-            molecule,
+            self.molecule,
             [make_charge(x) for x in [0.5, -0.9]]
         )
 
     def test_non_grid_esp(self) -> None:
 
-        result = esp_from_charges(nonGridMesh, self.molecule_with_charges)
+        result = esp_from_charges(self.nonGridMesh, self.molecule_with_charges)
         expected = Field(
-            nonGridMesh,
+            self.nonGridMesh,
             [
                 Esp(-0.08590039),
                 Esp(-0.33459064)
@@ -69,20 +74,23 @@ class TestEspFromCharges(TestCase):
              0.05220646, -0.10743320
         ]
 
-        expected = Field(gridMesh, [Esp(x) for x in expected_floats])
-        result = esp_from_charges(gridMesh, self.molecule_with_charges)
+        expected = Field(self.gridMesh, [Esp(x) for x in expected_floats])
+        result = esp_from_charges(self.gridMesh, self.molecule_with_charges)
 
         self.assertEqual(result.mesh, expected.mesh)
         self.assertListsAlmostEqual(result.values, expected.values)
 
 
-class TestVoronoi(TestCase):
+class TestVoronoi(SmallTestCase):
+
+    def setUp(self) -> None:
+        super().setUp()
 
     def test_non_grid_esp(self) -> None:
 
-        result = voronoi(nonGridMesh, molecule)
+        result = voronoi(self.nonGridMesh, self.molecule)
         expected = Field(
-            nonGridMesh,
+            self.nonGridMesh,
             [
                 (0, Dist(1.11803398)),
                 (1, Dist(1.53622914))
@@ -109,14 +117,14 @@ class TestVoronoi(TestCase):
         ]
 
         expected = Field(
-            gridMesh,
+            self.gridMesh,
             list(zip(
                 expected_closest_atom,
                 [Dist(x) for x in expected_floats]
             ))
         )
 
-        result = voronoi(gridMesh, molecule)
+        result = voronoi(self.gridMesh, self.molecule)
 
         self.assertEqual(result.mesh, expected.mesh)
         self.assertListsAlmostEqualRecursive(result.values, expected.values)
