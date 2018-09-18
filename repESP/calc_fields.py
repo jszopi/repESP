@@ -1,9 +1,11 @@
+from .exceptions import InputFormatError
 from .charges import MoleculeWithCharges
 from .types import Coords, Dist, Esp, Field, Mesh, NumericField, NumericFieldValue, Molecule
 from .types import make_esp
 
 from scipy.spatial.distance import euclidean
-from typing import List, NewType, Optional, Tuple
+import numpy as np
+from typing import cast, List, NewType, Optional, Tuple
 
 
 def _esp_from_charges_at_point(coords: Coords, molecule_with_charges: MoleculeWithCharges) -> Esp:
@@ -40,3 +42,27 @@ def voronoi(mesh: Mesh, molecule: Molecule) -> Field[Tuple[Optional[int], Dist]]
         mesh,
         [_voronoi_at_point(coords, molecule) for coords in mesh.points()]
     )
+
+
+def calc_rms_value(field: NumericField[NumericFieldValue]) -> NumericFieldValue:
+    return np.sqrt(np.mean(np.square(field.values)))
+
+
+def calc_rms_error(
+    field1: NumericField[NumericFieldValue],
+    field2: NumericField[NumericFieldValue]
+) -> NumericFieldValue:
+
+    if field1.mesh != field2.mesh:
+        raise InputFormatError(
+            "Calculating RMS requires the underlying grids to be the same for both fields."
+        )
+
+    return calc_rms_value(field1-field2)
+
+
+def calc_relative_rms_error(
+    field1: NumericField[NumericFieldValue],
+    field2: NumericField[NumericFieldValue]
+) -> float:
+    return calc_rms_error(field1, field2)/calc_rms_value(field1)
