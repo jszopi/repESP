@@ -2,9 +2,8 @@ from .types import Atom, Ed, Esp, Coords, Field, GridMesh, Molecule, NumericFiel
 from .types import make_coords, make_ed, make_esp
 from .exceptions import InputFormatError
 
-from enum import Enum
 from dataclasses import dataclass
-from typing import Any, Callable, Generic, List, Mapping, NewType, Optional, TextIO, Tuple, TypeVar, Union
+from typing import Callable, Generic, List, TextIO, Tuple
 
 
 @dataclass

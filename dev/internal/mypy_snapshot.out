@@ -1,2 +1,4 @@
-repESP/calc_fields.py:3: error: No library stub file for module 'scipy.spatial.distance'
-repESP/calc_fields.py:3: note: (Stub files are from https://github.com/python/typeshed)
+repESP/esp_util.py:8: error: Cannot find module named 'fortranformat'
+repESP/esp_util.py:8: note: (Perhaps setting MYPYPATH or using the "--ignore-missing-imports" flag would help)
+repESP/calc_fields.py:5: error: No library stub file for module 'scipy.spatial.distance'
+repESP/calc_fields.py:5: note: (Stub files are from https://github.com/python/typeshed)
