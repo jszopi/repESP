@@ -41,14 +41,6 @@ class TestNonGridMesh(TestCase):
         self.assertListsAlmostEqual(next(points), make_coords(1, 1, 1))
         self.assertListsAlmostEqual(next(points), make_coords(-1, 0, -0.9))
 
-    def test_calc_field(self) -> None:
-        # For testing convenience, the field function is a sum of coordinates.
-        func = lambda coords: sum(coords)
-        self.assertListsAlmostEqual(
-            self.mesh.calc_field(func).values,
-            [3, -1.9]
-        )
-
 
 class TestGridMesh(TestCase):
 
@@ -116,14 +108,6 @@ class TestGridMesh(TestCase):
         ]
 
         self.assertListsAlmostEqualRecursive(list(self.mesh.points()), points)
-
-    def test_calc_field(self) -> None:
-        # For testing convenience, the field function is a sum of coordinates.
-        func = lambda coords: sum(coords)
-        field = self.mesh.calc_field(func)
-
-        for coords, value in zip(self.mesh.points(), field.values):
-            self.assertAlmostEqual(sum(coords), value)
 
 
 class TestField(TestCase):

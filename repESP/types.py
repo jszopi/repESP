@@ -126,14 +126,6 @@ class Mesh(ABC):
     def __len__(self) -> int:
         pass
 
-    def calc_field(
-        self,
-        field_at_point: Callable[[Coords], FieldValue]
-    ) -> Field[FieldValue]:
-        """Calculate values at points to a function"""
-        # A default, possibly inefficient implementation
-        return Field(self, [field_at_point(point) for point in self.points()])
-
 
 class NonGridMesh(Mesh):
 

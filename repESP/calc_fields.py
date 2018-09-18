@@ -1,5 +1,5 @@
 from .charges import MoleculeWithCharges
-from .types import Coords, Dist, Esp, Field, Mesh, Molecule
+from .types import Coords, Dist, Esp, Field, Mesh, NumericField, NumericFieldValue, Molecule
 from .types import make_esp
 
 from scipy.spatial.distance import euclidean
@@ -14,10 +14,11 @@ def _esp_from_charges_at_point(coords: Coords, molecule_with_charges: MoleculeWi
     ))
 
 
-def esp_from_charges(mesh: Mesh, molecule_with_charges: MoleculeWithCharges) -> Field[Esp]:
+def esp_from_charges(mesh: Mesh, molecule_with_charges: MoleculeWithCharges) -> NumericField[Esp]:
     """Calculate ESP value at given point due to charges on atoms"""
-    return mesh.calc_field(
-        lambda coords: _esp_from_charges_at_point(coords, molecule_with_charges)
+    return NumericField(
+        mesh,
+        [_esp_from_charges_at_point(coords, molecule_with_charges) for coords in mesh.points()]
     )
 
 
@@ -35,6 +36,7 @@ def _voronoi_at_point(coords: Coords, molecule: Molecule) -> Tuple[Optional[int]
 
 def voronoi(mesh: Mesh, molecule: Molecule) -> Field[Tuple[Optional[int], Dist]]:
     # Voronoi means closest-atom in molecular partitioning lingo
-    return mesh.calc_field(
-        lambda coords: _voronoi_at_point(coords, molecule)
+    return Field(
+        mesh,
+        [_voronoi_at_point(coords, molecule) for coords in mesh.points()]
     )
