@@ -21,7 +21,7 @@ run_mypy() {
 }
 
 run_tests() {
-    nosetests3 -s "$ROOT_DIR" 2>&1
+    nosetests3 --rednose -s "$ROOT_DIR" 2>&1
 }
 
 run_coverage() {
