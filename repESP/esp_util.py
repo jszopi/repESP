@@ -21,6 +21,19 @@ class GaussianEspData:
     field: NumericField
 
 
+@dataclass
+class EspData:
+    atoms_coords: List[Coords]
+    field: NumericField
+
+    @classmethod
+    def from_gaussian(cls, gaussian_esp_data: GaussianEspData):
+        return EspData(
+            [atom.coords for atom in gaussian_esp_data.molecule_with_charges.molecule.atoms],
+            gaussian_esp_data.field
+        )
+
+
 def parse_gaussian_esp(f: TextIO) -> GaussianEspData:
 
     get_line = lambda: f.readline().rstrip('\n')
@@ -150,33 +163,70 @@ def _parse_esp_points(f: TextIO) -> NumericField[Esp]:
     )
 
 
-# TODO: This will not be initially implemented for G09 esp files.
-# def write_esp(f: TextIO, esp_data: EspData):
-#     pass
+def parse_resp_esp(f: TextIO) -> EspData:
+
+    get_line = lambda: f.readline().rstrip('\n')
+
+    atom_and_point_count = get_line().split()
+
+    if len(atom_and_point_count) != 2:
+        raise InputFormatError(
+            "Expected atom and point counts on the first line of .esp file in the `resp` format"
+        )
+
+    atom_count = int(atom_and_point_count[0])
+    point_count = int(atom_and_point_count[1])
+
+    atoms_coords = [make_coords(*get_line().split()) for _ in range(atom_count)]
+
+    mesh_coords: List[Coords] = []
+    esp_values: List[Esp] = []
+
+    for _ in range(point_count):
+        val, *coords = get_line().split()
+        mesh_coords.append(make_coords(*coords))
+        esp_values.append(make_esp(val))
+
+    field = NumericField(
+        NonGridMesh(
+            mesh_coords
+        ),
+        esp_values
+    )
+
+    return EspData(
+        atoms_coords,
+        field
+    )
 
 
-class RespFormats(object):
+def write_resp_esp(f: TextIO, esp_data: EspData):
+
+    atoms_coords, field = esp_data.atoms_coords, esp_data.field
+
     # Numeric Fortran formats specified in resp input specification
     # http://upjv.q4md-forcefieldtools.org/RED/resp/#other3
-    header = '2I5'
-    atoms = '17X,3E16.7'
-    points = '1X,4E16.7'
+    formats = {
+        "header": "2I5",
+        "atoms": "17X,3E16.7",
+        "points": "1X,4E16.7",
+    }
 
+    f.write(
+        FW(formats["header"]).write(
+            [
+                len(atoms_coords),
+                len(field.mesh)
+            ]
+        ) + "\n"
+    )
 
-def _old_write_to_file(output_fn, molecule):
+    for atom_coords in atoms_coords:
+        f.write(FW(formats["atoms"]).write(atom_coords) + "\n")
+
+    for point_coords, esp_val in zip(field.mesh.points(), field.values):
         f.write(
-            FW(RespFormats.header).write(
-                [len(molecule), len(self.points)]
+            FW(formats["points"]).write(
+                [esp_val] + list(point_coords)
             ) + "\n"
         )
-        for atom in molecule:
-            coords = atom.coords
-            f.write(FW(RespFormats.atoms).write(coords) + "\n")
-        for point_coords, esp_val in zip(self.points, self.values):
-            point_coords = [point_coord/angstrom_per_bohr for
-                            point_coord in point_coords]
-            f.write(
-                FW(RespFormats.points).write(
-                    [esp_val] + point_coords
-                ) + "\n"
-            )

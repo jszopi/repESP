@@ -1,8 +1,11 @@
 from repESP.types import *
 from repESP.charges import *
 from repESP.esp_util import GaussianEspData, parse_gaussian_esp
+from repESP.esp_util import EspData, parse_resp_esp, write_resp_esp
 
 from my_unittest import TestCase
+
+from io import StringIO
 
 
 gaussian_esp_data = GaussianEspData(
@@ -58,4 +61,31 @@ class TestGaussianEsp(TestCase):
         self.assertAlmostEqualRecursive(
             gaussian_esp_data,
             parsed_gaussian_esp_data
+        )
+
+
+class TestRespEsp(TestCase):
+
+    def test_writing(self) -> None:
+
+        esp_data = EspData.from_gaussian(gaussian_esp_data)
+
+        written = StringIO()
+        write_resp_esp(written, esp_data)
+        written.seek(0)
+
+        with open("tests/test_resp.esp") as f:
+            self.assertListEqual(f.readlines(), written.readlines())
+
+    def test_parsing(self) -> None:
+
+        with open("tests/test_resp.esp") as f:
+            esp_data = parse_resp_esp(f)
+
+        expected_esp_data = EspData.from_gaussian(gaussian_esp_data)
+
+        self.assertAlmostEqualRecursive(
+            esp_data,
+            expected_esp_data,
+            places=6
         )
