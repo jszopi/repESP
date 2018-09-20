@@ -127,7 +127,10 @@ class Mesh(ABC):
         pass
 
 
+@dataclass(init=False)
 class NonGridMesh(Mesh):
+
+    _points_coords: List[Coords]
 
     def __init__(self, points_coords: Collection[Coords]) -> None:
         self._points_coords = list(points_coords)
@@ -139,6 +142,7 @@ class NonGridMesh(Mesh):
         return len(self._points_coords)
 
 
+@dataclass(init=False)
 class GridMesh(Mesh):
 
     @dataclass
@@ -147,6 +151,9 @@ class GridMesh(Mesh):
         point_count: int
 
     Axes = NewType("Axes", Tuple[Axis, Axis, Axis])
+
+    _origin: Coords
+    _axes: Axes
 
     def __init__(self, origin: Coords, axes: Axes) -> None:
         # TODO: Remove this assumption (affects implementation of self.points)

@@ -107,7 +107,7 @@ class TestGridMesh(TestCase):
             make_coords(0.5, 0.8, 1.1),
         ]
 
-        self.assertListsAlmostEqualRecursive(list(self.mesh.points()), points)
+        self.assertAlmostEqualRecursive(list(self.mesh.points()), points)
 
 
 class TestField(TestCase):
@@ -131,7 +131,13 @@ class TestField(TestCase):
     def test_addition_fails_for_different_meshes(self) -> None:
 
         field1 = NumericField(self.mesh, self.values)
-        field2 = NumericField(copy(self.mesh), self.values)
+        field2 = NumericField(
+            NonGridMesh([
+                make_coords(1, 1, 1),
+                make_coords(-1, 0, 0.9)
+            ]),
+            self.values
+        )
 
         with self.assertRaises(ValueError):
             field3 = field1 + field2

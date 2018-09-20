@@ -99,8 +99,7 @@ class TestVoronoi(SmallTestCase):
             ]
         )
 
-        self.assertEqual(result.mesh, expected.mesh)
-        self.assertListsAlmostEqualRecursive(result.values, expected.values)
+        self.assertAlmostEqualRecursive(expected, result)
 
     def test_grid_esp(self) -> None:
 
@@ -128,8 +127,7 @@ class TestVoronoi(SmallTestCase):
 
         result = voronoi(self.gridMesh, self.molecule)
 
-        self.assertEqual(result.mesh, expected.mesh)
-        self.assertListsAlmostEqualRecursive(result.values, expected.values)
+        self.assertAlmostEqualRecursive(expected, result)
 
 
 class TestCalcStats(TestCase):
