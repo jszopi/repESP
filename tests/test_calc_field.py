@@ -1,7 +1,7 @@
 from repESP.calc_fields import esp_from_charges, voronoi, calc_rms_error, calc_relative_rms_error
 from repESP.charges import *
 from repESP.types import *
-from repESP.gaussian_util import get_charges_from_log, get_esp_fit_stats_from_log
+from repESP.gaussian_util import get_charges_from_log
 from repESP.esp_util import parse_gaussian_esp
 
 from my_unittest import TestCase
@@ -141,24 +141,22 @@ class TestCalcStats(TestCase):
         molecule = gaussian_esp.molecule_with_charges.molecule
 
         with open("data/methane/methane_mk.log") as f:
-            self.charges = get_charges_from_log(f, ChargeType.MK, verify_against=molecule)
-            f.seek(0)
-            self.esp_fit_stats = get_esp_fit_stats_from_log(f, ChargeType.MK, verify_against=molecule)
+            charges = get_charges_from_log(f, ChargeType.MK, verify_against=molecule)
 
-        self.molecule_with_charges = MoleculeWithCharges(molecule, self.charges)
+        self.molecule_with_charges = MoleculeWithCharges(molecule, charges)
         self.rep_esp_field = esp_from_charges(self.esp_field.mesh, self.molecule_with_charges)
 
     def test_rms(self) -> None:
         self.assertAlmostEqual(
             calc_rms_error(self.esp_field, self.rep_esp_field),
-            self.esp_fit_stats[0],
-            places=5  # Gaussian log output precision
+            0.00069,  # from Gaussian log
+            places=5
 
         )
 
     def test_rrms(self) -> None:
         self.assertAlmostEqual(
             calc_relative_rms_error(self.esp_field, self.rep_esp_field),
-            self.esp_fit_stats[1],
-            places=5  # Gaussian log output precision
+            0.35027,  # from Gaussian log
+            places=5
         )
