@@ -1,4 +1,5 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, asdict
+from fortranformat import FortranRecordWriter as FW
 import re
 from typing import Dict, List, TextIO, Tuple, TypeVar, Union
 
@@ -132,3 +133,27 @@ def _parse_respin(f) -> _Respin:
         atomic_numbers,
         ivary_numbers
     )
+
+
+def _write_cntrl(f: TextIO, cntrl: _Respin.Cntrl, skip_defaults: bool) -> None:
+    default_cntrl: Dict[str, Union[int, float]] = asdict(_Respin.Cntrl())
+    print(" &cntrl\n", file=f)
+    for key, value in asdict(cntrl).items():  # type: ignore
+        if key == "qwt":
+            print(" {} = {:.5f},".format(key, value), file=f)
+        else:
+            if not skip_defaults or value != default_cntrl[key]:
+                print(" {} = {},".format(key, value), file=f)
+    print("\n &end", file=f)
+
+
+def _write_respin(f: TextIO, respin: _Respin, skip_cntrl_defaults: bool=True) -> None:
+
+    print(respin.title, file=f)
+    print(file=f)
+    _write_cntrl(f, respin.cntrl, skip_cntrl_defaults)
+    print(FW("F7.1").write([respin.wtmol]), file=f)
+    print(respin.subtitle, file=f)
+    print(FW("2I5").write([respin.charge, respin.iuniq]), file=f)
+    for atomic_number, ivary in zip(respin.atomic_numbers, respin.ivary_numbers):
+        print(FW("2I5").write([atomic_number, ivary]), file=f)
