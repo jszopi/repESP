@@ -7,7 +7,7 @@ from .exceptions import InputFormatError
 
 
 @dataclass
-class _Respin:
+class Respin:
 
     # Limited to a single molecule and structure at the moment
 
@@ -35,12 +35,12 @@ class _Respin:
         qwt: float = 0
 
         def __post_init__(self) -> None:
-            _Respin._check_value("inopt", self.inopt, [0, 1])
-            _Respin._check_value("ioutopt", self.ioutopt, [0, 1])
-            _Respin._check_value("iqopt", self.iqopt, [1, 2, 3])
-            _Respin._check_value("nmol", self.nmol, [1])
-            _Respin._check_value("ihfree", self.ihfree, [0, 1])
-            _Respin._check_value("irstrnt", self.irstrnt, [0, 1, 2])
+            Respin._check_value("inopt", self.inopt, [0, 1])
+            Respin._check_value("ioutopt", self.ioutopt, [0, 1])
+            Respin._check_value("iqopt", self.iqopt, [1, 2, 3])
+            Respin._check_value("nmol", self.nmol, [1])
+            Respin._check_value("ihfree", self.ihfree, [0, 1])
+            Respin._check_value("irstrnt", self.irstrnt, [0, 1, 2])
             if self.qwt < 0:
                 raise ValueError(f"Invalid value for `qwt`: {self.qwt}.")
 
@@ -54,7 +54,7 @@ class _Respin:
     ivary_numbers: List[int]
 
     def __post_init__(self) -> None:
-        _Respin._check_value("wtmol", "{:.1f}".format(self.wtmol), ["1.0"])
+        Respin._check_value("wtmol", "{:.1f}".format(self.wtmol), ["1.0"])
 
         if len(self.atomic_numbers) != len(self.ivary_numbers):
             raise ValueError(
@@ -69,7 +69,7 @@ class _Respin:
             )
 
 
-def _parse_cntrl(f: TextIO) -> _Respin.Cntrl:
+def _parse_cntrl(f: TextIO) -> Respin.Cntrl:
     line_re = re.compile(" (\w+) = ([0-9.]+)")
     kwargs: Dict[str, Union[int, float]] = {}
     for line in f:
@@ -88,10 +88,10 @@ def _parse_cntrl(f: TextIO) -> _Respin.Cntrl:
 
         kwargs[key] = float(value) if key == "qwt" else int(value)
 
-    return _Respin.Cntrl(**kwargs)  # type: ignore # (not sure why not recognized)
+    return Respin.Cntrl(**kwargs)  # type: ignore # (not sure why not recognized)
 
 
-def _parse_respin(f) -> _Respin:
+def _parse_respin(f) -> Respin:
 
     get_line = lambda: f.readline().rstrip('\n')
     title = get_line()
@@ -123,7 +123,7 @@ def _parse_respin(f) -> _Respin:
         atomic_numbers.append(int(line.split()[0]))
         ivary_numbers.append(int(line.split()[1]))
 
-    return _Respin(
+    return Respin(
         title,
         cntrl,
         wtmol,
@@ -135,8 +135,8 @@ def _parse_respin(f) -> _Respin:
     )
 
 
-def _write_cntrl(f: TextIO, cntrl: _Respin.Cntrl, skip_defaults: bool) -> None:
-    default_cntrl: Dict[str, Union[int, float]] = asdict(_Respin.Cntrl())
+def _write_cntrl(f: TextIO, cntrl: Respin.Cntrl, skip_defaults: bool) -> None:
+    default_cntrl: Dict[str, Union[int, float]] = asdict(Respin.Cntrl())
     print(" &cntrl\n", file=f)
     for key, value in asdict(cntrl).items():  # type: ignore
         if key == "qwt":
@@ -147,7 +147,7 @@ def _write_cntrl(f: TextIO, cntrl: _Respin.Cntrl, skip_defaults: bool) -> None:
     print("\n &end", file=f)
 
 
-def _write_respin(f: TextIO, respin: _Respin, skip_cntrl_defaults: bool=True) -> None:
+def _write_respin(f: TextIO, respin: Respin, skip_cntrl_defaults: bool=True) -> None:
 
     print(respin.title, file=f)
     print(file=f)
