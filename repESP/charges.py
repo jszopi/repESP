@@ -1,8 +1,9 @@
 from .exceptions import InputFormatError
 from .types import Molecule
+from .util import _NoValue
 
 from dataclasses import dataclass
-from enum import Enum, auto
+from enum import auto
 from typing import Any, List, Collection, NewType
 
 
@@ -13,13 +14,7 @@ def make_charge(x: Any) -> Charge:
     return Charge(float(x))
 
 
-# As per Python docs
-class NoValue(Enum):
-    def __repr__(self):
-        return '<%s.%s>' % (self.__class__.__name__, self.name)
-
-
-class ChargeType(NoValue):
+class ChargeType(_NoValue):
     MULLIKEN = auto()
     MK = auto()
     CHELP = auto()

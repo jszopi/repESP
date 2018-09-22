@@ -1,3 +1,12 @@
+from enum import Enum
+
+
+# As per Python docs
+class _NoValue(Enum):
+    def __repr__(self):
+        return '<%s.%s>' % (self.__class__.__name__, self.name)
+
+
 # TODO: this should be handled by a library
 _elements = [('H', 'Hydrogen'),
             ('He', 'Helium'),
