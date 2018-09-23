@@ -115,6 +115,8 @@ def _parse_respin(f) -> Respin:
     ivary_numbers: List[int] = []
 
     for line in f:
+        if line.rstrip('\n') == "":
+            break
         if len(line.split()) != 2:
             raise InputFormatError(
                 f"Expected two ints for the line specifying atom and ivary, found:\n{line}"
@@ -157,3 +159,6 @@ def _write_respin(f: TextIO, respin: Respin, skip_cntrl_defaults: bool=True) -> 
     print(FW("2I5").write([respin.charge, respin.iuniq]), file=f)
     for atomic_number, ivary in zip(respin.atomic_numbers, respin.ivary_numbers):
         print(FW("2I5").write([atomic_number, ivary]), file=f)
+    # According to the spec a blank line is only for multi-structures but `resp`
+    # fails without it.
+    print(file=f)
