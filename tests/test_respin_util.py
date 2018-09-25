@@ -41,6 +41,16 @@ class TestRespin(TestCase):
         with open("tests/test_respin_util.respin") as f:
             self.assertListEqual(f.readlines(), written.readlines())
 
+    def test_ivary_init_validates_values(self) -> None:
+
+        Respin.Ivary([0, 0, 1, -1, 2])
+
+        with self.assertRaises(ValueError):
+            Respin.Ivary([0, 0, 2, -99, 2])
+
+        with self.assertRaises(ValueError):
+            Respin.Ivary([6, 0, 2, 2, 2])
+
     def test_ivary_description(self) -> None:
 
         output = StringIO()
