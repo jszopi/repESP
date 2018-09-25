@@ -1,9 +1,12 @@
 from dataclasses import dataclass, asdict
 from fortranformat import FortranRecordWriter as FW
+from itertools import zip_longest
 import re
-from typing import Dict, List, TextIO, Tuple, TypeVar, Union
+import sys
+from typing import Dict, List, Optional, TextIO, Tuple, TypeVar, Union
 
 from .exceptions import InputFormatError
+from .util import get_symbol
 
 
 @dataclass
@@ -57,6 +60,30 @@ class Respin:
                         f"Value number {i} passed as `ivary` with value {elem}, "
                         f"which is either lower than 0 or outside the list length."
                     )
+
+        def describe(self, atomic_numbers: Optional[List[int]]=None, file: TextIO=sys.stdout):
+            """Verbosely report the ``ivary`` actions"""
+            # I'm undecided about printing functions. Can `file` point to managed log object?
+            if atomic_numbers is not None and len(atomic_numbers) != len(self.values):
+                raise ValueError(
+                    f"The number of atoms ({len(atomic_numbers)} is not the same "
+                    f"as the number of ivary values ({len(self.values)}."
+                )
+
+            zipped = zip_longest(self.values, atomic_numbers if atomic_numbers is not None else [])
+
+            for i, (ivary, atomic_number) in enumerate(zipped):
+                identity = get_symbol(atomic_number) if atomic_number is not None else None
+                id_str = f" ({identity})" if identity is not None else ""
+
+                if ivary < 0:
+                    ivary_str = ", frozen"
+                elif ivary > 0:
+                    ivary_str = f", equivalenced to atom {ivary}"
+                else:
+                    ivary_str = ""
+
+                print(f"Atom{id_str} number {i+1}{ivary_str}", file=file)
 
 
     title: str

@@ -40,3 +40,33 @@ class TestRespin(TestCase):
 
         with open("tests/test_respin_util.respin") as f:
             self.assertListEqual(f.readlines(), written.readlines())
+
+    def test_ivary_description(self) -> None:
+
+        output = StringIO()
+        expected_lines = [
+            "Atom number 1\n",
+            "Atom number 2\n",
+            "Atom number 3, equivalenced to atom 2\n",
+            "Atom number 4, equivalenced to atom 2\n",
+            "Atom number 5, equivalenced to atom 2\n",
+        ]
+
+        self.respin.ivary.describe(file=output)
+        output.seek(0)
+        self.assertListEqual(expected_lines, output.readlines())
+
+    def test_ivary_description_with_molecule(self) -> None:
+
+        output = StringIO()
+        expected_lines = [
+            "Atom (C) number 1\n",
+            "Atom (H) number 2\n",
+            "Atom (H) number 3, equivalenced to atom 2\n",
+            "Atom (H) number 4, equivalenced to atom 2\n",
+            "Atom (H) number 5, equivalenced to atom 2\n",
+        ]
+
+        self.respin.ivary.describe(atomic_numbers=[6, 1, 1, 1, 1], file=output)
+        output.seek(0)
+        self.assertListEqual(expected_lines, output.readlines())
