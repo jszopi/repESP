@@ -24,7 +24,7 @@ class TestRespin(TestCase):
             charge=0,
             iuniq=5,
             atomic_numbers=[6, 1, 1, 1, 1],
-            ivary_numbers=[0, 0, 2, 2, 2]
+            ivary=Respin.Ivary([0, 0, 2, 2, 2])
         )
 
 

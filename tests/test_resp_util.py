@@ -25,7 +25,7 @@ class TestResp(TestCase):
             charge=0,
             iuniq=5,
             atomic_numbers=[6, 1, 1, 1, 1],
-            ivary_numbers=[0, 0, 0, 0, 0]
+            ivary=Respin.Ivary([0, 0, 0, 0, 0])
         )
 
         self.result_charges = run_resp(

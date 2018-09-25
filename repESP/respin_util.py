@@ -44,6 +44,21 @@ class Respin:
             if self.qwt < 0:
                 raise ValueError(f"Invalid value for `qwt`: {self.qwt}.")
 
+    @dataclass
+    class Ivary:
+        # Zero refers to no equivalencing, -1 for frozen and one-indexed value
+        # for equivalencing to a particular atom in the molecule.
+        values: List[int]
+
+        def __post_init__(self):
+            for i, elem in enumerate(self.values):
+                if elem < -1 or elem > len(self.values):
+                    raise ValueError(
+                        f"Value number {i} passed as `ivary` with value {elem}, "
+                        f"which is either lower than 0 or outside the list length."
+                    )
+
+
     title: str
     cntrl: Cntrl
     wtmol: float
@@ -51,18 +66,18 @@ class Respin:
     charge: int
     iuniq: int
     atomic_numbers: List[int]
-    ivary_numbers: List[int]
+    ivary: Ivary
 
     def __post_init__(self) -> None:
         Respin._check_value("wtmol", "{:.1f}".format(self.wtmol), ["1.0"])
 
-        if len(self.atomic_numbers) != len(self.ivary_numbers):
+        if len(self.atomic_numbers) != len(self.ivary.values):
             raise ValueError(
                 f"Number of atoms ({self.atomic_numbers}) does not match number "
-                f"of ivary values ({self.ivary_numbers})."
+                f"of ivary values ({self.ivary.values})."
             )
 
-        if self.iuniq != len(self.ivary_numbers):
+        if self.iuniq != len(self.ivary.values):
             raise ValueError(
                 f"`iuniq` value ({self.iuniq}) doesn't match the number of atoms "
                 f"({self.atomic_numbers})."
@@ -112,7 +127,7 @@ def _parse_respin(f) -> Respin:
     iuniq = int(charge_and_iuniq.split()[1])
 
     atomic_numbers: List[int] = []
-    ivary_numbers: List[int] = []
+    ivary = Respin.Ivary([])
 
     for line in f:
         if line.rstrip('\n') == "":
@@ -123,7 +138,9 @@ def _parse_respin(f) -> Respin:
             )
 
         atomic_numbers.append(int(line.split()[0]))
-        ivary_numbers.append(int(line.split()[1]))
+        ivary_value = int(line.split()[1])
+        # `respgen` uses a value of -99 but internally we use -1 as per resp spec.
+        ivary.values.append(ivary_value if ivary_value != -99 else -1)
 
     return Respin(
         title,
@@ -133,7 +150,7 @@ def _parse_respin(f) -> Respin:
         charge,
         iuniq,
         atomic_numbers,
-        ivary_numbers
+        ivary
     )
 
 
@@ -157,7 +174,7 @@ def _write_respin(f: TextIO, respin: Respin, skip_cntrl_defaults: bool=True) -> 
     print(FW("F7.1").write([respin.wtmol]), file=f)
     print(respin.subtitle, file=f)
     print(FW("2I5").write([respin.charge, respin.iuniq]), file=f)
-    for atomic_number, ivary in zip(respin.atomic_numbers, respin.ivary_numbers):
+    for atomic_number, ivary in zip(respin.atomic_numbers, respin.ivary.values):
         print(FW("2I5").write([atomic_number, ivary]), file=f)
     # According to the spec a blank line is only for multi-structures but `resp`
     # fails without it.
