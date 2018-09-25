@@ -18,7 +18,7 @@ def _run_resp_in_dir(
 ) -> List[Charge]:
 
     if respin.cntrl.iqopt in [2, 3] and initial_charges is None:
-        raise ValueError("`resp` initial charges (`iqopt` is not 1) but none given.")
+        raise ValueError("`resp` expected initial charges (`iqopt` is not 1) but none given.")
 
     respin_fn = "input.respin"
     qin_fn = "charges.qin"

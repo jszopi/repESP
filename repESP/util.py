@@ -30,9 +30,9 @@ _elements = [('H', 'Hydrogen'),
 _symbol_to_atomic_nummber = {v[0]: i+1 for i, v in enumerate(_elements)}
 
 
-def get_symbol(atomic_number: int):
-    return _elements[atomic_number-1]
+def get_symbol(atomic_number: int) -> str:
+    return _elements[atomic_number-1][0]
 
 
-def get_atomic_number(symbol: str):
+def get_atomic_number(symbol: str) -> int:
     return _symbol_to_atomic_nummber[symbol]
