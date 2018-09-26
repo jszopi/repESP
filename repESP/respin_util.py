@@ -54,9 +54,29 @@ class Equivalence:
         """
         return cls([
             # Whether `ivary - 1` fulfills other preconditions will be checked in __post_init__
-            None if ivary == 0 else ivary - 1
-            for ivary in ivary.values
+            None if ivary_value == 0 else ivary_value - 1
+            for ivary_value in ivary.values
         ])
+
+
+def get_equivalence(ivary1: "Respin.Ivary", ivary2: "Respin.Ivary") -> Equivalence:
+    """Get atom equivalence from two input for two 2-stage `resp`
+
+    Derive atom equivalence based on the data in two `.respin` files (represented
+    by the `Respin` objects) created for the purpose two-stage fitting with the
+    `resp` program. The files can be generated with the `respgen` program with
+    the following commands:
+
+        respgen -i methane.ac -o methane.respin1 -f resp1
+        respgen -i methane.ac -o methane.respin2 -f resp2
+    """
+    if len(ivary1.values) != len(ivary2.values):
+        raise ValueError()
+
+    return Equivalence.from_ivary(Respin.Ivary([
+        max(ivary1_value, ivary2_value)
+        for ivary1_value, ivary2_value in zip(ivary1.values, ivary2.values)
+    ]))
 
 
 @dataclass
@@ -134,6 +154,15 @@ class Respin:
                     ivary_str = ""
 
                 print(f"Atom{id_str} number {i+1}{ivary_str}", file=file)
+
+        @classmethod
+        def from_equivalence(cls, equivalence: Equivalence):
+            """Created ivary instructions based on equivalence information
+
+            Note: the resulting ivary instructions will correspond to fitting
+            with equivalent atoms assigned identical charges.
+            """
+            return cls([0 if val is None else val + 1 for val in equivalence.values])
 
 
     title: str

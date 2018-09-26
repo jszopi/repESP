@@ -1,5 +1,5 @@
 from repESP.types import *
-from repESP.respin_util import Respin, Equivalence, _parse_respin, _write_respin
+from repESP.respin_util import Respin, Equivalence, get_equivalence, _parse_respin, _write_respin
 
 from my_unittest import TestCase
 
@@ -86,6 +86,11 @@ class TestRespin(TestCase):
         )
 
 
+class TestParsingAndWriting(TestRespin):
+
+    def setUp(self) -> None:
+        super().setUp()
+
     def test_parsing(self) -> None:
         with open("tests/test_respin_util.respin") as f:
             parsed_respin = _parse_respin(f)
@@ -98,6 +103,12 @@ class TestRespin(TestCase):
 
         with open("tests/test_respin_util.respin") as f:
             self.assertListEqual(f.readlines(), written.readlines())
+
+
+class TestIvary(TestRespin):
+
+    def setUp(self) -> None:
+        super().setUp()
 
     def test_ivary_init_validates_values(self) -> None:
 
@@ -138,3 +149,22 @@ class TestRespin(TestCase):
         self.respin.ivary.describe(atomic_numbers=[6, 1, 1, 1, 1], file=output)
         output.seek(0)
         self.assertListEqual(expected_lines, output.readlines())
+
+    def test_ivary_from_equivalence(self) -> None:
+        self.assertListEqual(
+            Respin.Ivary([0, 0, 1, 2, 2]).values,
+            Respin.Ivary.from_equivalence(
+                Equivalence([None, None, 0, 1, 1])
+            ).values
+        )
+
+
+class TestRespinAndEquivalence(TestCase):
+
+    def test_getting_equivalence(self) -> None:
+        # MeSO4 [S O O (bridging) O C H H H]
+        ivary1 = Respin.Ivary([0, 0, 0, 2, 2, 0, 0, 0, 0])
+        ivary2 = Respin.Ivary([-1, -1, -1, -1, -1, 0, 0, 7, 7])
+        equivalence = get_equivalence(ivary1, ivary2)
+        expected = Equivalence([None, None, None, 1, 1, None, None, 6, 6])
+        self.assertListEqual(equivalence.values, expected.values)
