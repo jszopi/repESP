@@ -1,69 +1,11 @@
 from repESP.esp_util import EspData, parse_gaussian_esp
 from repESP.types import *
-from repESP.resp_util import run_resp, Equivalence
+from repESP.resp_util import run_resp
 from repESP.respin_util import Respin
 
 from my_unittest import TestCase
 
 from io import StringIO
-
-
-class TestEquivalence(TestCase):
-
-    def test_init_validates_values(self) -> None:
-
-        Equivalence([None, None, 0, 1, 1])
-
-        with self.assertRaises(ValueError):
-            Equivalence([0, 0, 2, -1, 2])
-
-        with self.assertRaises(ValueError):
-            Equivalence([5, 0, 2, 2, 2])
-
-    def test_init_from_ivary(self) -> None:
-
-        equivalence = Equivalence.from_ivary(Respin.Ivary([0, 0, 2, 2, 2]))
-        self.assertListEqual(equivalence.values, [None, None, 1, 1, 1])
-
-        with self.assertRaises(ValueError):
-            Equivalence.from_ivary(Respin.Ivary([0, 0, 2, -1, 2]))
-
-        with self.assertRaises(ValueError):
-            Equivalence.from_ivary(Respin.Ivary([6, 0, 2, 2, 2]))
-
-    def test_description(self) -> None:
-
-        equivalence = Equivalence([None, None, 0, 1, 1])
-
-        output = StringIO()
-        expected_lines = [
-            "Atom number 1\n",
-            "Atom number 2\n",
-            "Atom number 3, equivalenced to atom 1\n",
-            "Atom number 4, equivalenced to atom 2\n",
-            "Atom number 5, equivalenced to atom 2\n",
-        ]
-
-        equivalence.describe(file=output)
-        output.seek(0)
-        self.assertListEqual(expected_lines, output.readlines())
-
-    def test_description_with_molecule(self) -> None:
-
-        equivalence = Equivalence([None, None, 0, 1, 1])
-
-        output = StringIO()
-        expected_lines = [
-            "Atom (C) number 1\n",
-            "Atom (H) number 2\n",
-            "Atom (H) number 3, equivalenced to atom 1\n",
-            "Atom (H) number 4, equivalenced to atom 2\n",
-            "Atom (H) number 5, equivalenced to atom 2\n",
-        ]
-
-        equivalence.describe(atomic_numbers=[6, 1, 1, 1, 1], file=output)
-        output.seek(0)
-        self.assertListEqual(expected_lines, output.readlines())
 
 
 class TestResp(TestCase):

@@ -10,6 +10,56 @@ from .util import get_symbol
 
 
 @dataclass
+class Equivalence:
+    # Zero-indexed, None if not equivalenced to any atom. Note similarities in
+    # implementation with Respin.Ivary - perhaps should be refactored.
+    values: List[Optional[int]]
+
+    def __post_init__(self):
+        for i, elem in enumerate(self.values):
+            if elem is not None and (elem < 0 or elem >= len(self.values)):
+                raise ValueError(
+                    f"Value number {i} is not valid as equivalence information "
+                    f"in a molecule of {len(self.values)}."
+                )
+
+    def describe(self, atomic_numbers: Optional[List[int]]=None, file=sys.stdout):
+        """Verbosely report the equivalence information."""
+        if atomic_numbers is not None and len(atomic_numbers) != len(self.values):
+            raise ValueError(
+                f"The number of atoms ({len(atomic_numbers)} is not the same "
+                f"as the number of equivalence values ({len(self.values)}."
+            )
+
+        zipped = zip_longest(self.values, atomic_numbers if atomic_numbers is not None else [])
+
+        for i, (equivalence, atomic_number) in enumerate(zipped):
+            identity = get_symbol(atomic_number) if atomic_numbers is not None else None
+            id_str = f" ({identity})" if identity is not None else ""
+            equivalence_str = f", equivalenced to atom {equivalence+1}" if equivalence is not None else ""
+            print(f"Atom{id_str} number {i+1}{equivalence_str}", file=file)
+
+    @classmethod
+    def from_ivary(cls, ivary: "Respin.Ivary"):
+        """Get atom equivalence information from an Respin.Ivary object.
+
+        Warning: You probably don't mean to use this function. Use the
+        get_equivalence function instead.
+
+        Ivary objects are specific to `resp` program input and thus may
+        not provide information about atom equivalence. The `respin` file may
+        have been generated to perform any custom fitting by RESP. Only use
+        this function when you're certain that the `respin` file contains all
+        the equivalence information that you need.
+        """
+        return cls([
+            # Whether `ivary - 1` fulfills other preconditions will be checked in __post_init__
+            None if ivary == 0 else ivary - 1
+            for ivary in ivary.values
+        ])
+
+
+@dataclass
 class Respin:
 
     # Limited to a single molecule and structure at the moment
