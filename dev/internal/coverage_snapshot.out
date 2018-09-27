@@ -5,6 +5,8 @@ repESP/cube_util.py 100%
 repESP/esp_util.py 98%
 repESP/exceptions.py 100%
 repESP/gaussian_util.py 100%
-repESP/respin_util.py 93%
+repESP/resp_util.py 98%
+repESP/respin_generation.py 90%
+repESP/respin_util.py 100%
 repESP/types.py 100%
 repESP/util.py 90%
