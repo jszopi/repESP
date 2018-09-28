@@ -2,7 +2,9 @@ from .charges import Charge, make_charge
 from .esp_util import EspData, write_resp_esp
 from .respin_generation import prepare_respin
 from .respin_generation import RespStage1RespinGenerator, RespStage2RespinGenerator
-from .respin_util import Respin, _write_respin
+from .respin_generation import FitHydrogensOnlyRespinGenerator, FrozenAtomsRespinGenerator
+from .respin_generation import EquivalenceOnlyRespinGenerator
+from .respin_util import Respin, _write_respin, Equivalence
 from .resp_charges_util import write_resp_charges, parse_resp_charges
 from .util import get_symbol
 
@@ -132,4 +134,86 @@ def run_two_stage_resp(
         resp1_charges,
         generate_esout,
         get_calc_dir(2)
+    )
+
+
+def fit_with_equivalencing(
+    esp_data: EspData,
+    equivalence: Equivalence,
+    atomic_numbers: List[int],
+    total_charge: int,
+    initial_charges: Optional[List[Charge]]=None,
+    generate_esout: bool=False,
+    save_intermediates_to: Optional[str]=None
+) -> List[Charge]:
+
+    respin_generator = EquivalenceOnlyRespinGenerator(equivalence)
+    respin = prepare_respin(
+        respin_generator,
+        total_charge,
+        atomic_numbers,
+        read_charges=initial_charges is not None
+    )
+
+    return run_resp(
+        esp_data,
+        respin,
+        initial_charges,
+        generate_esout,
+        save_intermediates_to
+    )
+
+
+def fit_hydrogens_only(
+    esp_data: EspData,
+    equivalence: Equivalence,
+    atomic_numbers: List[int],
+    total_charge: int,
+    initial_charges: List[Charge],
+    generate_esout: bool=False,
+    save_intermediates_to: Optional[str]=None
+) -> List[Charge]:
+
+    respin_generator = FitHydrogensOnlyRespinGenerator(equivalence, atomic_numbers)
+    respin = prepare_respin(
+        respin_generator,
+        total_charge,
+        atomic_numbers,
+        read_charges=True
+    )
+
+    return run_resp(
+        esp_data,
+        respin,
+        initial_charges,
+        generate_esout,
+        save_intermediates_to
+    )
+
+
+def fit_with_frozen_atoms(
+    esp_data: EspData,
+    equivalence: Equivalence,
+    atomic_numbers: List[int],
+    frozen_atoms: List[int],
+    total_charge: int,
+    initial_charges: List[Charge],
+    generate_esout: bool=False,
+    save_intermediates_to: Optional[str]=None
+) -> List[Charge]:
+
+    respin_generator = FrozenAtomsRespinGenerator(equivalence, frozen_atoms)
+    respin = prepare_respin(
+        respin_generator,
+        total_charge,
+        atomic_numbers,
+        read_charges=True
+    )
+
+    return run_resp(
+        esp_data,
+        respin,
+        initial_charges,
+        generate_esout,
+        save_intermediates_to
     )
