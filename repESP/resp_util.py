@@ -1,5 +1,7 @@
 from .charges import Charge, make_charge
 from .esp_util import EspData, write_resp_esp
+from .respin_generation import prepare_respin
+from .respin_generation import RespStage1RespinGenerator, RespStage2RespinGenerator
 from .respin_util import Respin, _write_respin
 from .resp_charges_util import write_resp_charges, parse_resp_charges
 from .util import get_symbol
@@ -83,3 +85,49 @@ def run_resp(
     else:
         os.mkdir(save_intermediates_to)
         return _run_resp_in_dir(esp_data, respin, initial_charges, generate_esout, save_intermediates_to)
+
+def run_two_stage_resp(
+    esp_data: EspData,
+    respin1: Respin,
+    respin2: Respin,
+    initial_charges: Optional[List[Charge]]=None,
+    generate_esout: bool=False,
+    save_intermediates_to: Optional[str]=None
+) -> List[Charge]:
+
+    # Some verification of respin file compatibility should be performed.
+    total_charge = respin1.charge
+    atomic_numbers = respin1.atomic_numbers
+
+    get_calc_dir = lambda stage: (
+        f"{save_intermediates_to}/stage_{stage}"
+        if save_intermediates_to is not None else None
+    )
+
+    respin1_generated = prepare_respin(
+        RespStage1RespinGenerator(respin1),
+        total_charge,
+        atomic_numbers
+    )
+
+    resp1_charges = run_resp(
+        esp_data,
+        respin1,
+        initial_charges,
+        generate_esout,
+        get_calc_dir(1)
+    )
+
+    respin2_generated = prepare_respin(
+        RespStage2RespinGenerator(respin2),
+        total_charge,
+        atomic_numbers,
+    )
+
+    return run_resp(
+        esp_data,
+        respin2,
+        resp1_charges,
+        generate_esout,
+        get_calc_dir(2)
+    )

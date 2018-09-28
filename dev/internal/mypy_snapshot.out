@@ -5,5 +5,5 @@ repESP/esp_util.py:8: note: (Perhaps setting MYPYPATH or using the "--ignore-mis
 repESP/calc_fields.py:6: error: No library stub file for module 'scipy.spatial.distance'
 repESP/calc_fields.py:6: note: (Stub files are from https://github.com/python/typeshed)
 repESP/calc_fields.py:7: error: No library stub file for module 'numpy'
-repESP/resp_util.py:41: error: Unexpected keyword argument "text" for "run"
-repESP/resp_util.py:41: error: Unexpected keyword argument "capture_output" for "run"
+repESP/resp_util.py:47: error: Unexpected keyword argument "text" for "run"
+repESP/resp_util.py:47: error: Unexpected keyword argument "capture_output" for "run"

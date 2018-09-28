@@ -1,6 +1,6 @@
 from repESP.esp_util import EspData, parse_gaussian_esp
 from repESP.types import *
-from repESP.resp_util import run_resp
+from repESP.resp_util import run_resp, run_two_stage_resp
 from repESP.respin_util import Respin
 
 from my_unittest import TestCase
@@ -41,4 +41,32 @@ class TestResp(TestCase):
             self.result_charges,
             # Expected values from resp calculations done a while back
             [-0.407205, 0.101907, 0.101695, 0.101695, 0.101907]
+        )
+
+    def test_two_stage_resp(self) -> None:
+
+        respin2 = Respin(
+            title="File generated for unit tests only (can been removed).",
+            cntrl=Respin.Cntrl(
+                iqopt=2,
+                qwt=0.001,
+            ),
+            wtmol=1.0,
+            subtitle="Resp charges for organic molecule",
+            charge=0,
+            iuniq=5,
+            atomic_numbers=[6, 1, 1, 1, 1],
+            ivary=Respin.Ivary([0, 0, 2, 2, 2])
+        )
+
+        charges = run_two_stage_resp(
+            self.esp_data,
+            self.respin,
+            respin2
+        )
+
+        self.assertListsAlmostEqual(
+            charges,
+            # Expected values from resp calculations done a while back
+            [-0.317454, 0.079364, 0.079364, 0.079364, 0.079364]
         )
