@@ -15,7 +15,7 @@ class TestRespinGenerationOnStage1Resp(TestCase):
     def setUp(self) -> None:
         # First stage RESP
         self.respin = Respin(
-            title="Respin file prepared by `repESP` to perform Resp Stage 1.",
+            title="Respin file prepared by `repESP` to perform RESP stage 1.",
             cntrl=Respin.Cntrl(
                 qwt=0.0005
             ),

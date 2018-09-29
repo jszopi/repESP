@@ -7,6 +7,7 @@ from repESP.respin_util import Respin, Equivalence
 
 from my_unittest import TestCase
 
+from copy import deepcopy
 from io import StringIO
 
 
@@ -38,12 +39,18 @@ class TestResp(TestCase):
             self.respin
         )
 
-    def test_resp_charges(self) -> None:
+    def test_run_resp(self) -> None:
         self.assertListsAlmostEqual(
             self.result_charges,
             # Expected values from resp calculations done a while back
             [-0.407205, 0.101907, 0.101695, 0.101695, 0.101907]
         )
+
+    def test_run_resp_with_malformed_input(self) -> None:
+        respin = deepcopy(self.respin)
+        respin.atomic_numbers=[0]
+        with self.assertRaises(RuntimeError):
+            run_resp(self.esp_data, respin)
 
     def test_two_stage_resp(self) -> None:
 

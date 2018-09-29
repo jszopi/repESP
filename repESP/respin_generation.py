@@ -26,7 +26,7 @@ class RespStage1RespinGenerator(TypeSpecificRespinGenerator):
         self.respin1 = respin1
 
     def resp_type(self) -> str:
-        return "Resp Stage 1"
+        return "RESP stage 1"
 
     def get_ivary(self) -> Respin.Ivary:
         return self.respin1.ivary
@@ -43,7 +43,7 @@ class RespStage2RespinGenerator(TypeSpecificRespinGenerator):
         self.respin1 = respin1
 
     def resp_type(self) -> str:
-        return "Resp Stage 2"
+        return "RESP stage 2"
 
     def get_ivary(self) -> Respin.Ivary:
         return self.respin1.ivary
