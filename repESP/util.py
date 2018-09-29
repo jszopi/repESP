@@ -1,4 +1,5 @@
 from enum import Enum
+from typing import Collection, Iterable, Tuple, TypeVar
 
 
 # As per Python docs
@@ -36,3 +37,15 @@ def get_symbol(atomic_number: int) -> str:
 
 def get_atomic_number(symbol: str) -> int:
     return _symbol_to_atomic_nummber[symbol]
+
+T = TypeVar('T')
+U = TypeVar('U')
+
+def _zip_exact(first: Collection[T], second: Collection[U]) -> Iterable[Tuple[T, U]]:
+
+    if len(first) != len(second):
+        raise ValueError(
+            f"Failed to zip arguments due to unequal lengths: {len(first)} v. {len(second)}."
+        )
+
+    return zip(first, second)
