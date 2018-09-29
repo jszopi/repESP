@@ -6,7 +6,7 @@ import sys
 from typing import Dict, List, Optional, TextIO, Tuple, TypeVar, Union
 
 from .exceptions import InputFormatError
-from .util import get_symbol
+from .util import get_symbol, _zip_exact
 
 
 @dataclass
@@ -70,13 +70,26 @@ def get_equivalence(ivary1: "Respin.Ivary", ivary2: "Respin.Ivary") -> Equivalen
         respgen -i methane.ac -o methane.respin1 -f resp1
         respgen -i methane.ac -o methane.respin2 -f resp2
     """
-    if len(ivary1.values) != len(ivary2.values):
-        raise ValueError()
+    # The equivalence logic is explained somewhat inconsistently in the RESP
+    # papers but I've additionally re-engineered the ``resp`` program's logic
+    # to be sure that reading both the ``respin`` files will give the desired
+    # behaviour. In fact, it's pretty simple. In the first stage atoms of the
+    # methyl and methylene groups are free, while all the others are
+    # equivalenced. In the second stage the former are equivalenced, while all
+    # the others are frozen.
 
     return Equivalence.from_ivary(Respin.Ivary([
         max(ivary1_value, ivary2_value)
-        for ivary1_value, ivary2_value in zip(ivary1.values, ivary2.values)
+        for ivary1_value, ivary2_value in _zip_exact(ivary1.values, ivary2.values)
     ]))
+
+
+def get_equivalence_from_ac(ac) -> Equivalence:
+    # TODO: This should wrap the two respgen calls:
+    #     respgen -i methane.ac -o methane.respin1 -f resp1
+    #     respgen -i methane.ac -o methane.respin2 -f resp2
+    # and call get_equivalence on them.
+    raise NotImplementedError()
 
 
 @dataclass
@@ -147,6 +160,7 @@ class Respin:
                 id_str = f" ({identity})" if identity is not None else ""
 
                 if ivary < 0:
+                    # TODO: This could also report at what value if charges are provided
                     ivary_str = ", frozen"
                 elif ivary > 0:
                     ivary_str = f", equivalenced to atom {ivary}"
