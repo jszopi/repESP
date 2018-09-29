@@ -1,7 +1,8 @@
 from repESP.types import *
 from repESP.respin_util import Respin, Equivalence
 from repESP.respin_generation import prepare_respin
-from repESP.respin_generation import RespStage1RespinGenerator, FitHydrogensOnlyRespinGenerator
+from repESP.respin_generation import RespStage1RespinGenerator, RespStage2RespinGenerator
+from repESP.respin_generation import FitHydrogensOnlyRespinGenerator
 from repESP.respin_generation import EquivalenceOnlyRespinGenerator, FrozenAtomsRespinGenerator
 
 from my_unittest import TestCase
@@ -14,7 +15,7 @@ class TestRespinGenerationOnStage1Resp(TestCase):
 
     def setUp(self) -> None:
         # First stage RESP
-        self.respin = Respin(
+        self.expected_respin = Respin(
             title="Respin file prepared by `repESP` to perform RESP stage 1.",
             cntrl=Respin.Cntrl(
                 qwt=0.0005
@@ -27,26 +28,29 @@ class TestRespinGenerationOnStage1Resp(TestCase):
             ivary=Respin.Ivary([0, 0, 0, 0, 0])
         )
 
+        self.ivary = self.expected_respin.ivary
+        self.atomic_numbers = self.expected_respin.atomic_numbers
+
     def test_defaults(self) -> None:
 
         generated = prepare_respin(
-            respin_generator=RespStage1RespinGenerator(self.respin),
+            respin_generator=RespStage1RespinGenerator(self.ivary),
             total_charge=0,
-            atomic_numbers=self.respin.atomic_numbers
+            atomic_numbers=self.atomic_numbers
         )
 
-        self.assertAlmostEqualRecursive(self.respin, generated)
+        self.assertAlmostEqualRecursive(self.expected_respin, generated)
 
     def test_with_read_charges(self) -> None:
 
         generated = prepare_respin(
-            respin_generator=RespStage1RespinGenerator(self.respin),
+            respin_generator=RespStage1RespinGenerator(self.ivary),
             total_charge=0,
-            atomic_numbers=self.respin.atomic_numbers,
+            atomic_numbers=self.atomic_numbers,
             read_charges=True
         )
 
-        expected = deepcopy(self.respin)
+        expected = deepcopy(self.expected_respin)
         expected.cntrl.iqopt = 2
 
         self.assertAlmostEqualRecursive(expected, generated)
@@ -54,12 +58,12 @@ class TestRespinGenerationOnStage1Resp(TestCase):
     def test_with_total_charge(self) -> None:
 
         generated = prepare_respin(
-            respin_generator=RespStage1RespinGenerator(self.respin),
+            respin_generator=RespStage1RespinGenerator(self.ivary),
             total_charge=1,
-            atomic_numbers=self.respin.atomic_numbers
+            atomic_numbers=self.atomic_numbers
         )
 
-        expected = deepcopy(self.respin)
+        expected = deepcopy(self.expected_respin)
         expected.charge = 1
 
         self.assertAlmostEqualRecursive(expected, generated)
@@ -67,18 +71,44 @@ class TestRespinGenerationOnStage1Resp(TestCase):
     def test_with_title_and_subtitles(self) -> None:
 
         generated = prepare_respin(
-            respin_generator=RespStage1RespinGenerator(self.respin),
+            respin_generator=RespStage1RespinGenerator(self.ivary),
             total_charge=0,
-            atomic_numbers=self.respin.atomic_numbers,
+            atomic_numbers=self.atomic_numbers,
             title="Custom title",
             subtitle="Custom subtitle"
         )
 
-        expected = deepcopy(self.respin)
+        expected = deepcopy(self.expected_respin)
         expected.title = "Custom title"
         expected.subtitle = "Custom subtitle"
 
         self.assertAlmostEqualRecursive(expected, generated)
+
+
+class TestResp(TestCase):
+
+    def setUp(self) -> None:
+        # acetate anion [C O O C H H H]
+        self.equivalence = Equivalence([None, None, 1, None, None, 4, 4])
+        self.methyl_methylene_mask = [False, False, False, True, True, True, True]
+
+    def test_stage1_from_methyl_methylene(self) -> None:
+        self.assertListEqual(
+            RespStage1RespinGenerator.from_methyl_and_methylene(
+                self.equivalence,
+                self.methyl_methylene_mask
+            ).ivary.values,
+            [0, 0, 2, 0, 0, 0, 0]
+        )
+
+    def test_stage2_from_methyl_methylene(self) -> None:
+        self.assertListEqual(
+            RespStage2RespinGenerator.from_methyl_and_methylene(
+                self.equivalence,
+                self.methyl_methylene_mask
+            ).ivary.values,
+            [-1, -1, -1, 0, 0, 5, 5]
+        )
 
 
 class TestFitingHydrogensOnly(TestCase):

@@ -1,5 +1,6 @@
 from .charges import Charge
 from .respin_util import Respin, Equivalence
+from .util import _zip_exact
 
 from abc import ABC, abstractmethod
 from typing import List, Optional
@@ -20,39 +21,80 @@ class TypeSpecificRespinGenerator(ABC):
         pass
 
 
-class RespStage1RespinGenerator(TypeSpecificRespinGenerator):
+class RespRespinGenerator(TypeSpecificRespinGenerator):
 
-    def __init__(self, respin1: Respin) -> None:
-        self.respin1 = respin1
+    def __init__(self, ivary: Respin.Ivary) -> None:
+        self.ivary = ivary
+
+    def get_ivary(self) -> Respin.Ivary:
+        return self.ivary
+
+    @classmethod
+    def from_respin(cls, respin: Respin):
+        return cls(respin.ivary)
+
+    @classmethod
+    @abstractmethod
+    def from_methyl_and_methylene(
+        cls,
+        equivalence: Equivalence,
+        methyl_methylene_mask: List[bool]
+    ):
+        pass
+
+
+class RespStage1RespinGenerator(RespRespinGenerator):
 
     def resp_type(self) -> str:
         return "RESP stage 1"
-
-    def get_ivary(self) -> Respin.Ivary:
-        return self.respin1.ivary
 
     def get_cntrl(self) -> Respin.Cntrl:
         return Respin.Cntrl(
             qwt=0.0005
         )
 
+    @classmethod
+    def from_methyl_and_methylene(
+        cls,
+        equivalence: Equivalence,
+        methyl_methylene_mask: List[bool]
+    ):
+        return cls(Respin.Ivary([
+            0 if is_methyl_or_methylene else ivary_from_equivalence_value
+            for ivary_from_equivalence_value, is_methyl_or_methylene
+            in _zip_exact(
+                Respin.Ivary.from_equivalence(equivalence).values,
+                methyl_methylene_mask
+            )
+        ]))
 
-class RespStage2RespinGenerator(TypeSpecificRespinGenerator):
 
-    def __init__(self, respin1: Respin) -> None:
-        self.respin1 = respin1
+class RespStage2RespinGenerator(RespRespinGenerator):
 
     def resp_type(self) -> str:
         return "RESP stage 2"
-
-    def get_ivary(self) -> Respin.Ivary:
-        return self.respin1.ivary
 
     def get_cntrl(self) -> Respin.Cntrl:
         return Respin.Cntrl(
             iqopt=2,
             qwt=0.001
         )
+
+    @classmethod
+    def from_methyl_and_methylene(
+        cls,
+        equivalence: Equivalence,
+        methyl_methylene_mask: List[bool]
+    ):
+        return cls(Respin.Ivary([
+            ivary_from_equivalence_value if is_methyl_or_methylene else -1
+            for ivary_from_equivalence_value, is_methyl_or_methylene
+            in _zip_exact(
+                Respin.Ivary.from_equivalence(equivalence).values,
+                methyl_methylene_mask
+            )
+        ]))
+
 
 class FitHydrogensOnlyRespinGenerator(TypeSpecificRespinGenerator):
 

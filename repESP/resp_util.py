@@ -107,7 +107,7 @@ def run_two_stage_resp(
     )
 
     respin1_generated = prepare_respin(
-        RespStage1RespinGenerator(respin1),
+        RespStage1RespinGenerator(respin1.ivary),
         total_charge,
         atomic_numbers,
         read_charges=initial_charges is not None
@@ -122,7 +122,7 @@ def run_two_stage_resp(
     )
 
     respin2_generated = prepare_respin(
-        RespStage2RespinGenerator(respin2),
+        RespStage2RespinGenerator(respin2.ivary),
         total_charge,
         atomic_numbers,
         read_charges=True
