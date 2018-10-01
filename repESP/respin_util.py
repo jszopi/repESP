@@ -6,7 +6,7 @@ import sys
 from typing import Dict, List, Optional, TextIO, Tuple, TypeVar, Union
 
 from .exceptions import InputFormatError
-from .util import get_symbol, _zip_exact
+from .util import _get_symbol, _zip_exact
 
 
 @dataclass
@@ -34,7 +34,7 @@ class Equivalence:
         zipped = zip_longest(self.values, atomic_numbers if atomic_numbers is not None else [])
 
         for i, (equivalence, atomic_number) in enumerate(zipped):
-            identity = get_symbol(atomic_number) if atomic_numbers is not None else None
+            identity = _get_symbol(atomic_number) if atomic_numbers is not None else None
             id_str = f" ({identity})" if identity is not None else ""
             equivalence_str = f", equivalenced to atom {equivalence+1}" if equivalence is not None else ""
             print(f"Atom{id_str} number {i+1}{equivalence_str}", file=file)
@@ -156,7 +156,7 @@ class Respin:
             zipped = zip_longest(self.values, atomic_numbers if atomic_numbers is not None else [])
 
             for i, (ivary, atomic_number) in enumerate(zipped):
-                identity = get_symbol(atomic_number) if atomic_number is not None else None
+                identity = _get_symbol(atomic_number) if atomic_number is not None else None
                 id_str = f" ({identity})" if identity is not None else ""
 
                 if ivary < 0:

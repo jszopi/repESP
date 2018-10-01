@@ -6,7 +6,6 @@ from .respin_generation import FitHydrogensOnlyRespinGenerator, FrozenAtomsRespi
 from .respin_generation import EquivalenceOnlyRespinGenerator
 from .respin_util import Respin, _write_respin, Equivalence
 from .resp_charges_util import write_resp_charges, parse_resp_charges
-from .util import get_symbol
 
 from dataclasses import dataclass
 from itertools import zip_longest
@@ -87,6 +86,7 @@ def run_resp(
     else:
         os.mkdir(save_intermediates_to)
         return _run_resp_in_dir(esp_data, respin, initial_charges, generate_esout, save_intermediates_to)
+
 
 def run_two_stage_resp(
     esp_data: EspData,

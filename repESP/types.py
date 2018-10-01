@@ -1,5 +1,5 @@
 from .exceptions import InputFormatError
-from .util import get_atomic_number
+from .util import _get_atomic_number
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
@@ -45,7 +45,7 @@ class Atom:
 
     @classmethod
     def from_symbol(cls, symbol: str, coords: Coords) -> 'Atom':
-        return cls(get_atomic_number(symbol), coords)
+        return cls(_get_atomic_number(symbol), coords)
 
 
 @dataclass
