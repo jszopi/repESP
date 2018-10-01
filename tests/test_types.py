@@ -130,8 +130,8 @@ class TestField(TestCase):
 
     def test_addition_fails_for_different_meshes(self) -> None:
 
-        field1 = NumericField(self.mesh, self.values)
-        field2 = NumericField(
+        field1 = Field(self.mesh, self.values)
+        field2 = Field(
             NonGridMesh([
                 make_coords(1, 1, 1),
                 make_coords(-1, 0, 0.9)
@@ -144,8 +144,8 @@ class TestField(TestCase):
 
     def test_addition(self) -> None:
 
-        field1 = NumericField(self.mesh, self.values)
-        field2 = NumericField(self.mesh, [make_esp(0.1), make_esp(1) ])
+        field1 = Field(self.mesh, self.values)
+        field2 = Field(self.mesh, [make_esp(0.1), make_esp(1) ])
         field3 = field1 + field2
 
         self.assertEqual(field1.mesh, field3.mesh)
@@ -153,8 +153,8 @@ class TestField(TestCase):
 
     def test_subtraction(self) -> None:
 
-        field1 = NumericField(self.mesh, self.values)
-        field2 = NumericField(self.mesh, [make_esp(0.1), make_esp(1) ])
+        field1 = Field(self.mesh, self.values)
+        field2 = Field(self.mesh, [make_esp(0.1), make_esp(1) ])
         field3 = field1 - field2
 
         self.assertEqual(field1.mesh, field3.mesh)

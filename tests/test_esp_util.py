@@ -34,7 +34,7 @@ gaussian_esp_data = GaussianEspData(
         make_quadrupole_moment(-0.97158067e-16),
         make_quadrupole_moment( 0.72144168e-15),
     ),
-    NumericField(
+    Field(
         NonGridMesh(
             [
                 make_coords( 0.00000000,  0.0000000, 3.9684249),

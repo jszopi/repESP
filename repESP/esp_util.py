@@ -1,4 +1,4 @@
-from .types import Atom, Esp, Coords, NonGridMesh, Molecule, NumericField, NumericFieldValue
+from .types import Atom, Esp, Field, Coords, NonGridMesh, Molecule
 from .types import make_coords, make_esp
 from .charges import Charge, Dipole, MoleculeWithCharges, Quadrupole
 from .charges import make_charge, make_dipole_moment, make_quadrupole_moment
@@ -18,13 +18,13 @@ class GaussianEspData:
     molecule_with_charges: MoleculeWithCharges
     dipole: Dipole
     quadrupole: Quadrupole
-    field: NumericField
+    field: Field
 
 
 @dataclass
 class EspData:
     atoms_coords: List[Coords]
-    field: NumericField
+    field: Field
 
     @classmethod
     def from_gaussian(cls, gaussian_esp_data: GaussianEspData):
@@ -149,7 +149,7 @@ def _parse_quadrupole(lines: List[str]) -> Quadrupole:
     )
 
 
-def _parse_esp_points(f: TextIO) -> NumericField[Esp]:
+def _parse_esp_points(f: TextIO) -> Field[Esp]:
     points = []
     values = []
     for line in f:
@@ -157,7 +157,7 @@ def _parse_esp_points(f: TextIO) -> NumericField[Esp]:
         points.append(make_coords(*line_split[1:4]))
         values.append(make_esp(line_split[0]))
 
-    return NumericField(
+    return Field(
         NonGridMesh(points),
         values
     )
@@ -187,7 +187,7 @@ def parse_resp_esp(f: TextIO) -> EspData:
         mesh_coords.append(make_coords(*coords))
         esp_values.append(make_esp(val))
 
-    field = NumericField(
+    field = Field(
         NonGridMesh(
             mesh_coords
         ),

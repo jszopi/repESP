@@ -76,18 +76,14 @@ class Field(Generic[FieldValue]):
         self.mesh = mesh
         self.values = list(values)
 
+    # TODO: This would ideally be extended to numbers.Number but mypy throws errors.
+    NumericValue = TypeVar('NumericValue', bound=float)
 
-# TODO: This would ideally be extended to numbers.Number but mypy throws errors.
-NumericFieldValue = TypeVar('NumericFieldValue', bound=float)
+    def __add__(self: 'Field[NumericValue]', other: 'Field[NumericValue]') -> 'Field[NumericValue]':
 
-
-class NumericField(Field[NumericFieldValue]):
-
-    def __add__(self, other: 'NumericField[NumericFieldValue]') -> 'NumericField[NumericFieldValue]':
-
-        if not isinstance(other, NumericField):
+        if not isinstance(other, Field):
             raise TypeError(
-                "unsupported operand type(s) for +: 'NumericField' and 'type(other)"
+                "unsupported operand type(s) for +: 'Field' and 'type(other)"
             )
 
         if self.mesh != other.mesh:
@@ -95,25 +91,29 @@ class NumericField(Field[NumericFieldValue]):
                 "Cannot add or subtract Fields with different meshes."
             )
 
-        return NumericField(
+        return Field(
             self.mesh,
             [
-                cast(NumericFieldValue, value_self + value_other)
+                cast(Field.NumericValue, value_self + value_other)
                 for value_self, value_other in zip(self.values, other.values)
             ]
         )
 
-    def __neg__(self) -> 'NumericField[NumericFieldValue]':
-        return NumericField(
+    def __neg__(self: 'Field[NumericValue]') -> 'Field[NumericValue]':
+        return Field(
             self.mesh,
             [
-                cast(NumericFieldValue, -value)
+                cast(Field.NumericValue, -value)
                 for value in self.values
             ]
         )
 
-    def __sub__(self, other: 'NumericField[NumericFieldValue]') -> 'NumericField[NumericFieldValue]':
+    def __sub__(self: 'Field[NumericValue]', other: 'Field[NumericValue]') -> 'Field[NumericValue]':
         return self + (-other)
+
+    # TODO: Could add div and sub but it's not needed at the moment.
+    # TODO: __iadd__ can be added as an optimization (unless we decide to
+    # freeze the dataclass.
 
 
 class Mesh(ABC):

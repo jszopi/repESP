@@ -1,6 +1,6 @@
 from .exceptions import InputFormatError
 from .charges import MoleculeWithCharges
-from .types import Coords, Dist, Esp, Field, Mesh, NumericField, NumericFieldValue, Molecule
+from .types import Coords, Dist, Esp, Field, Mesh, Molecule
 from .types import make_esp
 
 from scipy.spatial.distance import euclidean
@@ -16,9 +16,9 @@ def _esp_from_charges_at_point(coords: Coords, molecule_with_charges: MoleculeWi
     ))
 
 
-def esp_from_charges(mesh: Mesh, molecule_with_charges: MoleculeWithCharges) -> NumericField[Esp]:
+def esp_from_charges(mesh: Mesh, molecule_with_charges: MoleculeWithCharges) -> Field[Esp]:
     """Calculate ESP value at given point due to charges on atoms"""
-    return NumericField(
+    return Field(
         mesh,
         [_esp_from_charges_at_point(coords, molecule_with_charges) for coords in mesh.points()]
     )
@@ -44,14 +44,14 @@ def voronoi(mesh: Mesh, molecule: Molecule) -> Field[Tuple[Optional[int], Dist]]
     )
 
 
-def calc_rms_value(field: NumericField[NumericFieldValue]) -> NumericFieldValue:
+def calc_rms_value(field: Field[Field.NumericValue]) -> Field.NumericValue:
     return np.sqrt(np.mean(np.square(field.values)))
 
 
 def calc_rms_error(
-    field1: NumericField[NumericFieldValue],
-    field2: NumericField[NumericFieldValue]
-) -> NumericFieldValue:
+    field1: Field[Field.NumericValue],
+    field2: Field[Field.NumericValue]
+) -> Field.NumericValue:
 
     if field1.mesh != field2.mesh:
         raise InputFormatError(
@@ -62,7 +62,7 @@ def calc_rms_error(
 
 
 def calc_relative_rms_error(
-    field1: NumericField[NumericFieldValue],
-    field2: NumericField[NumericFieldValue]
+    field1: Field[Field.NumericValue],
+    field2: Field[Field.NumericValue]
 ) -> float:
     return calc_rms_error(field1, field2)/calc_rms_value(field1)
