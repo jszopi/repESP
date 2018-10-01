@@ -1,5 +1,5 @@
 from .exceptions import InputFormatError
-from .util import _get_atomic_number
+from .util import _elements, _get_symbol, _get_atomic_number
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
@@ -42,6 +42,13 @@ def make_ed(x: Any) -> Ed:
 class Atom:
     identity: int  # Atomic number
     coords: Coords
+
+    def __post_init__(self):
+        if self.identity < 1 or self.identity >= len(_elements):
+            raise ValueError("Atomic number is not within expected bounds.")
+
+    def symbol(self) -> str:
+        return _get_symbol(self.identity)
 
     @classmethod
     def from_symbol(cls, symbol: str, coords: Coords) -> 'Atom':
