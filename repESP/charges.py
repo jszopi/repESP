@@ -28,29 +28,12 @@ class ChargeType(_NoValue):
 class AtomWithCharge(Atom):
     charge: Charge
 
-    @classmethod
-    def from_symbol(  # type: ignore
-        cls: 'AtomWithCharge',
-        symbol: str,
-        charge: Charge
-    ) -> 'AtomWithCharge':
-        return cls(_get_atomic_number(symbol), charge)
-
 
 @dataclass
 class AtomWithCoordsAndCharge(AtomWithCharge, AtomWithCoords):
-
-    @classmethod
-    def from_symbol(  # type: ignore
-        cls: 'AtomWithCoordsAndCharge',
-        symbol: str,
-        coords: Coords,
-        charge: Charge
-    ) -> 'AtomWithCoordsAndCharge':
-        # TODO: mypy incorrectly infers the argument order for __init__ to be:
-        # (identity, charge, coords). Not ignoring here as it's also failing
-        # the tests, so leaving this one as reference.
-        return cls(_get_atomic_number(symbol), coords, charge)
+    # NOTE: mypy incorrectly infers the argument order for __init__ to be:
+    # (identity, charge, coords), resulting in loads of spurious errors.
+    pass
 
 
 DipoleMoment = NewType("DipoleMoment", float)  # Dipole moment [bohr * fundamental charge]

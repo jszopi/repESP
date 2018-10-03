@@ -50,21 +50,17 @@ class Atom:
         return _get_symbol(self.identity)
 
     @classmethod
-    def from_symbol(cls: 'Atom', symbol: str) -> 'Atom':
-        # All children of this class need to override this, because the generic
-        # type annotations (as per https://github.com/python/typing/issues/58#issuecomment-326240794)
-        # don't seem to be working for a dataclass. They also need to silence
-        # the resulting mypy warning.
-        return cls(_get_atomic_number(symbol))
+    def from_symbol(cls, symbol: str, *args, **kwargs):
+        # Generic type annotations as per:
+        # https://github.com/python/typing/issues/58#issuecomment-326240794)
+        # don't seem to be working for a dataclass, and that's even before
+        # getting them to work with args and kwargs.
+        return cls(_get_atomic_number(symbol), *args, **kwargs)  # type: ignore # (args, kwargs)
 
 
 @dataclass
 class AtomWithCoords(Atom):
     coords: Coords
-
-    @classmethod
-    def from_symbol(cls: 'AtomWithCoords', symbol: str, coords: Coords) -> 'AtomWithCoords':  # type: ignore
-        return cls(_get_atomic_number(symbol), coords)
 
 
 GenericAtom = TypeVar('GenericAtom', bound=Atom)
