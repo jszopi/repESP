@@ -15,7 +15,7 @@ class Cube(Generic[Field.NumericValue]):
         title_line: str
 
     info: Info
-    molecule: Molecule
+    molecule: Molecule[AtomWithCoords]
     electrons_on_atoms: List[float]
     field: Field[Field.NumericValue]
 

@@ -1,6 +1,6 @@
 from .exceptions import InputFormatError
 from .charges import MoleculeWithCharges
-from .types import Coords, Dist, Esp, Field, Mesh, Molecule
+from .types import AtomWithCoords, Coords, Dist, Esp, Field, Mesh, Molecule
 from .types import make_esp
 
 from scipy.spatial.distance import euclidean
@@ -24,7 +24,7 @@ def esp_from_charges(mesh: Mesh, molecule_with_charges: MoleculeWithCharges) -> 
     )
 
 
-def _voronoi_at_point(coords: Coords, molecule: Molecule) -> Tuple[Optional[int], Dist]:
+def _voronoi_at_point(coords: Coords, molecule: Molecule[AtomWithCoords]) -> Tuple[Optional[int], Dist]:
     """For a given point, find the closest atom and its distance"""
     min_dist = Dist(float('inf'))
     min_atom = None
@@ -36,7 +36,7 @@ def _voronoi_at_point(coords: Coords, molecule: Molecule) -> Tuple[Optional[int]
     return (min_atom, min_dist)
 
 
-def voronoi(mesh: Mesh, molecule: Molecule) -> Field[Tuple[Optional[int], Dist]]:
+def voronoi(mesh: Mesh, molecule: Molecule[AtomWithCoords]) -> Field[Tuple[Optional[int], Dist]]:
     # Voronoi means closest-atom in molecular partitioning lingo
     return Field(
         mesh,
