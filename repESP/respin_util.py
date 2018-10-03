@@ -6,6 +6,7 @@ import sys
 from typing import Dict, List, Optional, TextIO, Tuple, TypeVar, Union
 
 from .exceptions import InputFormatError
+from .types import Atom, Molecule
 from .util import _get_symbol, _zip_exact
 
 
@@ -23,18 +24,18 @@ class Equivalence:
                     f"in a molecule of {len(self.values)}."
                 )
 
-    def describe(self, atomic_numbers: Optional[List[int]]=None, file=sys.stdout):
+    def describe(self, molecule: Optional[Molecule[Atom]]=None, file=sys.stdout):
         """Verbosely report the equivalence information."""
-        if atomic_numbers is not None and len(atomic_numbers) != len(self.values):
+        if molecule is not None and len(molecule.atoms) != len(self.values):
             raise ValueError(
-                f"The number of atoms ({len(atomic_numbers)} is not the same "
+                f"The number of atoms ({len(molecule.atoms)} is not the same "
                 f"as the number of equivalence values ({len(self.values)}."
             )
 
-        zipped = zip_longest(self.values, atomic_numbers if atomic_numbers is not None else [])
+        zipped = zip_longest(self.values, molecule.atoms if molecule is not None else [])
 
-        for i, (equivalence, atomic_number) in enumerate(zipped):
-            identity = _get_symbol(atomic_number) if atomic_numbers is not None else None
+        for i, (equivalence, atom) in enumerate(zipped):
+            identity = atom.symbol() if molecule is not None else None
             id_str = f" ({identity})" if identity is not None else ""
             equivalence_str = f", equivalenced to atom {equivalence+1}" if equivalence is not None else ""
             print(f"Atom{id_str} number {i+1}{equivalence_str}", file=file)
@@ -144,19 +145,19 @@ class Respin:
                         f"which is either lower than 0 or outside the list length."
                     )
 
-        def describe(self, atomic_numbers: Optional[List[int]]=None, file: TextIO=sys.stdout):
+        def describe(self, molecule: Optional[Molecule[Atom]]=None, file: TextIO=sys.stdout):
             """Verbosely report the ``ivary`` actions"""
             # I'm undecided about printing functions. Can `file` point to managed log object?
-            if atomic_numbers is not None and len(atomic_numbers) != len(self.values):
+            if molecule is not None and len(molecule.atoms) != len(self.values):
                 raise ValueError(
-                    f"The number of atoms ({len(atomic_numbers)} is not the same "
+                    f"The number of atoms ({len(molecule.atoms)} is not the same "
                     f"as the number of ivary values ({len(self.values)}."
                 )
 
-            zipped = zip_longest(self.values, atomic_numbers if atomic_numbers is not None else [])
+            zipped = zip_longest(self.values, molecule.atoms if molecule is not None else [])
 
-            for i, (ivary, atomic_number) in enumerate(zipped):
-                identity = _get_symbol(atomic_number) if atomic_number is not None else None
+            for i, (ivary, atom) in enumerate(zipped):
+                identity = atom.symbol() if molecule is not None else None
                 id_str = f" ({identity})" if identity is not None else ""
 
                 if ivary < 0:
@@ -185,22 +186,22 @@ class Respin:
     subtitle: str
     charge: int
     iuniq: int
-    atomic_numbers: List[int]
+    molecule: Molecule[Atom]
     ivary: Ivary
 
     def __post_init__(self) -> None:
         Respin._check_value("wtmol", "{:.1f}".format(self.wtmol), ["1.0"])
 
-        if len(self.atomic_numbers) != len(self.ivary.values):
+        if len(self.molecule.atoms) != len(self.ivary.values):
             raise ValueError(
-                f"Number of atoms ({self.atomic_numbers}) does not match number "
-                f"of ivary values ({self.ivary.values})."
+                f"Number of atoms ({len(self.molecule.atoms)}) does not match number "
+                f"of ivary values ({len(self.ivary.values)})."
             )
 
         if self.iuniq != len(self.ivary.values):
             raise ValueError(
                 f"`iuniq` value ({self.iuniq}) doesn't match the number of atoms "
-                f"({self.atomic_numbers})."
+                f"({len(self.molecule.atoms)})."
             )
 
 
@@ -246,7 +247,7 @@ def _parse_respin(f) -> Respin:
     charge = int(charge_and_iuniq.split()[0])
     iuniq = int(charge_and_iuniq.split()[1])
 
-    atomic_numbers: List[int] = []
+    atoms: List[Atom] = []
     ivary = Respin.Ivary([])
 
     for line in f:
@@ -257,7 +258,7 @@ def _parse_respin(f) -> Respin:
                 f"Expected two ints for the line specifying atom and ivary, found:\n{line}"
             )
 
-        atomic_numbers.append(int(line.split()[0]))
+        atoms.append(Atom(int(line.split()[0])))
         ivary_value = int(line.split()[1])
         # `respgen` uses a value of -99 but internally we use -1 as per resp spec.
         ivary.values.append(ivary_value if ivary_value != -99 else -1)
@@ -269,7 +270,7 @@ def _parse_respin(f) -> Respin:
         subtitle,
         charge,
         iuniq,
-        atomic_numbers,
+        Molecule(atoms),
         ivary
     )
 
@@ -294,8 +295,8 @@ def _write_respin(f: TextIO, respin: Respin, skip_cntrl_defaults: bool=True) -> 
     print(FW("F7.1").write([respin.wtmol]), file=f)
     print(respin.subtitle, file=f)
     print(FW("2I5").write([respin.charge, respin.iuniq]), file=f)
-    for atomic_number, ivary in zip(respin.atomic_numbers, respin.ivary.values):
-        print(FW("2I5").write([atomic_number, ivary]), file=f)
+    for atom, ivary in zip(respin.molecule.atoms, respin.ivary.values):
+        print(FW("2I5").write([atom.identity, ivary]), file=f)
     # According to the spec a blank line is only for multi-structures but `resp`
     # fails without it.
     print(file=f)

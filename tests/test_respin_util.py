@@ -59,7 +59,10 @@ class TestEquivalence(TestCase):
             "Atom (H) number 5, equivalenced to atom 2\n",
         ]
 
-        equivalence.describe(atomic_numbers=[6, 1, 1, 1, 1], file=output)
+        equivalence.describe(
+            molecule=Molecule([Atom(atomic_number) for atomic_number in [6, 1, 1, 1, 1]]),
+            file=output
+        )
         output.seek(0)
         self.assertListEqual(expected_lines, output.readlines())
 
@@ -81,7 +84,7 @@ class TestRespin(TestCase):
             subtitle="Resp charges for organic molecule",
             charge=0,
             iuniq=5,
-            atomic_numbers=[6, 1, 1, 1, 1],
+            molecule=Molecule([Atom(atomic_number) for atomic_number in [6, 1, 1, 1, 1]]),
             ivary=Respin.Ivary([0, 0, 2, 2, 2])
         )
 
@@ -146,7 +149,10 @@ class TestIvary(TestRespin):
             "Atom (H) number 5, equivalenced to atom 2\n",
         ]
 
-        self.respin.ivary.describe(atomic_numbers=[6, 1, 1, 1, 1], file=output)
+        self.respin.ivary.describe(
+            molecule=Molecule([Atom(atomic_number) for atomic_number in [6, 1, 1, 1, 1]]),
+            file=output
+        )
         output.seek(0)
         self.assertListEqual(expected_lines, output.readlines())
 

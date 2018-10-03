@@ -6,6 +6,7 @@ from .respin_generation import FitHydrogensOnlyRespinGenerator, FrozenAtomsRespi
 from .respin_generation import EquivalenceOnlyRespinGenerator
 from .respin_util import Respin, _write_respin, Equivalence
 from .resp_charges_util import write_resp_charges, parse_resp_charges
+from .types import Atom, Molecule
 
 from dataclasses import dataclass
 from itertools import zip_longest
@@ -99,7 +100,7 @@ def run_two_stage_resp(
 
     # Some verification of respin file compatibility should be performed.
     total_charge = respin1.charge
-    atomic_numbers = respin1.atomic_numbers
+    molecule = respin1.molecule
 
     get_calc_dir = lambda stage: (
         f"{save_intermediates_to}/stage_{stage}"
@@ -109,7 +110,7 @@ def run_two_stage_resp(
     respin1_generated = prepare_respin(
         RespStage1RespinGenerator(respin1.ivary),
         total_charge,
-        atomic_numbers,
+        molecule,
         read_charges=initial_charges is not None
     )
 
@@ -124,7 +125,7 @@ def run_two_stage_resp(
     respin2_generated = prepare_respin(
         RespStage2RespinGenerator(respin2.ivary),
         total_charge,
-        atomic_numbers,
+        molecule,
         read_charges=True
     )
 
@@ -140,7 +141,7 @@ def run_two_stage_resp(
 def fit_with_equivalencing(
     esp_data: EspData,
     equivalence: Equivalence,
-    atomic_numbers: List[int],
+    molecule: Molecule[Atom],
     total_charge: int,
     initial_charges: Optional[List[Charge]]=None,
     generate_esout: bool=False,
@@ -151,7 +152,7 @@ def fit_with_equivalencing(
     respin = prepare_respin(
         respin_generator,
         total_charge,
-        atomic_numbers,
+        molecule,
         read_charges=initial_charges is not None
     )
 
@@ -167,18 +168,18 @@ def fit_with_equivalencing(
 def fit_hydrogens_only(
     esp_data: EspData,
     equivalence: Equivalence,
-    atomic_numbers: List[int],
+    molecule: Molecule[Atom],
     total_charge: int,
     initial_charges: List[Charge],
     generate_esout: bool=False,
     save_intermediates_to: Optional[str]=None
 ) -> List[Charge]:
 
-    respin_generator = FitHydrogensOnlyRespinGenerator(equivalence, atomic_numbers)
+    respin_generator = FitHydrogensOnlyRespinGenerator(equivalence, molecule)
     respin = prepare_respin(
         respin_generator,
         total_charge,
-        atomic_numbers,
+        molecule,
         read_charges=True
     )
 
@@ -194,7 +195,7 @@ def fit_hydrogens_only(
 def fit_with_frozen_atoms(
     esp_data: EspData,
     equivalence: Equivalence,
-    atomic_numbers: List[int],
+    molecule: Molecule[Atom],
     frozen_atoms: List[int],
     total_charge: int,
     initial_charges: List[Charge],
@@ -206,7 +207,7 @@ def fit_with_frozen_atoms(
     respin = prepare_respin(
         respin_generator,
         total_charge,
-        atomic_numbers,
+        molecule,
         read_charges=True
     )
 

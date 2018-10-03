@@ -1,5 +1,6 @@
 from .charges import Charge
 from .respin_util import Respin, Equivalence
+from .types import Atom, Molecule
 from .util import _zip_exact
 
 from abc import ABC, abstractmethod
@@ -98,18 +99,18 @@ class RespStage2RespinGenerator(RespRespinGenerator):
 
 class FitHydrogensOnlyRespinGenerator(TypeSpecificRespinGenerator):
 
-    def __init__(self, equivalence: Equivalence, atomic_numbers: List[int]) -> None:
+    def __init__(self, equivalence: Equivalence, molecule: Molecule[Atom]) -> None:
         self.equivalence = equivalence
-        self.atomic_numbers = atomic_numbers
+        self.molecule = molecule
 
     def resp_type(self) -> str:
         return "fitting of hydrogen atoms"
 
     def get_ivary(self) -> Respin.Ivary:
         return Respin.Ivary([
-            -1 if atomic_number != 1 else ivary
-            for atomic_number, ivary in zip(
-                self.atomic_numbers,
+            -1 if atom.identity != 1 else ivary
+            for atom, ivary in zip(
+                self.molecule.atoms,
                 Respin.Ivary.from_equivalence(self.equivalence).values
             )
         ])
@@ -169,7 +170,7 @@ class FrozenAtomsRespinGenerator(TypeSpecificRespinGenerator):
 def prepare_respin(
     respin_generator: TypeSpecificRespinGenerator,
     total_charge: int,
-    atomic_numbers: List[int],
+    molecule: Molecule[Atom],
     title: Optional[str]=None,
     subtitle: Optional[str]=None,
     read_charges: bool=False
@@ -188,7 +189,7 @@ def prepare_respin(
         wtmol=1.0,
         subtitle=subtitle if subtitle is not None else default_subtitle,
         charge=total_charge,
-        iuniq=len(atomic_numbers),
-        atomic_numbers=atomic_numbers,
+        iuniq=len(molecule.atoms),
+        molecule=molecule,
         ivary=respin_generator.get_ivary()
     )

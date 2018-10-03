@@ -24,19 +24,19 @@ class TestRespinGenerationOnStage1Resp(TestCase):
             subtitle="Resp charges for organic molecule",
             charge=0,
             iuniq=5,
-            atomic_numbers=[6, 1, 1, 1, 1],
+            molecule=Molecule([Atom(atomic_number) for atomic_number in [6, 1, 1, 1, 1]]),
             ivary=Respin.Ivary([0, 0, 0, 0, 0])
         )
 
         self.ivary = self.expected_respin.ivary
-        self.atomic_numbers = self.expected_respin.atomic_numbers
+        self.molecule = self.expected_respin.molecule
 
     def test_defaults(self) -> None:
 
         generated = prepare_respin(
             respin_generator=RespStage1RespinGenerator(self.ivary),
             total_charge=0,
-            atomic_numbers=self.atomic_numbers
+            molecule=self.molecule
         )
 
         self.assertAlmostEqualRecursive(self.expected_respin, generated)
@@ -46,7 +46,7 @@ class TestRespinGenerationOnStage1Resp(TestCase):
         generated = prepare_respin(
             respin_generator=RespStage1RespinGenerator(self.ivary),
             total_charge=0,
-            atomic_numbers=self.atomic_numbers,
+            molecule=self.molecule,
             read_charges=True
         )
 
@@ -60,7 +60,7 @@ class TestRespinGenerationOnStage1Resp(TestCase):
         generated = prepare_respin(
             respin_generator=RespStage1RespinGenerator(self.ivary),
             total_charge=1,
-            atomic_numbers=self.atomic_numbers
+            molecule=self.molecule
         )
 
         expected = deepcopy(self.expected_respin)
@@ -73,7 +73,7 @@ class TestRespinGenerationOnStage1Resp(TestCase):
         generated = prepare_respin(
             respin_generator=RespStage1RespinGenerator(self.ivary),
             total_charge=0,
-            atomic_numbers=self.atomic_numbers,
+            molecule=self.molecule,
             title="Custom title",
             subtitle="Custom subtitle"
         )
@@ -126,17 +126,17 @@ class TestFitingHydrogensOnly(TestCase):
             subtitle="Resp charges for organic molecule",
             charge=0,
             iuniq=5,
-            atomic_numbers=[6, 1, 1, 1, 1],
+            molecule=Molecule([Atom(atomic_number) for atomic_number in [6, 1, 1, 1, 1]]),
             ivary=Respin.Ivary([-1, 0, 2, 2, 2])
         )
 
         generated = prepare_respin(
             respin_generator=FitHydrogensOnlyRespinGenerator(
                 Equivalence([None, None, 1, 1, 1]),
-                respin.atomic_numbers
+                respin.molecule
             ),
             total_charge=0,
-            atomic_numbers=respin.atomic_numbers
+            molecule=respin.molecule
         )
 
         self.assertAlmostEqualRecursive(respin, generated)
@@ -156,7 +156,7 @@ class TestEquivalencing(TestCase):
             subtitle="Resp charges for organic molecule",
             charge=0,
             iuniq=5,
-            atomic_numbers=[6, 1, 1, 1, 1],
+            molecule=Molecule([Atom(atomic_number) for atomic_number in [6, 1, 1, 1, 1]]),
             ivary=Respin.Ivary([0, 0, 2, 2, 2])
         )
 
@@ -165,7 +165,7 @@ class TestEquivalencing(TestCase):
                 Equivalence([None, None, 1, 1, 1])
             ),
             total_charge=0,
-            atomic_numbers=respin.atomic_numbers
+            molecule=respin.molecule
         )
 
         self.assertAlmostEqualRecursive(respin, generated)
@@ -186,7 +186,7 @@ class TestFittingWithFrozenAtoms(TestCase):
             subtitle="Resp charges for organic molecule",
             charge=0,
             iuniq=5,
-            atomic_numbers=[6, 1, 1, 1, 1],
+            molecule=Molecule([Atom(atomic_number) for atomic_number in [6, 1, 1, 1, 1]]),
             ivary=Respin.Ivary([-1, 0, 2, -1, 2])
         )
 
@@ -196,7 +196,7 @@ class TestFittingWithFrozenAtoms(TestCase):
                 frozen_atoms=[0, 3]
             ),
             total_charge=0,
-            atomic_numbers=respin.atomic_numbers
+            molecule=respin.molecule
         )
 
         self.assertAlmostEqualRecursive(respin, generated)

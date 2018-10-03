@@ -30,7 +30,7 @@ class TestResp(TestCase):
             subtitle="Resp charges for organic molecule",
             charge=0,
             iuniq=5,
-            atomic_numbers=[6, 1, 1, 1, 1],
+            molecule=Molecule([Atom(atomic_number) for atomic_number in [6, 1, 1, 1, 1]]),
             ivary=Respin.Ivary([0, 0, 0, 0, 0])
         )
 
@@ -48,7 +48,7 @@ class TestResp(TestCase):
 
     def test_run_resp_with_malformed_input(self) -> None:
         respin = deepcopy(self.respin)
-        respin.atomic_numbers=[0]
+        respin.molecule = Molecule([Atom(1)])
         with self.assertRaises(RuntimeError):
             run_resp(self.esp_data, respin)
 
@@ -64,7 +64,7 @@ class TestResp(TestCase):
             subtitle="Resp charges for organic molecule",
             charge=0,
             iuniq=5,
-            atomic_numbers=[6, 1, 1, 1, 1],
+            molecule=Molecule([Atom(atomic_number) for atomic_number in [6, 1, 1, 1, 1]]),
             ivary=Respin.Ivary([0, 0, 2, 2, 2])
         )
 
@@ -85,7 +85,7 @@ class TestResp(TestCase):
         charges = fit_with_equivalencing(
             esp_data=self.esp_data,
             equivalence=Equivalence([None, None, 1, 1, 1]),
-            atomic_numbers=[6, 1, 1, 1, 1],
+            molecule=Molecule([Atom(atomic_number) for atomic_number in [6, 1, 1, 1, 1]]),
             total_charge=0
         )
 
@@ -100,7 +100,7 @@ class TestResp(TestCase):
         charges = fit_hydrogens_only(
             esp_data=self.esp_data,
             equivalence=Equivalence([None, None, 1, 1, 1]),
-            atomic_numbers=[6, 1, 1, 1, 1],
+            molecule=Molecule([Atom(atomic_number) for atomic_number in [6, 1, 1, 1, 1]]),
             total_charge=0,
             initial_charges=[make_charge(x) for x in [-0.5, 0, 0, 0, 0]]
         )
@@ -117,7 +117,7 @@ class TestResp(TestCase):
         charges = fit_with_frozen_atoms(
             esp_data=self.esp_data,
             equivalence=Equivalence([None, None, 1, 1, 1]),
-            atomic_numbers=[6, 1, 1, 1, 1],
+            molecule=Molecule([Atom(atomic_number) for atomic_number in [6, 1, 1, 1, 1]]),
             frozen_atoms=[0, 2, 4],
             total_charge=0,
             initial_charges=[make_charge(x) for x in [-0.5, 0, 0, 0, 0]]
