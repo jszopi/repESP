@@ -1,5 +1,5 @@
 from .exceptions import InputFormatError
-from .charges import MoleculeWithCharges
+from .charges import AtomWithCoordsAndCharge
 from .types import AtomWithCoords, Coords, Dist, Esp, Field, Mesh, Molecule
 from .types import make_esp
 
@@ -8,19 +8,19 @@ import numpy as np
 from typing import cast, List, NewType, Optional, Tuple
 
 
-def _esp_from_charges_at_point(coords: Coords, molecule_with_charges: MoleculeWithCharges) -> Esp:
+def _esp_from_charges_at_point(coords: Coords, molecule: Molecule[AtomWithCoordsAndCharge]) -> Esp:
 
     return make_esp(sum(
-        charge/(euclidean(coords, atom.coords))
-        for atom, charge in zip(molecule_with_charges.molecule.atoms, molecule_with_charges.charges)
+        atom.charge/(euclidean(coords, atom.coords))
+        for atom in molecule.atoms
     ))
 
 
-def esp_from_charges(mesh: Mesh, molecule_with_charges: MoleculeWithCharges) -> Field[Esp]:
+def esp_from_charges(mesh: Mesh, molecule: Molecule[AtomWithCoordsAndCharge]) -> Field[Esp]:
     """Calculate ESP value at given point due to charges on atoms"""
     return Field(
         mesh,
-        [_esp_from_charges_at_point(coords, molecule_with_charges) for coords in mesh.points()]
+        [_esp_from_charges_at_point(coords, molecule) for coords in mesh.points()]
     )
 
 

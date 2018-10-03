@@ -1,10 +1,10 @@
 from .exceptions import InputFormatError
-from .types import Molecule
-from .util import _NoValue
+from .types import Atom, AtomWithCoords, Coords
+from .util import _NoValue, _get_atomic_number
 
-from dataclasses import dataclass
+from dataclasses import dataclass, make_dataclass
 from enum import auto
-from typing import Any, List, Collection, NewType
+from typing import Any, List, Collection, NewType, Tuple, Type
 
 
 Charge = NewType("Charge", float)  # Atomic charge [elementary charge]
@@ -24,24 +24,33 @@ class ChargeType(_NoValue):
     AIM = auto()
 
 
-@dataclass(init=False)
-class MoleculeWithCharges:
+@dataclass
+class AtomWithCharge(Atom):
+    charge: Charge
 
-    molecule: Molecule
-    charges: List[Charge]
+    @classmethod
+    def from_symbol(  # type: ignore
+        cls: 'AtomWithCharge',
+        symbol: str,
+        charge: Charge
+    ) -> 'AtomWithCharge':
+        return cls(_get_atomic_number(symbol), charge)
 
-    def __init__(self, molecule: Molecule, charges: Collection[Charge]) -> None:
-        if len(molecule.atoms) != len(charges):
-            raise InputFormatError(
-                "Construction of MoleculeWithCharges failed due to mismatch between the "
-                "number of atoms in molecule ({}) and the number of charges ({})".format(
-                    len(molecule.atoms),
-                    len(charges)
-                )
-            )
 
-        self.charges = list(charges)
-        self.molecule = molecule
+@dataclass
+class AtomWithCoordsAndCharge(AtomWithCharge, AtomWithCoords):
+
+    @classmethod
+    def from_symbol(  # type: ignore
+        cls: 'AtomWithCoordsAndCharge',
+        symbol: str,
+        coords: Coords,
+        charge: Charge
+    ) -> 'AtomWithCoordsAndCharge':
+        # TODO: mypy incorrectly infers the argument order for __init__ to be:
+        # (identity, charge, coords). Not ignoring here as it's also failing
+        # the tests, so leaving this one as reference.
+        return cls(_get_atomic_number(symbol), coords, charge)
 
 
 DipoleMoment = NewType("DipoleMoment", float)  # Dipole moment [bohr * fundamental charge]

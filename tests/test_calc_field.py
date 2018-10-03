@@ -46,10 +46,17 @@ class TestEspFromCharges(SmallTestCase):
 
     def setUp(self) -> None:
         super().setUp()
-        self.molecule_with_charges = MoleculeWithCharges(
-            self.molecule,
-            [make_charge(x) for x in [0.5, -0.9]]
-        )
+        self.molecule_with_charges = Molecule([
+            AtomWithCoordsAndCharge(
+                atom.identity,
+                atom.coords,
+                charge
+            )
+            for atom, charge in zip(
+                self.molecule.atoms,
+                [make_charge(x) for x in [0.5, -0.9]]
+            )
+        ])
 
     def test_non_grid_esp(self) -> None:
 
@@ -138,13 +145,20 @@ class TestCalcStats(TestCase):
             gaussian_esp = parse_gaussian_esp(f)
 
         self.esp_field = gaussian_esp.field
-        molecule = gaussian_esp.molecule_with_charges.molecule
+        molecule = gaussian_esp.molecule
 
         with open("data/methane/methane_mk.log") as f:
             charges = get_charges_from_log(f, ChargeType.MK, verify_against=molecule)
 
-        self.molecule_with_charges = MoleculeWithCharges(molecule, charges)
-        self.rep_esp_field = esp_from_charges(self.esp_field.mesh, self.molecule_with_charges)
+        molecule_with_charges = Molecule([
+            AtomWithCoordsAndCharge(
+                atom.identity,
+                atom.coords,
+                charge
+            )
+            for atom, charge in zip(molecule.atoms, charges)
+        ])
+        self.rep_esp_field = esp_from_charges(self.esp_field.mesh, molecule_with_charges)
 
     def test_rms(self) -> None:
         self.assertAlmostEqual(

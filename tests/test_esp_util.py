@@ -11,16 +11,18 @@ from io import StringIO
 gaussian_esp_data = GaussianEspData(
     0,
     1,
-    MoleculeWithCharges(
-        Molecule([
-            AtomWithCoords(6, make_coords(0, 0, 0)),
-            AtomWithCoords(1, make_coords(1.23, 0.456, 0.0789))
-        ]),
-        [
-            make_charge(-0.50031415),
+    Molecule([
+        AtomWithCoordsAndCharge(
+            6,
+            make_coords(0, 0, 0),
+            make_charge(-0.50031415)
+        ),
+        AtomWithCoordsAndCharge(
+            1,
+            make_coords(1.23, 0.456, 0.0789),
             make_charge( 0.12532268)
-        ]
-    ),
+        )
+    ]),
     Dipole(
         make_dipole_moment( 0.38811727e-15),
         make_dipole_moment( 0.42690461e-16),

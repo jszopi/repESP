@@ -1,6 +1,6 @@
 from .types import AtomWithCoords, Esp, Field, Coords, NonGridMesh, Molecule
 from .types import make_coords, make_esp
-from .charges import Charge, Dipole, MoleculeWithCharges, Quadrupole
+from .charges import AtomWithCoordsAndCharge, Charge, Dipole, Quadrupole
 from .charges import make_charge, make_dipole_moment, make_quadrupole_moment
 from .exceptions import InputFormatError
 
@@ -15,7 +15,7 @@ class GaussianEspData:
     # Gaussian 09 .esp file format generated with IOp(6/50=1).
     charge: float
     multiplicity: int
-    molecule_with_charges: MoleculeWithCharges
+    molecule: Molecule[AtomWithCoordsAndCharge]
     dipole: Dipole
     quadrupole: Quadrupole
     field: Field
@@ -29,7 +29,7 @@ class EspData:
     @classmethod
     def from_gaussian(cls, gaussian_esp_data: GaussianEspData):
         return EspData(
-            [atom.coords for atom in gaussian_esp_data.molecule_with_charges.molecule.atoms],
+            [atom.coords for atom in gaussian_esp_data.molecule.atoms],
             gaussian_esp_data.field
         )
 
@@ -40,11 +40,7 @@ def parse_gaussian_esp(f: TextIO) -> GaussianEspData:
 
     charge, multiplicity, atom_count = _parse_prelude([get_line() for i in range(3)])
 
-    atoms_and_charges = [_parse_atom(get_line()) for _ in range(atom_count)]
-    molecule_with_charges = MoleculeWithCharges(
-        Molecule([atom_and_charge[0] for atom_and_charge in atoms_and_charges]),
-        [atom_and_charge[1] for atom_and_charge in atoms_and_charges]
-    )
+    molecule = Molecule([_parse_atom(get_line()) for _ in range(atom_count)])
 
     if get_line() != " DIPOLE MOMENT:":
         raise InputFormatError("Expected dipole moment section header.")
@@ -71,7 +67,7 @@ def parse_gaussian_esp(f: TextIO) -> GaussianEspData:
             f"specified in section header ({point_count})."
         )
 
-    return GaussianEspData(charge, multiplicity, molecule_with_charges, dipole, quadrupole, field)
+    return GaussianEspData(charge, multiplicity, molecule, dipole, quadrupole, field)
 
 
 def _parse_prelude(lines: List[str]) -> Tuple[float, int, int]:
@@ -99,13 +95,11 @@ def _parse_prelude(lines: List[str]) -> Tuple[float, int, int]:
     return charge, multiplicity, int(atom_count.group(1))
 
 
-def _parse_atom(line: str) -> Tuple[AtomWithCoords, Charge]:
+def _parse_atom(line: str) -> AtomWithCoordsAndCharge:
     line_split = line.split()
-    return (
-        AtomWithCoords.from_symbol(
-            line_split[0],
-            make_coords(*(coord.replace('D', 'E') for coord in line_split[1:4]))
-        ),
+    return AtomWithCoordsAndCharge.from_symbol(
+        line_split[0],
+        make_coords(*(coord.replace('D', 'E') for coord in line_split[1:4])),
         make_charge(line_split[4].replace('D', 'E'))
     )
 
