@@ -13,8 +13,8 @@ gaussian_esp_data = GaussianEspData(
     1,
     MoleculeWithCharges(
         Molecule([
-            Atom(6, make_coords(0, 0, 0)),
-            Atom(1, make_coords(1.23, 0.456, 0.0789))
+            AtomWithCoords(6, make_coords(0, 0, 0)),
+            AtomWithCoords(1, make_coords(1.23, 0.456, 0.0789))
         ]),
         [
             make_charge(-0.50031415),

@@ -1,4 +1,4 @@
-from .types import Atom, Esp, Field, Coords, NonGridMesh, Molecule
+from .types import AtomWithCoords, Esp, Field, Coords, NonGridMesh, Molecule
 from .types import make_coords, make_esp
 from .charges import Charge, Dipole, MoleculeWithCharges, Quadrupole
 from .charges import make_charge, make_dipole_moment, make_quadrupole_moment
@@ -99,10 +99,10 @@ def _parse_prelude(lines: List[str]) -> Tuple[float, int, int]:
     return charge, multiplicity, int(atom_count.group(1))
 
 
-def _parse_atom(line: str) -> Tuple[Atom, Charge]:
+def _parse_atom(line: str) -> Tuple[AtomWithCoords, Charge]:
     line_split = line.split()
     return (
-        Atom.from_symbol(
+        AtomWithCoords.from_symbol(
             line_split[0],
             make_coords(*(coord.replace('D', 'E') for coord in line_split[1:4]))
         ),

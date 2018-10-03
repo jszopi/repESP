@@ -41,7 +41,6 @@ def make_ed(x: Any) -> Ed:
 @dataclass
 class Atom:
     identity: int  # Atomic number
-    coords: Coords
 
     def __post_init__(self):
         if self.identity < 1 or self.identity >= len(_elements):
@@ -51,13 +50,29 @@ class Atom:
         return _get_symbol(self.identity)
 
     @classmethod
-    def from_symbol(cls, symbol: str, coords: Coords) -> 'Atom':
-        return cls(_get_atomic_number(symbol), coords)
+    def from_symbol(cls: 'Atom', symbol: str) -> 'Atom':
+        # All children of this class need to override this, because the generic
+        # type annotations (as per https://github.com/python/typing/issues/58#issuecomment-326240794)
+        # don't seem to be working for a dataclass. They also need to silence
+        # the resulting mypy warning.
+        return cls(_get_atomic_number(symbol))
 
 
 @dataclass
-class Molecule:
-    atoms: List[Atom]
+class AtomWithCoords(Atom):
+    coords: Coords
+
+    @classmethod
+    def from_symbol(cls: 'AtomWithCoords', symbol: str, coords: Coords) -> 'AtomWithCoords':  # type: ignore
+        return cls(_get_atomic_number(symbol), coords)
+
+
+GenericAtom = TypeVar('GenericAtom', bound=Atom)
+
+
+@dataclass
+class Molecule(Generic[GenericAtom]):
+    atoms: List[GenericAtom]
 
 
 FieldValue = TypeVar('FieldValue')

@@ -6,15 +6,21 @@ from my_unittest import TestCase
 from copy import copy
 
 
+class TestMoleculeWithCoords(TestCase):
+
+    def test_construction(self):
+        Molecule(
+            [
+                AtomWithCoords(1, make_coords(1, 1, 2)),
+                AtomWithCoords(2, make_coords(2, 0, 2)),
+            ]
+        )
+
+
 class TestMoleculeWithCharges(TestCase):
 
     def setUp(self) -> None:
-        self.molecule = Molecule(
-            atoms=[
-                Atom(1, make_coords(1, 1, 2)),
-                Atom(2, make_coords(2, 0, 2)),
-            ]
-        )
+        self.molecule = Molecule([Atom(1), Atom(2)])
 
     def test_construction(self) -> None:
         values = [make_charge(x) for x in [0, 1]]

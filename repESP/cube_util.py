@@ -1,4 +1,4 @@
-from .types import Atom, Ed, Esp, Coords, Field, GridMesh, Molecule
+from .types import AtomWithCoords, Ed, Esp, Coords, Field, GridMesh, Molecule
 from .types import make_coords, make_ed, make_esp
 from .exceptions import InputFormatError
 
@@ -65,16 +65,10 @@ def _parse_grid(origin: Coords, lines: List[str]) -> GridMesh:
     )
 
 
-@dataclass
-class _AtomWithElectrons:
-    atom: Atom
-    electron_count: float
-
-
-def _parse_atom(line: str) -> _AtomWithElectrons:
+def _parse_atom(line: str) -> Tuple[AtomWithCoords, float]:
     identity, cube_charge, *coords = line.split()
-    return _AtomWithElectrons(
-        Atom(int(identity), make_coords(*coords)),
+    return (
+        AtomWithCoords(int(identity), make_coords(*coords)),
         float(cube_charge)
     )
 
@@ -102,9 +96,8 @@ def parse_cube(
 
     # Molecule
     atoms_with_electrons = [_parse_atom(get_line()) for i in range(grid_prelude.atom_count)]
-    atoms = [atom_with_electrons.atom for atom_with_electrons in atoms_with_electrons]
-    electrons_on_atoms = [atom_with_electrons.electron_count for atom_with_electrons in atoms_with_electrons]
-    molecule = Molecule(atoms)
+    atoms, electrons_on_atoms = zip(*atoms_with_electrons)
+    molecule = Molecule(list(atoms))
 
     # Field values
     value_ctor = lambda x: make_value(info, x)
@@ -114,7 +107,7 @@ def parse_cube(
     return Cube(
         info,
         molecule,
-        electrons_on_atoms,
+        list(electrons_on_atoms),
         Field(grid, values)
     )
 

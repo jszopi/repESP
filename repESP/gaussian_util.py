@@ -1,6 +1,6 @@
 from .charges import Charge, ChargeType, make_charge
 from .exceptions import InputFormatError
-from .types import Atom, Coords, Esp, Molecule, make_esp
+from .types import Coords, Esp, Molecule, make_esp
 
 from dataclasses import dataclass
 import re

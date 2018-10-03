@@ -36,8 +36,8 @@ class SmallTestCase(TestCase):
 
         self.molecule = Molecule(
             atoms=[
-                Atom(identity=1, coords=make_coords(0, 1, 0.5)),
-                Atom(identity=1, coords=make_coords(-0.4, 0.2, 0.5))
+                AtomWithCoords(identity=1, coords=make_coords(0, 1, 0.5)),
+                AtomWithCoords(identity=1, coords=make_coords(-0.4, 0.2, 0.5))
             ]
         )
 
