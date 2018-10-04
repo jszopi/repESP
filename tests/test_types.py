@@ -87,7 +87,7 @@ class TestNonGridMesh(TestCase):
 
     def test_points(self) -> None:
 
-        points = self.mesh.points()
+        points = self.mesh.points
         self.assertListsAlmostEqual(next(points), make_coords(1, 1, 1))
         self.assertListsAlmostEqual(next(points), make_coords(-1, 0, -0.9))
 
@@ -159,7 +159,7 @@ class TestGridMesh(TestCase):
             ]
         ]
 
-        self.assertAlmostEqualRecursive(list(self.mesh.points()), points)
+        self.assertAlmostEqualRecursive(list(self.mesh.points), points)
 
 
 class TestField(TestCase):

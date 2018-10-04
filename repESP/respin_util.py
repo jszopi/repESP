@@ -35,7 +35,7 @@ class Equivalence:
         zipped = zip_longest(self.values, molecule.atoms if molecule is not None else [])
 
         for i, (equivalence, atom) in enumerate(zipped):
-            identity = atom.symbol() if molecule is not None else None
+            identity = atom.symbol if molecule is not None else None
             id_str = f" ({identity})" if identity is not None else ""
             equivalence_str = f", equivalenced to atom {equivalence+1}" if equivalence is not None else ""
             print(f"Atom{id_str} number {i+1}{equivalence_str}", file=file)
@@ -157,7 +157,7 @@ class Respin:
             zipped = zip_longest(self.values, molecule.atoms if molecule is not None else [])
 
             for i, (ivary, atom) in enumerate(zipped):
-                identity = atom.symbol() if molecule is not None else None
+                identity = atom.symbol if molecule is not None else None
                 id_str = f" ({identity})" if identity is not None else ""
 
                 if ivary < 0:

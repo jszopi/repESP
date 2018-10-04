@@ -46,6 +46,7 @@ class Atom:
         if self.identity < 1 or self.identity >= len(_elements):
             raise ValueError("Atomic number is not within expected bounds.")
 
+    @property
     def symbol(self) -> str:
         return _get_symbol(self.identity)
 
@@ -136,6 +137,7 @@ class Field(Generic[FieldValue]):
 
 class Mesh(ABC):
 
+    @property
     @abstractmethod
     def points(self) -> Iterator[Coords]:
         pass
@@ -153,6 +155,7 @@ class NonGridMesh(Mesh):
     def __init__(self, points_coords: Collection[Coords]) -> None:
         self._points_coords = list(points_coords)
 
+    @property
     def points(self) -> Iterator[Coords]:
         return iter(self._points_coords)
 
@@ -198,6 +201,7 @@ class GridMesh(Mesh):
             ])
         )
 
+    @property
     def points(self) -> Iterator[Coords]:
         for i in range(self._axes[0].point_count):
             for j in range(self._axes[1].point_count):

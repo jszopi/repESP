@@ -218,7 +218,7 @@ def write_resp_esp(f: TextIO, esp_data: EspData):
     for atom_coords in atoms_coords:
         f.write(FW(formats["atoms"]).write(atom_coords) + "\n")
 
-    for point_coords, esp_val in zip(field.mesh.points(), field.values):
+    for point_coords, esp_val in zip(field.mesh.points, field.values):
         f.write(
             FW(formats["points"]).write(
                 [esp_val] + list(point_coords)

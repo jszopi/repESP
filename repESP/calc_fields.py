@@ -20,7 +20,7 @@ def esp_from_charges(mesh: Mesh, molecule: Molecule[AtomWithCoordsAndCharge]) ->
     """Calculate ESP value at given point due to charges on atoms"""
     return Field(
         mesh,
-        [_esp_from_charges_at_point(coords, molecule) for coords in mesh.points()]
+        [_esp_from_charges_at_point(coords, molecule) for coords in mesh.points]
     )
 
 
@@ -40,7 +40,7 @@ def voronoi(mesh: Mesh, molecule: Molecule[AtomWithCoords]) -> Field[Tuple[Optio
     # Voronoi means closest-atom in molecular partitioning lingo
     return Field(
         mesh,
-        [_voronoi_at_point(coords, molecule) for coords in mesh.points()]
+        [_voronoi_at_point(coords, molecule) for coords in mesh.points]
     )
 
 
