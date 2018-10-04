@@ -144,7 +144,14 @@ class EquivalenceOnlyRespinGenerator(TypeSpecificRespinGenerator):
 class FrozenAtomsRespinGenerator(TypeSpecificRespinGenerator):
 
     def __init__(self, equivalence: Equivalence, frozen_atoms: List[int]) -> None:
-        # This should check compatibility between equivalence and frozen_atoms.
+
+        for atom_label in frozen_atoms:
+            if atom_label < 0 or atom_label >= len(equivalence.values):
+                raise ValueError(
+                    f"Label of atom to be frozen ({atom_label}) is outside of "
+                    f"expected range i.e. [0, {len(equivalence.values)})."
+                )
+
         self.equivalence = equivalence
         self.frozen_atoms = frozen_atoms
 

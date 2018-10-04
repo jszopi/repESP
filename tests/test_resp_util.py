@@ -112,16 +112,36 @@ class TestResp(TestCase):
             [-0.5, 0.125, 0.125, 0.125, 0.125]
         )
 
+class TestFittingWithFrozenAtoms(TestResp):
+
+    def setUp(self) -> None:
+
+        super().setUp()
+
+        self.kwargs = {
+            "esp_data": self.esp_data,
+            "equivalence": Equivalence([None, None, 1, 1, 1]),
+            "molecule": Molecule([Atom(atomic_number) for atomic_number in [6, 1, 1, 1, 1]]),
+            "frozen_atoms": [0, 2, 4],
+            "total_charge": 0,
+            "initial_charges": [make_charge(x) for x in [-0.5, 0, 0, 0, 0]]
+        }
+
+    def test_fitting_with_frozen_atoms_fails_validation_with_invalid_labels(self) -> None:
+
+        with self.assertRaises(ValueError):
+            kwargs = deepcopy(self.kwargs)
+            kwargs["frozen_atoms"] = [0, -1, 4]
+            fit_with_frozen_atoms(**kwargs)
+
+        with self.assertRaises(ValueError):
+            kwargs = deepcopy(self.kwargs)
+            kwargs["frozen_atoms"] = [0, 5, 4]
+            fit_with_frozen_atoms(**kwargs)
+
     def test_fitting_with_frozen_atoms(self) -> None:
 
-        charges = fit_with_frozen_atoms(
-            esp_data=self.esp_data,
-            equivalence=Equivalence([None, None, 1, 1, 1]),
-            molecule=Molecule([Atom(atomic_number) for atomic_number in [6, 1, 1, 1, 1]]),
-            frozen_atoms=[0, 2, 4],
-            total_charge=0,
-            initial_charges=[make_charge(x) for x in [-0.5, 0, 0, 0, 0]]
-        )
+        charges = fit_with_frozen_atoms(**self.kwargs)
 
         self.assertListsAlmostEqual(
             charges,
