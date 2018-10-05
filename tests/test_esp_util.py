@@ -2,6 +2,7 @@ from repESP.types import *
 from repESP.charges import *
 from repESP.esp_util import GaussianEspData, parse_gaussian_esp
 from repESP.esp_util import EspData, parse_resp_esp, write_resp_esp
+from repESP.fields import *
 
 from my_unittest import TestCase
 

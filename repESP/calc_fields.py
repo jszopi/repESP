@@ -1,7 +1,7 @@
+from .fields import Esp, Field, Mesh, make_esp
 from .exceptions import InputFormatError
 from .charges import AtomWithCoordsAndCharge
-from .types import AtomWithCoords, Coords, Dist, Esp, Field, Mesh, Molecule
-from .types import make_esp
+from .types import AtomWithCoords, Coords, Dist, Molecule
 
 from scipy.spatial.distance import euclidean
 import numpy as np

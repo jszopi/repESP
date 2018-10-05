@@ -1,6 +1,7 @@
 from repESP.types import *
 from repESP.charges import *
 from repESP.cube_util import parse_esp_cube
+from repESP.fields import make_esp
 from repESP.gaussian_util import get_charges_from_log, get_esp_fit_stats_from_log
 
 from my_unittest import TestCase

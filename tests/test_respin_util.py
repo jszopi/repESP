@@ -1,3 +1,4 @@
+from repESP.fields import *
 from repESP.types import *
 from repESP.respin_util import Respin, Equivalence, get_equivalence, _parse_respin, _write_respin
 

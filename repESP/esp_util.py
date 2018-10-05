@@ -1,8 +1,8 @@
-from .types import AtomWithCoords, Esp, Field, Coords, NonGridMesh, Molecule
-from .types import make_coords, make_esp
 from .charges import AtomWithCoordsAndCharge, Charge, Dipole, Quadrupole
 from .charges import make_charge, make_dipole_moment, make_quadrupole_moment
+from .fields import Esp, Field, NonGridMesh, make_esp
 from .exceptions import InputFormatError
+from .types import AtomWithCoords, Coords, Molecule, make_coords
 
 from dataclasses import dataclass
 from fortranformat import FortranRecordWriter as FW, FortranRecordReader as FR

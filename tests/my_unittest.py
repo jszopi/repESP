@@ -1,6 +1,4 @@
-from repESP.types import *
-
-from typing import Any, List
+from typing import Any, Collection, List
 
 import unittest
 import dataclasses

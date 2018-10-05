@@ -1,6 +1,6 @@
-from .types import AtomWithCoords, Ed, Esp, Coords, Field, GridMesh, Molecule
-from .types import make_coords, make_ed, make_esp
+from .fields import Ed, Esp, Field, GridMesh, make_ed, make_esp
 from .exceptions import InputFormatError
+from .types import AtomWithCoords, Coords, Molecule, make_coords
 
 from dataclasses import dataclass
 from typing import Callable, Generic, List, TextIO, Tuple

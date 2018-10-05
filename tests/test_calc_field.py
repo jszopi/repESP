@@ -1,8 +1,9 @@
 from repESP.calc_fields import esp_from_charges, voronoi, calc_rms_error, calc_relative_rms_error
 from repESP.charges import *
+from repESP.esp_util import parse_gaussian_esp
+from repESP.fields import *
 from repESP.types import *
 from repESP.gaussian_util import get_charges_from_log
-from repESP.esp_util import parse_gaussian_esp
 
 from my_unittest import TestCase
 

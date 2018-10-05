@@ -1,5 +1,6 @@
 from repESP.types import *
 from repESP.cube_util import parse_ed_cube, write_cube
+from repESP.fields import *
 
 from io import StringIO
 from my_unittest import TestCase
