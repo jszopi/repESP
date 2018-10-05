@@ -109,7 +109,6 @@ def _parse_dipole(line: str) -> Dipole:
     dipole_line_match = dipole_line_re.match(line)
     if dipole_line_match is None:
         raise InputFormatError("Failed parsing dipole specification.")
-    # TODO: Are the units atomic or Debye?
     return Dipole(
         make_dipole_moment(dipole_line_match.group(1).replace('D', 'E')),
         make_dipole_moment(dipole_line_match.group(2).replace('D', 'E')),
@@ -132,7 +131,6 @@ def _parse_quadrupole(lines: List[str]) -> Quadrupole:
     if line1_match is None or line2_match is None:
         raise InputFormatError("Failed parsing quadrupole specification.")
 
-    # TODO: Are the units atomic or other?
     return Quadrupole(
         make_quadrupole_moment(line1_match.group(1).replace('D', 'E')),
         make_quadrupole_moment(line1_match.group(2).replace('D', 'E')),

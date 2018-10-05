@@ -9,24 +9,26 @@ class _NoValue(Enum):
 
 
 # TODO: this should be handled by a library
-_elements = [('H', 'Hydrogen'),
-            ('He', 'Helium'),
-            ('Li', 'Lithium'),
-            ('Be', 'Beryllium'),
-            ('B', 'Boron'),
-            ('C', 'Carbon'),
-            ('N', 'Nitrogen'),
-            ('O', 'Oxygen'),
-            ('F', 'Fluorine'),
-            ('Ne', 'Neon'),
-            ('Na', 'Sodium'),
-            ('Mg', 'Magnesium'),
-            ('Al', 'Aluminum'),
-            ('Si', 'Silicon'),
-            ('P', 'Phosphorus'),
-            ('S', 'Sulfur'),
-            ('Cl', 'Chlorine'),
-            ('Ar', 'Argon')]
+_elements = [
+    ('H', 'Hydrogen'),
+    ('He', 'Helium'),
+    ('Li', 'Lithium'),
+    ('Be', 'Beryllium'),
+    ('B', 'Boron'),
+    ('C', 'Carbon'),
+    ('N', 'Nitrogen'),
+    ('O', 'Oxygen'),
+    ('F', 'Fluorine'),
+    ('Ne', 'Neon'),
+    ('Na', 'Sodium'),
+    ('Mg', 'Magnesium'),
+    ('Al', 'Aluminum'),
+    ('Si', 'Silicon'),
+    ('P', 'Phosphorus'),
+    ('S', 'Sulfur'),
+    ('Cl', 'Chlorine'),
+    ('Ar', 'Argon')
+]
 
 _symbol_to_atomic_nummber = {v[0]: i+1 for i, v in enumerate(_elements)}
 
@@ -52,7 +54,7 @@ def _zip_exact(first: Collection[T], second: Collection[U]) -> Iterable[Tuple[T,
     return zip(first, second)
 
 
-def _list_from_dict(
+def list_from_dict(
     dictionary: Dict[int, T],
     length: int,
     default: U,
@@ -69,7 +71,7 @@ def _list_from_dict(
     return [dictionary[i+offset] if i+offset in dictionary else default for i in range(length)]
 
 
-def _mask_from_list(  # type: ignore # (defaults with generics: https://github.com/python/mypy/issues/3737)
+def mask_from_list(  # type: ignore # (defaults with generics: https://github.com/python/mypy/issues/3737)
     l: List[int],
     length: int,
     value_if_present: T=True,
