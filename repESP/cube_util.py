@@ -150,10 +150,10 @@ def write_cube(f: TextIO, cube: Cube):
 
     f.write(' {0:4}   {1: .6f}   {2: .6f}   {3: .6f}    1\n'.format(
         len(cube.molecule.atoms),
-        *cube.field.mesh._origin
+        *cube.field.mesh.origin
     ))
 
-    for axis in cube.field.mesh._axes:
+    for axis in cube.field.mesh.axes:
         f.write(' {0:4}   {1: .6f}   {2: .6f}   {3: .6f}\n'.format(
             axis.point_count,
             *axis.vector
@@ -171,7 +171,7 @@ def write_cube(f: TextIO, cube: Cube):
         f.write(' {0: .5E}'.format(value))
         if not i % 6:
             f.write('\n')
-        if not i % cube.field.mesh._axes[2].point_count:
+        if not i % cube.field.mesh.axes[2].point_count:
             f.write('\n')
             i = 1
         else:

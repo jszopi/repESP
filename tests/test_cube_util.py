@@ -24,12 +24,12 @@ class TestCubeParser(TestCase):
 
         self.assertListsAlmostEqual(
             [0.1, 0.2, 0.3],
-            self.cube.field.mesh._origin  # type: ignore # (accessing subclass attribute)
+            self.cube.field.mesh.origin  # type: ignore # (accessing subclass attribute)
         )
 
         self.assertListsAlmostEqual(
             [0.1, 0.2, 0.3],
-            self.cube.field.mesh._origin  # type: ignore # (accessing subclass attribute)
+            self.cube.field.mesh.origin  # type: ignore # (accessing subclass attribute)
         )
 
         expected_axis_vecs = [
@@ -39,7 +39,7 @@ class TestCubeParser(TestCase):
         ]
 
         for axis, expected_axis_vec in zip(
-            self.cube.field.mesh._axes,  # type: ignore # (accessing subclass attribute)
+            self.cube.field.mesh.axes,  # type: ignore # (accessing subclass attribute)
             expected_axis_vecs
         ):
             self.assertEqual(axis.point_count, 3)

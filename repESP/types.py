@@ -163,7 +163,7 @@ class NonGridMesh(Mesh):
         return len(self._points_coords)
 
 
-@dataclass(init=False)
+@dataclass
 class GridMesh(Mesh):
 
     @dataclass
@@ -173,19 +173,16 @@ class GridMesh(Mesh):
 
     Axes = NewType("Axes", Tuple[Axis, Axis, Axis])
 
-    _origin: Coords
-    _axes: Axes
+    origin: Coords
+    axes: Axes
 
-    def __init__(self, origin: Coords, axes: Axes) -> None:
+    def __post_init__(self) -> None:
         # TODO: Remove this assumption (affects implementation of self.points)
-        if (not self._axes_are_aligned_to_coordinate_axes(axes)):
+        if (not self._axes_are_aligned_to_coordinate_axes(self.axes)):
             raise NotImplementedError(
-                "GridMesh cannot currently be constructed with axes not aligned"
-                " to coordinate axes. The provided axes are: {}".format(axes)
+                f"GridMesh cannot currently be constructed with axes not aligned"
+                f" to coordinate axes. The provided axes are: {self.axes}"
             )
-
-        self._origin = origin
-        self._axes = axes
 
     @staticmethod
     def _axes_are_aligned_to_coordinate_axes(axes: Axes) -> bool:
@@ -203,17 +200,17 @@ class GridMesh(Mesh):
 
     @property
     def points(self) -> Iterator[Coords]:
-        for i in range(self._axes[0].point_count):
-            for j in range(self._axes[1].point_count):
-                for k in range(self._axes[2].point_count):
+        for i in range(self.axes[0].point_count):
+            for j in range(self.axes[1].point_count):
+                for k in range(self.axes[2].point_count):
                     yield Coords((
-                        Dist(self._origin[0] + i*self._axes[0].vector[0]),
-                        Dist(self._origin[1] + j*self._axes[1].vector[1]),
-                        Dist(self._origin[2] + k*self._axes[2].vector[2])
+                        Dist(self.origin[0] + i*self.axes[0].vector[0]),
+                        Dist(self.origin[1] + j*self.axes[1].vector[1]),
+                        Dist(self.origin[2] + k*self.axes[2].vector[2])
                     ))
 
     def __len__(self) -> int:
         return functools.reduce(
             operator.mul,
-            (axis.point_count for axis in self._axes)
+            (axis.point_count for axis in self.axes)
         )
