@@ -2,7 +2,7 @@ from .exceptions import InputFormatError
 from .util import _elements, _get_symbol, _get_atomic_number
 
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
+from dataclasses import dataclass, field, InitVar
 from typing import Any, Callable, cast, Collection, Generic, Iterator, List, NewType, Tuple, TypeVar
 
 import functools
@@ -74,26 +74,22 @@ class Molecule(Generic[GenericAtom]):
 
 FieldValue = TypeVar('FieldValue')
 
-
-@dataclass(init=False)
+@dataclass
 class Field(Generic[FieldValue]):
 
     mesh: 'Mesh'
-    values: List[FieldValue]
+    values_: InitVar[Collection[FieldValue]]
+    values: List[FieldValue] = field(init=False)
 
-    def __init__(self, mesh: 'Mesh', values: Collection[FieldValue]) -> None:
+    def __post_init__(self, values_) -> None:
 
-        if len(values) != len(mesh):
+        if len(values_) != len(self.mesh):
             raise InputFormatError(
-                "Construction of a Field failed due to mismatch between the "
-                "number of points ({}) and the number of values ({})".format(
-                    len(mesh),
-                    len(values)
-                )
+                f"Construction of a Field failed due to mismatch between the "
+                f"number of points ({len(self.mesh)}) and the number of values ({len(values_)})"
             )
 
-        self.mesh = mesh
-        self.values = list(values)
+        self.values = list(values_)
 
     # TODO: This would ideally be extended to numbers.Number but mypy throws errors.
     NumericValue = TypeVar('NumericValue', bound=float)
@@ -147,20 +143,21 @@ class Mesh(ABC):
         pass
 
 
-@dataclass(init=False)
+@dataclass
 class NonGridMesh(Mesh):
 
-    _points_coords: List[Coords]
+    points_: InitVar[Collection[Coords]]
+    _points: List[Coords] = field(init=False)
 
-    def __init__(self, points_coords: Collection[Coords]) -> None:
-        self._points_coords = list(points_coords)
+    def __post_init__(self, points_) -> None:
+        self._points = list(points_)
 
     @property
     def points(self) -> Iterator[Coords]:
-        return iter(self._points_coords)
+        return iter(self._points)
 
     def __len__(self) -> int:
-        return len(self._points_coords)
+        return len(self._points)
 
 
 @dataclass
