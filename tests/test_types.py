@@ -9,13 +9,13 @@ from copy import copy
 class TestAtom(TestCase):
 
     def setUp(self) -> None:
-        self.identity = 1
+        self.atomic_number = 1
         self.coords = make_coords(1, 1, 2)
         self.charge = make_charge(0.6)
 
     def test_ctor(self) -> None:
-        atom = Atom(self.identity)
-        self.assertEqual(atom.identity, self.identity)
+        atom = Atom(self.atomic_number)
+        self.assertEqual(atom.atomic_number, self.atomic_number)
 
     def test_ctor_fails_with_invalid_atomic_number(self) -> None:
         with self.assertRaises(ValueError):
@@ -32,18 +32,18 @@ class TestAtom(TestCase):
             AtomWithCoordsAndCharge(-1, self.coords, self.charge)
 
     def test_with_coords(self) -> None:
-        atom = AtomWithCoords(self.identity, self.coords)
-        self.assertEqual(atom.identity, self.identity)
+        atom = AtomWithCoords(self.atomic_number, self.coords)
+        self.assertEqual(atom.atomic_number, self.atomic_number)
         self.assertEqual(atom.coords, self.coords)
 
     def test_with_charges(self) -> None:
-        atom = AtomWithCharge(self.identity, self.charge)
-        self.assertEqual(atom.identity, self.identity)
+        atom = AtomWithCharge(self.atomic_number, self.charge)
+        self.assertEqual(atom.atomic_number, self.atomic_number)
         self.assertEqual(atom.charge, self.charge)
 
     def test_with_coords_and_charges(self) -> None:
-        atom = AtomWithCoordsAndCharge(self.identity, self.coords, self.charge)
-        self.assertEqual(atom.identity, self.identity)
+        atom = AtomWithCoordsAndCharge(self.atomic_number, self.coords, self.charge)
+        self.assertEqual(atom.atomic_number, self.atomic_number)
         self.assertEqual(atom.coords, self.coords)
         self.assertEqual(atom.charge, self.charge)
 

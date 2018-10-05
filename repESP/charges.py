@@ -32,7 +32,7 @@ class AtomWithCharge(Atom):
 @dataclass
 class AtomWithCoordsAndCharge(AtomWithCharge, AtomWithCoords):
     # NOTE: mypy incorrectly infers the argument order for __init__ to be:
-    # (identity, charge, coords), resulting in loads of spurious errors.
+    # (atomic_number, charge, coords), resulting in loads of spurious errors.
     pass
 
 

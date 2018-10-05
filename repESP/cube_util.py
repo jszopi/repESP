@@ -66,9 +66,9 @@ def _parse_grid(origin: Coords, lines: List[str]) -> GridMesh:
 
 
 def _parse_atom(line: str) -> Tuple[AtomWithCoords, float]:
-    identity, cube_charge, *coords = line.split()
+    atomic_number, cube_charge, *coords = line.split()
     return (
-        AtomWithCoords(int(identity), make_coords(*coords)),
+        AtomWithCoords(int(atomic_number), make_coords(*coords)),
         float(cube_charge)
     )
 
@@ -161,7 +161,7 @@ def write_cube(f: TextIO, cube: Cube):
 
     for atom, electron_count in zip(cube.molecule.atoms, cube.electrons_on_atoms):
         f.write(' {0:4}   {1: .6f}   {2: .6f}   {3: .6f}   {4: .6f}\n'.format(
-            atom.identity,
+            atom.atomic_number,
             electron_count,
             *atom.coords
         ))

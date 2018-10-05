@@ -35,8 +35,8 @@ class Equivalence:
         zipped = zip_longest(self.values, molecule.atoms if molecule is not None else [])
 
         for i, (equivalence, atom) in enumerate(zipped):
-            identity = atom.symbol if molecule is not None else None
-            id_str = f" ({identity})" if identity is not None else ""
+            atomic_number = atom.symbol if molecule is not None else None
+            id_str = f" ({atomic_number})" if atomic_number is not None else ""
             equivalence_str = f", equivalenced to atom {equivalence+1}" if equivalence is not None else ""
             print(f"Atom{id_str} number {i+1}{equivalence_str}", file=file)
 
@@ -157,8 +157,8 @@ class Respin:
             zipped = zip_longest(self.values, molecule.atoms if molecule is not None else [])
 
             for i, (ivary, atom) in enumerate(zipped):
-                identity = atom.symbol if molecule is not None else None
-                id_str = f" ({identity})" if identity is not None else ""
+                atomic_number = atom.symbol if molecule is not None else None
+                id_str = f" ({atomic_number})" if atomic_number is not None else ""
 
                 if ivary < 0:
                     # TODO: This could also report at what value if charges are provided
@@ -296,7 +296,7 @@ def _write_respin(f: TextIO, respin: Respin, skip_cntrl_defaults: bool=True) -> 
     print(respin.subtitle, file=f)
     print(FW("2I5").write([respin.charge, respin.iuniq]), file=f)
     for atom, ivary in zip(respin.molecule.atoms, respin.ivary.values):
-        print(FW("2I5").write([atom.identity, ivary]), file=f)
+        print(FW("2I5").write([atom.atomic_number, ivary]), file=f)
     # According to the spec a blank line is only for multi-structures but `resp`
     # fails without it.
     print(file=f)

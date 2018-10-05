@@ -108,7 +108,7 @@ class FitHydrogensOnlyRespinGenerator(TypeSpecificRespinGenerator):
 
     def get_ivary(self) -> Respin.Ivary:
         return Respin.Ivary([
-            -1 if atom.identity != 1 else ivary
+            -1 if atom.atomic_number != 1 else ivary
             for atom, ivary in zip(
                 self.molecule.atoms,
                 Respin.Ivary.from_equivalence(self.equivalence).values

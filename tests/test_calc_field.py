@@ -36,8 +36,8 @@ class SmallTestCase(TestCase):
 
         self.molecule = Molecule(
             atoms=[
-                AtomWithCoords(identity=1, coords=make_coords(0, 1, 0.5)),
-                AtomWithCoords(identity=1, coords=make_coords(-0.4, 0.2, 0.5))
+                AtomWithCoords(atomic_number=1, coords=make_coords(0, 1, 0.5)),
+                AtomWithCoords(atomic_number=1, coords=make_coords(-0.4, 0.2, 0.5))
             ]
         )
 
@@ -48,7 +48,7 @@ class TestEspFromCharges(SmallTestCase):
         super().setUp()
         self.molecule_with_charges = Molecule([
             AtomWithCoordsAndCharge(
-                atom.identity,
+                atom.atomic_number,
                 atom.coords,
                 charge
             )
@@ -152,7 +152,7 @@ class TestCalcStats(TestCase):
 
         molecule_with_charges = Molecule([
             AtomWithCoordsAndCharge(
-                atom.identity,
+                atom.atomic_number,
                 atom.coords,
                 charge
             )

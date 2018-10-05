@@ -40,15 +40,15 @@ def make_ed(x: Any) -> Ed:
 
 @dataclass
 class Atom:
-    identity: int  # Atomic number
+    atomic_number: int
 
     def __post_init__(self):
-        if self.identity < 1 or self.identity >= len(_elements):
+        if self.atomic_number < 1 or self.atomic_number >= len(_elements):
             raise ValueError("Atomic number is not within expected bounds.")
 
     @property
     def symbol(self) -> str:
-        return _get_symbol(self.identity)
+        return _get_symbol(self.atomic_number)
 
     @classmethod
     def from_symbol(cls, symbol: str, *args, **kwargs):

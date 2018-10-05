@@ -48,7 +48,7 @@ class TestCubeParser(TestCase):
     def test_molecule(self) -> None:
 
         self.assertEqual(len(self.cube.molecule.atoms), 1)
-        self.assertEqual(self.cube.molecule.atoms[0].identity, 1)
+        self.assertEqual(self.cube.molecule.atoms[0].atomic_number, 1)
         self.assertEqual(self.cube.molecule.atoms[0].coords, make_coords(0.1, 0.2, 0.4))
 
     def test_electron_counts(self) -> None:

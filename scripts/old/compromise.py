@@ -148,7 +148,7 @@ def plot(result_list, heavy, min_ratio, min_ratio_rrms):
         ax2.invert_xaxis()
 
     ax1.set_xlabel(charge_type.upper() + " charge ratio")
-    ax2.set_xlabel("Charge on " + g.molecule[indicator_label-1].identity +
+    ax2.set_xlabel("Charge on " + g.molecule[indicator_label-1].atomic_number +
                    str(indicator_label))
     ax1.set_ylabel("RRMS")
 

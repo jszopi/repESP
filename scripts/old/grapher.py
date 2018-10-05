@@ -118,7 +118,7 @@ for charge_type in charge_types.keys():
         os.mkdir(basin_dir)
 
         for atom in molecule:
-            atom_id = str(atom.label) + atom.identity
+            atom_id = str(atom.label) + atom.atomic_number
             atom_fn = basin_dir + '/' + atom_id + '.png'
             title = (charge_type.upper() + ", filtered by " + basin_name +
                      " basin of " + atom_id)

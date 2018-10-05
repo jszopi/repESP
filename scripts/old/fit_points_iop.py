@@ -141,6 +141,6 @@ if False:
               set_lim=True, save_to=save_to)
 
     for atom in g.molecule:
-        save_to = path + atom.identity + str(atom.label) + "_charge.pdf"
-        title = "Charge on " + atom.identity + str(atom.label)
+        save_to = path + atom.atomic_number + str(atom.label) + "_charge.pdf"
+        title = "Charge on " + atom.atomic_number + str(atom.label)
         calc_plot(calcs, charges_dict[atom.label], title, save_to=save_to)
