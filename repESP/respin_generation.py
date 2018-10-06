@@ -1,5 +1,5 @@
 from .charges import Charge
-from .respin_util import Respin, Equivalence
+from .respin_format import Respin, Equivalence
 from .types import Atom, Molecule
 from .util import _zip_exact
 

@@ -1,7 +1,7 @@
-repESP/respin_util.py:2: error: Cannot find module named 'fortranformat'
-repESP/resp_charges_util.py:3: error: Cannot find module named 'fortranformat'
-repESP/esp_util.py:8: error: Cannot find module named 'fortranformat'
-repESP/esp_util.py:8: note: (Perhaps setting MYPYPATH or using the "--ignore-missing-imports" flag would help)
+repESP/respin_format.py:2: error: Cannot find module named 'fortranformat'
+repESP/resp_charges_format.py:3: error: Cannot find module named 'fortranformat'
+repESP/esp_util.py:7: error: Cannot find module named 'fortranformat'
+repESP/esp_util.py:7: note: (Perhaps setting MYPYPATH or using the "--ignore-missing-imports" flag would help)
 repESP/charge_util.py:4: error: No library stub file for module 'numpy'
 repESP/calc_fields.py:6: error: No library stub file for module 'scipy.spatial.distance'
 repESP/calc_fields.py:6: note: (Stub files are from https://github.com/python/typeshed)
@@ -10,11 +10,11 @@ tests/test_types.py:32: error: Argument 2 to "AtomWithCoordsAndCharge" has incom
 tests/test_types.py:32: error: Argument 3 to "AtomWithCoordsAndCharge" has incompatible type "Charge"; expected "Coords"
 tests/test_types.py:45: error: Argument 2 to "AtomWithCoordsAndCharge" has incompatible type "Coords"; expected "Charge"
 tests/test_types.py:45: error: Argument 3 to "AtomWithCoordsAndCharge" has incompatible type "Charge"; expected "Coords"
-tests/test_esp_util.py:15: error: Argument 2 to "AtomWithCoordsAndCharge" has incompatible type "Coords"; expected "Charge"
-tests/test_esp_util.py:15: error: Argument 3 to "AtomWithCoordsAndCharge" has incompatible type "Charge"; expected "Coords"
-tests/test_esp_util.py:20: error: Argument 2 to "AtomWithCoordsAndCharge" has incompatible type "Coords"; expected "Charge"
-tests/test_esp_util.py:20: error: Argument 3 to "AtomWithCoordsAndCharge" has incompatible type "Charge"; expected "Coords"
-tests/test_calc_field.py:50: error: Argument 2 to "AtomWithCoordsAndCharge" has incompatible type "Coords"; expected "Charge"
-tests/test_calc_field.py:50: error: Argument 3 to "AtomWithCoordsAndCharge" has incompatible type "Charge"; expected "Coords"
-tests/test_calc_field.py:154: error: Argument 2 to "AtomWithCoordsAndCharge" has incompatible type "Coords"; expected "Charge"
-tests/test_calc_field.py:154: error: Argument 3 to "AtomWithCoordsAndCharge" has incompatible type "Charge"; expected "Coords"
+tests/test_esp_util.py:16: error: Argument 2 to "AtomWithCoordsAndCharge" has incompatible type "Coords"; expected "Charge"
+tests/test_esp_util.py:16: error: Argument 3 to "AtomWithCoordsAndCharge" has incompatible type "Charge"; expected "Coords"
+tests/test_esp_util.py:21: error: Argument 2 to "AtomWithCoordsAndCharge" has incompatible type "Coords"; expected "Charge"
+tests/test_esp_util.py:21: error: Argument 3 to "AtomWithCoordsAndCharge" has incompatible type "Charge"; expected "Coords"
+tests/test_calc_field.py:51: error: Argument 2 to "AtomWithCoordsAndCharge" has incompatible type "Coords"; expected "Charge"
+tests/test_calc_field.py:51: error: Argument 3 to "AtomWithCoordsAndCharge" has incompatible type "Charge"; expected "Coords"
+tests/test_calc_field.py:155: error: Argument 2 to "AtomWithCoordsAndCharge" has incompatible type "Coords"; expected "Charge"
+tests/test_calc_field.py:155: error: Argument 3 to "AtomWithCoordsAndCharge" has incompatible type "Charge"; expected "Coords"

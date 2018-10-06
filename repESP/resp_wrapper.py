@@ -4,8 +4,8 @@ from .respin_generation import prepare_respin
 from .respin_generation import RespStage1RespinGenerator, RespStage2RespinGenerator
 from .respin_generation import FitHydrogensOnlyRespinGenerator, FrozenAtomsRespinGenerator
 from .respin_generation import EquivalenceOnlyRespinGenerator
-from .respin_util import Respin, _write_respin, Equivalence
-from .resp_charges_util import write_resp_charges, parse_resp_charges
+from .respin_format import Respin, _write_respin, Equivalence
+from .resp_charges_format import write_resp_charges, parse_resp_charges
 from .types import Atom, Molecule
 
 from dataclasses import dataclass

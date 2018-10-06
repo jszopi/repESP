@@ -1,5 +1,5 @@
 from repESP.charges import Charge
-from repESP.resp_charges_util import parse_resp_charges, write_resp_charges
+from repESP.resp_charges_format import parse_resp_charges, write_resp_charges
 
 from my_unittest import TestCase
 

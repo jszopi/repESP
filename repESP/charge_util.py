@@ -1,4 +1,4 @@
-from .respin_util import Equivalence
+from .respin_format import Equivalence
 from .charges import Charge
 
 import numpy as np

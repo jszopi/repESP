@@ -1,5 +1,5 @@
 from repESP.types import *
-from repESP.respin_util import Respin, Equivalence
+from repESP.respin_format import Respin, Equivalence
 from repESP.respin_generation import prepare_respin
 from repESP.respin_generation import RespStage1RespinGenerator, RespStage2RespinGenerator
 from repESP.respin_generation import FitHydrogensOnlyRespinGenerator

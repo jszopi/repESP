@@ -1,6 +1,6 @@
 from repESP.fields import *
 from repESP.types import *
-from repESP.respin_util import Respin, Equivalence, get_equivalence, _parse_respin, _write_respin
+from repESP.respin_format import Respin, Equivalence, get_equivalence, _parse_respin, _write_respin
 
 from my_unittest import TestCase
 
@@ -96,7 +96,7 @@ class TestParsingAndWriting(TestRespin):
         super().setUp()
 
     def test_parsing(self) -> None:
-        with open("tests/test_respin_util.respin") as f:
+        with open("tests/test_respin_format.respin") as f:
             parsed_respin = _parse_respin(f)
         self.assertAlmostEqualRecursive(self.respin, parsed_respin)
 
@@ -105,7 +105,7 @@ class TestParsingAndWriting(TestRespin):
         _write_respin(written, self.respin)
         written.seek(0)
 
-        with open("tests/test_respin_util.respin") as f:
+        with open("tests/test_respin_format.respin") as f:
             self.assertListEqual(f.readlines(), written.readlines())
 
 

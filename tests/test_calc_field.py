@@ -3,7 +3,7 @@ from repESP.charges import *
 from repESP.esp_util import parse_gaussian_esp
 from repESP.fields import *
 from repESP.types import *
-from repESP.gaussian_util import get_charges_from_log, MkChargeSectionParser
+from repESP.gaussian_format import get_charges_from_log, MkChargeSectionParser
 
 from my_unittest import TestCase
 

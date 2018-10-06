@@ -1,11 +1,11 @@
 from repESP.charges import *
 from repESP.fields import *
 from repESP.types import *
-from repESP.cube_util import parse_esp_cube
-from repESP.gaussian_util import get_charges_from_log, get_esp_fit_stats_from_log
-from repESP.gaussian_util import ChargesSectionParser, EspChargesSectionParser
-from repESP.gaussian_util import MullikenChargeSectionParser, MkChargeSectionParser
-from repESP.gaussian_util import ChelpgChargeSectionParser, NpaChargeSectionParser
+from repESP.cube_format import parse_esp_cube
+from repESP.gaussian_format import get_charges_from_log, get_esp_fit_stats_from_log
+from repESP.gaussian_format import ChargesSectionParser, EspChargesSectionParser
+from repESP.gaussian_format import MullikenChargeSectionParser, MkChargeSectionParser
+from repESP.gaussian_format import ChelpgChargeSectionParser, NpaChargeSectionParser
 
 from my_unittest import TestCase
 
