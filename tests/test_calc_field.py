@@ -3,7 +3,7 @@ from repESP.charges import *
 from repESP.esp_util import parse_gaussian_esp
 from repESP.fields import *
 from repESP.types import *
-from repESP.gaussian_util import get_charges_from_log
+from repESP.gaussian_util import get_charges_from_log, MkChargeSectionParser
 
 from my_unittest import TestCase
 
@@ -149,7 +149,7 @@ class TestCalcStats(TestCase):
         molecule = gaussian_esp.molecule
 
         with open("data/methane/methane_mk.log") as f:
-            charges = get_charges_from_log(f, ChargeType.MK, verify_against=molecule)
+            charges = get_charges_from_log(f, MkChargeSectionParser(), verify_against=molecule)
 
         molecule_with_charges = Molecule([
             AtomWithCoordsAndCharge(

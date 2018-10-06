@@ -3,6 +3,9 @@ from repESP.fields import *
 from repESP.types import *
 from repESP.cube_util import parse_esp_cube
 from repESP.gaussian_util import get_charges_from_log, get_esp_fit_stats_from_log
+from repESP.gaussian_util import ChargesSectionParser, EspChargesSectionParser
+from repESP.gaussian_util import MullikenChargeSectionParser, MkChargeSectionParser
+from repESP.gaussian_util import ChelpgChargeSectionParser, NpaChargeSectionParser
 
 from my_unittest import TestCase
 
@@ -48,13 +51,13 @@ class TestGetChargesFromLog(TestFromLog):
     def common(
         self,
         f: TextIO,
-        charge_type: ChargeType,
+        charges_section_parser: ChargesSectionParser,
         expected: List[float],
         occurrence: int=-1
     ) -> None:
         charges = get_charges_from_log(
             f,
-            charge_type,
+            charges_section_parser,
             verify_against=self.molecule,
             occurrence=occurrence
         )
@@ -66,7 +69,7 @@ class TestGetChargesFromLog(TestFromLog):
         with open("data/methane/methane_mk.log") as f:
             self.common(
                 f,
-                ChargeType.MULLIKEN,
+                MullikenChargeSectionParser(),
                 [-0.437226, 0.109307, 0.109307, 0.109307, 0.109307]
             )
 
@@ -74,7 +77,7 @@ class TestGetChargesFromLog(TestFromLog):
         with open("data/methane/methane_mk.log") as f:
             self.common(
                 f,
-                ChargeType.MK,
+                MkChargeSectionParser(),
                 [-0.500314, 0.125323, 0.124834, 0.124834, 0.125323]
             )
 
@@ -82,7 +85,7 @@ class TestGetChargesFromLog(TestFromLog):
         with open("data/methane/methane_chelpg.log") as f:
             self.common(
                 f,
-                ChargeType.CHELPG,
+                ChelpgChargeSectionParser(),
                 [-0.344877, 0.086219, 0.086219, 0.086219, 0.086219]
             )
 
@@ -90,35 +93,35 @@ class TestGetChargesFromLog(TestFromLog):
         with open("data/methane/methane_nbo.log") as f:
             self.common(
                 f,
-                ChargeType.NPA,
+                NpaChargeSectionParser(),
                 [-0.79151, 0.19788, 0.19788, 0.19788, 0.19788]
             )
 
     def test_mk_from_combined_mk_and_npa(self) -> None:
         self.common(
             self.concatenate(["data/methane/methane_mk.log", "data/methane/methane_nbo.log"]),
-            ChargeType.MK,
+            MkChargeSectionParser(),
             [-0.500314, 0.125323, 0.124834, 0.124834, 0.125323]
         )
 
     def test_npa_from_combined_mk_and_npa(self) -> None:
         self.common(
             self.concatenate(["data/methane/methane_mk.log", "data/methane/methane_nbo.log"]),
-            ChargeType.NPA,
+            NpaChargeSectionParser(),
             [-0.79151, 0.19788, 0.19788, 0.19788, 0.19788]
         )
 
     def test_mk_from_combined_mk_and_chelpg(self) -> None:
         self.common(
             self.concatenate(["data/methane/methane_mk.log", "data/methane/methane_chelpg.log"]),
-            ChargeType.MK,
+            MkChargeSectionParser(),
             [-0.500314, 0.125323, 0.124834, 0.124834, 0.125323]
         )
 
     def test_chelpg_from_combined_mk_and_chelpg(self) -> None:
         self.common(
             self.concatenate(["data/methane/methane_mk.log", "data/methane/methane_chelpg.log"]),
-            ChargeType.CHELPG,
+            ChelpgChargeSectionParser(),
             [-0.344877, 0.086219, 0.086219, 0.086219, 0.086219]
         )
 
@@ -130,14 +133,14 @@ class TestGetChargesFromLog(TestFromLog):
         )
         self.common(
             f,
-            ChargeType.MK,
+            MkChargeSectionParser(),
             [0.123456, 0.125323, 0.124834, 0.124834, 0.125323],
             occurrence=0,
         )
         f.seek(0)
         self.common(
             f,
-            ChargeType.MK,
+            MkChargeSectionParser(),
             [-0.500314, 0.125323, 0.124834, 0.124834, 0.125323],
             occurrence=1
         )
@@ -148,13 +151,13 @@ class TestGetEspFitStatsFromLog(TestFromLog):
     def common(
         self,
         f: TextIO,
-        charge_type: ChargeType,
+        charges_section_parser: EspChargesSectionParser,
         expected: Tuple[float, float],
         occurrence: int=-1
     ) -> None:
         rms, rrms = get_esp_fit_stats_from_log(
             f,
-            charge_type,
+            charges_section_parser,
             verify_against=self.molecule,
             occurrence=occurrence
         )
@@ -169,7 +172,7 @@ class TestGetEspFitStatsFromLog(TestFromLog):
         with open("data/methane/methane_mk.log") as f:
             self.common(
                 f,
-                ChargeType.MK,
+                MkChargeSectionParser(),
                 (0.00069, 0.35027)
             )
 
@@ -177,28 +180,28 @@ class TestGetEspFitStatsFromLog(TestFromLog):
         with open("data/methane/methane_chelpg.log") as f:
             self.common(
                 f,
-                ChargeType.CHELPG,
+                ChelpgChargeSectionParser(),
                 (0.00121, 0.62228)
             )
 
     def test_mk_from_combined_mk_and_npa(self) -> None:
         self.common(
             self.concatenate(["data/methane/methane_mk.log", "data/methane/methane_nbo.log"]),
-            ChargeType.MK,
+            MkChargeSectionParser(),
             (0.00069, 0.35027)
         )
 
     def test_mk_from_combined_mk_and_chelpg(self) -> None:
         self.common(
             self.concatenate(["data/methane/methane_mk.log", "data/methane/methane_chelpg.log"]),
-            ChargeType.MK,
+            MkChargeSectionParser(),
             (0.00069, 0.35027)
         )
 
     def test_chelpg_from_combined_mk_and_chelpg(self) -> None:
         self.common(
             self.concatenate(["data/methane/methane_mk.log", "data/methane/methane_chelpg.log"]),
-            ChargeType.CHELPG,
+            ChelpgChargeSectionParser(),
             (0.00121, 0.62228)
         )
 
@@ -210,14 +213,14 @@ class TestGetEspFitStatsFromLog(TestFromLog):
         )
         self.common(
             f,
-            ChargeType.MK,
+            MkChargeSectionParser(),
             (1.23456, 7.65432),
             occurrence=0,
         )
         f.seek(0)
         self.common(
             f,
-            ChargeType.MK,
+            MkChargeSectionParser(),
             (0.00069, 0.35027),
             occurrence=1
         )

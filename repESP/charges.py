@@ -16,14 +16,19 @@ class Charge(float):
     def __new__(cls, x: Any):
         return super().__new__(cls, float(x))  # type: ignore # (Too many arguments for "__new__" of "object")
 
-class ChargeType(_NoValue):
-    MULLIKEN = auto()
-    MK = auto()
-    CHELP = auto()
-    CHELPG = auto()
-    HLY = auto()
-    NPA = auto()
-    AIM = auto()
+
+# Could be useful as a common denominator between modules, e.g. to translate
+# a given charge type to its corresponding ChargesSectionParser. However, this
+# is currently not necessary (and doesn't get rendered very nicely in Sphinx).
+#
+# class ChargeType(_NoValue):
+#     MULLIKEN = auto()
+#     MK = auto()
+#     CHELP = auto()
+#     CHELPG = auto()
+#     HLY = auto()
+#     NPA = auto()
+#     AIM = auto()
 
 
 @dataclass
