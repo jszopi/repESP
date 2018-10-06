@@ -1,4 +1,4 @@
-from .util import _elements, _get_symbol, _get_atomic_number
+from ._util import elements, get_symbol, get_atomic_number
 
 from dataclasses import dataclass
 from typing import Any, Generic, List, Tuple, TypeVar
@@ -35,12 +35,12 @@ class Atom:
     atomic_number: int
 
     def __post_init__(self):
-        if self.atomic_number < 1 or self.atomic_number >= len(_elements):
+        if self.atomic_number < 1 or self.atomic_number >= len(elements):
             raise ValueError("Atomic number is not within expected bounds.")
 
     @property
     def symbol(self) -> str:
-        return _get_symbol(self.atomic_number)
+        return get_symbol(self.atomic_number)
 
     @classmethod
     def from_symbol(cls, symbol: str, *args, **kwargs):
@@ -48,7 +48,7 @@ class Atom:
         # https://github.com/python/typing/issues/58#issuecomment-326240794)
         # don't seem to be working for a dataclass, and that's even before
         # getting them to work with args and kwargs.
-        return cls(_get_atomic_number(symbol), *args, **kwargs)  # type: ignore # (args, kwargs)
+        return cls(get_atomic_number(symbol), *args, **kwargs)  # type: ignore # (args, kwargs)
 
 
 @dataclass

@@ -1,9 +1,8 @@
 from .exceptions import InputFormatError
 from .types import Atom, AtomWithCoords, Coords
-from .util import _NoValue, _get_atomic_number
 
 from dataclasses import dataclass
-from enum import auto
+# from enum import auto
 from typing import Any, List, Collection, Tuple, Type
 
 

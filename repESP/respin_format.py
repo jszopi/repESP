@@ -7,7 +7,7 @@ from typing import Dict, List, Optional, TextIO, Tuple, TypeVar, Union
 
 from .exceptions import InputFormatError
 from .types import Atom, Molecule
-from .util import _get_symbol, _zip_exact
+from ._util import zip_exact
 
 
 @dataclass
@@ -81,7 +81,7 @@ def get_equivalence(ivary1: "Respin.Ivary", ivary2: "Respin.Ivary") -> Equivalen
 
     return Equivalence.from_ivary(Respin.Ivary([
         max(ivary1_value, ivary2_value)
-        for ivary1_value, ivary2_value in _zip_exact(ivary1.values, ivary2.values)
+        for ivary1_value, ivary2_value in zip_exact(ivary1.values, ivary2.values)
     ]))
 
 

@@ -1,7 +1,7 @@
 from .charges import Charge
 from .respin_format import Respin, Equivalence
 from .types import Atom, Molecule
-from .util import _zip_exact
+from ._util import zip_exact
 
 from abc import ABC, abstractmethod
 from typing import List, Optional
@@ -63,7 +63,7 @@ class RespStage1RespinGenerator(RespRespinGenerator):
         return cls(Respin.Ivary([
             0 if is_methyl_or_methylene else ivary_from_equivalence_value
             for ivary_from_equivalence_value, is_methyl_or_methylene
-            in _zip_exact(
+            in zip_exact(
                 Respin.Ivary.from_equivalence(equivalence).values,
                 methyl_methylene_mask
             )
@@ -90,7 +90,7 @@ class RespStage2RespinGenerator(RespRespinGenerator):
         return cls(Respin.Ivary([
             ivary_from_equivalence_value if is_methyl_or_methylene else -1
             for ivary_from_equivalence_value, is_methyl_or_methylene
-            in _zip_exact(
+            in zip_exact(
                 Respin.Ivary.from_equivalence(equivalence).values,
                 methyl_methylene_mask
             )
