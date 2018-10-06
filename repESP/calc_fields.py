@@ -1,16 +1,16 @@
-from .fields import Esp, Field, Mesh, make_esp
+from .fields import Esp, Field, Mesh
 from .exceptions import InputFormatError
 from .charges import AtomWithCoordsAndCharge
 from .types import AtomWithCoords, Coords, Dist, Molecule
 
 from scipy.spatial.distance import euclidean
 import numpy as np
-from typing import cast, List, NewType, Optional, Tuple
+from typing import cast, List, Optional, Tuple
 
 
 def _esp_from_charges_at_point(coords: Coords, molecule: Molecule[AtomWithCoordsAndCharge]) -> Esp:
 
-    return make_esp(sum(
+    return Esp(sum(
         atom.charge/(euclidean(coords, atom.coords))
         for atom in molecule.atoms
     ))

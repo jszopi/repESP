@@ -12,32 +12,32 @@ class TestNonGridMesh(TestCase):
     def setUp(self) -> None:
 
         self.mesh = NonGridMesh([
-            make_coords(1, 1, 1),
-            make_coords(-1, 0, -0.9)
+            Coords((1, 1, 1)),
+            Coords((-1, 0, -0.9))
         ])
 
     def test_points(self) -> None:
 
         points = self.mesh.points
-        self.assertListsAlmostEqual(next(points), make_coords(1, 1, 1))
-        self.assertListsAlmostEqual(next(points), make_coords(-1, 0, -0.9))
+        self.assertListsAlmostEqual(next(points), Coords((1, 1, 1)))
+        self.assertListsAlmostEqual(next(points), Coords((-1, 0, -0.9)))
 
 
 class TestGridMesh(TestCase):
 
     def setUp(self) -> None:
-        self.origin = make_coords(0.1, 0.2, 0.3)
+        self.origin = Coords((0.1, 0.2, 0.3))
         self.axes = GridMesh.Axes((
             GridMesh.Axis(
-                vector=make_coords(0.2, 0, 0),
+                vector=Coords((0.2, 0, 0)),
                 point_count=3
             ),
             GridMesh.Axis(
-                vector=make_coords(0, 0.3, 0),
+                vector=Coords((0, 0.3, 0)),
                 point_count=3
             ),
             GridMesh.Axis(
-                vector=make_coords(0, 0, 0.4),
+                vector=Coords((0, 0, 0.4)),
                 point_count=3
             ),
         ))
@@ -47,7 +47,7 @@ class TestGridMesh(TestCase):
     def test_construction_fails_with_misaligned_axes(self) -> None:
         axes = GridMesh.Axes((
             GridMesh.Axis(
-                vector=make_coords(0.2, 0, 0.0001),
+                vector=Coords((0.2, 0, 0.0001)),
                 point_count=3
             ),
             self.axes[1],
@@ -59,7 +59,7 @@ class TestGridMesh(TestCase):
 
     def test_points(self) -> None:
         points = [
-            make_coords(*coords) for coords in [
+            Coords(coords) for coords in [
                 (0.1, 0.2, 0.3),
                 (0.1, 0.2, 0.7),
                 (0.1, 0.2, 1.1),
@@ -98,26 +98,26 @@ class TestField(TestCase):
     def setUp(self) -> None:
 
         self.mesh = NonGridMesh([
-            make_coords(1, 1, 1),
-            make_coords(-1, 0, -0.9)
+            Coords((1, 1, 1)),
+            Coords((-1, 0, -0.9))
         ])
 
-        self.values = [make_esp(0.5), make_esp(-0.7)]
+        self.values = [Esp(0.5), Esp(-0.7)]
 
     def test_construction(self) -> None:
         Field(self.mesh, self.values)
 
     def test_construction_fails_when_lengths_mismatched(self) -> None:
         with self.assertRaises(InputFormatError):
-            Field(self.mesh, [make_esp(0.5)])
+            Field(self.mesh, [Esp(0.5)])
 
     def test_addition_fails_for_different_meshes(self) -> None:
 
         field1 = Field(self.mesh, self.values)
         field2 = Field(
             NonGridMesh([
-                make_coords(1, 1, 1),
-                make_coords(-1, 0, 0.9)
+                Coords((1, 1, 1)),
+                Coords((-1, 0, 0.9))
             ]),
             self.values
         )
@@ -128,17 +128,17 @@ class TestField(TestCase):
     def test_addition(self) -> None:
 
         field1 = Field(self.mesh, self.values)
-        field2 = Field(self.mesh, [make_esp(0.1), make_esp(1) ])
+        field2 = Field(self.mesh, [Esp(0.1), Esp(1) ])
         field3 = field1 + field2
 
         self.assertEqual(field1.mesh, field3.mesh)
-        self.assertListsAlmostEqual(field3.values, [make_esp(0.6), make_esp(0.3)])
+        self.assertListsAlmostEqual(field3.values, [Esp(0.6), Esp(0.3)])
 
     def test_subtraction(self) -> None:
 
         field1 = Field(self.mesh, self.values)
-        field2 = Field(self.mesh, [make_esp(0.1), make_esp(1) ])
+        field2 = Field(self.mesh, [Esp(0.1), Esp(1) ])
         field3 = field1 - field2
 
         self.assertEqual(field1.mesh, field3.mesh)
-        self.assertListsAlmostEqual(field3.values, [make_esp(0.4), make_esp(-1.7)])
+        self.assertListsAlmostEqual(field3.values, [Esp(0.4), Esp(-1.7)])

@@ -1,7 +1,7 @@
-from repESP.types import *
 from repESP.charges import *
+from repESP.fields import *
+from repESP.types import *
 from repESP.cube_util import parse_esp_cube
-from repESP.fields import make_esp
 from repESP.gaussian_util import get_charges_from_log, get_esp_fit_stats_from_log
 
 from my_unittest import TestCase
@@ -59,7 +59,7 @@ class TestGetChargesFromLog(TestFromLog):
             occurrence=occurrence
         )
 
-        expected_charges = [make_charge(x) for x in expected]
+        expected_charges = [Charge(x) for x in expected]
         self.assertListsAlmostEqual(charges, expected_charges)
 
     def test_mulliken(self) -> None:
@@ -159,7 +159,7 @@ class TestGetEspFitStatsFromLog(TestFromLog):
             occurrence=occurrence
         )
 
-        expected_rms = make_esp(expected[0])
+        expected_rms = Esp(expected[0])
         expected_rrms = expected[1]
 
         self.assertAlmostEqual(rms, expected_rms)

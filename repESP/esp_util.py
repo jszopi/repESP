@@ -1,8 +1,7 @@
-from .charges import AtomWithCoordsAndCharge, Charge, Dipole, Quadrupole
-from .charges import make_charge, make_dipole_moment, make_quadrupole_moment
-from .fields import Esp, Field, NonGridMesh, make_esp
+from .charges import AtomWithCoordsAndCharge, Charge, Dipole, DipoleMoment, Quadrupole, QuadrupoleMoment
+from .fields import Esp, Field, NonGridMesh
 from .exceptions import InputFormatError
-from .types import AtomWithCoords, Coords, Molecule, make_coords
+from .types import AtomWithCoords, Coords, Molecule
 
 from dataclasses import dataclass
 from fortranformat import FortranRecordWriter as FW, FortranRecordReader as FR
@@ -99,8 +98,8 @@ def _parse_atom(line: str) -> AtomWithCoordsAndCharge:
     line_split = line.split()
     return AtomWithCoordsAndCharge.from_symbol(
         line_split[0],
-        make_coords(*(coord.replace('D', 'E') for coord in line_split[1:4])),
-        make_charge(line_split[4].replace('D', 'E'))
+        Coords(tuple(coord.replace('D', 'E') for coord in line_split[1:4])),
+        Charge(line_split[4].replace('D', 'E'))
     )
 
 
@@ -110,9 +109,9 @@ def _parse_dipole(line: str) -> Dipole:
     if dipole_line_match is None:
         raise InputFormatError("Failed parsing dipole specification.")
     return Dipole(
-        make_dipole_moment(dipole_line_match.group(1).replace('D', 'E')),
-        make_dipole_moment(dipole_line_match.group(2).replace('D', 'E')),
-        make_dipole_moment(dipole_line_match.group(3).replace('D', 'E'))
+        DipoleMoment(dipole_line_match.group(1).replace('D', 'E')),
+        DipoleMoment(dipole_line_match.group(2).replace('D', 'E')),
+        DipoleMoment(dipole_line_match.group(3).replace('D', 'E'))
     )
 
 
@@ -132,12 +131,12 @@ def _parse_quadrupole(lines: List[str]) -> Quadrupole:
         raise InputFormatError("Failed parsing quadrupole specification.")
 
     return Quadrupole(
-        make_quadrupole_moment(line1_match.group(1).replace('D', 'E')),
-        make_quadrupole_moment(line1_match.group(2).replace('D', 'E')),
-        make_quadrupole_moment(line1_match.group(3).replace('D', 'E')),
-        make_quadrupole_moment(line2_match.group(1).replace('D', 'E')),
-        make_quadrupole_moment(line2_match.group(2).replace('D', 'E')),
-        make_quadrupole_moment(line2_match.group(3).replace('D', 'E'))
+        QuadrupoleMoment(line1_match.group(1).replace('D', 'E')),
+        QuadrupoleMoment(line1_match.group(2).replace('D', 'E')),
+        QuadrupoleMoment(line1_match.group(3).replace('D', 'E')),
+        QuadrupoleMoment(line2_match.group(1).replace('D', 'E')),
+        QuadrupoleMoment(line2_match.group(2).replace('D', 'E')),
+        QuadrupoleMoment(line2_match.group(3).replace('D', 'E'))
     )
 
 
@@ -146,8 +145,8 @@ def _parse_esp_points(f: TextIO) -> Field[Esp]:
     values = []
     for line in f:
         line_split = [val.replace('D', 'E') for val in line.split()]
-        points.append(make_coords(*line_split[1:4]))
-        values.append(make_esp(line_split[0]))
+        points.append(Coords(line_split[1:4]))
+        values.append(Esp(line_split[0]))
 
     return Field(
         NonGridMesh(points),
@@ -169,15 +168,15 @@ def parse_resp_esp(f: TextIO) -> EspData:
     atom_count = int(atom_and_point_count[0])
     point_count = int(atom_and_point_count[1])
 
-    atoms_coords = [make_coords(*get_line().split()) for _ in range(atom_count)]
+    atoms_coords = [Coords(get_line().split()) for _ in range(atom_count)]
 
     mesh_coords: List[Coords] = []
     esp_values: List[Esp] = []
 
     for _ in range(point_count):
         val, *coords = get_line().split()
-        mesh_coords.append(make_coords(*coords))
-        esp_values.append(make_esp(val))
+        mesh_coords.append(Coords(coords))
+        esp_values.append(Esp(val))
 
     field = Field(
         NonGridMesh(

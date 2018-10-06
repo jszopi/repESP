@@ -15,40 +15,40 @@ gaussian_esp_data = GaussianEspData(
     Molecule([
         AtomWithCoordsAndCharge(
             6,
-            make_coords(0, 0, 0),
-            make_charge(-0.50031415)
+            Coords((0, 0, 0)),
+            Charge(-0.50031415)
         ),
         AtomWithCoordsAndCharge(
             1,
-            make_coords(1.23, 0.456, 0.0789),
-            make_charge( 0.12532268)
+            Coords((1.23, 0.456, 0.0789)),
+            Charge( 0.12532268)
         )
     ]),
     Dipole(
-        make_dipole_moment( 0.38811727e-15),
-        make_dipole_moment( 0.42690461e-16),
-        make_dipole_moment(-0.29029513e-15)
+        DipoleMoment( 0.38811727e-15),
+        DipoleMoment( 0.42690461e-16),
+        DipoleMoment(-0.29029513e-15)
     ),
     Quadrupole(
-        make_quadrupole_moment(-0.26645353e-14),
-        make_quadrupole_moment( 0.35527137e-14),
-        make_quadrupole_moment(-0.88817842e-15),
-        make_quadrupole_moment(-0.13868301e-15),
-        make_quadrupole_moment(-0.97158067e-16),
-        make_quadrupole_moment( 0.72144168e-15),
+        QuadrupoleMoment(-0.26645353e-14),
+        QuadrupoleMoment( 0.35527137e-14),
+        QuadrupoleMoment(-0.88817842e-15),
+        QuadrupoleMoment(-0.13868301e-15),
+        QuadrupoleMoment(-0.97158067e-16),
+        QuadrupoleMoment( 0.72144168e-15),
     ),
     Field(
         NonGridMesh(
             [
-                make_coords( 0.00000000,  0.0000000, 3.9684249),
-                make_coords(-0.99210622,  1.7183784, 3.4367568),
-                make_coords( 0.99210622, -1.7183784, 3.4367568)
+                Coords(( 0.00000000,  0.0000000, 3.9684249)),
+                Coords((-0.99210622,  1.7183784, 3.4367568)),
+                Coords(( 0.99210622, -1.7183784, 3.4367568))
             ],
         ),
         [
-            make_esp(-0.26293556e-2),
-            make_esp(-0.28665426e-2),
-            make_esp(-0.28665426e-2)
+            Esp(-0.26293556e-2),
+            Esp(-0.28665426e-2),
+            Esp(-0.28665426e-2)
         ]
     )
 )

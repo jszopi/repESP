@@ -1,4 +1,4 @@
-from .charges import Charge, make_charge
+from .charges import Charge
 from .esp_util import EspData, write_resp_esp
 from .respin_generation import prepare_respin
 from .respin_generation import RespStage1RespinGenerator, RespStage2RespinGenerator

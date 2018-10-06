@@ -1,4 +1,4 @@
-from repESP.charges import Charge, make_charge
+from repESP.charges import Charge
 from repESP.esp_util import EspData, parse_gaussian_esp
 from repESP.types import *
 from repESP.resp_util import run_resp, run_two_stage_resp, fit_hydrogens_only
@@ -102,7 +102,7 @@ class TestResp(TestCase):
             equivalence=Equivalence([None, None, 1, 1, 1]),
             molecule=Molecule([Atom(atomic_number) for atomic_number in [6, 1, 1, 1, 1]]),
             total_charge=0,
-            initial_charges=[make_charge(x) for x in [-0.5, 0, 0, 0, 0]]
+            initial_charges=[Charge(x) for x in [-0.5, 0, 0, 0, 0]]
         )
 
         self.assertListsAlmostEqual(
@@ -124,7 +124,7 @@ class TestFittingWithFrozenAtoms(TestResp):
             "molecule": Molecule([Atom(atomic_number) for atomic_number in [6, 1, 1, 1, 1]]),
             "frozen_atoms": [0, 2, 4],
             "total_charge": 0,
-            "initial_charges": [make_charge(x) for x in [-0.5, 0, 0, 0, 0]]
+            "initial_charges": [Charge(x) for x in [-0.5, 0, 0, 0, 0]]
         }
 
     def test_fitting_with_frozen_atoms_fails_validation_with_invalid_labels(self) -> None:

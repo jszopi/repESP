@@ -1,5 +1,5 @@
-from .charges import Charge, ChargeType, make_charge
-from .fields import Esp, make_esp
+from .charges import Charge, ChargeType
+from .fields import Esp
 from .exceptions import InputFormatError
 from .types import Coords, Molecule
 
@@ -223,7 +223,7 @@ def _parse_charges_section(section: List[str], charge_type: ChargeType) -> _Char
         charges = []
         for line in section[6:-1]:
             _symbol, _label, charge, *_other = line.split()
-            charges.append(make_charge(charge))
+            charges.append(Charge(charge))
         return _ChargesSectionData(
             ChargeType.NPA,
             charges
@@ -232,7 +232,7 @@ def _parse_charges_section(section: List[str], charge_type: ChargeType) -> _Char
         charges = []
         for line in section[2:-1]:
             _label, _symbol, charge = line.split()
-            charges.append(make_charge(charge))
+            charges.append(Charge(charge))
         return _ChargesSectionData(
             ChargeType.MULLIKEN,
             charges
@@ -259,7 +259,7 @@ def _parse_esp_charge_section(section: List[str]) -> _EspChargesSectionData:
     for i, line in enumerate(section):
         matched_charges_and_stats = charges_and_stats_re.match(line)
         if matched_charges_and_stats is not None:
-            rms = make_esp(matched_charges_and_stats.group(1))
+            rms = Esp(matched_charges_and_stats.group(1))
             rrms = float(matched_charges_and_stats.group(2))
             break
 
@@ -268,7 +268,7 @@ def _parse_esp_charge_section(section: List[str]) -> _EspChargesSectionData:
         if _is_section_end(line, charge_type):
             break
         _label, _symbol, charge = line.split()
-        charges.append(make_charge(charge))
+        charges.append(Charge(charge))
 
     return _EspChargesSectionData(
         charge_type,

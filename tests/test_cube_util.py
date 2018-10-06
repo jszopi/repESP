@@ -34,9 +34,9 @@ class TestCubeParser(TestCase):
         )
 
         expected_axis_vecs = [
-            make_coords(0.2, 0, 0),
-            make_coords(0, 0.3, 0),
-            make_coords(0, 0, 0.4)
+            Coords((0.2, 0, 0)),
+            Coords((0, 0.3, 0)),
+            Coords((0, 0, 0.4))
         ]
 
         for axis, expected_axis_vec in zip(
@@ -50,7 +50,7 @@ class TestCubeParser(TestCase):
 
         self.assertEqual(len(self.cube.molecule.atoms), 1)
         self.assertEqual(self.cube.molecule.atoms[0].atomic_number, 1)
-        self.assertEqual(self.cube.molecule.atoms[0].coords, make_coords(0.1, 0.2, 0.4))
+        self.assertEqual(self.cube.molecule.atoms[0].coords, Coords((0.1, 0.2, 0.4)))
 
     def test_electron_counts(self) -> None:
         self.assertListEqual(self.cube.electrons_on_atoms, [0.9])

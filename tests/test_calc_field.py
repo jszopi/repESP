@@ -13,23 +13,23 @@ class SmallTestCase(TestCase):
     def setUp(self) -> None:
 
         self.nonGridMesh = NonGridMesh([
-            make_coords(1, 1, 1),
-            make_coords(-1, 0, -0.9)
+            Coords((1, 1, 1)),
+            Coords((-1, 0, -0.9))
         ])
 
         self.gridMesh = GridMesh(
-            origin=make_coords(0.1, 0.2, 0.3),
+            origin=Coords((0.1, 0.2, 0.3)),
             axes=GridMesh.Axes((
                 GridMesh.Axis(
-                    vector=make_coords(0.2, 0, 0),
+                    vector=Coords((0.2, 0, 0)),
                     point_count=3
                 ),
                 GridMesh.Axis(
-                    vector=make_coords(0, 0.3, 0),
+                    vector=Coords((0, 0.3, 0)),
                     point_count=3
                 ),
                 GridMesh.Axis(
-                    vector=make_coords(0, 0, 0.4),
+                    vector=Coords((0, 0, 0.4)),
                     point_count=3
                 ),
             ))
@@ -37,8 +37,8 @@ class SmallTestCase(TestCase):
 
         self.molecule = Molecule(
             atoms=[
-                AtomWithCoords(atomic_number=1, coords=make_coords(0, 1, 0.5)),
-                AtomWithCoords(atomic_number=1, coords=make_coords(-0.4, 0.2, 0.5))
+                AtomWithCoords(atomic_number=1, coords=Coords((0, 1, 0.5))),
+                AtomWithCoords(atomic_number=1, coords=Coords((-0.4, 0.2, 0.5)))
             ]
         )
 
@@ -55,7 +55,7 @@ class TestEspFromCharges(SmallTestCase):
             )
             for atom, charge in zip(
                 self.molecule.atoms,
-                [make_charge(x) for x in [0.5, -0.9]]
+                [Charge(x) for x in [0.5, -0.9]]
             )
         ])
 

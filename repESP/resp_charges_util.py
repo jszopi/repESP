@@ -1,4 +1,4 @@
-from .charges import Charge, make_charge
+from .charges import Charge
 
 from fortranformat import FortranRecordWriter as FW, FortranRecordReader as FR
 from functools import reduce
@@ -9,7 +9,7 @@ from typing import List, TextIO
 def parse_resp_charges(f: TextIO) -> List[Charge]:
     formatter = FR("8F10.6")
     return list(map(
-        make_charge,
+        Charge,
         filter(
             lambda elem: elem is not None,
             reduce(add, [formatter.read(line) for line in f], [])

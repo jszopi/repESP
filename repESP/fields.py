@@ -9,16 +9,25 @@ import functools
 import math
 import operator
 
-Esp = NewType("Esp", float)  # Electrostatic potential [atomic units]
-Ed = NewType("Ed", float)  # Electron density [atomic units]
+
+class Esp(float):
+
+    """Electrostatic potential [atomic units]"""
+
+    __slots__ = ()
+
+    def __new__(cls, x: Any):
+        return super().__new__(cls, float(x))  # type: ignore # (Too many arguments for "__new__" of "object")
 
 
-def make_esp(x: Any) -> Esp:
-    return Esp(float(x))
+class Ed(float):
 
+    """Electron density [atomic units]"""
 
-def make_ed(x: Any) -> Ed:
-    return Ed(float(x))
+    __slots__ = ()
+
+    def __new__(cls, x: Any):
+        return super().__new__(cls, float(x))  # type: ignore # (Too many arguments for "__new__" of "object")
 
 
 FieldValue = TypeVar('FieldValue')

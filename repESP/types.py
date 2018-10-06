@@ -1,22 +1,33 @@
 from .util import _elements, _get_symbol, _get_atomic_number
 
 from dataclasses import dataclass
-from typing import Any, Generic, List, NewType, Tuple, TypeVar
-
-# TODO: It would be neat if the __repr__ of these could be overriden, so that
-# it's different from float. May not be possible without creating a class though.
-Dist = NewType("Dist", float)  # Distance [bohr]
-Coords = NewType("Coords", Tuple[Dist, Dist, Dist])
-
-# NewType allows to avoid the overhead of creating a class, but that's at the
-# cost of having custom constructors.
-# https://github.com/python/typing/issues/415#issuecomment-297401553
-def make_dist(x: Any) -> Dist:
-    return Dist(float(x))
+from typing import Any, Generic, List, Tuple, TypeVar
 
 
-def make_coords(x: Any, y: Any, z: Any) -> Coords:
-    return Coords((make_dist(x), make_dist(y), make_dist(z)))
+class Dist(float):
+    # NewType had many limitations: not supported in sphinx, not possible to
+    # override __repr__, and requirement for standalone helper constructors, like:
+    # https://github.com/python/typing/issues/415#issuecomment-297401553
+
+    """Distance [bohr]"""
+
+    __slots__ = ()
+
+    def __new__(cls, x: Any):
+        return super().__new__(cls, float(x))  # type: ignore # (Too many arguments for "__new__" of "object")
+
+
+class Coords(tuple):
+
+    __slots__ = ()
+
+    # A constructor from individual distances would be more convenient but that
+    # was causing issues due to libraries and built-ins assuming the same
+    # interface as `tuple`.
+    def __new__(cls, t: Tuple[Any, Any, Any]):
+        # To allow generators (required by `dataclasses.astuple`)
+        t = tuple(t)  # type: ignore # (t is now a variadic-size tuple)
+        return super().__new__(cls, tuple((Dist(t[0]), Dist(t[1]), Dist(t[2]))))
 
 
 @dataclass

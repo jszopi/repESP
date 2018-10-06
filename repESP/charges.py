@@ -2,17 +2,19 @@ from .exceptions import InputFormatError
 from .types import Atom, AtomWithCoords, Coords
 from .util import _NoValue, _get_atomic_number
 
-from dataclasses import dataclass, make_dataclass
+from dataclasses import dataclass
 from enum import auto
-from typing import Any, List, Collection, NewType, Tuple, Type
+from typing import Any, List, Collection, Tuple, Type
 
 
-Charge = NewType("Charge", float)  # Atomic charge [elementary charge]
+class Charge(float):
 
+    """Atomic charge [elementary charge]"""
 
-def make_charge(x: Any) -> Charge:
-    return Charge(float(x))
+    __slots__ = ()
 
+    def __new__(cls, x: Any):
+        return super().__new__(cls, float(x))  # type: ignore # (Too many arguments for "__new__" of "object")
 
 class ChargeType(_NoValue):
     MULLIKEN = auto()
@@ -36,11 +38,14 @@ class AtomWithCoordsAndCharge(AtomWithCharge, AtomWithCoords):
     pass
 
 
-DipoleMoment = NewType("DipoleMoment", float)  # Dipole moment [bohr * fundamental charge]
+class DipoleMoment(float):
 
+    """Dipole moment [bohr * fundamental charge]"""
 
-def make_dipole_moment(x: Any) -> DipoleMoment:
-    return DipoleMoment(float(x))
+    __slots__ = ()
+
+    def __new__(cls, x: Any):
+        return super().__new__(cls, float(x))  # type: ignore # (Too many arguments for "__new__" of "object")
 
 
 @dataclass
@@ -50,11 +55,14 @@ class Dipole:
     z: DipoleMoment
 
 
-QuadrupoleMoment = NewType("QuadrupoleMoment", float)  # Quadrupole moment [bohr^2 * fundamental charge]
+class QuadrupoleMoment(float):
 
+    """Quadrupole moment [bohr^2 * fundamental charge]"""
 
-def make_quadrupole_moment(x: Any) -> QuadrupoleMoment:
-    return QuadrupoleMoment(float(x))
+    __slots__ = ()
+
+    def __new__(cls, x: Any):
+        return super().__new__(cls, float(x))  # type: ignore # (Too many arguments for "__new__" of "object")
 
 
 @dataclass

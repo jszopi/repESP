@@ -1,6 +1,6 @@
-from .fields import Ed, Esp, Field, GridMesh, make_ed, make_esp
+from .fields import Ed, Esp, Field, GridMesh
 from .exceptions import InputFormatError
-from .types import AtomWithCoords, Coords, Molecule, make_coords
+from .types import AtomWithCoords, Coords, Molecule
 
 from dataclasses import dataclass
 from typing import Callable, Generic, List, TextIO, Tuple
@@ -41,7 +41,7 @@ def _parse_grid_prelude(line: str) -> _GridPrelude:
 
     return _GridPrelude(
         int(atom_count),
-        make_coords(*origin_coords),
+        Coords(origin_coords),
         float(nval)
     )
 
@@ -51,7 +51,7 @@ def _parse_grid(origin: Coords, lines: List[str]) -> GridMesh:
     def parse_axis(line: str) -> GridMesh.Axis:
         point_count, *vector_components = line.split()
         return GridMesh.Axis(
-            make_coords(*vector_components),
+            Coords(vector_components),
             int(point_count)
         )
 
@@ -68,7 +68,7 @@ def _parse_grid(origin: Coords, lines: List[str]) -> GridMesh:
 def _parse_atom(line: str) -> Tuple[AtomWithCoords, float]:
     atomic_number, cube_charge, *coords = line.split()
     return (
-        AtomWithCoords(int(atomic_number), make_coords(*coords)),
+        AtomWithCoords(int(atomic_number), Coords(coords)),
         float(cube_charge)
     )
 
@@ -132,14 +132,14 @@ def _parse_cube_by_title_common(
 def parse_esp_cube(f: TextIO, verify_title=True) -> Cube[Esp]:
     return parse_cube(
         f,
-        _parse_cube_by_title_common(" Electrostatic potential", make_esp, verify_title)
+        _parse_cube_by_title_common(" Electrostatic potential", Esp, verify_title)
     )
 
 
 def parse_ed_cube(f: TextIO, verify_title=True) -> Cube[Ed]:
     return parse_cube(
         f,
-        _parse_cube_by_title_common(" Electron density", make_ed, verify_title)
+        _parse_cube_by_title_common(" Electron density", Ed, verify_title)
     )
 
 def write_cube(f: TextIO, cube: Cube):

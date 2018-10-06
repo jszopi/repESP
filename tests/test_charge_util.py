@@ -1,5 +1,5 @@
 from repESP.charge_util import average
-from repESP.charges import Charge, make_charge
+from repESP.charges import Charge
 from repESP.respin_util import Equivalence
 
 from my_unittest import TestCase
@@ -8,7 +8,7 @@ from my_unittest import TestCase
 class TestAveraging(TestCase):
 
     def setUp(self) -> None:
-        self.charges = [make_charge(x) for x in [1, 2, 3, 4, 5, 6]]
+        self.charges = [Charge(x) for x in [1, 2, 3, 4, 5, 6]]
 
     def test_no_equivalence(self) -> None:
         equivalence = Equivalence([None]*6)

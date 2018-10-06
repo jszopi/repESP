@@ -1,5 +1,5 @@
 from .respin_util import Equivalence
-from .charges import Charge, make_charge
+from .charges import Charge
 
 import numpy as np
 from typing import Dict, List
@@ -26,7 +26,7 @@ def average(charges: List[Charge], equivalence: Equivalence) -> List[Charge]:
             equivalent_group_of_atom[referrer] = len(equivalent_groups) - 1
 
     return [
-        make_charge(
+        Charge(
             np.mean([charges[j] for j in equivalent_groups[equivalent_group_of_atom[i]]])
         ) for i in range(len(charges))
     ]

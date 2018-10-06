@@ -1,4 +1,4 @@
-from repESP.charges import make_charge
+from repESP.charges import Charge
 from repESP.resp_charges_util import parse_resp_charges, write_resp_charges
 
 from my_unittest import TestCase
@@ -9,7 +9,7 @@ class TestRespCharges(TestCase):
 
     def setUp(self) -> None:
         self.charges = list(map(
-            make_charge,
+            Charge,
             [
                 -0.162076,  0.040051,  0.042711,  0.033893, -0.001304, 0.012177,
                  0.011888,  0.200011, -0.001915, -0.223809,  0.044483, 0.048844,
