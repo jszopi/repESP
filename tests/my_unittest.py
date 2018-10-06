@@ -86,10 +86,7 @@ class TestCase(unittest.TestCase):
                     self.assertEqual(len(first), len(second))
                     zipped = zip(first, second)
                 except TypeError:
-                    try:
-                        self.assertAlmostEqual(first, second, places, msg, delta)
-                    except TypeError:
-                        self.assertEqual(first, second, msg)
+                    self.assertEqual(first, second, msg)
 
                 for a, b in zipped:
                     self.assertAlmostEqualRecursive(a, b, places, msg, delta)
