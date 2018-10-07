@@ -28,7 +28,7 @@ The plan is to transform them into command line scripts as well.
 The following chart presents the data flow that `repESP` can support.
 The monospaced text above arrows shows the names of the relevant command line scripts.
 
-![Data flow](https://github.com/jszopi/repESP/blob/master/data_flow.png)
+![Data flow](https://github.com/jszopi/repESP/blob/master/docs/diagrams/data_flow.png)
 
 Remember to run the scripts with the `.py` extension.
 Start by running with the option `-h` to see a help message and usage instructions.
