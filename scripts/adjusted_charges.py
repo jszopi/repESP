@@ -13,10 +13,10 @@ import resp_parser
 
 import shutil
 
-help_description = """Calculate compromise charges on the given ESP fitting
-    points. Note that the input charges should be averaged beforehand and
-    charges passed as a 'list' type. Nevertheless, this script also works if
-    raw charges are requested to be extracted from Gaussian or AIMAll output
+help_description = """Calculate adjusted rational charges for the given ESP
+    fitting points. Note that the input charges should be averaged beforehand
+    and charges passed as a 'list' type. Nevertheless, this script also works
+    if raw charges are requested to be extracted from Gaussian or AIMAll output
     files."""
 
 parser = argparse.ArgumentParser(
@@ -49,8 +49,8 @@ parser.add_argument("--scale_all",
                     scaling, which massively deteriorates fit quality. For
                     neutral molecules this approach has not been tested
                     thoroughly and presumably leads to a significantly larger
-                    fit deterioration than the default 'compromise'
-                    procedure.""",
+                    fit deterioration than the default adjusted rational charges.
+                    """,
                     action="store_true")
 
 parser.add_argument("--save_resp_to",
@@ -61,12 +61,12 @@ parser.add_argument("--save_resp_to",
 
 parser.add_argument("-o", "--output",
                     help="output file name",
-                    default='compromise_charges.txt')
+                    default='adjusted_rational_charges.txt')
 
 args = parser.parse_args()
 
 if args.save_resp_to is None:
-    save_resp_to = "compromise_temp_dir-dont_remove/"
+    save_resp_to = "adjusted_charges-temp_dir-dont_remove/"
 else:
     save_resp_to = args.save_resp_to + "/"
     if args.scale_all:
