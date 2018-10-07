@@ -1,16 +1,16 @@
 from typing import Dict, List, TypeVar, Union
 
 
-T = TypeVar('T')
-U = TypeVar('U')
+T1 = TypeVar('T1')
+T2 = TypeVar('T2')
 
 
 def list_from_dict(
-    dictionary: Dict[int, T],
+    dictionary: Dict[int, T1],
     length: int,
-    default: U,
+    default: T2,
     one_indexed: bool=False
-) -> List[Union[T, U]]:
+) -> List[Union[T1, T2]]:
     """Convenience function for creating lists from dictionaries
 
     For sparse data or certain user input it may be easier to represent properties of a
@@ -25,10 +25,10 @@ def list_from_dict(
 def mask_from_list(  # type: ignore # (defaults with generics: https://github.com/python/mypy/issues/3737)
     l: List[int],
     length: int,
-    value_if_present: T=True,
-    value_if_absent: U=False,
+    value_if_present: T1=True,
+    value_if_absent: T2=False,
     one_indexed: bool=False
-) -> List[Union[T, U]]:
+) -> List[Union[T1, T2]]:
     """Convenience function for creating masks from lists
 
     For sparse data or certain user input it may be easier to represent
