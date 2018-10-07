@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 
-from repESP.cube_helpers import Cube
-from repESP.field_comparison import difference, filter_by_dist
-from repESP import resp_helpers
+import sys, os
+sys.path.append(f"{os.path.dirname(__file__)}/../repESP_old")
+
+from cube_helpers import Cube
+from field_comparison import difference, filter_by_dist
+import resp_helpers
 
 import argparse
-import os
-import sys
 
 help_description = """Calculate the difference between two fields FIELD1 -
                    FIELD2. The fields can be given either as Gaussian cube

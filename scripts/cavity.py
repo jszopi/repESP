@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 
-from repESP import cube_helpers
+import sys, os
+sys.path.append(f"{os.path.dirname(__file__)}/../repESP_old")
+
+import cube_helpers
 
 import numpy as np
 from scipy.ndimage.morphology import distance_transform_edt as scipy_edt

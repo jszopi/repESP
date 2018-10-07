@@ -1,14 +1,16 @@
 #!/usr/bin/env python3
 
-from repESP.field_comparison import rms_and_rep
-from repESP import charges
-from repESP import resp_helpers
+import sys, os
+sys.path.append(f"{os.path.dirname(__file__)}/../repESP_old")
+
+from field_comparison import rms_and_rep
+import charges
+import resp_helpers
 
 import argparse
 import charges_parser
 import resp_parser
 
-import os
 import shutil
 
 help_description = """Evaluate the fit quality of the given charges on the

@@ -1,14 +1,16 @@
 #!/usr/bin/env python3
 
-from repESP.resp import eval_ratios, minimize_ratio
-from repESP import charges
-from repESP import resp_helpers
+import sys, os
+sys.path.append(f"{os.path.dirname(__file__)}/../repESP_old")
+
+from resp import eval_ratios, minimize_ratio
+import charges
+import resp_helpers
 
 import argparse
 import charges_parser
 import resp_parser
 
-import os
 import shutil
 
 help_description = """Calculate compromise charges on the given ESP fitting
