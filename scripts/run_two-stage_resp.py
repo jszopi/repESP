@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
 
-from repESP.resp import run_resp
-from repESP import charges
-from repESP import resp_helpers
+import sys, os
+sys.path.append(f"{os.path.dirname(__file__)}/../repESP_old")
+
+from resp import run_resp
+import charges
+import resp_helpers
 
 import argparse
 import resp_parser
 
-import os
 import shutil
 
 help_description = """Run 2-stage RESP. Running this wrapper is arguably easier

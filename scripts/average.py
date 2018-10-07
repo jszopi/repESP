@@ -1,15 +1,17 @@
 #!/usr/bin/env python3
 
-from repESP.resp import equivalence, _get_input_files, _read_respin
-from repESP.resp import _check_ivary, run_resp
-from repESP import charges
-from repESP import resp_helpers
+import sys, os
+sys.path.append(f"{os.path.dirname(__file__)}/../repESP_old")
+
+from resp import equivalence, _get_input_files, _read_respin
+from resp import _check_ivary, run_resp
+import charges
+import resp_helpers
 
 import argparse
 import charges_parser
 import resp_parser
 
-import os
 import shutil
 import copy
 

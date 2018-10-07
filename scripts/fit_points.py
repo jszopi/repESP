@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 
-from repESP import resp_helpers, cube_helpers, graphs
+import sys, os
+sys.path.append(f"{os.path.dirname(__file__)}/../repESP_old")
+
+import resp_helpers, cube_helpers, graphs
 
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
@@ -8,8 +11,6 @@ from matplotlib import cm
 import numpy as np
 
 import argparse
-import os
-import sys
 
 help_description = """
     Plot fitting or cube points in 2 or 3D colored by field values

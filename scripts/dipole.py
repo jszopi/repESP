@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 
-from repESP.resp_helpers import G09_esp
-from repESP import charges, rep_esp
+import sys, os
+sys.path.append(f"{os.path.dirname(__file__)}/../repESP_old")
+
+from resp_helpers import G09_esp
+import charges, rep_esp2
 
 import argparse
 import charges_parser
@@ -32,7 +35,7 @@ molecule = G09_esp(args.respin_location + '/' + args.esp_file).molecule
 charges._get_charges(args.input_charge_type, args.input_charge_file,
                      input_type, molecule)
 
-dipole = rep_esp.calc_dipole(molecule, args.input_charge_type)
+dipole = rep_esp2.calc_dipole(molecule, args.input_charge_type)
 
 for coord, component in zip(['X', 'Y', 'Z'], dipole):
     print("{0}:   {1: .6f}".format(coord, component))

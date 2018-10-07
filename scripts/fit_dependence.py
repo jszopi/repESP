@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
 
-from repESP import resp, resp_helpers, rep_esp, charges
-from repESP.field_comparison import difference, rms_and_rep
-from repESP.resp import get_atom_signature
+import sys, os
+sys.path.append(f"{os.path.dirname(__file__)}/../repESP_old")
+
+import resp, resp_helpers, rep_esp2, charges
+from field_comparison import difference, rms_and_rep
+from resp import get_atom_signature
 
 from numpy import linspace, meshgrid
 
@@ -11,9 +14,7 @@ import resp_parser
 import argparse
 import csv
 import itertools
-import os
 import shutil
-import sys
 
 
 help_description = """

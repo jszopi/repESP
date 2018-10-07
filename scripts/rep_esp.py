@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 
-from repESP import cube_helpers, charges, resp_helpers
-from repESP.rep_esp import calc_grid_field, calc_non_grid_field
+import sys, os
+sys.path.append(f"{os.path.dirname(__file__)}/../repESP_old")
+
+import cube_helpers, charges, resp_helpers
+from rep_esp2 import calc_grid_field, calc_non_grid_field
 
 import argparse
 import charges_parser
-import os
-import sys
 
 help_description = """
     Reproduce ESP from given charges and save as a cube or .esp file.

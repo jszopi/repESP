@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 
-from repESP import resp, resp_helpers, rep_esp, charges
-from repESP.field_comparison import difference, rms_and_rep
+import sys, os
+sys.path.append(f"{os.path.dirname(__file__)}/../repESP_old")
+
+import resp, resp_helpers, rep_esp2, charges
+from field_comparison import difference, rms_and_rep
 
 import resp_parser
 
 import argparse
-import os
-import sys
 import shutil
 
 

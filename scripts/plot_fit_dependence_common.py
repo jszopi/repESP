@@ -1,4 +1,7 @@
-from repESP.cube_helpers import InputFormatError
+import sys, os
+sys.path.append(f"{os.path.dirname(__file__)}/../repESP_old")
+
+from cube_helpers import InputFormatError
 
 import argparse
 import re
