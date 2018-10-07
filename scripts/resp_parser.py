@@ -1,3 +1,7 @@
+import sys, os
+sys.path.append(f"{os.path.dirname(__file__)}")
+sys.path.append(f"{os.path.dirname(__file__)}/../repESP_old")
+
 import argparse
 
 parser = argparse.ArgumentParser(add_help=False)

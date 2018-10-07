@@ -1,4 +1,6 @@
-#!/usr/bin/env python3
+import sys, os
+sys.path.append(f"{os.path.dirname(__file__)}")
+sys.path.append(f"{os.path.dirname(__file__)}/../repESP_old")
 
 from plot_fit_dependence_common import *
 
@@ -159,7 +161,8 @@ def plot_common(df, varied_atom, varied_atom_display, title, shaded_region):
 
     return ax1
 
-if __name__ == "__main__":
+
+def main():
 
     parser, plot_appearance_group = get_parser(isTwoAtoms=False)
     add_specific_cli_args(parser, plot_appearance_group)

@@ -1,6 +1,5 @@
-#!/usr/bin/env python3
-
 import sys, os
+sys.path.append(f"{os.path.dirname(__file__)}")
 sys.path.append(f"{os.path.dirname(__file__)}/../repESP_old")
 
 from resp_helpers import G09_esp
@@ -11,33 +10,36 @@ import charges_parser
 import resp_parser
 import numpy as np
 
-help_description = """Calculate dipole moment in Debye."""
 
-parser = argparse.ArgumentParser(
-    parents=[charges_parser.parser, resp_parser.parser],
-    formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-    description=help_description)
+def main():
 
-# TODO: The ESP file is only necessary to create the molecule but that's not
-# clear from the help message. Also, `respin_location` is only necessary to
-# locate that ESP file.
-parser.add_argument("esp_file",
-                    help=resp_parser.esp_file_help,
-                    metavar="ESP_FILE")
+    help_description = """Calculate dipole moment in Debye."""
 
-args = parser.parse_args()
+    parser = argparse.ArgumentParser(
+        parents=[charges_parser.parser, resp_parser.parser],
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+        description=help_description)
 
-input_type = charges_parser.input_type(args.input_charge_type)
+    # TODO: The ESP file is only necessary to create the molecule but that's not
+    # clear from the help message. Also, `respin_location` is only necessary to
+    # locate that ESP file.
+    parser.add_argument("esp_file",
+                        help=resp_parser.esp_file_help,
+                        metavar="ESP_FILE")
 
-# Note: the molecule is taken from the esp file
-molecule = G09_esp(args.respin_location + '/' + args.esp_file).molecule
-# ... but this will throw an error if the molecule in log is not the same one
-charges._get_charges(args.input_charge_type, args.input_charge_file,
-                     input_type, molecule)
+    args = parser.parse_args()
 
-dipole = rep_esp2.calc_dipole(molecule, args.input_charge_type)
+    input_type = charges_parser.input_type(args.input_charge_type)
 
-for coord, component in zip(['X', 'Y', 'Z'], dipole):
-    print("{0}:   {1: .6f}".format(coord, component))
+    # Note: the molecule is taken from the esp file
+    molecule = G09_esp(args.respin_location + '/' + args.esp_file).molecule
+    # ... but this will throw an error if the molecule in log is not the same one
+    charges._get_charges(args.input_charge_type, args.input_charge_file,
+                         input_type, molecule)
 
-print("TOT: {0: .6f}".format(np.linalg.norm(dipole)))
+    dipole = rep_esp2.calc_dipole(molecule, args.input_charge_type)
+
+    for coord, component in zip(['X', 'Y', 'Z'], dipole):
+        print("{0}:   {1: .6f}".format(coord, component))
+
+    print("TOT: {0: .6f}".format(np.linalg.norm(dipole)))

@@ -1,4 +1,6 @@
-#!/usr/bin/env python3
+import sys, os
+sys.path.append(f"{os.path.dirname(__file__)}")
+sys.path.append(f"{os.path.dirname(__file__)}/../repESP_old")
 
 from plot_fit_dependence_common import *
 
@@ -182,7 +184,7 @@ def mark_point(ax, coords, marker_spec, swap_axes):
     ax.scatter(coords[0], coords[1], **marker_spec)
 
 
-if __name__ == "__main__":
+def main():
 
     parser, plot_appearance_group = get_parser(isTwoAtoms=True)
     add_specific_cli_args(parser, plot_appearance_group)

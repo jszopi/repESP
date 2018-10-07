@@ -1,6 +1,5 @@
-#!/usr/bin/env python3
-
 import sys, os
+sys.path.append(f"{os.path.dirname(__file__)}")
 sys.path.append(f"{os.path.dirname(__file__)}/../repESP_old")
 
 import resp, resp_helpers, rep_esp2, charges
@@ -16,106 +15,6 @@ import csv
 import itertools
 import shutil
 
-
-help_description = """
-    Investigate the dependence of the ESP fit on the charge on one or two atoms
-    """
-
-parser = argparse.ArgumentParser(
-    parents=[resp_parser.parser],
-    description=help_description,
-    formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-
-parser.add_argument("esp_file",
-                    help=resp_parser.esp_file_help,
-                    metavar="FILENAME")
-
-parser.add_argument("--monitor",
-                    help="""labels of atoms which charges are to be monitored
-                    while the charge on atom1 (and optionally atom2) are varied""",
-                    type=int, nargs="*", metavar="LABELS", default=[])
-
-parser.add_argument("-o", "--output",
-                    help="file to write the output in the csv format",
-                    type=str, metavar="FILENAME")
-
-atom1_group = parser.add_argument_group(
-    title="options regarding the first varied atom",
-    description="Charge on this atom will be varied"
-)
-
-atom1_group.add_argument(
-    "atom1",
-    help="""label of the first atom which charge is to be varied""",
-    type=int,
-    metavar="LABEL"
-)
-
-atom1_group.add_argument(
-    "--equivalent1",
-    help="""If in the molecule there are atoms equivalent to the atom1, specify
-    their labels. This ensures that the atoms cannot vary independently.""",
-    type=int,
-    nargs="*",
-    metavar="LABELS",
-    default=[]
-)
-
-atom1_group.add_argument(
-    "--limits1",
-    help="""range of atom1 charge values to be sampled""",
-    nargs=2,
-    type=float,
-    default=(-1, 1),
-    metavar=("LOWER", "UPPER")
-)
-
-atom1_group.add_argument(
-    "--sampling1",
-    help="""number of data points to be sampled for atom1 charges""",
-    type=float,
-    default=11,
-    metavar="POINTS"
-)
-
-atom2_group = parser.add_argument_group(
-    title="options regarding the second varied atom",
-    description="Optionally the charge on another atom can be simultaneously varied."
-)
-
-atom2_group.add_argument(
-    "--atom2",
-    help="""label of the second atom which charge is to be varied""",
-    type=int,
-    metavar="LABEL"
-)
-
-atom2_group.add_argument(
-    "--equivalent2",
-    help="""If in the molecule there are atoms equivalent to the atom1, specify
-        their labels. This ensures that the atoms cannot vary independently.""",
-    type=int,
-    nargs="*",
-    metavar="LABELS",
-    default=[]
-)
-
-atom2_group.add_argument(
-    "--limits2",
-    help="""range of atom2 charge values to be sampled""",
-    nargs=2,
-    type=float,
-    default=(-1, 1),
-    metavar=("LOWER", "UPPER")
-)
-
-atom2_group.add_argument(
-    "--sampling2",
-    help="""number of data points to be sampled for atom2 charges""",
-    type=float,
-    default=11,
-    metavar="POINTS"
-)
 
 def interpret(molecule, charge_dict, vary_label1, vary_label2=None):
     if vary_label2 is None:
@@ -244,36 +143,138 @@ def two_charge_variation():
     return csv_header, charges_with_results
 
 
-args = parser.parse_args()
+def main():
 
-input_esp = args.respin_location + "/" + args.esp_file
+    help_description = """
+        Investigate the dependence of the ESP fit on the charge on one or two atoms
+        """
 
-temp_dir = "fit-dependence_temp_dir/"
+    parser = argparse.ArgumentParser(
+        parents=[resp_parser.parser],
+        description=help_description,
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-if args.output and os.path.exists(args.output):
-    raise FileExistsError("Output file exists: " + args.output)
+    parser.add_argument("esp_file",
+                        help=resp_parser.esp_file_help,
+                        metavar="FILENAME")
 
-if os.path.exists(temp_dir):
+    parser.add_argument("--monitor",
+                        help="""labels of atoms which charges are to be monitored
+                        while the charge on atom1 (and optionally atom2) are varied""",
+                        type=int, nargs="*", metavar="LABELS", default=[])
+
+    parser.add_argument("-o", "--output",
+                        help="file to write the output in the csv format",
+                        type=str, metavar="FILENAME")
+
+    atom1_group = parser.add_argument_group(
+        title="options regarding the first varied atom",
+        description="Charge on this atom will be varied"
+    )
+
+    atom1_group.add_argument(
+        "atom1",
+        help="""label of the first atom which charge is to be varied""",
+        type=int,
+        metavar="LABEL"
+    )
+
+    atom1_group.add_argument(
+        "--equivalent1",
+        help="""If in the molecule there are atoms equivalent to the atom1, specify
+        their labels. This ensures that the atoms cannot vary independently.""",
+        type=int,
+        nargs="*",
+        metavar="LABELS",
+        default=[]
+    )
+
+    atom1_group.add_argument(
+        "--limits1",
+        help="""range of atom1 charge values to be sampled""",
+        nargs=2,
+        type=float,
+        default=(-1, 1),
+        metavar=("LOWER", "UPPER")
+    )
+
+    atom1_group.add_argument(
+        "--sampling1",
+        help="""number of data points to be sampled for atom1 charges""",
+        type=float,
+        default=11,
+        metavar="POINTS"
+    )
+
+    atom2_group = parser.add_argument_group(
+        title="options regarding the second varied atom",
+        description="Optionally the charge on another atom can be simultaneously varied."
+    )
+
+    atom2_group.add_argument(
+        "--atom2",
+        help="""label of the second atom which charge is to be varied""",
+        type=int,
+        metavar="LABEL"
+    )
+
+    atom2_group.add_argument(
+        "--equivalent2",
+        help="""If in the molecule there are atoms equivalent to the atom1, specify
+            their labels. This ensures that the atoms cannot vary independently.""",
+        type=int,
+        nargs="*",
+        metavar="LABELS",
+        default=[]
+    )
+
+    atom2_group.add_argument(
+        "--limits2",
+        help="""range of atom2 charge values to be sampled""",
+        nargs=2,
+        type=float,
+        default=(-1, 1),
+        metavar=("LOWER", "UPPER")
+    )
+
+    atom2_group.add_argument(
+        "--sampling2",
+        help="""number of data points to be sampled for atom2 charges""",
+        type=float,
+        default=11,
+        metavar="POINTS"
+    )
+
+    args = parser.parse_args()
+
+    input_esp = args.respin_location + "/" + args.esp_file
+
+    temp_dir = "fit-dependence_temp_dir/"
+
+    if args.output and os.path.exists(args.output):
+        raise FileExistsError("Output file exists: " + args.output)
+
+    if os.path.exists(temp_dir):
+        shutil.rmtree(temp_dir)
+
+    os.mkdir(temp_dir)
+
+    # Read the .esp file
+    info_from_esp = resp_helpers.G09_esp(input_esp)
+    # Write the .esp file in the correct format expected by the `resp` program
+    info_from_esp.field.write_to_file(temp_dir + "corrected.esp", info_from_esp.molecule)
+
+    csv_header, charges_with_results = one_charge_variation() if args.atom2 is None else two_charge_variation()
+
+    if args.output is None:
+        print("\nESP fit dependence scan results:")
+        print(",".join("{:>13}".format(x) for x in csv_header))
+        for result_line in charges_with_results:
+            print(",".join("{:>13.8f}".format(x) for x in result_line))
+    else:
+        with open(args.output, "w") as out:
+            csv_writer = csv.writer(out)
+            csv_writer.writerow(csv_header)
+            csv_writer.writerows(charges_with_results)
+
     shutil.rmtree(temp_dir)
-
-os.mkdir(temp_dir)
-
-# Read the .esp file
-info_from_esp = resp_helpers.G09_esp(input_esp)
-# Write the .esp file in the correct format expected by the `resp` program
-info_from_esp.field.write_to_file(temp_dir + "corrected.esp", info_from_esp.molecule)
-
-csv_header, charges_with_results = one_charge_variation() if args.atom2 is None else two_charge_variation()
-
-if args.output is None:
-    print("\nESP fit dependence scan results:")
-    print(",".join("{:>13}".format(x) for x in csv_header))
-    for result_line in charges_with_results:
-        print(",".join("{:>13.8f}".format(x) for x in result_line))
-else:
-    with open(args.output, "w") as out:
-        csv_writer = csv.writer(out)
-        csv_writer.writerow(csv_header)
-        csv_writer.writerows(charges_with_results)
-
-shutil.rmtree(temp_dir)
