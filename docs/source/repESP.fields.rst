@@ -1,7 +1,7 @@
-repESP.graphs module
+repESP.fields module
 ====================
 
-.. automodule:: repESP.graphs
+.. automodule:: repESP.fields
     :members:
     :undoc-members:
     :show-inheritance:

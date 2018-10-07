@@ -1,7 +1,7 @@
-repESP.resp module
+repESP.util module
 ==================
 
-.. automodule:: repESP.resp
+.. automodule:: repESP.util
     :members:
     :undoc-members:
     :show-inheritance:

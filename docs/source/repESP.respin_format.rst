@@ -1,7 +1,7 @@
-repESP.esp\_fit\_calc module
+repESP.respin\_format module
 ============================
 
-.. automodule:: repESP.esp_fit_calc
+.. automodule:: repESP.respin_format
     :members:
     :undoc-members:
     :show-inheritance:

@@ -1,7 +1,7 @@
-repESP.cube\_helpers module
+repESP.resp\_wrapper module
 ===========================
 
-.. automodule:: repESP.cube_helpers
+.. automodule:: repESP.resp_wrapper
     :members:
     :undoc-members:
     :show-inheritance:
