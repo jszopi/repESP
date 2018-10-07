@@ -6,17 +6,25 @@ try:
 except ImportError:
     from distutils.core import setup
 
+docs_require = ['sphinx']
+test_requires = ['mypy', 'nose']
+dev_requires = docs_require + test_requires
+
 config = {
     'name': 'repESP',
-    'version': '0.1.0',
-    'description': 'ESP field reproduction from partial charges and analysis '
-                   'of resulting discrepancies',
+    'version': '0.2.0-dev',
+    'description': 'Reproducing molecular ESP from partial charges and more',
     'author': 'Jan Szopinski',
     'author_email': 'jszopi@users.noreply.github.com',
     'url': 'https://github.com/jszopi/repESP',
     'packages': ['repESP'],
-    'install_requires': ['scipy', 'matplotlib', 'fortranformat', 'pandas', 'sphinx'],
-    'python_requires':'>=3.7.0',
+    'install_requires': ['scipy', 'matplotlib', 'fortranformat', 'pandas'],
+    'extras_require': {
+        'docs': docs_require,
+        'dev': dev_requires,
+        'test': test_requires,
+    },
+    'python_requires': '>=3.7.0',
     'license': 'GPLv3',
 }
 
