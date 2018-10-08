@@ -118,7 +118,7 @@ def write_detailed(scripts_path: Path, scripts: List[Script]) -> None:
 def write_overviews(scripts_path: Path, scripts: List[Script]) -> None:
 
     readme_path = scripts_path.joinpath("README.md")
-    dev_notes_path = scripts_path.joinpath("docs").joinpath("developer-notes.md")
+    # another_file = scripts_path.joinpath("docs").joinpath("another_file.md")
 
     with open(readme_path, 'x') as readme_file:
 
@@ -136,8 +136,8 @@ Full help messages can be found in the [`detailed.md`](./detailed.md) file.
         for script in scripts:
             write_overview_to_md(readme_file, script)
 
-        with open(dev_notes_path, 'r') as dev_notes_file:
-            readme_file.write(dev_notes_file.read())
+        # with open(another_file_path, 'r') as another_file:
+        #     readme_file.write(another_file.read())
 
 
 if __name__ == "__main__":
