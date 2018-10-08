@@ -5,8 +5,11 @@ import sys
 import subprocess
 from typing import List, NamedTuple, Optional, TextIO
 
+from script_list import script_list
+
 # Run this script whenever any of the scripts in the directory above changes.
-# This will generate two files: README.md and detailed.md.
+# This will generate two files: README.md and detailed.md. The files must not
+# exist beforehand, as this script won't overwrite them for safety's sake.
 #
 # The idea for this script is somewhat misconceived as it de facto attempts to
 # parse formatted output rather than accessing argparse datastructures directly.
@@ -32,19 +35,17 @@ def get_script_help(path: Path) -> Optional[str]:
 
 def get_scripts(path: Path) -> List[Script]:
 
-    script_candidates = path.resolve().glob("*.py")
-
     result: List[Script] = []
 
-    for script in sorted(script_candidates):
+    for script in sorted(script_list):
 
         script_help_opt = get_script_help(script)
 
         if script_help_opt is not None:
-            # print(f'Script "{script.name}" with --help succeeded.')
+            # print(f'Script "{script}" with --help succeeded.')
             result.append(
                 Script(
-                    script.name,
+                    script,
                     script_help_opt
                 )
             )
