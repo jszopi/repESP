@@ -14,77 +14,53 @@ The program was developed as part of Jan Szopinski's MSci project at the [Hunt R
 The program was used to investigate and develop the following novel concepts:
 
 * charge 'flexibility'
-* 'compromise' charges
+* 'adjusted rational' charges
 
 # How to use `repESP`
 
-`repESP` implemented a lot of functionalities, which researchers can use to re-assess the various methods of assigning partial charges.
-Some of these functionalities are exposed to users as command line (CLI) scripts, which are relatively easy to use.
-The scripts perform well-defined, modular tasks and can be woven together to create one's own work flow (UNIX style).
-
-Other functionalities are less user friendly and require modifying a few input values in Python scripts
-The plan is to transform them into command line scripts as well.
-
-The following chart presents the data flow that `repESP` can support.
-The monospaced text above arrows shows the names of the relevant command line scripts.
+`repESP` implemented a lot of functionalities, which can be used to examine the various methods of assigning partial charges.
+Many of these functionalities are exposed to users as command line (CLI) scripts and are easy to use.
+The scripts perform well-defined, modular tasks and can be woven together to create one's own work flow (Unix style).
+The following chart presents some of the `repESP` capabilities:
 
 ![Data flow](https://github.com/jszopi/repESP/blob/master/docs/diagrams/data_flow.png)
 
-Remember to run the scripts with the `.py` extension.
-Start by running with the option `-h` to see a help message and usage instructions.
+The monospaced text above arrows shows the names of the relevant command line scripts.
+
+When the out-of-the-box functionalities are not sufficient or flexible enough, users can create their own scripts by using the repESP library.
 
 ## Documentation
 
+### Scripts
+
+The overview of the available scripts can be found [here](scripts/README.md) and the command line interface help can be found [here](scripts/detailed.md).
+
 ### Library
 
-The library is in the process of being rewritten to provide a better organized interface and be useful in applications beyond the original research problem.
-If you want to see the documentation for the current version, check if you have `sphinx` installed:
+> **Note:** Work on the library is currently ongoing and documentation will be filled in over the coming week or two, leading to a release of version 0.2.0.
+> Missing functionalities will be prioritized and added in subsequent revisions.
 
-```sh
-sphinx-build --version
-```
-
-I'm not sure if installing the `repESP` package provides the command line tools, so this may or may not work out of the box.
-If it's not installed, please follow [these instructions](http://www.sphinx-doc.org/en/master/usage/installation.html).
-When that's ready, run these commands in the `docs` directory:
+Documentation for the library isn't currently hosted and must be generated locally by the user:
+After installing `repESP`, run the following commands from the `docs` directory:
 
 ```sh
 sphinx-apidoc -fMe -o source ../repESP
 make html
 ```
 
-The documentation is available to view in the `build/html` subdirectory.
+The documentation can then be found in the `build/html` subdirectory.
 You can open the `index.html` or `modules.html` file in any browser and navigate from there.
 
-### Scripts
+# Run `repESP`
 
-Scripts are available in the `scripts` directory.
-Only the scripts which work with the `--help` option are supported and the help message should provide comprehensive instructions on the usage.
-If anything is unclear, please see the [Contributing](#contributing) section.
-
-# Where is `repESP` going?
-
-> **Note:** Work on version 0.2.0 is currently ongoing.
-
-Every research project is different and the CLI scripts cannot cater for all but the most standard purposes.
-Therefore, `repESP` will also attempt to provide an API/library, so that researchers can write their own Python scripts.
-They will be able to take advantage of the general capabilities of `repESP`, e.g. reading in charges from Gaussian output and reproducing the ESP.
-The high level of abstraction and clear documentation should make it usable by anyone comfortable with Python.
-Ideally, the user will only have to code elements specific to their research project.
-
-# Installation
+The following instructions are for Unix-like systems, like MacOS and Linux.
+There shouldn't be anything stopping `repESP` from running on Windows but that hasn't been tested.
 
 ## Prerequisites
 
 `repESP` needs input from computational chemistry software to obtain the ESP and partial charges.
-For the foreseeable future the only supported program is Gaussian 09 (adapting the program for older versions may be easy, please open an issue if you want this).
-
-To run, `repESP` requires Python with certain packages and two other free programs.
-
-### Python
-
-* Python 3.7
-* Packages: `scipy`, `matplotlib`, `fortranformat` (install using `pip3`, which comes with your Python) and others
+Currently only the output from Gaussian 09 is known to be recognized, please open issues for other Gaussian versions or other software.
+Further, to run `repESP` you need Python 3.7 and two other free programs, which need to be in your `PATH`.
 
 ### `resp` 
 
@@ -98,7 +74,7 @@ To install you'll have to compile the Fortran source and put the resulting binar
 AmberTools is a suite of free programs ([link](http://ambermd.org/AmberTools16-get.html)).
 However, it requires compilation from C, C++ and Fortran sources, which proved tricky on MacOS.
 
-To create the necessary input for a methane molecule, first create the `.ac` file from Gausian `.log` using `antechamber`:
+To create the necessary input for a methane molecule, first create the `.ac` file from Gaussian `.log` using `antechamber`:
 
 `antechamber -i methane.log -fi gout -o methane.ac -fo ac`
 
@@ -111,14 +87,18 @@ respgen -i methane.ac -o methane.respin2 -f resp2
 
 ## Install
 
-The following instructions are for UNIX-like systems, like MacOS and Linux.
+Installing `repESP` is standard and simple:
 
-* Choose and go to installation directory (e.g. `~/bin`)
-* Get the code: `git clone https://github.com/jszopi/repESP`
-* From inside the repESP directory run: `python3.7 setup.py develop`
-* Make the scripts callable: `export PATH=$PATH:your_scripts_path`
+1. Choose and go to an installation directory (e.g. `~/bin`)
+2. Get the code: `git clone https://github.com/jszopi/repESP`
+3. From inside the repESP directory run: `pip3 install .`
 
-To update the code to latest version run: `git fetch --all ; git pull`
+With the following caveats regarding the final point:
+
+* While version 0.2.0 is being actively developed it is recommended to stay up-to-date with the latest code on the `master` branch.
+  Passing `-e` to `pip3 install` will ensure that the `repESP` version installed reflects what's in your local git repo.
+  To later update the code to latest version run: `git fetch --all ; git pull`.
+* If you want to generate documentation, you'll need to append `[docs]` to the install command, i.e. run  `pip3 install .[docs]` instead.
 
 # Contributing
 
