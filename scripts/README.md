@@ -5,70 +5,55 @@
 Given below are the descriptions of the provided scripts.
 Full help messages can be found in the [`detailed.md`](./detailed.md) file.
 
-## `average.py`
+## `adjusted_charges`
+
+Calculate adjusted rational charges for the given ESP fitting points. Note that the input charges should be averaged beforehand and charges passed as a 'list' type. Nevertheless, this script also works if raw charges are requested to be extracted from Gaussian or AIMAll output files. 
+
+## `average`
 
 Average charges according to atom equivalence information from 'respin' files. Note that ESP-based charges should be equivalenced instead! This can be achieved by passing the fitting points to the --esp_file option. Equivalencing is then performed by running an unconstrained RESP calculation. 
 
-## `cavity.py`
+## `cavity`
 
 Create a Gaussian cube file (.cub) with an (approximate) atom distance transform. Visualizing isosurfaces or contours can help creating SMD cavity diagrams. 
 
-## `compromise_cli.py`
-
-Calculate compromise charges on the given ESP fitting points. Note that the input charges should be averaged beforehand and charges passed as a 'list' type. Nevertheless, this script also works if raw charges are requested to be extracted from Gaussian or AIMAll output files. 
-
-## `dipole.py`
+## `dipole`
 
 Calculate dipole moment in Debye. 
 
-## `eval_fit.py`
+## `eval_fit`
 
 Evaluate the fit quality of the given charges on the provided mesh of fitting points. 
 
-## `field_diff.py`
+## `field_diff`
 
 Calculate the difference between two fields FIELD1 - FIELD2. The fields can be given either as Gaussian cube files (.cub) or ESP fitting points (.esp). 
 
-## `fit_dependence.py`
+## `fit_dependence`
 
 Investigate the dependence of the ESP fit on the charge on one or two atoms 
 
-## `fit_points.py`
+## `fit_points`
 
 Plot fitting or cube points in 2 or 3D colored by field values In order to avoid having a cluttered plot the user is recommended to specify a 'slice' of the points to be plotted. Only points within a given distance from the slicing plane will be shown. To enable this option see section 'optional arguments related to slicing' section below. 
 
-## `flexibility.py`
+## `flexibility`
 
 Calculate the flexibilty limits of an atom evaluated on the given mesh. Don't forget to specify the --equivalent option if there are other atoms equivalent to the investigated one. This script assumes that the ESP fit error as a function of the charge on the selected atom has a single minimum and the error increases monotonically in both directions away from the minimum. As flexibility is a new concept, this may not be the case in all molecules. To study the dependence of the ESP fit on the charge of an atom, please use the `fit_dependence` script. 
 
-## `plot_fit_dependence1.py`
+## `plot_fit_dependence1`
 
 Plot the dependence of the ESP fit and/or values on monitored charges as a function of charges on one atom, based on the output of the `fit_dependence` script. 
 
-## `plot_fit_dependence2.py`
+## `plot_fit_dependence2`
 
 Plot the dependence of the ESP fit and/or values on monitored charges as a function of charges on two atoms, based on the output of the `fit_dependence` script. 
 
-## `rep_esp.py`
+## `rep_esp`
 
 Reproduce ESP from given charges and save as a cube or .esp file. If you do not want to process the charge in any way, raw charges can be extracted from Gaussian .log or AIMAll .sumviz files. However, it is probably sensible to average or equivalence the charges first, using the 'average.py' script from this suite. The charges can then be read in from the output text file. 
 
-## `run_two-stage_resp.py`
+## `run_two-stage_resp`
 
 Run 2-stage RESP. Running this wrapper is arguably easier than running the `resp` program manually. 
-
-# Developer notes
-
-In scripts use imports from the package (rather than relative), e.g.:
-
-	from repESP import cube_helpers
-	from repESP.graphs import plot
-
-Such scripts can be run from any directory but the package needs to be installed (`setup.py`) beforehand.
-For development, run only once
-
-	sudo python3 setup.py develop
-
-to link the files in the `repESP` directory and hence avoid reinstalling the package after every change.
-[Source](http://tjelvarolsson.com/blog/begginers-guide-creating-clean-python-development-environments/).
 
