@@ -227,7 +227,7 @@ def _parse_cntrl(f: TextIO) -> Respin.Cntrl:
     return Respin.Cntrl(**kwargs)  # type: ignore # (not sure why not recognized)
 
 
-def _parse_respin(f) -> Respin:
+def parse_respin(f) -> Respin:
 
     get_line = lambda: f.readline().rstrip('\n')
     title = get_line()
@@ -287,7 +287,7 @@ def _write_cntrl(f: TextIO, cntrl: Respin.Cntrl, skip_defaults: bool) -> None:
     print("\n &end", file=f)
 
 
-def _write_respin(f: TextIO, respin: Respin, skip_cntrl_defaults: bool=True) -> None:
+def write_respin(f: TextIO, respin: Respin, skip_cntrl_defaults: bool=True) -> None:
 
     print(respin.title, file=f)
     print(file=f)

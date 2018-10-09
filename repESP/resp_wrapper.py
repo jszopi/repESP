@@ -4,7 +4,7 @@ from .respin_generation import prepare_respin
 from .respin_generation import RespStage1RespinGenerator, RespStage2RespinGenerator
 from .respin_generation import FitHydrogensOnlyRespinGenerator, FrozenAtomsRespinGenerator
 from .respin_generation import EquivalenceOnlyRespinGenerator
-from .respin_format import Respin, _write_respin, Equivalence
+from .respin_format import Respin, write_respin, Equivalence
 from .resp_charges_format import write_resp_charges, parse_resp_charges
 from .types import Atom, Molecule
 
@@ -36,7 +36,7 @@ def _run_resp_in_dir(
     get_full_path = lambda fn: f"{calc_dir}/{fn}"
 
     with open(get_full_path(respin_fn), "w") as f:
-        _write_respin(f, respin)
+        write_respin(f, respin)
 
     if initial_charges is not None:
         with open(get_full_path(qin_fn), "w") as f:
