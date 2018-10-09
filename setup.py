@@ -13,7 +13,7 @@ def get_console_scripts(script_to_hook_dict):
     return [f"{script}={hook}" for script, hook in script_to_hook_dict.items()]
 
 
-docs_require = ['sphinx']
+docs_require = ['sphinx', 'sphinx_rtd_theme']
 test_requires = ['mypy', 'nose']
 dev_requires = docs_require + test_requires
 
