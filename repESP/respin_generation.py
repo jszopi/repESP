@@ -1,3 +1,5 @@
+"""Creating `resp` program input for predefined ESP fitting types"""
+
 from .charges import Charge
 from .respin_format import Respin, Equivalence
 from .types import Atom, Molecule

@@ -1,3 +1,5 @@
+"""Functions producing or acting on molecular fields"""
+
 from .fields import Esp, Field, Mesh
 from .exceptions import InputFormatError
 from .charges import AtomWithCoordsAndCharge

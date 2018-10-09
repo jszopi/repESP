@@ -1,3 +1,5 @@
+"""Fundamental types used to describe molecules in space"""
+
 from ._util import elements, get_symbol, get_atomic_number
 
 from dataclasses import dataclass

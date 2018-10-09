@@ -1,3 +1,5 @@
+"""Wrappers for performing ESP fitting with the `resp` program"""
+
 from .charges import Charge
 from .esp_util import EspData, write_resp_esp
 from .respin_generation import prepare_respin

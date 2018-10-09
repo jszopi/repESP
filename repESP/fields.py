@@ -1,3 +1,5 @@
+"""Types used to describe fields as values at selected points in space"""
+
 from .exceptions import InputFormatError
 from .types import Coords, Dist
 

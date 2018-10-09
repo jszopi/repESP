@@ -1,3 +1,5 @@
+"""Types used to describe partial charges and higher moments"""
+
 from .exceptions import InputFormatError
 from .types import Atom, AtomWithCoords, Coords
 

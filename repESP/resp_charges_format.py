@@ -1,3 +1,5 @@
+"""Parsing and writing charges to format handled by the `resp` program"""
+
 from .charges import Charge
 
 from fortranformat import FortranRecordWriter as FW, FortranRecordReader as FR

@@ -1,3 +1,5 @@
+"""Utility functions for working with partial charges"""
+
 from .respin_format import Equivalence
 from .charges import Charge
 

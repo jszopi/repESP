@@ -1,3 +1,5 @@
+"""Parsing the Gaussian output format (.log or .out files)"""
+
 from .charges import Charge
 from .fields import Esp
 from .exceptions import InputFormatError

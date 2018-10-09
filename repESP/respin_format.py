@@ -1,3 +1,5 @@
+"""Parsing and writing `resp` program input format (.respin files)"""
+
 from dataclasses import dataclass, asdict
 from fortranformat import FortranRecordWriter as FW
 from itertools import zip_longest

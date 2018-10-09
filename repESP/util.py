@@ -1,3 +1,5 @@
+"""Convenience functions for interacting with the library interface"""
+
 from typing import Dict, List, TypeVar, Union
 
 

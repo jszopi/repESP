@@ -1,3 +1,5 @@
+"""Parsing and writing Gaussian "cube" format describing molecular fields"""
+
 from .fields import Ed, Esp, Field, GridMesh
 from .exceptions import InputFormatError
 from .types import AtomWithCoords, Coords, Molecule

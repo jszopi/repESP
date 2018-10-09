@@ -1,3 +1,5 @@
+"""Parsing and writing Gaussian .esp format describing molecular ESP field"""
+
 from .charges import AtomWithCoordsAndCharge, Charge, Dipole, DipoleMoment, Quadrupole, QuadrupoleMoment
 from .fields import Esp, Field, NonGridMesh
 from .exceptions import InputFormatError
