@@ -3,6 +3,10 @@
 from typing import Dict, List, TypeVar, Union
 
 
+# http://www.gaussian.com/g_tech/g_ur/k_constants.htm
+angstrom_per_bohr = 0.5291772086
+
+
 T1 = TypeVar('T1')
 T2 = TypeVar('T2')
 

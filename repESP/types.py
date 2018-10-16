@@ -1,6 +1,7 @@
 """Fundamental types used to describe molecules in space"""
 
 from ._util import elements, get_symbol, get_atomic_number
+from .util import angstrom_per_bohr
 
 from dataclasses import dataclass
 from typing import Any, Generic, List, Tuple, TypeVar
@@ -17,6 +18,26 @@ class Dist(float):
 
     def __new__(cls, x: Any):
         return super().__new__(cls, float(x))  # type: ignore # (Too many arguments for "__new__" of "object")
+
+    @classmethod
+    def from_angstrom(cls, value: Any):
+        return cls(float(value)/angstrom_per_bohr)
+
+    def angstrom(self) -> float:
+        return angstrom_per_bohr*self
+
+    def __repr__(self) -> str:
+        return f"Dist({super().__repr__()})"
+
+    def __str__(self) -> str:
+
+        def get_decimals_in_str(str_: str) -> int:
+            return len(str_) - str_.find(".") - 1
+
+        # Angstroms are displayed with the same decimal precision as a.u. value
+        angstrom_format = f"{{:.{get_decimals_in_str(super().__str__())}f}}"
+        str_ = f"{super().__str__()} a₀ ({angstrom_format} Å)"
+        return str_.format(self.angstrom())
 
 
 class Coords(tuple):
