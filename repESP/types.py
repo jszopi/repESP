@@ -7,12 +7,28 @@ from dataclasses import dataclass
 from typing import Any, Generic, List, Tuple, TypeVar
 
 
+# NewType had many limitations: not supported in sphinx, not possible to
+# override __repr__, and requirement for standalone helper constructors, like:
+# https://github.com/python/typing/issues/415#issuecomment-297401553
 class Dist(float):
-    # NewType had many limitations: not supported in sphinx, not possible to
-    # override __repr__, and requirement for standalone helper constructors, like:
-    # https://github.com/python/typing/issues/415#issuecomment-297401553
+    """Distance in atomic units i.e. Bohr radii (a\ :sub:`0`\ )
 
-    """Distance [bohr]"""
+    Bohr radius is the measure of length in atomic units and angstrom is a unit
+    commonly used in computational chemistry. The string representations are
+    thus implemented as follows:
+
+    >>> d = Dist(2.3)
+    >>> d
+    Dist(2.3)
+    >>> print(d)
+    2.3 a₀ (1.2 Å)
+
+    Parameters
+    ----------
+    value : Any
+        Any value convertible to float representing the value in units of Bohr
+        radii, e.g. 1.23 or "2.34".
+    """
 
     __slots__ = ()
 
@@ -21,9 +37,18 @@ class Dist(float):
 
     @classmethod
     def from_angstrom(cls, value: Any):
+        """Alternative initialization from value in angstrom (Å)
+
+        Parameters
+        ----------
+        value : Any
+            Any value convertible to float representing the value in units of
+            angstrom.
+        """
         return cls(float(value)/angstrom_per_bohr)
 
     def angstrom(self) -> float:
+        """Value in angstrom (Å)"""
         return angstrom_per_bohr*self
 
     def __repr__(self) -> str:
@@ -41,20 +66,50 @@ class Dist(float):
 
 
 class Coords(tuple):
+    """Three-dimensional coordinates of a point in space, in atomic units
+
+    Parameters
+    ----------
+    values : Tuple[Any, Any, Any]
+        Tuple of three values of any type convertible to float representing the
+        coordinates in units of Bohr radii. The values will be converted to `Dist`.
+    """
 
     __slots__ = ()
 
     # A constructor from individual distances would be more convenient but that
     # was causing issues due to libraries and built-ins assuming the same
     # interface as `tuple`.
-    def __new__(cls, t: Tuple[Any, Any, Any]):
+    def __new__(cls, values: Tuple[Any, Any, Any]):
         # To allow generators (required by `dataclasses.astuple`)
-        t = tuple(t)  # type: ignore # (t is now a variadic-size tuple)
-        return super().__new__(cls, tuple((Dist(t[0]), Dist(t[1]), Dist(t[2]))))
+        values = tuple(values)  # type: ignore # (`values` is now a variadic-size tuple)
+        return super().__new__(cls, tuple((Dist(values[0]), Dist(values[1]), Dist(values[2]))))
+
+    # TODO: Implement __str__ to avoid falling back on Dist.__repr__
 
 
 @dataclass
 class Atom:
+    """Dataclass representing an atom of a certain element
+
+    If more information should be associated with an atom, it's easy to inherit
+    from this class.
+
+    Parameters
+    ----------
+    atomic_number : int
+        The atomic number of the element
+
+    Raises
+    ------
+    ValueError
+        Raised in case the given atomic number is not recognized
+
+    Attributes
+    ----------
+    atomic_number
+        See initialization parameter
+    """
     atomic_number: int
 
     def __post_init__(self):
@@ -63,10 +118,27 @@ class Atom:
 
     @property
     def symbol(self) -> str:
+        """The chemical symbol of this atom"""
         return get_symbol(self.atomic_number)
 
     @classmethod
     def from_symbol(cls, symbol: str, *args, **kwargs):
+        """Alternative initialization from chemical symbol
+
+        Despite not being documented, this constructor is inherited by the
+        subclasses of this class. `*args` and `**kwargs` will be forwarded to
+        initializer of the subclass.
+
+        Parameters
+        ----------
+        symbol : str
+            The chemical symbol of the element, e.g. "Be".
+
+        Raises
+        ------
+        ValueError
+            Raised in case the given chemical symbol is not recognized
+        """
         # Generic type annotations as per:
         # https://github.com/python/typing/issues/58#issuecomment-326240794)
         # don't seem to be working for a dataclass, and that's even before
@@ -76,6 +148,27 @@ class Atom:
 
 @dataclass
 class AtomWithCoords(Atom):
+    """Dataclass representing an atom of a certain element in space
+
+    Parameters
+    ----------
+    atomic_number : int
+        The atomic number of the element
+    coords : Coords
+        The coordinates of the atom in space
+
+    Raises
+    ------
+    ValueError
+        Raised in case the given atomic number is not recognized
+
+    Attributes
+    ----------
+    atomic_number
+        See initialization parameter
+    coords
+        See initialization parameter
+    """
     coords: Coords
 
 
@@ -83,4 +176,23 @@ GenericAtom = TypeVar('GenericAtom', bound=Atom)
 
 @dataclass
 class Molecule(Generic[GenericAtom]):
+    """A basic dataclass representing a molecule
+
+    "Basic" because no characteristics of the molecule, like bonding, are
+    stored in this class in addition to the list of constituent atoms.
+
+    This class is generic in the type of `GenericAtom`, which must be a subtype
+    of `Atom`. This allows the molecule to store `Atom` objects as well as
+    other objects, e.g. `AtomWithCoords`.
+
+    Parameters
+    ----------
+    atoms : typing.List[Atom]
+        The constituent atoms of the molecule. Any `Atom` subtype is valid.
+
+    Attributes
+    ----------
+    atoms
+        See initialization parameter
+    """
     atoms: List[GenericAtom]
