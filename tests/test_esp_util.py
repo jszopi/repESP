@@ -24,18 +24,18 @@ gaussian_esp_data = GaussianEspData(
             Charge( 0.12532268)
         )
     ]),
-    Dipole(
-        DipoleMoment( 0.38811727e-15),
-        DipoleMoment( 0.42690461e-16),
-        DipoleMoment(-0.29029513e-15)
+    DipoleMoment(
+        DipoleMomentValue( 0.38811727e-15),
+        DipoleMomentValue( 0.42690461e-16),
+        DipoleMomentValue(-0.29029513e-15)
     ),
-    Quadrupole(
-        QuadrupoleMoment(-0.26645353e-14),
-        QuadrupoleMoment( 0.35527137e-14),
-        QuadrupoleMoment(-0.88817842e-15),
-        QuadrupoleMoment(-0.13868301e-15),
-        QuadrupoleMoment(-0.97158067e-16),
-        QuadrupoleMoment( 0.72144168e-15),
+    QuadrupoleMoment(
+        QuadrupoleMomentValue(-0.26645353e-14),
+        QuadrupoleMomentValue( 0.35527137e-14),
+        QuadrupoleMomentValue(-0.88817842e-15),
+        QuadrupoleMomentValue(-0.13868301e-15),
+        QuadrupoleMomentValue(-0.97158067e-16),
+        QuadrupoleMomentValue( 0.72144168e-15),
     ),
     Field(
         NonGridMesh(

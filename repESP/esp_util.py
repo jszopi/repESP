@@ -1,6 +1,7 @@
 """Parsing and writing Gaussian .esp format describing molecular ESP field"""
 
-from .charges import AtomWithCoordsAndCharge, Charge, Dipole, DipoleMoment, Quadrupole, QuadrupoleMoment
+from .charges import AtomWithCoordsAndCharge, Charge, DipoleMoment, DipoleMomentValue
+from .charges import QuadrupoleMoment, QuadrupoleMomentValue
 from .fields import Esp, Field, NonGridMesh
 from .exceptions import InputFormatError
 from .types import AtomWithCoords, Coords, Molecule
@@ -17,8 +18,8 @@ class GaussianEspData:
     charge: float
     multiplicity: int
     molecule: Molecule[AtomWithCoordsAndCharge]
-    dipole: Dipole
-    quadrupole: Quadrupole
+    dipole_moment: DipoleMoment
+    quadrupole_moment: QuadrupoleMoment
     field: Field
 
 
@@ -46,12 +47,12 @@ def parse_gaussian_esp(f: TextIO) -> GaussianEspData:
     if get_line() != " DIPOLE MOMENT:":
         raise InputFormatError("Expected dipole moment section header.")
 
-    dipole = _parse_dipole(get_line())
+    dipole_moment = _parse_dipole(get_line())
 
     if get_line() != " TRACELESS QUADRUPOLE MOMENT:":
         raise InputFormatError("Expected quadrupole moment section header.")
 
-    quadrupole = _parse_quadrupole([get_line(), get_line()])
+    quadrupole_moment = _parse_quadrupole([get_line(), get_line()])
 
     points_header_re = re.compile(" ESP VALUES AND GRID POINT COORDINATES. #POINTS =\s+([0-9]+)")
     points_header_match = points_header_re.match(get_line())
@@ -68,7 +69,7 @@ def parse_gaussian_esp(f: TextIO) -> GaussianEspData:
             f"specified in section header ({point_count})."
         )
 
-    return GaussianEspData(charge, multiplicity, molecule, dipole, quadrupole, field)
+    return GaussianEspData(charge, multiplicity, molecule, dipole_moment, quadrupole_moment, field)
 
 
 def _parse_prelude(lines: List[str]) -> Tuple[float, int, int]:
@@ -105,19 +106,19 @@ def _parse_atom(line: str) -> AtomWithCoordsAndCharge:
     )
 
 
-def _parse_dipole(line: str) -> Dipole:
+def _parse_dipole(line: str) -> DipoleMoment:
     dipole_line_re = re.compile(" X=\s+([-0-9.D]+) Y=\s+([-0-9.D]+) Z=\s+([-0-9.D]+) Total=\s+([-0-9.D]+)")
     dipole_line_match = dipole_line_re.match(line)
     if dipole_line_match is None:
         raise InputFormatError("Failed parsing dipole specification.")
-    return Dipole(
-        DipoleMoment(dipole_line_match.group(1).replace('D', 'E')),
-        DipoleMoment(dipole_line_match.group(2).replace('D', 'E')),
-        DipoleMoment(dipole_line_match.group(3).replace('D', 'E'))
+    return DipoleMoment(
+        DipoleMomentValue(dipole_line_match.group(1).replace('D', 'E')),
+        DipoleMomentValue(dipole_line_match.group(2).replace('D', 'E')),
+        DipoleMomentValue(dipole_line_match.group(3).replace('D', 'E'))
     )
 
 
-def _parse_quadrupole(lines: List[str]) -> Quadrupole:
+def _parse_quadrupole(lines: List[str]) -> QuadrupoleMoment:
     assert len(lines) == 2
 
     line1_components = ("XX", "YY", "ZZ")
@@ -132,13 +133,13 @@ def _parse_quadrupole(lines: List[str]) -> Quadrupole:
     if line1_match is None or line2_match is None:
         raise InputFormatError("Failed parsing quadrupole specification.")
 
-    return Quadrupole(
-        QuadrupoleMoment(line1_match.group(1).replace('D', 'E')),
-        QuadrupoleMoment(line1_match.group(2).replace('D', 'E')),
-        QuadrupoleMoment(line1_match.group(3).replace('D', 'E')),
-        QuadrupoleMoment(line2_match.group(1).replace('D', 'E')),
-        QuadrupoleMoment(line2_match.group(2).replace('D', 'E')),
-        QuadrupoleMoment(line2_match.group(3).replace('D', 'E'))
+    return QuadrupoleMoment(
+        QuadrupoleMomentValue(line1_match.group(1).replace('D', 'E')),
+        QuadrupoleMomentValue(line1_match.group(2).replace('D', 'E')),
+        QuadrupoleMomentValue(line1_match.group(3).replace('D', 'E')),
+        QuadrupoleMomentValue(line2_match.group(1).replace('D', 'E')),
+        QuadrupoleMomentValue(line2_match.group(2).replace('D', 'E')),
+        QuadrupoleMomentValue(line2_match.group(3).replace('D', 'E'))
     )
 
 
