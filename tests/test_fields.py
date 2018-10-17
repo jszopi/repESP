@@ -7,11 +7,11 @@ from my_unittest import TestCase
 from copy import copy
 
 
-class TestNonGridMesh(TestCase):
+class TestMesh(TestCase):
 
     def setUp(self) -> None:
 
-        self.mesh = NonGridMesh([
+        self.mesh = Mesh([
             Coords((1, 1, 1)),
             Coords((-1, 0, -0.9))
         ])
@@ -97,7 +97,7 @@ class TestField(TestCase):
 
     def setUp(self) -> None:
 
-        self.mesh = NonGridMesh([
+        self.mesh = Mesh([
             Coords((1, 1, 1)),
             Coords((-1, 0, -0.9))
         ])
@@ -115,7 +115,7 @@ class TestField(TestCase):
 
         field1 = Field(self.mesh, self.values)
         field2 = Field(
-            NonGridMesh([
+            Mesh([
                 Coords((1, 1, 1)),
                 Coords((-1, 0, 0.9))
             ]),

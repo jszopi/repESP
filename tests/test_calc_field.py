@@ -12,7 +12,7 @@ class SmallTestCase(TestCase):
 
     def setUp(self) -> None:
 
-        self.nonGridMesh = NonGridMesh([
+        self.mesh = Mesh([
             Coords((1, 1, 1)),
             Coords((-1, 0, -0.9))
         ])
@@ -61,9 +61,9 @@ class TestEspFromCharges(SmallTestCase):
 
     def test_non_grid_esp(self) -> None:
 
-        result = esp_from_charges(self.nonGridMesh, self.molecule_with_charges)
+        result = esp_from_charges(self.mesh, self.molecule_with_charges)
         expected = Field(
-            self.nonGridMesh,
+            self.mesh,
             [
                 Esp(-0.08590039),
                 Esp(-0.33459064)
@@ -98,9 +98,9 @@ class TestVoronoi(SmallTestCase):
 
     def test_non_grid_esp(self) -> None:
 
-        result = voronoi(self.nonGridMesh, self.molecule)
+        result = voronoi(self.mesh, self.molecule)
         expected = Field(
-            self.nonGridMesh,
+            self.mesh,
             [
                 (0, Dist(1.11803398)),
                 (1, Dist(1.53622914))

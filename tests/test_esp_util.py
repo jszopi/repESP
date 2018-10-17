@@ -38,7 +38,7 @@ gaussian_esp_data = GaussianEspData(
         QuadrupoleMomentValue( 0.72144168e-15),
     ),
     Field(
-        NonGridMesh(
+        Mesh(
             [
                 Coords(( 0.00000000,  0.0000000, 3.9684249)),
                 Coords((-0.99210622,  1.7183784, 3.4367568)),

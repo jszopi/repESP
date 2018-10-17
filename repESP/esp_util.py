@@ -2,7 +2,7 @@
 
 from .charges import AtomWithCoordsAndCharge, Charge, DipoleMoment, DipoleMomentValue
 from .charges import QuadrupoleMoment, QuadrupoleMomentValue
-from .fields import Esp, Field, NonGridMesh
+from .fields import Esp, Field, Mesh
 from .exceptions import InputFormatError
 from .types import AtomWithCoords, Coords, Molecule
 
@@ -152,7 +152,7 @@ def _parse_esp_points(f: TextIO) -> Field[Esp]:
         values.append(Esp(line_split[0]))
 
     return Field(
-        NonGridMesh(points),
+        Mesh(points),
         values
     )
 
@@ -182,7 +182,7 @@ def parse_resp_esp(f: TextIO) -> EspData:
         esp_values.append(Esp(val))
 
     field = Field(
-        NonGridMesh(
+        Mesh(
             mesh_coords
         ),
         esp_values

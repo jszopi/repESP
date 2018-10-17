@@ -1,6 +1,6 @@
 """Functions producing or acting on molecular fields"""
 
-from .fields import Esp, Field, Mesh
+from .fields import Esp, Field, AbstractMesh
 from .exceptions import InputFormatError
 from .charges import AtomWithCoordsAndCharge
 from .types import AtomWithCoords, Coords, Dist, Molecule
@@ -18,7 +18,7 @@ def _esp_from_charges_at_point(coords: Coords, molecule: Molecule[AtomWithCoords
     ))
 
 
-def esp_from_charges(mesh: Mesh, molecule: Molecule[AtomWithCoordsAndCharge]) -> Field[Esp]:
+def esp_from_charges(mesh: AbstractMesh, molecule: Molecule[AtomWithCoordsAndCharge]) -> Field[Esp]:
     """Calculate ESP value at given point due to charges on atoms"""
     return Field(
         mesh,
@@ -38,7 +38,7 @@ def _voronoi_at_point(coords: Coords, molecule: Molecule[AtomWithCoords]) -> Tup
     return (min_atom, min_dist)
 
 
-def voronoi(mesh: Mesh, molecule: Molecule[AtomWithCoords]) -> Field[Tuple[Optional[int], Dist]]:
+def voronoi(mesh: AbstractMesh, molecule: Molecule[AtomWithCoords]) -> Field[Tuple[Optional[int], Dist]]:
     # Voronoi means closest-atom in molecular partitioning lingo
     return Field(
         mesh,

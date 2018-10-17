@@ -37,7 +37,7 @@ FieldValue = TypeVar('FieldValue')
 @dataclass
 class Field(Generic[FieldValue]):
 
-    mesh: 'Mesh'
+    mesh: 'AbstractMesh'
     values_: InitVar[Collection[FieldValue]]
     values: List[FieldValue] = field(init=False)
 
@@ -91,7 +91,7 @@ class Field(Generic[FieldValue]):
     # freeze the dataclass.
 
 
-class Mesh(ABC):
+class AbstractMesh(ABC):
 
     @property
     @abstractmethod
@@ -104,7 +104,7 @@ class Mesh(ABC):
 
 
 @dataclass
-class NonGridMesh(Mesh):
+class Mesh(AbstractMesh):
 
     points_: InitVar[Collection[Coords]]
     _points: List[Coords] = field(init=False)
@@ -121,7 +121,7 @@ class NonGridMesh(Mesh):
 
 
 @dataclass
-class GridMesh(Mesh):
+class GridMesh(AbstractMesh):
 
     @dataclass
     class Axis:
