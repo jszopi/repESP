@@ -121,7 +121,7 @@ class GridMesh(AbstractMesh):
 
     Attributes
     ----------
-    Axes : Tuple[Axis, Axis, Axis]
+    Axes : Tuple[GridMesh.Axis, GridMesh.Axis, GridMesh.Axis]
         Type alias for a tuple of three ``Axis`` objects. Note that currently
         only axes aligned with the coordinate system axes are supported, i.e.
         the axes' vectors are expected to be ((1, 0, 0), (0, 1, 0), (0, 0, 1)).
@@ -207,7 +207,7 @@ class Field(Generic[FieldValue]):
     ----------
     mesh : AbstractMesh
         A "mesh" of points in space at which the field has values
-    values\_ : typing.Collection[FieldValue]
+    values\_ : Collection[FieldValue]
         A collection of values corresponding to the points in space given in
         the same order as the `AbstractMesh.points` iterator.
 
@@ -217,8 +217,8 @@ class Field(Generic[FieldValue]):
         See initialization parameter
     values : typing.List[FieldValue]
         Converted from the `values_` initialization parameter
-    NumericValue : typing.TypeVar
-        TypeVar specifying a subset of FieldValue types for which arithmetic
+    NumericValue : TypeVar
+        Generic type specifying a subset of FieldValue types for which arithmetic
         operations are defined. This can be any type matching "bound=float".
     """
 
