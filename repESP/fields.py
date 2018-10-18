@@ -13,8 +13,13 @@ import operator
 
 
 class Esp(float):
+    """Electrostatic potential value in atomic units (:math:`E_h/e`)
 
-    """Electrostatic potential [atomic units]"""
+    Parameters
+    ----------
+    value : Any
+        Any value convertible to float representing the value in atomic units.
+    """
 
     __slots__ = ()
 
@@ -29,8 +34,13 @@ class Esp(float):
 
 
 class Ed(float):
+    """Electron density value in atomic units (\ :math:`e / \mathrm{a}_0^3`\ )
 
-    """Electron density [atomic units]"""
+    Parameters
+    ----------
+    value : Any
+        Any value convertible to float representing the value in atomic units.
+    """
 
     __slots__ = ()
 
@@ -48,6 +58,30 @@ FieldValue = TypeVar('FieldValue')
 
 @dataclass
 class Field(Generic[FieldValue]):
+    """Dataclass representing values of a field at a "mesh" of points in space
+
+    This class is generic in the type of the field value, which can be of any
+    type. Classes where `FieldValue` matches `NumericValue`, additionally
+    support arithmetic operations (currently only addition and subtraction).
+
+    Parameters
+    ----------
+    mesh : AbstractMesh
+        A "mesh" of points in space at which the field has values
+    values\_ : typing.Collection[FieldValue]
+        A collection of values corresponding to the points in space given in
+        the same order as the `AbstractMesh.points` iterator.
+
+    Attributes
+    ----------
+    mesh : AbstractMesh
+        See initialization parameter
+    values : typing.List[FieldValue]
+        Converted from the `values_` initialization parameter
+    NumericValue : typing.TypeVar
+        TypeVar specifying a subset of FieldValue types for which arithmetic
+        operations are defined. This can be any type matching "bound=float".
+    """
 
     mesh: 'AbstractMesh'
     values_: InitVar[Collection[FieldValue]]
@@ -104,10 +138,21 @@ class Field(Generic[FieldValue]):
 
 
 class AbstractMesh(ABC):
+    """Abstract base class for collections of points in space
+
+    Calling ``len`` on instances of this class will return the number of points.
+    """
 
     @property
     @abstractmethod
     def points(self) -> Iterator[Coords]:
+        """Coordinates of points of which the mesh consists
+
+        Yields
+        ------
+        Iterator[Coords]
+            Iterator over the point coordinates
+        """
         pass
 
     @abstractmethod
@@ -117,7 +162,16 @@ class AbstractMesh(ABC):
 
 @dataclass
 class Mesh(AbstractMesh):
+    """Collection of points in space without assumptions regarding structure
 
+    This class stores all the points given on initialization and hence it's
+    memory footprint is linear in the number of points.
+
+    Parameters
+    ----------
+    points_ : Collection[Coords]
+        The coordinates of points to be stored
+    """
     points_: InitVar[Collection[Coords]]
     _points: List[Coords] = field(init=False)
 
@@ -134,10 +188,47 @@ class Mesh(AbstractMesh):
 
 @dataclass
 class GridMesh(AbstractMesh):
+    """Collection of points in space organized in a grid
+
+    This class only stores information regarding the grid which underlies the
+    spatial organization of the points and thus it's memory footprint is constant
+    with respect to the number of points it describes. This is at the cost of
+    a small CPU cost whenever a point is retrieved from the ``points`` iterator.
+
+    Parameters
+    ----------
+    origin : Coords
+        The coordinates of the coordinates system origin.
+    axes : Axes
+        The coordinates of the coordinates axes' origin.
+
+    Attributes
+    ----------
+    Axes : Tuple[Axis, Axis, Axis]
+        Type alias for a tuple of three ``Axis`` objects. Note that currently
+        only axes aligned with the coordinate system axes are supported, i.e.
+        the axes' vectors are expected to be ((1, 0, 0), (0, 1, 0), (0, 0, 1)).
+    """
 
     @dataclass
     class Axis:
-        vector: Coords  # Unit vector in xyz coordinates
+        """Dataclass describing a coordinate system axis
+
+        Parameters
+        ----------
+        vector : Coords
+            Unit vector in xyz coordinates, e.g. (1, 0, 0) for a typical x-axis.
+        point_count : int
+            The number of points that the grid places along this axis.
+
+        Attributes
+        ----------
+        vector : Coords
+            See initialization attribute.
+        point_count : int
+            See initialization attribute.
+        """
+        vector: Coords
         point_count: int
 
     Axes = NewType("Axes", Tuple[Axis, Axis, Axis])
