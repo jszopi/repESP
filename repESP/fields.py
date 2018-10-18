@@ -54,89 +54,6 @@ class Ed(float):
         return f"{super().__str__()} a.u."
 
 
-FieldValue = TypeVar('FieldValue')
-
-@dataclass
-class Field(Generic[FieldValue]):
-    """Dataclass representing values of a field at a "mesh" of points in space
-
-    This class is generic in the type of the field value, which can be of any
-    type. Classes where `FieldValue` matches `NumericValue`, additionally
-    support arithmetic operations (currently only addition and subtraction).
-
-    Parameters
-    ----------
-    mesh : AbstractMesh
-        A "mesh" of points in space at which the field has values
-    values\_ : typing.Collection[FieldValue]
-        A collection of values corresponding to the points in space given in
-        the same order as the `AbstractMesh.points` iterator.
-
-    Attributes
-    ----------
-    mesh : AbstractMesh
-        See initialization parameter
-    values : typing.List[FieldValue]
-        Converted from the `values_` initialization parameter
-    NumericValue : typing.TypeVar
-        TypeVar specifying a subset of FieldValue types for which arithmetic
-        operations are defined. This can be any type matching "bound=float".
-    """
-
-    mesh: 'AbstractMesh'
-    values_: InitVar[Collection[FieldValue]]
-    values: List[FieldValue] = field(init=False)
-
-    def __post_init__(self, values_) -> None:
-
-        if len(values_) != len(self.mesh):
-            raise InputFormatError(
-                f"Construction of a Field failed due to mismatch between the "
-                f"number of points ({len(self.mesh)}) and the number of values ({len(values_)})"
-            )
-
-        self.values = list(values_)
-
-    # TODO: This would ideally be extended to numbers.Number but mypy throws errors.
-    NumericValue = TypeVar('NumericValue', bound=float)
-
-    def __add__(self: 'Field[NumericValue]', other: 'Field[NumericValue]') -> 'Field[NumericValue]':
-
-        if not isinstance(other, Field):
-            raise TypeError(
-                "unsupported operand type(s) for +: 'Field' and 'type(other)"
-            )
-
-        if self.mesh != other.mesh:
-            raise ValueError(
-                "Cannot add or subtract Fields with different meshes."
-            )
-
-        return Field(
-            self.mesh,
-            [
-                cast(Field.NumericValue, value_self + value_other)
-                for value_self, value_other in zip(self.values, other.values)
-            ]
-        )
-
-    def __neg__(self: 'Field[NumericValue]') -> 'Field[NumericValue]':
-        return Field(
-            self.mesh,
-            [
-                cast(Field.NumericValue, -value)
-                for value in self.values
-            ]
-        )
-
-    def __sub__(self: 'Field[NumericValue]', other: 'Field[NumericValue]') -> 'Field[NumericValue]':
-        return self + (-other)
-
-    # TODO: Could add div and sub but it's not needed at the moment.
-    # TODO: __iadd__ can be added as an optimization (unless we decide to
-    # freeze the dataclass.
-
-
 class AbstractMesh(ABC):
     """Abstract base class for collections of points in space
 
@@ -274,3 +191,86 @@ class GridMesh(AbstractMesh):
             operator.mul,
             (axis.point_count for axis in self.axes)
         )
+
+
+FieldValue = TypeVar('FieldValue')
+
+@dataclass
+class Field(Generic[FieldValue]):
+    """Dataclass representing values of a field at a "mesh" of points in space
+
+    This class is generic in the type of the field value, which can be of any
+    type. Classes where `FieldValue` matches `NumericValue`, additionally
+    support arithmetic operations (currently only addition and subtraction).
+
+    Parameters
+    ----------
+    mesh : AbstractMesh
+        A "mesh" of points in space at which the field has values
+    values\_ : typing.Collection[FieldValue]
+        A collection of values corresponding to the points in space given in
+        the same order as the `AbstractMesh.points` iterator.
+
+    Attributes
+    ----------
+    mesh : AbstractMesh
+        See initialization parameter
+    values : typing.List[FieldValue]
+        Converted from the `values_` initialization parameter
+    NumericValue : typing.TypeVar
+        TypeVar specifying a subset of FieldValue types for which arithmetic
+        operations are defined. This can be any type matching "bound=float".
+    """
+
+    mesh: AbstractMesh
+    values_: InitVar[Collection[FieldValue]]
+    values: List[FieldValue] = field(init=False)
+
+    def __post_init__(self, values_) -> None:
+
+        if len(values_) != len(self.mesh):
+            raise InputFormatError(
+                f"Construction of a Field failed due to mismatch between the "
+                f"number of points ({len(self.mesh)}) and the number of values ({len(values_)})"
+            )
+
+        self.values = list(values_)
+
+    # TODO: This would ideally be extended to numbers.Number but mypy throws errors.
+    NumericValue = TypeVar('NumericValue', bound=float)
+
+    def __add__(self: 'Field[NumericValue]', other: 'Field[NumericValue]') -> 'Field[NumericValue]':
+
+        if not isinstance(other, Field):
+            raise TypeError(
+                "unsupported operand type(s) for +: 'Field' and 'type(other)"
+            )
+
+        if self.mesh != other.mesh:
+            raise ValueError(
+                "Cannot add or subtract Fields with different meshes."
+            )
+
+        return Field(
+            self.mesh,
+            [
+                cast(Field.NumericValue, value_self + value_other)
+                for value_self, value_other in zip(self.values, other.values)
+            ]
+        )
+
+    def __neg__(self: 'Field[NumericValue]') -> 'Field[NumericValue]':
+        return Field(
+            self.mesh,
+            [
+                cast(Field.NumericValue, -value)
+                for value in self.values
+            ]
+        )
+
+    def __sub__(self: 'Field[NumericValue]', other: 'Field[NumericValue]') -> 'Field[NumericValue]':
+        return self + (-other)
+
+    # TODO: Could add div and sub but it's not needed at the moment.
+    # TODO: __iadd__ can be added as an optimization (unless we decide to
+    # freeze the dataclass.
