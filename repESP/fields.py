@@ -18,8 +18,14 @@ class Esp(float):
 
     __slots__ = ()
 
-    def __new__(cls, x: Any):
-        return super().__new__(cls, float(x))  # type: ignore # (Too many arguments for "__new__" of "object")
+    def __new__(cls, value: Any):
+        return super().__new__(cls, float(value))  # type: ignore # (Too many arguments for "__new__" of "object")
+
+    def __repr__(self) -> str:
+        return f"Esp({super().__repr__()})"
+
+    def __str__(self) -> str:
+        return f"{super().__str__()} a.u."
 
 
 class Ed(float):
@@ -28,8 +34,14 @@ class Ed(float):
 
     __slots__ = ()
 
-    def __new__(cls, x: Any):
-        return super().__new__(cls, float(x))  # type: ignore # (Too many arguments for "__new__" of "object")
+    def __new__(cls, value: Any):
+        return super().__new__(cls, float(value))  # type: ignore # (Too many arguments for "__new__" of "object")
+
+    def __repr__(self) -> str:
+        return f"Ed({super().__repr__()})"
+
+    def __str__(self) -> str:
+        return f"{super().__str__()} a.u."
 
 
 FieldValue = TypeVar('FieldValue')
