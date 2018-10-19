@@ -145,7 +145,7 @@ class TestCalcStats(TestCase):
         with open("data/methane/methane_mk.esp") as f:
             gaussian_esp = parse_gaussian_esp(f)
 
-        self.esp_field = gaussian_esp.field
+        self.esp_values = gaussian_esp.field.values
         molecule = gaussian_esp.molecule
 
         with open("data/methane/methane_mk.log") as f:
@@ -159,11 +159,11 @@ class TestCalcStats(TestCase):
             )
             for atom, charge in zip(molecule.atoms, charges)
         ])
-        self.rep_esp_field = esp_from_charges(self.esp_field.mesh, molecule_with_charges)
+        self.rep_esp_values = esp_from_charges(gaussian_esp.field.mesh, molecule_with_charges).values
 
     def test_rms(self) -> None:
         self.assertAlmostEqual(
-            calc_rms_error(self.esp_field, self.rep_esp_field),
+            calc_rms_error(self.esp_values, self.rep_esp_values),
             0.00069,  # from Gaussian log
             places=5
 
@@ -171,7 +171,7 @@ class TestCalcStats(TestCase):
 
     def test_rrms(self) -> None:
         self.assertAlmostEqual(
-            calc_relative_rms_error(self.esp_field, self.rep_esp_field),
+            calc_relative_rms_error(self.esp_values, self.rep_esp_values),
             0.35027,  # from Gaussian log
             places=5
         )

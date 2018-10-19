@@ -7,7 +7,7 @@ from .types import AtomWithCoords, Coords, Dist, Molecule
 
 from scipy.spatial.distance import euclidean
 import numpy as np
-from typing import cast, List, Optional, Tuple
+from typing import cast, Collection, List, Optional, Tuple, TypeVar
 
 
 def _esp_from_charges_at_point(coords: Coords, molecule: Molecule[AtomWithCoordsAndCharge]) -> Esp:
@@ -46,25 +46,25 @@ def voronoi(mesh: AbstractMesh, molecule: Molecule[AtomWithCoords]) -> Field[Tup
     )
 
 
-def calc_rms_value(field: Field[Field.NumericValue]) -> Field.NumericValue:
-    return np.sqrt(np.mean(np.square(field.values)))
+# Meant to mirror fields.Field.NumericValue, and similarly the bound should be
+# numbers.Number but mypy throws errors.
+NumericValue = TypeVar('NumericValue', bound=float)
+
+
+def calc_rms_value(values: Collection[NumericValue]) -> NumericValue:
+
+    return np.sqrt(np.mean(np.square(values)))
 
 
 def calc_rms_error(
-    field1: Field[Field.NumericValue],
-    field2: Field[Field.NumericValue]
-) -> Field.NumericValue:
-
-    if field1.mesh != field2.mesh:
-        raise InputFormatError(
-            "Calculating RMS requires the underlying grids to be the same for both fields."
-        )
-
-    return calc_rms_value(field1-field2)
+    values1: Collection[NumericValue],
+    values2: Collection[NumericValue]
+) -> NumericValue:
+    return calc_rms_value([cast(NumericValue, value1 - value2) for value1, value2 in zip(values1, values2)])
 
 
 def calc_relative_rms_error(
-    field1: Field[Field.NumericValue],
-    field2: Field[Field.NumericValue]
+    values1: Collection[NumericValue],
+    values2: Collection[NumericValue]
 ) -> float:
-    return calc_rms_error(field1, field2)/calc_rms_value(field1)
+    return calc_rms_error(values1, values2)/calc_rms_value(values1)
