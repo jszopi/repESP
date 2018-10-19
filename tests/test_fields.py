@@ -108,7 +108,7 @@ class TestField(TestCase):
         Field(self.mesh, self.values)
 
     def test_construction_fails_when_lengths_mismatched(self) -> None:
-        with self.assertRaises(InputFormatError):
+        with self.assertRaises(ValueError):
             Field(self.mesh, [Esp(0.5)])
 
     def test_addition_fails_for_different_meshes(self) -> None:

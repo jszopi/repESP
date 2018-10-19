@@ -5,7 +5,6 @@ Attributes
 """
 
 from .fields import Esp, Field, AbstractMesh
-from .exceptions import InputFormatError
 from .charges import AtomWithCoordsAndCharge
 from .types import AtomWithCoords, Coords, Dist, Molecule
 

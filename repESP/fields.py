@@ -1,6 +1,5 @@
 """Types used to describe fields as values at selected points in space"""
 
-from .exceptions import InputFormatError
 from .types import Coords, Dist
 
 from abc import ABC, abstractmethod
@@ -229,7 +228,7 @@ class Field(Generic[FieldValue]):
     def __post_init__(self, values_) -> None:
 
         if len(values_) != len(self.mesh):
-            raise InputFormatError(
+            raise ValueError(
                 f"Construction of a Field failed due to mismatch between the "
                 f"number of points ({len(self.mesh)}) and the number of values ({len(values_)})"
             )
