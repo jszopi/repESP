@@ -8,6 +8,21 @@ from typing import Dict, List
 
 
 def average(charges: List[Charge], equivalence: Equivalence) -> List[Charge]:
+    """Average values of charges on chemically equivalent atoms
+
+    Parameters
+    ----------
+    charges : List[Charge]
+        The charges to be averaged.
+    equivalence : Equivalence
+        Information about the chemical equivalence of atoms (symmetry-related
+        and fast-exchanging atoms).
+
+    Returns
+    -------
+    List[Charge]
+        The list of averaged charges.
+    """
 
     if len(charges) != len(equivalence.values):
         raise ValueError(
