@@ -164,69 +164,6 @@ class EspChargesSectionParser(ChargesSectionParser):
         )
 
 
-class MullikenChargeSectionParser(ChargesSectionParser):
-    """Mulliken charges parser for Gaussian output"""
-
-    def is_section_start(self, line: str) -> bool:
-        return line == " Mulliken charges:"
-
-    def is_section_end(self, line: str) -> bool:
-        # TODO: Same as this function in EspChargesSectionParser
-        return line.startswith(' Sum of ')
-
-    def parse_section(self, section: List[str]) -> ChargesSectionData:
-        charges = []
-        for line in section[2:-1]:
-            _label, _symbol, charge = line.split()
-            charges.append(Charge(charge))
-        return ChargesSectionData(charges)
-
-
-class MkChargeSectionParser(EspChargesSectionParser):
-    """MK charges parser for Gaussian output"""
-
-    def is_section_start(self, line: str) -> bool:
-        return line == " Merz-Kollman atomic radii used."
-
-
-class ChelpChargeSectionParser(EspChargesSectionParser):
-    """CHelp charges parser for Gaussian output"""
-
-    def is_section_start(self, line: str) -> bool:
-        return line == " Francl (CHELP) atomic radii used."
-
-
-class ChelpgChargeSectionParser(EspChargesSectionParser):
-    """CHelpG charges parser for Gaussian output"""
-
-    def is_section_start(self, line: str) -> bool:
-        return line == " Breneman (CHELPG) radii used."
-
-
-class HlyChargeSectionParser(EspChargesSectionParser):
-    """HLY charges parser for Gaussian output"""
-
-    def is_section_start(self, line: str) -> bool:
-        return line == " Generate Potential Derived Charges using the Hu-Lu-Yang model"
-
-
-class NpaChargeSectionParser(ChargesSectionParser):
-    """NPA charges parser for Gaussian output"""
-
-    def is_section_start(self, line: str) -> bool:
-        return line == " Summary of Natural Population Analysis:                  "
-
-    def is_section_end(self, line: str) -> bool:
-        return line.startswith(' =======')
-
-    def parse_section(self, section: List[str]) -> ChargesSectionData:
-        charges = []
-        for line in section[6:-1]:
-            _symbol, _label, charge, *_other = line.split()
-            charges.append(Charge(charge))
-        return ChargesSectionData(charges)
-
-
 def get_charges_from_log(
     f: TextIO,
     charges_section_parser: ChargesSectionParser,
@@ -367,3 +304,66 @@ def _get_charges_sections(
                 current_section = None
 
     return charges_sections
+
+
+class MullikenChargeSectionParser(ChargesSectionParser):
+    """Mulliken charges parser for Gaussian output"""
+
+    def is_section_start(self, line: str) -> bool:
+        return line == " Mulliken charges:"
+
+    def is_section_end(self, line: str) -> bool:
+        # TODO: Same as this function in EspChargesSectionParser
+        return line.startswith(' Sum of ')
+
+    def parse_section(self, section: List[str]) -> ChargesSectionData:
+        charges = []
+        for line in section[2:-1]:
+            _label, _symbol, charge = line.split()
+            charges.append(Charge(charge))
+        return ChargesSectionData(charges)
+
+
+class MkChargeSectionParser(EspChargesSectionParser):
+    """MK charges parser for Gaussian output"""
+
+    def is_section_start(self, line: str) -> bool:
+        return line == " Merz-Kollman atomic radii used."
+
+
+class ChelpChargeSectionParser(EspChargesSectionParser):
+    """CHelp charges parser for Gaussian output"""
+
+    def is_section_start(self, line: str) -> bool:
+        return line == " Francl (CHELP) atomic radii used."
+
+
+class ChelpgChargeSectionParser(EspChargesSectionParser):
+    """CHelpG charges parser for Gaussian output"""
+
+    def is_section_start(self, line: str) -> bool:
+        return line == " Breneman (CHELPG) radii used."
+
+
+class HlyChargeSectionParser(EspChargesSectionParser):
+    """HLY charges parser for Gaussian output"""
+
+    def is_section_start(self, line: str) -> bool:
+        return line == " Generate Potential Derived Charges using the Hu-Lu-Yang model"
+
+
+class NpaChargeSectionParser(ChargesSectionParser):
+    """NPA charges parser for Gaussian output"""
+
+    def is_section_start(self, line: str) -> bool:
+        return line == " Summary of Natural Population Analysis:                  "
+
+    def is_section_end(self, line: str) -> bool:
+        return line.startswith(' =======')
+
+    def parse_section(self, section: List[str]) -> ChargesSectionData:
+        charges = []
+        for line in section[6:-1]:
+            _symbol, _label, charge, *_other = line.split()
+            charges.append(Charge(charge))
+        return ChargesSectionData(charges)
