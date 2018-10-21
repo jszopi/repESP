@@ -1,8 +1,9 @@
 """Parsing and writing Gaussian "cube" format describing molecular fields"""
 
+from .charges import AtomWithCoordsAndCharge, Charge
 from .fields import Ed, Esp, Field, FieldValue, GridMesh
 from .exceptions import InputFormatError
-from .types import AtomWithCoords, Coords, Molecule
+from .types import Coords, Coords, Molecule
 
 from dataclasses import dataclass
 from typing import Callable, Generic, List, TextIO, Tuple
@@ -19,11 +20,8 @@ class Cube(Generic[FieldValue]):
     ----------
     info : Info
         Additional, less structured information about the cube file.
-    molecule : Molecule[AtomWithCoords]
-        A molecule consisting of atoms with coordinates are specified.
-    electrons_on_atoms : typing.List[float]
-        Not clear what this represents, I thought it was the number of electrons
-        on each atom (TODO).
+    molecule : Molecule[AtomWithCoordsAndCharge]
+        A molecule consisting of atoms with coordinates and charges specified.
     field : Field[FieldValue]
         The field described by the cube file.
 
@@ -32,8 +30,6 @@ class Cube(Generic[FieldValue]):
     info
         See initialization parameter
     molecule
-        See initialization parameter
-    electrons_on_atoms
         See initialization parameter
     field
         See initialization parameter
@@ -63,8 +59,7 @@ class Cube(Generic[FieldValue]):
         title_line: str
 
     info: Info
-    molecule: Molecule[AtomWithCoords]
-    electrons_on_atoms: List[float]
+    molecule: Molecule[AtomWithCoordsAndCharge]
     field: Field[FieldValue]
 
 
@@ -113,12 +108,9 @@ def _parse_grid(origin: Coords, lines: List[str]) -> GridMesh:
     )
 
 
-def _parse_atom(line: str) -> Tuple[AtomWithCoords, float]:
+def _parse_atom(line: str) -> AtomWithCoordsAndCharge:
     atomic_number, cube_charge, *coords = line.split()
-    return (
-        AtomWithCoords(int(atomic_number), Coords(coords)),
-        float(cube_charge)
-    )
+    return AtomWithCoordsAndCharge(int(atomic_number), Coords(coords), Charge(cube_charge))
 
 
 def parse_cube(
@@ -169,9 +161,9 @@ def parse_cube(
     grid = _parse_grid(grid_prelude.origin, [get_line() for i in range(3)])
 
     # Molecule
-    atoms_with_electrons = [_parse_atom(get_line()) for i in range(grid_prelude.atom_count)]
-    atoms, electrons_on_atoms = zip(*atoms_with_electrons)
-    molecule = Molecule(list(atoms))
+    molecule = Molecule([
+        _parse_atom(get_line()) for i in range(grid_prelude.atom_count)
+    ])
 
     # Field values
     value_ctor = lambda x: make_value(info, x)
@@ -181,7 +173,6 @@ def parse_cube(
     return Cube(
         info,
         molecule,
-        list(electrons_on_atoms),
         Field(grid, values)
     )
 
@@ -283,10 +274,10 @@ def write_cube(f: TextIO, cube: Cube[Field.NumericValue]):
             *axis.vector
         ))
 
-    for atom, electron_count in zip(cube.molecule.atoms, cube.electrons_on_atoms):
+    for atom in cube.molecule.atoms:
         f.write(' {0:4}   {1: .6f}   {2: .6f}   {3: .6f}   {4: .6f}\n'.format(
             atom.atomic_number,
-            electron_count,
+            atom.charge,
             *atom.coords
         ))
 

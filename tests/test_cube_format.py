@@ -1,3 +1,4 @@
+from repESP.charges import Charge
 from repESP.types import *
 from repESP.cube_format import parse_ed_cube, write_cube
 from repESP.fields import *
@@ -51,9 +52,7 @@ class TestCubeParser(TestCase):
         self.assertEqual(len(self.cube.molecule.atoms), 1)
         self.assertEqual(self.cube.molecule.atoms[0].atomic_number, 1)
         self.assertEqual(self.cube.molecule.atoms[0].coords, Coords((0.1, 0.2, 0.4)))
-
-    def test_electron_counts(self) -> None:
-        self.assertListEqual(self.cube.electrons_on_atoms, [0.9])
+        self.assertEqual(self.cube.molecule.atoms[0].charge, Charge(0.9))
 
     def test_field_values(self) -> None:
 

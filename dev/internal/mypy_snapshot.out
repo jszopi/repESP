@@ -1,11 +1,13 @@
 repESP/respin_format.py:4: error: Cannot find module named 'fortranformat'
 repESP/resp_charges_format.py:5: error: Cannot find module named 'fortranformat'
-repESP/esp_util.py:9: error: Cannot find module named 'fortranformat'
-repESP/esp_util.py:9: note: (Perhaps setting MYPYPATH or using the "--ignore-missing-imports" flag would help)
+repESP/esp_util.py:10: error: Cannot find module named 'fortranformat'
+repESP/esp_util.py:10: note: (Perhaps setting MYPYPATH or using the "--ignore-missing-imports" flag would help)
+repESP/cube_format.py:113: error: Argument 2 to "AtomWithCoordsAndCharge" has incompatible type "Coords"; expected "Charge"
+repESP/cube_format.py:113: error: Argument 3 to "AtomWithCoordsAndCharge" has incompatible type "Charge"; expected "Coords"
 repESP/charge_util.py:6: error: No library stub file for module 'numpy'
-repESP/calc_fields.py:8: error: No library stub file for module 'scipy.spatial.distance'
-repESP/calc_fields.py:8: note: (Stub files are from https://github.com/python/typeshed)
-repESP/calc_fields.py:9: error: No library stub file for module 'numpy'
+repESP/calc_fields.py:11: error: No library stub file for module 'scipy.spatial.distance'
+repESP/calc_fields.py:11: note: (Stub files are from https://github.com/python/typeshed)
+repESP/calc_fields.py:12: error: No library stub file for module 'numpy'
 tests/test_types.py:32: error: Argument 2 to "AtomWithCoordsAndCharge" has incompatible type "Coords"; expected "Charge"
 tests/test_types.py:32: error: Argument 3 to "AtomWithCoordsAndCharge" has incompatible type "Charge"; expected "Coords"
 tests/test_types.py:45: error: Argument 2 to "AtomWithCoordsAndCharge" has incompatible type "Coords"; expected "Charge"
