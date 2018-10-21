@@ -13,33 +13,125 @@ from typing import List, Mapping, Optional, TextIO, Tuple
 
 @dataclass
 class ChargesSectionData:
+    """Dataclass with information from the charges section of Gaussian output
+
+    Currently this dataclass only supports the charges but in the future it may
+    contain more information that can be obtained from this section of the
+    Gaussian output.
+
+    Parameters
+    ----------
+    charges : typing.List[Charge]
+        List of charges
+
+    Attributes
+    ----------
+    charges
+        See initialization parameter
+    """
     charges: List[Charge]
     # TODO: Could be extended with Molecule[Atom]
 
 
 class ChargesSectionParser(ABC):
+    """Interface required for implementations of parsers for the charges section
+
+    This interface will be implemented differently for the various charge types
+    supported by Gaussian. Implementations for commonly used charges are also
+    provided.
+    """
 
     @abstractmethod
     def is_section_start(self, line: str) -> bool:
+        """Checks whether the given line is the start of charges section
+
+        Parameters
+        ----------
+        line : str
+            A line from Gaussian output file.
+
+        Returns
+        -------
+        bool
+            Whether the given line is the start of the charges section for the
+            specific charge type.
+        """
         pass
 
     @abstractmethod
     def is_section_end(self, line: str) -> bool:
+        """Checks whether the given line is the end of charges section
+
+        Parameters
+        ----------
+        line : str
+            A line from Gaussian output file.
+
+        Returns
+        -------
+        bool
+            Whether the given line is the end of the charges section for the
+            specific charge type.
+        """
         pass
 
     @abstractmethod
     def parse_section(self, section: List[str]) -> ChargesSectionData:
+        """Parse the charges section to obtain all information possible
+
+        Parameters
+        ----------
+        section : typing.List[str]
+            The list of lines identified to be the charges section of the
+            Gaussian output file.
+
+        Returns
+        -------
+        ChargesSectionData
+            All the data that can be parsed from the charges section.
+        """
         pass
 
 
 @dataclass
 class EspChargesSectionData(ChargesSectionData):
+    """Dataclass with information from the ESP charges section of Gaussian output
+
+    Compared to `ChargesSectionData`, the charges section of ESP charges
+    additionally contains information regarding the quality of the reproduced
+    field (RMS and RRMS).
+
+    Parameters
+    ----------
+    charges : typing.List[Charge]
+        List of charges
+    rms : Esp
+        The value of RMS error of the ESP field reproduced from partial charges
+        with respect to the true ESP field.
+    rrms : float
+        The value of relative RMS error i.e. same as `rms` but relative to the
+        RMS value of the true ESP field.
+
+    Attributes
+    ----------
+    charges
+        See initialization parameter
+    rms
+        See initialization parameter
+    rrms
+        See initialization parameter
+    """
     rms: Esp
     rrms: float
     # TODO: Could be extended with number of points
 
 
 class EspChargesSectionParser(ChargesSectionParser):
+    """Base class for parser with implemented methods common to all ESP charge types
+
+    This base class implements the `is_section_end` and `parse_section` methods,
+    which are common to all ESP charge types.
+    """
 
     def is_section_end(self, line: str) -> bool:
         # TODO: This will not work with IOp(6/50=1), where all I know is that
@@ -73,6 +165,7 @@ class EspChargesSectionParser(ChargesSectionParser):
 
 
 class MullikenChargeSectionParser(ChargesSectionParser):
+    """Mulliken charges parser for Gaussian output"""
 
     def is_section_start(self, line: str) -> bool:
         return line == " Mulliken charges:"
@@ -90,30 +183,35 @@ class MullikenChargeSectionParser(ChargesSectionParser):
 
 
 class MkChargeSectionParser(EspChargesSectionParser):
+    """MK charges parser for Gaussian output"""
 
     def is_section_start(self, line: str) -> bool:
         return line == " Merz-Kollman atomic radii used."
 
 
 class ChelpChargeSectionParser(EspChargesSectionParser):
+    """CHelp charges parser for Gaussian output"""
 
     def is_section_start(self, line: str) -> bool:
         return line == " Francl (CHELP) atomic radii used."
 
 
 class ChelpgChargeSectionParser(EspChargesSectionParser):
+    """CHelpG charges parser for Gaussian output"""
 
     def is_section_start(self, line: str) -> bool:
         return line == " Breneman (CHELPG) radii used."
 
 
 class HlyChargeSectionParser(EspChargesSectionParser):
+    """HLY charges parser for Gaussian output"""
 
     def is_section_start(self, line: str) -> bool:
         return line == " Generate Potential Derived Charges using the Hu-Lu-Yang model"
 
 
 class NpaChargeSectionParser(ChargesSectionParser):
+    """NPA charges parser for Gaussian output"""
 
     def is_section_start(self, line: str) -> bool:
         return line == " Summary of Natural Population Analysis:                  "
@@ -142,15 +240,15 @@ def get_charges_from_log(
     f : TextIO
         The file object corresponding to the Gaussian `.log`/`.out` output file
         from which the charges are to be extracted.
-    charges_section_parser: ChargesSectionParser
+    charges_section_parser : ChargesSectionParser
         Class implementing the `ChargesSectionParser` interface for the desired
         charge type, e.g. `MullikenChargeSectionParser`.
-    verify_against: Molecule, optional
+    verify_against : Molecule, optional
         Molecule against which the output is to be verified. Defaults to None.
         Note that currently the verification only involves comparing the number
         of extracted charges against the number of atoms. In the future this may
         be extended to verifying the atom identities (TODO).
-    occurrence: int, optional
+    occurrence : int, optional
         Determines which charges section to use for extracting the charges.
         Defaults to -1 i.e. the last section.
 
@@ -162,13 +260,13 @@ def get_charges_from_log(
 
     Returns
     -------
-    List[Charge]
+    typing.List[Charge]
         List of charges in order of occurrence in output file.
 
     Raises
     ------
     InputFormatError
-        Raised when parsing of the input file fails.
+        Raised when parsing the input file fails.
     IndexError
         Raised when the requested occurence of the charges section cannot
         be found could not be found in the output file.
