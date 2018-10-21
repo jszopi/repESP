@@ -10,9 +10,55 @@ from typing import Callable, Generic, List, TextIO, Tuple
 
 @dataclass
 class Cube(Generic[FieldValue]):
+    """Dataclass representing information in a Gaussian "cube" file
+
+    This class is generic in the type of the values of the field described by
+    the cube file. This type can be any type, as can `fields.FieldValue`.
+
+    Parameters
+    ----------
+    info : Info
+        Additional, less structured information about the cube file.
+    molecule : Molecule[AtomWithCoords]
+        A molecule consisting of atoms with coordinates are specified.
+    electrons_on_atoms : typing.List[float]
+        Not clear what this represents, I thought it was the number of electrons
+        on each atom (TODO).
+    field : Field[FieldValue]
+        The field described by the cube file.
+
+    Attributes
+    ----------
+    info
+        See initialization parameter
+    molecule
+        See initialization parameter
+    electrons_on_atoms
+        See initialization parameter
+    field
+        See initialization parameter
+    """
 
     @dataclass
     class Info:
+        """Additional, less structured information about the cube file.
+
+        Parameters
+        ----------
+        input_line: str
+            The top line of a cube file, usually containing information
+            regarding the Gaussian input parameters used.
+        title_line: str
+            The second line of a cube file, containing a free-form title.
+
+        Attributes
+        ----------
+        input_line
+            See initialization parameter
+        title_line
+            See initialization parameter
+        """
+
         input_line: str
         title_line: str
 
@@ -79,7 +125,33 @@ def parse_cube(
     f: TextIO,
     make_value: Callable[[Cube.Info, str], FieldValue]
 ) -> Cube[FieldValue]:
-    # Assumption: coordinates in bohr
+    """Parse a file in the Gaussian "cube" file format
+
+    You probably mean to use `parse_ed_cube` or `parse_esp_cube` unless
+    your cube file is of neither of those types. Note that the values are
+    expected to be space separated.
+
+    If your cube file comes from elsewhere than Gaussian, you should ensure that
+    the coordinates are given in bohr.
+
+    Parameters
+    ----------
+    f : TextIO
+        The file object representing the cube file opened for reading.
+    make_value : Callable[[Cube.Info, str], FieldValue]
+        A function taking two parameters: the cube information and a string
+        representing the field value, and parsing it into a numerical
+        representation of the field value. The cube information is provided to
+        the function if a verification of the cube file type is required. In
+        the simplest case this could be ``lambda _, str_: float(str_)``, which
+        ignores the cube information (thus performing no verification) and
+        simply parses the string value as a float.
+
+    Returns
+    -------
+    Cube[FieldValue]
+        Data from the parsed cube file.
+    """
 
     get_line = lambda: f.readline().rstrip('\n')
 
@@ -132,6 +204,25 @@ def _parse_cube_by_title_common(
 
 
 def parse_esp_cube(f: TextIO, verify_title=True) -> Cube[Esp]:
+    """Parse a Gaussian "cube" file describing an ESP field
+
+    If your cube file comes from elsewhere than Gaussian, you should ensure
+    that the coordinates are given in bohr and ESP values in atomic units.
+
+    Parameters
+    ----------
+    f : TextIO
+        The file object representing the cube file opened for reading.
+    verify_title : bool, optional
+        If this flag is set to True (default), an `InputFormatError` will
+        be raised if the cube title does not start with the string
+        ``" Electrostatic potential"``.
+
+    Returns
+    -------
+    Cube[Esp]
+        Data from the parsed cube file.
+    """
     return parse_cube(
         f,
         _parse_cube_by_title_common(" Electrostatic potential", Esp, verify_title)
@@ -139,12 +230,43 @@ def parse_esp_cube(f: TextIO, verify_title=True) -> Cube[Esp]:
 
 
 def parse_ed_cube(f: TextIO, verify_title=True) -> Cube[Ed]:
+    """Parse a Gaussian "cube" file describing electron density field
+
+    If your cube file comes from elsewhere than Gaussian, you should ensure
+    that the coordinates are given in bohr and electron density values in
+    atomic units.
+
+    Parameters
+    ----------
+    f : TextIO
+        The file object representing the cube file opened for reading.
+    verify_title : bool, optional
+        If this flag is set to True (default), an `InputFormatError` will
+        be raised if the cube title does not start with the string
+        ``" Electron density"``.
+
+    Returns
+    -------
+    Cube[Ed]
+        Data from the parsed cube file.
+    """
     return parse_cube(
         f,
         _parse_cube_by_title_common(" Electron density", Ed, verify_title)
     )
 
 def write_cube(f: TextIO, cube: Cube[Field.NumericValue]):
+    """Write a Gaussian "cube" file described by the given input data
+
+    Parameters
+    ----------
+    f : TextIO
+        The file object representing the cube file opened for writing.
+    cube : Cube[Field.NumericValue]
+        The information representing the information needed to create a cube
+        file. Note that only cube files describing fields with values matching
+        `Field.NumericValue` are supported.
+    """
 
     f.write(f"{cube.info.input_line}\n{cube.info.title_line}\n")
 
