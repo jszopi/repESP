@@ -1,6 +1,6 @@
 """Parsing and writing Gaussian "cube" format describing molecular fields"""
 
-from .fields import Ed, Esp, Field, GridMesh
+from .fields import Ed, Esp, Field, FieldValue, GridMesh
 from .exceptions import InputFormatError
 from .types import AtomWithCoords, Coords, Molecule
 
@@ -9,7 +9,7 @@ from typing import Callable, Generic, List, TextIO, Tuple
 
 
 @dataclass
-class Cube(Generic[Field.NumericValue]):
+class Cube(Generic[FieldValue]):
 
     @dataclass
     class Info:
@@ -19,7 +19,7 @@ class Cube(Generic[Field.NumericValue]):
     info: Info
     molecule: Molecule[AtomWithCoords]
     electrons_on_atoms: List[float]
-    field: Field[Field.NumericValue]
+    field: Field[FieldValue]
 
 
 @dataclass
@@ -77,8 +77,8 @@ def _parse_atom(line: str) -> Tuple[AtomWithCoords, float]:
 
 def parse_cube(
     f: TextIO,
-    make_value: Callable[[Cube.Info, str], Field.NumericValue]
-) -> Cube[Field.NumericValue]:
+    make_value: Callable[[Cube.Info, str], FieldValue]
+) -> Cube[FieldValue]:
     # Assumption: coordinates in bohr
 
     get_line = lambda: f.readline().rstrip('\n')
@@ -116,11 +116,11 @@ def parse_cube(
 
 def _parse_cube_by_title_common(
     expected_title_start: str,
-    value_ctor: Callable[[str], Field.NumericValue],
+    value_ctor: Callable[[str], FieldValue],
     verify_title: bool
-) -> Callable[[Cube.Info, str], Field.NumericValue]:
+) -> Callable[[Cube.Info, str], FieldValue]:
 
-    def make_value(info: Cube.Info, value: str) -> Field.NumericValue:
+    def make_value(info: Cube.Info, value: str) -> FieldValue:
         check_title = lambda title: title.startswith(expected_title_start)
         if verify_title and not check_title(info.title_line):
             raise InputFormatError(
@@ -144,7 +144,7 @@ def parse_ed_cube(f: TextIO, verify_title=True) -> Cube[Ed]:
         _parse_cube_by_title_common(" Electron density", Ed, verify_title)
     )
 
-def write_cube(f: TextIO, cube: Cube):
+def write_cube(f: TextIO, cube: Cube[Field.NumericValue]):
 
     f.write(f"{cube.info.input_line}\n{cube.info.title_line}\n")
 
