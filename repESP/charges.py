@@ -53,6 +53,14 @@ class AtomWithCharge(Atom):
         The atomic number of the element
     charge: Charge
         The partial charge on the atom
+
+    Attributes
+    ----------
+    atomic_number
+        See initialization parameter
+    charge
+        See initialization parameter
+
     """
     charge: Charge
 
@@ -65,10 +73,19 @@ class AtomWithCoordsAndCharge(AtomWithCharge, AtomWithCoords):
     ----------
     atomic_number : int
         The atomic number of the element
-    charge : Charge
-        The partial charge on the atom
     coords : Coords
         The coordinates of the atom in space
+    charge : Charge
+        The partial charge on the atom
+
+    Attributes
+    ----------
+    atomic_number
+        See initialization parameter
+    coords
+        See initialization parameter
+    charge
+        See initialization parameter
     """
     # NOTE: mypy incorrectly infers the argument order for __init__ to be:
     # (atomic_number, charge, coords), resulting in loads of spurious errors.
@@ -95,6 +112,8 @@ class DipoleMomentValue(float):
 @dataclass
 class DipoleMoment:
     """Dipole moment vector described through its three components
+
+    After initialization, the parameters can be accessed as attributes.
 
     Parameters
     ----------
@@ -130,6 +149,8 @@ class QuadrupoleMomentValue(float):
 @dataclass
 class QuadrupoleMoment:
     """Quadrupole moment tensor described through its six components
+
+    After initialization, the parameters can be accessed as attributes.
 
     Parameters
     ----------

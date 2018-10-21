@@ -1,4 +1,8 @@
-"""Types used to describe fields as values at selected points in space"""
+"""Types used to describe fields as values at selected points in space
+
+Attributes
+----------
+"""
 
 from .types import Coords, Dist
 
@@ -139,10 +143,10 @@ class GridMesh(AbstractMesh):
 
         Attributes
         ----------
-        vector : Coords
-            See initialization attribute.
-        point_count : int
-            See initialization attribute.
+        vector
+            See initialization parameter
+        point_count
+            See initialization parameter
         """
         vector: Coords
         point_count: int
@@ -193,6 +197,10 @@ class GridMesh(AbstractMesh):
 
 
 FieldValue = TypeVar('FieldValue')
+"""typing.TypeVar : The generic type for the values of the `Field` class.
+
+There are no restrictions on what this type can be.
+"""
 
 @dataclass
 class Field(Generic[FieldValue]):
@@ -212,11 +220,11 @@ class Field(Generic[FieldValue]):
 
     Attributes
     ----------
-    mesh : AbstractMesh
+    mesh
         See initialization parameter
     values : typing.List[FieldValue]
         Converted from the `values_` initialization parameter
-    NumericValue : TypeVar
+    NumericValue : typing.TypeVar
         Generic type specifying a subset of FieldValue types for which arithmetic
         operations are defined. This can be any type matching "bound=float".
     """
