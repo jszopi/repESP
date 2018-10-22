@@ -139,6 +139,11 @@ def parse_cube(
         ignores the cube information (thus performing no verification) and
         simply parses the string value as a float.
 
+    Raises
+    ------
+    InputFormatError
+        Raised when the file does not follow the expected format.
+
     Returns
     -------
     Cube[FieldValue]
@@ -254,7 +259,7 @@ def write_cube(f: TextIO, cube: Cube[Field.NumericValue]):
     f : TextIO
         The file object representing the cube file opened for writing.
     cube : Cube[Field.NumericValue]
-        The information representing the information needed to create a cube
+        The dataclass containing the information needed to create a cube
         file. Note that only cube files describing fields with values matching
         `Field.NumericValue` are supported.
     """

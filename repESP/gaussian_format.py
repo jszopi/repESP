@@ -13,7 +13,7 @@ from typing import List, Mapping, Optional, TextIO, Tuple
 
 @dataclass
 class ChargesSectionData:
-    """Dataclass with information from the charges section of Gaussian output
+    """Dataclass representing the charges section of Gaussian output
 
     Currently this dataclass only supports the charges but in the future it may
     contain more information that can be obtained from this section of the
@@ -95,7 +95,7 @@ class ChargesSectionParser(ABC):
 
 @dataclass
 class EspChargesSectionData(ChargesSectionData):
-    """Dataclass with information from the ESP charges section of Gaussian output
+    """Dataclass representing the ESP charges section of Gaussian output
 
     Compared to `ChargesSectionData`, the charges section of ESP charges
     additionally contains information regarding the quality of the reproduced
@@ -203,7 +203,7 @@ def get_charges_from_log(
     Raises
     ------
     InputFormatError
-        Raised when parsing the input file fails.
+        Raised when the file does not follow the expected format.
     IndexError
         Raised when the requested occurence of the charges section cannot
         be found could not be found in the output file.
@@ -224,6 +224,11 @@ def get_esp_fit_stats_from_log(
     """Extract ESP fit statistics from charges section in Gaussian output
 
     See documentation of `get_charges_from_log` for parameters and raised exceptions.
+
+    Raises
+    ------
+    InputFormatError
+        Raised when the file does not follow the expected format.
 
     Returns
     -------
