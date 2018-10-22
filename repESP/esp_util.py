@@ -15,7 +15,7 @@ import re
 @dataclass
 class GaussianEspData:
     # Gaussian 09 .esp file format generated with IOp(6/50=1).
-    charge: float
+    charge: int
     multiplicity: int
     molecule: Molecule[AtomWithCoordsAndCharge]
     dipole_moment: DipoleMoment
@@ -72,7 +72,7 @@ def parse_gaussian_esp(f: TextIO) -> GaussianEspData:
     return GaussianEspData(charge, multiplicity, molecule, dipole_moment, quadrupole_moment, field)
 
 
-def _parse_prelude(lines: List[str]) -> Tuple[float, int, int]:
+def _parse_prelude(lines: List[str]) -> Tuple[int, int, int]:
     assert len(lines) == 3
 
     # Line 1
@@ -85,7 +85,7 @@ def _parse_prelude(lines: List[str]) -> Tuple[float, int, int]:
     if charge_and_multiplicity is None:
         raise InputFormatError("Failed parsing line 2 (charge and multiplicity expected).")
 
-    charge = float(charge_and_multiplicity.group(1))
+    charge = int(charge_and_multiplicity.group(1))
     multiplicity = int(charge_and_multiplicity.group(2))
 
     # Line 3
