@@ -3,6 +3,7 @@
 from dataclasses import dataclass, asdict
 from fortranformat import FortranRecordWriter as FW
 from itertools import zip_longest
+import io
 import re
 import sys
 from typing import Dict, List, Optional, TextIO, Tuple, TypeVar, Union
@@ -26,7 +27,7 @@ class Equivalence:
                     f"in a molecule of {len(self.values)}."
                 )
 
-    def describe(self, molecule: Optional[Molecule[Atom]]=None, file=sys.stdout):
+    def describe(self, molecule: Optional[Molecule[Atom]]=None) -> str:
         """Verbosely report the equivalence information."""
         if molecule is not None and len(molecule.atoms) != len(self.values):
             raise ValueError(
@@ -36,11 +37,14 @@ class Equivalence:
 
         zipped = zip_longest(self.values, molecule.atoms if molecule is not None else [])
 
+        f = io.StringIO()
         for i, (equivalence, atom) in enumerate(zipped):
             atomic_number = atom.symbol if molecule is not None else None
             id_str = f" ({atomic_number})" if atomic_number is not None else ""
             equivalence_str = f", equivalenced to atom {equivalence+1}" if equivalence is not None else ""
-            print(f"Atom{id_str} number {i+1}{equivalence_str}", file=file)
+            print(f"Atom{id_str} number {i+1}{equivalence_str}", file=f)
+
+        return f.getvalue()
 
     @classmethod
     def from_ivary(cls, ivary: "Respin.Ivary"):
@@ -147,7 +151,7 @@ class Respin:
                         f"which is either lower than 0 or outside the list length."
                     )
 
-        def describe(self, molecule: Optional[Molecule[Atom]]=None, file: TextIO=sys.stdout):
+        def describe(self, molecule: Optional[Molecule[Atom]]=None) -> str:
             """Verbosely report the ``ivary`` actions"""
             # I'm undecided about printing functions. Can `file` point to managed log object?
             if molecule is not None and len(molecule.atoms) != len(self.values):
@@ -158,6 +162,7 @@ class Respin:
 
             zipped = zip_longest(self.values, molecule.atoms if molecule is not None else [])
 
+            f = io.StringIO()
             for i, (ivary, atom) in enumerate(zipped):
                 atomic_number = atom.symbol if molecule is not None else None
                 id_str = f" ({atomic_number})" if atomic_number is not None else ""
@@ -170,7 +175,9 @@ class Respin:
                 else:
                     ivary_str = ""
 
-                print(f"Atom{id_str} number {i+1}{ivary_str}", file=file)
+                print(f"Atom{id_str} number {i+1}{ivary_str}", file=f)
+
+            return f.getvalue()
 
         @classmethod
         def from_equivalence(cls, equivalence: Equivalence):

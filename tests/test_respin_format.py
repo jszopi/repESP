@@ -34,38 +34,33 @@ class TestEquivalence(TestCase):
 
         equivalence = Equivalence([None, None, 0, 1, 1])
 
-        output = StringIO()
         expected_lines = [
-            "Atom number 1\n",
-            "Atom number 2\n",
-            "Atom number 3, equivalenced to atom 1\n",
-            "Atom number 4, equivalenced to atom 2\n",
-            "Atom number 5, equivalenced to atom 2\n",
+            "Atom number 1",
+            "Atom number 2",
+            "Atom number 3, equivalenced to atom 1",
+            "Atom number 4, equivalenced to atom 2",
+            "Atom number 5, equivalenced to atom 2",
         ]
 
-        equivalence.describe(file=output)
-        output.seek(0)
-        self.assertListEqual(expected_lines, output.readlines())
+        result = equivalence.describe()
+        self.assertListEqual(expected_lines, result.splitlines())
 
     def test_description_with_molecule(self) -> None:
 
         equivalence = Equivalence([None, None, 0, 1, 1])
 
-        output = StringIO()
         expected_lines = [
-            "Atom (C) number 1\n",
-            "Atom (H) number 2\n",
-            "Atom (H) number 3, equivalenced to atom 1\n",
-            "Atom (H) number 4, equivalenced to atom 2\n",
-            "Atom (H) number 5, equivalenced to atom 2\n",
+            "Atom (C) number 1",
+            "Atom (H) number 2",
+            "Atom (H) number 3, equivalenced to atom 1",
+            "Atom (H) number 4, equivalenced to atom 2",
+            "Atom (H) number 5, equivalenced to atom 2",
         ]
 
-        equivalence.describe(
+        result = equivalence.describe(
             molecule=Molecule([Atom(atomic_number) for atomic_number in [6, 1, 1, 1, 1]]),
-            file=output
         )
-        output.seek(0)
-        self.assertListEqual(expected_lines, output.readlines())
+        self.assertListEqual(expected_lines, result.splitlines())
 
 
 class TestRespin(TestCase):
@@ -126,36 +121,31 @@ class TestIvary(TestRespin):
 
     def test_ivary_description(self) -> None:
 
-        output = StringIO()
         expected_lines = [
-            "Atom number 1\n",
-            "Atom number 2\n",
-            "Atom number 3, equivalenced to atom 2\n",
-            "Atom number 4, equivalenced to atom 2\n",
-            "Atom number 5, equivalenced to atom 2\n",
+            "Atom number 1",
+            "Atom number 2",
+            "Atom number 3, equivalenced to atom 2",
+            "Atom number 4, equivalenced to atom 2",
+            "Atom number 5, equivalenced to atom 2",
         ]
 
-        self.respin.ivary.describe(file=output)
-        output.seek(0)
-        self.assertListEqual(expected_lines, output.readlines())
+        result = self.respin.ivary.describe()
+        self.assertListEqual(expected_lines, result.splitlines())
 
     def test_ivary_description_with_molecule(self) -> None:
 
-        output = StringIO()
         expected_lines = [
-            "Atom (C) number 1\n",
-            "Atom (H) number 2\n",
-            "Atom (H) number 3, equivalenced to atom 2\n",
-            "Atom (H) number 4, equivalenced to atom 2\n",
-            "Atom (H) number 5, equivalenced to atom 2\n",
+            "Atom (C) number 1",
+            "Atom (H) number 2",
+            "Atom (H) number 3, equivalenced to atom 2",
+            "Atom (H) number 4, equivalenced to atom 2",
+            "Atom (H) number 5, equivalenced to atom 2",
         ]
 
-        self.respin.ivary.describe(
+        result = self.respin.ivary.describe(
             molecule=Molecule([Atom(atomic_number) for atomic_number in [6, 1, 1, 1, 1]]),
-            file=output
         )
-        output.seek(0)
-        self.assertListEqual(expected_lines, output.readlines())
+        self.assertListEqual(expected_lines, result.splitlines())
 
     def test_ivary_from_equivalence(self) -> None:
         self.assertListEqual(
