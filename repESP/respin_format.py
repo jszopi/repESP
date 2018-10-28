@@ -1,4 +1,4 @@
-"""Parsing and writing `resp` program input format (.respin files)"""
+"""Parsing and writing ``resp`` program input format ("respin" files)"""
 
 from dataclasses import dataclass, asdict
 from fortranformat import FortranRecordWriter as FW
@@ -15,8 +15,52 @@ from ._util import zip_exact
 
 @dataclass
 class Equivalence:
-    # Zero-indexed, None if not equivalenced to any atom. Note similarities in
-    # implementation with Respin.Ivary - perhaps should be refactored.
+    """Dataclass representing chemical equivalence relations between atoms
+
+    Atoms in a molecule are considered equivalent for the purpose of fitting
+    partial charges when they are symmetry-related or fast-exchanging.
+
+    The equivalence information is represented as a list of values stored in
+    the `values` attribute. The length of this list must be the same as the
+    number of atoms in the molecule it describes. Consecutive values refer
+    to consecutive atoms of the molecule. Each value is either None, if the
+    described atom is not equivalenced to any other atom, or a zero-based index
+    of the atom to which the described atom is equivalenced.
+
+    Example
+    -------
+
+    Consider a methane molecule defined as follows:
+
+    >>> methane = Molecule([Atom(atomic_number) for atomic_number in [6, 1, 1, 1, 1]])
+
+    The corresponding equivalence information would be:
+
+    >>> equivalence = Equivalence([None, None, 1, 1, 1])
+
+    There are no atoms equivalent to the carbon atom, and thus its value is
+    None. The first hydrogen atom is equivalent to the other three but those
+    have not been specified yet, so its value is also None. The remaining
+    three hydrogen atoms are equivalent to the first hydrogen atom, which
+    zero-based index in the `methane.atoms` list is 1.
+
+    Parameters
+    ----------
+    values : typing.List[Optional[int]]
+        The list of equivalence values.
+
+    Raises
+    ------
+    ValueError
+        Raised when any of the values are outside of the expected bounds. In
+        the future the initialization may further verify that there are no cyclic
+        relations.
+
+    Attributes
+    ----------
+    values
+        See initialization parameter
+    """
     values: List[Optional[int]]
 
     def __post_init__(self):
@@ -28,7 +72,36 @@ class Equivalence:
                 )
 
     def describe(self, molecule: Optional[Molecule[Atom]]=None) -> str:
-        """Verbosely report the equivalence information."""
+        """Verbosely report the equivalence information
+
+        Example
+        -------
+
+        >>> print(equivalence.describe(methane))
+        Atom (C) number 1
+        Atom (H) number 2
+        Atom (H) number 3, equivalenced to atom 1
+        Atom (H) number 4, equivalenced to atom 2
+        Atom (H) number 5, equivalenced to atom 2
+
+        Parameters
+        ----------
+        molecule : Optional[Molecule[Atom]], optional
+            The molecule to which the equivalence information refers. This
+            argument is optional and defaults to None. If it is provided, atom
+            identities will be included in the output.
+
+        Raises
+        ------
+        ValueError
+            Raised when the number of atoms in the molecule does not match
+            the length of the list of values in this object.
+
+        Returns
+        -------
+        str
+            A verbose description of the equivalence information.
+        """
         if molecule is not None and len(molecule.atoms) != len(self.values):
             raise ValueError(
                 f"The number of atoms ({len(molecule.atoms)} is not the same "
@@ -48,16 +121,17 @@ class Equivalence:
 
     @classmethod
     def from_ivary(cls, ivary: "Respin.Ivary"):
-        """Get atom equivalence information from an Respin.Ivary object.
+        """Get atom equivalence information from an `Respin.Ivary` object
 
-        Warning: You probably don't mean to use this function. Use the
-        get_equivalence function instead.
+        .. note::
+            You probably don't mean to use this function. Use the
+            `get_equivalence` function instead.
 
-        Ivary objects are specific to `resp` program input and thus may
-        not provide information about atom equivalence. The `respin` file may
-        have been generated to perform any custom fitting by RESP. Only use
-        this function when you're certain that the `respin` file contains all
-        the equivalence information that you need.
+            `Ivary` objects are specific to ``resp`` program input and thus may
+            not provide information about atom equivalence. The "respin" file
+            may have been generated to perform any custom fitting with
+            ``resp``. Only use this function when you're certain that the
+            "respin" file contains all the equivalence information that you need.
         """
         return cls([
             # Whether `ivary - 1` fulfills other preconditions will be checked in __post_init__
@@ -67,12 +141,12 @@ class Equivalence:
 
 
 def get_equivalence(ivary1: "Respin.Ivary", ivary2: "Respin.Ivary") -> Equivalence:
-    """Get atom equivalence from two input for two 2-stage `resp`
+    """Get atom equivalence from two input for two 2-stage ``resp``
 
-    Derive atom equivalence based on the data in two `.respin` files (represented
-    by the `Respin` objects) created for the purpose two-stage fitting with the
-    `resp` program. The files can be generated with the `respgen` program with
-    the following commands:
+    Derive atom equivalence based on the data in two "respin" files
+    (represented by the `Respin` objects) created for the purpose of two-stage
+    fitting with the ``resp`` program. The files can be generated with the
+    ``respgen`` program with the following commands::
 
         respgen -i methane.ac -o methane.respin1 -f resp1
         respgen -i methane.ac -o methane.respin2 -f resp2
