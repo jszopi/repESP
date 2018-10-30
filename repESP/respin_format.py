@@ -4,6 +4,7 @@ from dataclasses import dataclass, asdict
 from fortranformat import FortranRecordWriter as FW
 from itertools import zip_longest
 import io
+import math
 import re
 import sys
 from typing import Dict, List, Optional, TextIO, Tuple, TypeVar, Union
@@ -196,16 +197,18 @@ class Respin:
         inopt: int = 0
         ioutopt: int = 0
         iqopt: int = 1
-        nmol: int = 1
         ihfree: int = 1
         irstrnt: int = 1
         qwt: float = 0
+
+        @property
+        def nmol(self) -> int:
+            return 1
 
         def __post_init__(self) -> None:
             Respin._check_value("inopt", self.inopt, [0, 1])
             Respin._check_value("ioutopt", self.ioutopt, [0, 1])
             Respin._check_value("iqopt", self.iqopt, [1, 2, 3])
-            Respin._check_value("nmol", self.nmol, [1])
             Respin._check_value("ihfree", self.ihfree, [0, 1])
             Respin._check_value("irstrnt", self.irstrnt, [0, 1, 2])
             if self.qwt < 0:
@@ -265,26 +268,24 @@ class Respin:
 
     title: str
     cntrl: Cntrl
-    wtmol: float
     subtitle: str
     charge: int
-    iuniq: int
     molecule: Molecule[Atom]
     ivary: Ivary
 
-    def __post_init__(self) -> None:
-        Respin._check_value("wtmol", "{:.1f}".format(self.wtmol), ["1.0"])
+    @property
+    def wtmol(self) -> float:
+        return 1.0
 
+    @property
+    def iuniq(self) -> int:
+        return len(self.molecule.atoms)
+
+    def __post_init__(self) -> None:
         if len(self.molecule.atoms) != len(self.ivary.values):
             raise ValueError(
                 f"Number of atoms ({len(self.molecule.atoms)}) does not match number "
                 f"of ivary values ({len(self.ivary.values)})."
-            )
-
-        if self.iuniq != len(self.ivary.values):
-            raise ValueError(
-                f"`iuniq` value ({self.iuniq}) doesn't match the number of atoms "
-                f"({len(self.molecule.atoms)})."
             )
 
 
@@ -307,6 +308,11 @@ def _parse_cntrl(f: TextIO) -> Respin.Cntrl:
 
         kwargs[key] = float(value) if key == "qwt" else int(value)
 
+    # nmol is not a parameter of Cntrl.__init__ and must be equal to 1.
+    nmol = kwargs.pop("nmol", None)
+    if nmol is not None and nmol != 1:
+        raise InputFormatError("Parsing multiple structures is not supported")
+
     return Respin.Cntrl(**kwargs)  # type: ignore # (not sure why not recognized)
 
 
@@ -318,7 +324,14 @@ def parse_respin(f) -> Respin:
         pass
 
     cntrl = _parse_cntrl(f)
-    wtmol = float(get_line().strip())
+
+    wtmol = get_line().strip()
+    if not math.isclose(float(wtmol), 1.0, rel_tol=0, abs_tol=1e-6):
+        raise InputFormatError(
+            f"Encountered value of `wtmol` different from 1.0 ({wtmol}) but "
+            f"parsing is supported only for single-structure respin files."
+        )
+
     subtitle = get_line()
 
     charge_and_iuniq = get_line()
@@ -346,22 +359,32 @@ def parse_respin(f) -> Respin:
         # `respgen` uses a value of -99 but internally we use -1 as per resp spec.
         ivary.values.append(ivary_value if ivary_value != -99 else -1)
 
+    if len(atoms) != iuniq:
+        raise InputFormatError(
+            f"The value of `iuniq` ({iuniq}) is different from the number of"
+            f"atoms in the described molecule ({len(atoms)})."
+        )
+
     return Respin(
         title,
         cntrl,
-        wtmol,
         subtitle,
         charge,
-        iuniq,
         Molecule(atoms),
         ivary
     )
 
 
 def _write_cntrl(f: TextIO, cntrl: Respin.Cntrl, skip_defaults: bool) -> None:
+
     default_cntrl: Dict[str, Union[int, float]] = asdict(Respin.Cntrl())
+    default_cntrl["nmol"] = 1
+
+    dict_: Dict[str, Union[int, float]] = asdict(cntrl)
+    dict_["nmol"] = cntrl.nmol
+
     print(" &cntrl\n", file=f)
-    for key, value in asdict(cntrl).items():  # type: ignore
+    for key, value in dict_.items():
         if key == "qwt":
             print(" {} = {:.5f},".format(key, value), file=f)
         else:

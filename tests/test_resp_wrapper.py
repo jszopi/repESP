@@ -21,15 +21,12 @@ class TestResp(TestCase):
         self.respin = Respin(
             title="File generated for unit tests only (can been removed).",
             cntrl=Respin.Cntrl(
-                nmol=1,
                 ihfree=1,
                 ioutopt=1,
                 qwt=0.0005,
             ),
-            wtmol=1.0,
             subtitle="Resp charges for organic molecule",
             charge=0,
-            iuniq=5,
             molecule=Molecule([Atom(atomic_number) for atomic_number in [6, 1, 1, 1, 1]]),
             ivary=Respin.Ivary([0, 0, 0, 0, 0])
         )
@@ -46,12 +43,6 @@ class TestResp(TestCase):
             [-0.407205, 0.101907, 0.101695, 0.101695, 0.101907]
         )
 
-    def test_run_resp_with_malformed_input(self) -> None:
-        respin = deepcopy(self.respin)
-        respin.molecule = Molecule([Atom(1)])
-        with self.assertRaises(RuntimeError):
-            run_resp(self.esp_data, respin)
-
     def test_two_stage_resp(self) -> None:
 
         respin2 = Respin(
@@ -60,10 +51,8 @@ class TestResp(TestCase):
                 iqopt=2,
                 qwt=0.001,
             ),
-            wtmol=1.0,
             subtitle="Resp charges for organic molecule",
             charge=0,
-            iuniq=5,
             molecule=Molecule([Atom(atomic_number) for atomic_number in [6, 1, 1, 1, 1]]),
             ivary=Respin.Ivary([0, 0, 2, 2, 2])
         )

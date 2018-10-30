@@ -195,10 +195,8 @@ def prepare_respin(
     return Respin(
         title=title if title is not None else default_title,
         cntrl=cntrl,
-        wtmol=1.0,
         subtitle=subtitle if subtitle is not None else default_subtitle,
         charge=total_charge,
-        iuniq=len(molecule.atoms),
         molecule=molecule,
         ivary=respin_generator.get_ivary()
     )

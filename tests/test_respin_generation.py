@@ -20,10 +20,8 @@ class TestRespinGenerationOnStage1Resp(TestCase):
             cntrl=Respin.Cntrl(
                 qwt=0.0005
             ),
-            wtmol=1.0,
             subtitle="Resp charges for organic molecule",
             charge=0,
-            iuniq=5,
             molecule=Molecule([Atom(atomic_number) for atomic_number in [6, 1, 1, 1, 1]]),
             ivary=Respin.Ivary([0, 0, 0, 0, 0])
         )
@@ -122,10 +120,8 @@ class TestFitingHydrogensOnly(TestCase):
                 ihfree=0,
                 qwt=0.0
             ),
-            wtmol=1.0,
             subtitle="Resp charges for organic molecule",
             charge=0,
-            iuniq=5,
             molecule=Molecule([Atom(atomic_number) for atomic_number in [6, 1, 1, 1, 1]]),
             ivary=Respin.Ivary([-1, 0, 2, 2, 2])
         )
@@ -152,10 +148,8 @@ class TestEquivalencing(TestCase):
                 ihfree=0,
                 qwt=0.0
             ),
-            wtmol=1.0,
             subtitle="Resp charges for organic molecule",
             charge=0,
-            iuniq=5,
             molecule=Molecule([Atom(atomic_number) for atomic_number in [6, 1, 1, 1, 1]]),
             ivary=Respin.Ivary([0, 0, 2, 2, 2])
         )
@@ -182,10 +176,8 @@ class TestFittingWithFrozenAtoms(TestCase):
                 ihfree=0,
                 qwt=0.0
             ),
-            wtmol=1.0,
             subtitle="Resp charges for organic molecule",
             charge=0,
-            iuniq=5,
             molecule=Molecule([Atom(atomic_number) for atomic_number in [6, 1, 1, 1, 1]]),
             ivary=Respin.Ivary([-1, 0, 2, -1, 2])
         )
