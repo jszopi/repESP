@@ -63,7 +63,7 @@ class TestEquivalence(TestCase):
         self.assertListEqual(expected_lines, result.splitlines())
 
 
-class TestRespin(TestCase):
+class RespinSetup(TestCase):
 
     def setUp(self) -> None:
 
@@ -85,7 +85,7 @@ class TestRespin(TestCase):
         )
 
 
-class TestParsingAndWriting(TestRespin):
+class TestParsingAndWriting(RespinSetup):
 
     def setUp(self) -> None:
         super().setUp()
@@ -104,7 +104,7 @@ class TestParsingAndWriting(TestRespin):
             self.assertListEqual(f.readlines(), written.readlines())
 
 
-class TestIvary(TestRespin):
+class TestIvary(RespinSetup):
 
     def setUp(self) -> None:
         super().setUp()
