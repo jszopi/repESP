@@ -5,3 +5,4 @@ repESP.respin\_format module
     :members:
     :undoc-members:
     :show-inheritance:
+    :exclude-members: inopt, ioutopt, iqopt, ihfree, irstrnt, qwt

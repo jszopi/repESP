@@ -176,8 +176,42 @@ def get_equivalence_from_ac(ac) -> Equivalence:
 
 @dataclass
 class Respin:
+    """Dataclass describing the ``resp`` program input
 
-    # Limited to a single molecule and structure at the moment
+    Note that the functionality is currently limited to a single molecule and
+    a single structure.
+
+    Parameters
+    ----------
+    title : str
+        The title of the calculation to be performed.
+    cntrl : Cntrl
+        Dataclass representing the "cntrl" section of the input.
+    subtitle : str
+        Subtitle describing the considered molecular structure.
+    charge : int
+        The total charge of the molecule.
+    molecule : Molecule[Atom]
+        The molecule as described by the positions of constituent atoms.
+    ivary : Ivary
+        The "ivary" values for fitting the considered structure. These determine
+        how the charge on each atom is allowed to vary during the fitting.
+
+    Attributes
+    ----------
+    title
+        See initialization parameter
+    cntrl
+        See initialization parameter
+    subtitle
+        See initialization parameter
+    charge
+        See initialization parameter
+    molecule
+        See initialization parameter
+    ivary
+        See initialization parameter
+    """
 
     _ValueType = TypeVar("_ValueType", int, float, str)
 
@@ -194,6 +228,67 @@ class Respin:
 
     @dataclass
     class Cntrl:
+        """Dataclass describing the "cntrl" section of a "respin" file
+
+        See ``resp`` program documentation for more details.
+
+        Parameters
+        ----------
+        inopt : int, optional
+            If equal to 1, ``resp`` will cycle through different "qwt" values
+            from the file specified with the ``-w`` option. Defaults to 0.
+        ioutopt : int, optional
+            If equal to 1, ``resp`` will write restart info of new ESP field
+            to the file specified with the ``-s`` option. Defaults to 0.
+        iqopt : int, optional
+            Controls setting initial charges. If equal to 1 (default), all
+            initial charges will be set to zero. If equal to 2, initial charges
+            are read from the file specified with the ``-q`` option. If equal
+            to 3, charges are read as with the previous option and will
+            additionally be averaged according to "ivary" values (normally not
+            used).
+        ihfree : int, optional
+            If equal to 0, the charge magnitude restraint is applied to all
+            charges. If equal to 1 (default), the restraint does not apply to
+            hydrogen atoms.
+        irstrnt : int, optional
+            Controls the type of charge magnitude restraint. If equal to 0,
+            harmonic restraints are used (old-style). If equal to 1 (default),
+            hyperbolic restraints are used. If equal to 2, no charge fitting
+            is carried out and only analysis of input charges is performed.
+        qwt : float, optional
+            The weight of the charge magnitude restraint to be used during
+            the fitting. Defaults to 0.0 (no charge magnitude restraint).
+
+            .. warning::
+                The default used here is different from the default used by ``resp``.
+
+                That the ``resp`` documentation specifies that it uses the
+                Amber force field values by default. However, it is not clear how
+                it can determine the fitting stage. Thus, to remove the ambiguity,
+                this dataclass assumes a weight of zero by default.
+
+            .. note::
+                Amber force fields use values of 0.0005 and 0.001 for
+                stages 1 and 2, respectively. The Glycam force field is derived with
+                one stage fitting with a value of 0.01.
+
+
+        Attributes
+        ----------
+        inopt
+            See initialization parameter
+        ioutopt
+            See initialization parameter
+        iqopt
+            See initialization parameter
+        ihfree
+            See initialization parameter
+        irstrnt
+            See initialization parameter
+        qwt
+            See initialization parameter
+        """
         inopt: int = 0
         ioutopt: int = 0
         iqopt: int = 1
@@ -203,6 +298,10 @@ class Respin:
 
         @property
         def nmol(self) -> int:
+            """Number of structures in a multiple structure fit.
+
+            With the current implementation this will always be equal to 1.
+            """
             return 1
 
         def __post_init__(self) -> None:
@@ -216,8 +315,54 @@ class Respin:
 
     @dataclass
     class Ivary:
-        # Zero refers to no equivalencing, -1 for frozen and one-indexed value
-        # for equivalencing to a particular atom in the molecule.
+        """Dataclass representing per atom fitting instructions for ``resp``
+
+        The fitting instructions are represented as a list of values stored in
+        the `values` attribute. The length of this list must be the same as the
+        number of atoms in the molecule it describes. Consecutive values refer
+        to consecutive atoms of the molecule.
+
+        The values determine how the charge on the atom can vary during the
+        fitting and the allowed values are:
+
+        * -1, meaning that the atom's charge is "frozen" at the initial value
+        * 0, meaning that this atom will be varied freely
+        * Larger than zero, representing the 1-based index of the atom in the
+          molecule to which this atom is to be equivalenced.
+
+        Example
+        -------
+
+        Consider fitting RESP charges in a molecule of methylamine:
+
+        >>> methylamine = Molecule([Atom(atomic_number) for atomic_number in [6, 1, 1, 1, 7, 1, 1]])
+
+        Fitting RESP charges consists of two stages. The ivary section for the
+        second stage of the fitting for the methylamine molecule should be as
+        follows:
+
+        >>> ivary = Respin.Ivary([0, 0, 2, 2, -1, -1, -1])
+
+        The carbon atom is free to vary during the fitting. The first of the methyl
+        hydrogens is equivalenced to the remaining two but they haven't been
+        specified yet, so it also has a value of 0. These two hydrogen atoms
+        are equivalenced to the first one, and thus are assigned its one-based
+        index in the molecule, i.e. 2 (meaning "equivalenced to the second atom
+        of the molecule"). The nitrogen atom and the two hydrogen atoms attached
+        to it are frozen during the second stage of the fitting and are thus
+        assigned values of -1.
+
+        Parameters
+        ----------
+        values : List[int]
+            The per-atom instructions for the ``resp`` program.
+
+        Attributes
+        ----------
+        values
+            See initialization parameter
+        """
+
         values: List[int]
 
         def __post_init__(self):
@@ -229,8 +374,39 @@ class Respin:
                     )
 
         def describe(self, molecule: Optional[Molecule[Atom]]=None) -> str:
-            """Verbosely report the ``ivary`` actions"""
-            # I'm undecided about printing functions. Can `file` point to managed log object?
+            """Verbosely report the "ivary" actions
+
+            Example
+            -------
+
+            >>> print(ivary.describe(methylamine))
+            Atom (C) number 1
+            Atom (H) number 2
+            Atom (H) number 3, equivalenced to atom 2
+            Atom (H) number 4, equivalenced to atom 2
+            Atom (N) number 5, frozen
+            Atom (H) number 6, frozen
+            Atom (H) number 7, frozen
+
+            Parameters
+            ----------
+            molecule : Optional[Molecule[Atom]], optional
+                The molecule to which the ivary information refers. This
+                argument is optional and defaults to None. If it is provided,
+                atom identities will be included in the output.
+
+            Raises
+            ------
+            ValueError
+                Raised when the number of atoms in the molecule does not match
+                the length of the list of values in this object.
+
+            Returns
+            -------
+            str
+                A verbose description of the "ivary" instructions.
+            """
+
             if molecule is not None and len(molecule.atoms) != len(self.values):
                 raise ValueError(
                     f"The number of atoms ({len(molecule.atoms)} is not the same "
@@ -258,10 +434,17 @@ class Respin:
 
         @classmethod
         def from_equivalence(cls, equivalence: Equivalence):
-            """Created ivary instructions based on equivalence information
+            """Alternative initialization from equivalence information
 
-            Note: the resulting ivary instructions will correspond to fitting
-            with equivalent atoms assigned identical charges.
+            .. note:
+                The resulting ivary instructions will correspond to fitting
+                with equivalent atoms assigned identical charges. This may not
+                be the type of fitting that you want to perform.
+
+            Parameters
+            ----------
+            equivalence : Equivalence
+                Information about chemical equivalence of atoms in a molecule.
             """
             return cls([0 if val is None else val + 1 for val in equivalence.values])
 
@@ -275,10 +458,15 @@ class Respin:
 
     @property
     def wtmol(self) -> float:
+        """Relative weight of the structure in a multistructure fitting.
+
+        A value of 1.0 is always returned in the current implementation.
+        """
         return 1.0
 
     @property
     def iuniq(self) -> int:
+        """The number of atoms in the fitted structure"""
         return len(self.molecule.atoms)
 
     def __post_init__(self) -> None:
@@ -317,6 +505,25 @@ def _parse_cntrl(f: TextIO) -> Respin.Cntrl:
 
 
 def parse_respin(f) -> Respin:
+    """Parse a file in the "respin" format (input format of ``resp``)
+
+    Note that only files describing a single structure fit are currently supported.
+
+    Parameters
+    ----------
+    f : TextIO
+        The file object containing the "respin" file opened for reading.
+
+    Raises
+    ------
+    InputFormatError
+        Raised when the file does not follow the expected format.
+
+    Returns
+    -------
+    Respin
+        Object representing the fitting instructions for the ``resp`` program.
+    """
 
     get_line = lambda: f.readline().rstrip('\n')
     title = get_line()
@@ -394,6 +601,20 @@ def _write_cntrl(f: TextIO, cntrl: Respin.Cntrl, skip_defaults: bool) -> None:
 
 
 def write_respin(f: TextIO, respin: Respin, skip_cntrl_defaults: bool=True) -> None:
+    """Write a "respin" file described by the given input data
+
+    Parameters
+    ----------
+    f : TextIO
+        The file object to which the instructions are to be saved. The file
+        must be opened for writing.
+    respin : Respin
+        The dataclass representing all the instructions needed by the ``resp``
+        program. Note that only single-structure fitting is currently supported.
+    skip_cntrl_defaults : bool, optional
+        When this option is set to True (default), fitting options with default
+        values will not be written to the file.
+    """
 
     print(respin.title, file=f)
     print(file=f)
