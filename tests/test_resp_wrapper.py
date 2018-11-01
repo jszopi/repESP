@@ -1,9 +1,10 @@
 from repESP.charges import Charge
 from repESP.esp_util import EspData, parse_gaussian_esp
+from repESP.equivalence import Equivalence
 from repESP.types import *
 from repESP.resp_wrapper import run_resp, run_two_stage_resp, fit_hydrogens_only
 from repESP.resp_wrapper import fit_with_frozen_atoms, fit_with_equivalencing
-from repESP.respin_format import Respin, Equivalence
+from repESP.respin_format import Respin
 
 from my_unittest import TestCase
 

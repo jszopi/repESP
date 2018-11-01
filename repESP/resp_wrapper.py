@@ -2,11 +2,12 @@
 
 from .charges import Charge
 from .esp_util import EspData, write_resp_esp
+from .equivalence import Equivalence
 from .respin_generation import prepare_respin
 from .respin_generation import RespStage1RespinGenerator, RespStage2RespinGenerator
 from .respin_generation import FitHydrogensOnlyRespinGenerator, FrozenAtomsRespinGenerator
 from .respin_generation import EquivalenceOnlyRespinGenerator
-from .respin_format import Respin, write_respin, Equivalence
+from .respin_format import Respin, write_respin
 from .resp_charges_format import write_resp_charges, parse_resp_charges
 from .types import Atom, Molecule
 

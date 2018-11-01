@@ -4,13 +4,14 @@ repESP/calc_fields.py 100%
 repESP/charge_util.py 100%
 repESP/charges.py 97%
 repESP/cube_format.py 100%
-repESP/esp_util.py 100%
+repESP/equivalence.py 92%
+repESP/esp_util.py 99%
 repESP/exceptions.py 100%
 repESP/fields.py 100%
 repESP/gaussian_format.py 98%
 repESP/resp_charges_format.py 100%
 repESP/resp_wrapper.py 97%
-repESP/respin_format.py 99%
+repESP/respin_format.py 100%
 repESP/respin_generation.py 100%
 repESP/types.py 100%
 repESP/util.py 100%

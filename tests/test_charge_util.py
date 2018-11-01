@@ -1,6 +1,6 @@
 from repESP.charge_util import average
 from repESP.charges import Charge
-from repESP.respin_format import Equivalence
+from repESP.equivalence import Equivalence
 
 from my_unittest import TestCase
 

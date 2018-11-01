@@ -1,66 +1,13 @@
+from repESP.equivalence import Equivalence
 from repESP.fields import *
 from repESP.types import *
-from repESP.respin_format import Respin, Equivalence, get_equivalence, parse_respin, write_respin
+from repESP.respin_format import Respin, parse_respin, write_respin
+from repESP.respin_format import get_equivalence_from_two_stage_resp_ivary
+from repESP.respin_format import _get_equivalence_from_ivary
 
 from my_unittest import TestCase
 
 from io import StringIO
-
-
-class TestEquivalence(TestCase):
-
-    def test_init_validates_values(self) -> None:
-
-        Equivalence([None, None, 0, 1, 1])
-
-        with self.assertRaises(ValueError):
-            Equivalence([0, 0, 2, -1, 2])
-
-        with self.assertRaises(ValueError):
-            Equivalence([5, 0, 2, 2, 2])
-
-    def test_init_from_ivary(self) -> None:
-
-        equivalence = Equivalence.from_ivary(Respin.Ivary([0, 0, 2, 2, 2]))
-        self.assertListEqual(equivalence.values, [None, None, 1, 1, 1])
-
-        with self.assertRaises(ValueError):
-            Equivalence.from_ivary(Respin.Ivary([0, 0, 2, -1, 2]))
-
-        with self.assertRaises(ValueError):
-            Equivalence.from_ivary(Respin.Ivary([6, 0, 2, 2, 2]))
-
-    def test_description(self) -> None:
-
-        equivalence = Equivalence([None, None, 0, 1, 1])
-
-        expected_lines = [
-            "Atom number 1",
-            "Atom number 2",
-            "Atom number 3, equivalenced to atom 1",
-            "Atom number 4, equivalenced to atom 2",
-            "Atom number 5, equivalenced to atom 2",
-        ]
-
-        result = equivalence.describe()
-        self.assertListEqual(expected_lines, result.splitlines())
-
-    def test_description_with_molecule(self) -> None:
-
-        equivalence = Equivalence([None, None, 0, 1, 1])
-
-        expected_lines = [
-            "Atom (C) number 1",
-            "Atom (H) number 2",
-            "Atom (H) number 3, equivalenced to atom 1",
-            "Atom (H) number 4, equivalenced to atom 2",
-            "Atom (H) number 5, equivalenced to atom 2",
-        ]
-
-        result = equivalence.describe(
-            molecule=Molecule([Atom(atomic_number) for atomic_number in [6, 1, 1, 1, 1]]),
-        )
-        self.assertListEqual(expected_lines, result.splitlines())
 
 
 class RespinSetup(TestCase):
@@ -177,10 +124,21 @@ class TestIvary(RespinSetup):
 
 class TestRespinAndEquivalence(TestCase):
 
-    def test_getting_equivalence(self) -> None:
+    def test_getting_equivalence_from_two_stage_resp_ivary(self) -> None:
         # MeSO4 [S O O (bridging) O C H H H]
         ivary1 = Respin.Ivary([0, 0, 0, 2, 2, 0, 0, 0, 0])
         ivary2 = Respin.Ivary([-1, -1, -1, -1, -1, 0, 0, 7, 7])
-        equivalence = get_equivalence(ivary1, ivary2)
+        equivalence = get_equivalence_from_two_stage_resp_ivary(ivary1, ivary2)
         expected = Equivalence([None, None, None, 1, 1, None, None, 6, 6])
         self.assertListEqual(equivalence.values, expected.values)
+
+    def test_getting_equivalence_from_ivary(self) -> None:
+
+        equivalence = _get_equivalence_from_ivary(Respin.Ivary([0, 0, 2, 2, 2]))
+        self.assertListEqual(equivalence.values, [None, None, 1, 1, 1])
+
+        with self.assertRaises(ValueError):
+            _get_equivalence_from_ivary(Respin.Ivary([0, 0, 2, -1, 2]))
+
+        with self.assertRaises(ValueError):
+            _get_equivalence_from_ivary(Respin.Ivary([6, 0, 2, 2, 2]))

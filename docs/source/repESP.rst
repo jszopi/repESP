@@ -15,6 +15,7 @@ Submodules
    repESP.charge_util
    repESP.charges
    repESP.cube_format
+   repESP.equivalence
    repESP.esp_util
    repESP.exceptions
    repESP.fields
