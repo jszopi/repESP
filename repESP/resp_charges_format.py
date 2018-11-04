@@ -1,6 +1,7 @@
 """Parsing and writing charges to format handled by the `resp` program"""
 
 from .charges import Charge
+from .exceptions import InputFormatError
 
 from fortranformat import FortranRecordWriter as FW, FortranRecordReader as FR
 from functools import reduce
@@ -10,13 +11,16 @@ from typing import List, TextIO
 
 def parse_resp_charges(f: TextIO) -> List[Charge]:
     formatter = FR("8F10.6")
-    return list(map(
-        Charge,
-        filter(
-            lambda elem: elem is not None,
-            reduce(add, [formatter.read(line) for line in f], [])
-        )
-    ))
+    try:
+        return list(map(
+            Charge,
+            filter(
+                lambda elem: elem is not None,
+                reduce(add, [formatter.read(line) for line in f], [])
+            )
+        ))
+    except ValueError as e:
+        raise InputFormatError(e)
 
 
 def write_resp_charges(f: TextIO, charges: List[Charge]) -> None:
