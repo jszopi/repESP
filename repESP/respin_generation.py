@@ -10,7 +10,7 @@ from abc import ABC, abstractmethod
 from typing import List, Optional
 
 
-class TypeSpecificRespinGenerator(ABC):
+class RespinGenerator(ABC):
     """Interface for objects required to create ``resp`` instructions
 
     This interface will be implemented differently for different types of
@@ -37,7 +37,7 @@ class TypeSpecificRespinGenerator(ABC):
         pass
 
 
-class RespRespinGenerator(TypeSpecificRespinGenerator):
+class RespRespinGenerator(RespinGenerator):
     """Partial implementation with methods common to fitting RESP charges"""
 
     def __init__(self, ivary: Respin.Ivary) -> None:
@@ -175,7 +175,7 @@ class RespStage2RespinGenerator(RespRespinGenerator):
         ]))
 
 
-class FitHydrogensOnlyRespinGenerator(TypeSpecificRespinGenerator):
+class FitHydrogensOnlyRespinGenerator(RespinGenerator):
     """Supports creation of "respin" files for fitting only hydrogen atoms
 
     The generated "respin" file instructs ``resp`` to perform fitting in which
@@ -213,7 +213,7 @@ class FitHydrogensOnlyRespinGenerator(TypeSpecificRespinGenerator):
         )
 
 
-class EquivalenceOnlyRespinGenerator(TypeSpecificRespinGenerator):
+class EquivalenceOnlyRespinGenerator(RespinGenerator):
     """Supports creation of "respin" files with no constraints beyond equivalence
 
     The generated "respin" file instructs ``resp`` to perform fitting in which
@@ -241,7 +241,7 @@ class EquivalenceOnlyRespinGenerator(TypeSpecificRespinGenerator):
         )
 
 
-class FrozenAtomsRespinGenerator(TypeSpecificRespinGenerator):
+class FrozenAtomsRespinGenerator(RespinGenerator):
     """Supports creation of "respin" files excluding selected atoms from fitting
 
     The generated "respin" file instructs ``resp`` to perform fitting in which
@@ -290,7 +290,7 @@ class FrozenAtomsRespinGenerator(TypeSpecificRespinGenerator):
 
 
 def prepare_respin(
-    respin_generator: TypeSpecificRespinGenerator,
+    respin_generator: RespinGenerator,
     total_charge: int,
     molecule: Molecule[Atom],
     title: Optional[str]=None,
@@ -304,8 +304,8 @@ def prepare_respin(
 
     Parameters
     ----------
-    respin_generator : TypeSpecificRespinGenerator
-        An object implementing the `TypeSpecificRespinGenerator` interface.
+    respin_generator : RespinGenerator
+        An object implementing the `RespinGenerator` interface.
         This object expresses a given type of charge fitting through
         instructions understood by ``resp``. Implementations of this interface
         for common fitting types are provided in this module.
