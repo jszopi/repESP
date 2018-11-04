@@ -1,4 +1,4 @@
-"""Wrappers for performing ESP fitting with the `resp` program"""
+"""Wrappers for performing ESP fitting with the ``resp`` program"""
 
 from .charges import Charge
 from .esp_util import EspData, write_resp_esp
@@ -83,6 +83,39 @@ def run_resp(
     generate_esout: bool=False,
     save_intermediates_to: Optional[str]=None
 ) -> List[Charge]:
+    """Run the ``resp`` program with the given "respin" instructions
+
+    Parameters
+    ----------
+    esp_data : EspData
+        Data regarding atom coordinates and ESP field values at the points
+        to be used for the fitting.
+    respin : Respin
+        Instructions for the fitting in the `resp` program input format.
+    initial_charges : Optional[typing.List[Charge]], optional
+        Initial charges to be used for the fitting, which may be required by
+        the fitting method or may simply be provided as an initial guess for
+        the fitting algorithm. `ValueError` will be raised if the `respin`
+        argument specifies that initial charges are expected (`iqopt` not equal
+        to 1) but this argument is not provided. Defaults to None.
+    generate_esout : bool, optional
+        Whether to produce an "esout" file containing the ESP field values at
+        the fitting points, reproduced from the fitted charges. This can also
+        be achieved with the `repESP` library and thus shouldn't be necessary.
+        Defaults to False. If this option is set to True, the user should also
+        set the `save_intermediates_to` option, otherwise the "esout" file will
+        not be accessible.
+    save_intermediates_to : Optional[str], optional
+        Which directory to save the ``resp`` program output to. If the user does
+        not require access to the files, this option should remain at the default
+        of None. The calculation will then be run in the OS temporary directory.
+
+    Returns
+    -------
+    typing.List[Charge]
+        The charges fitted using the ``resp`` program according to the "respin"
+        instructions.
+    """
 
     if save_intermediates_to is None:
         with tempfile.TemporaryDirectory() as temp_dir_name:
@@ -100,7 +133,33 @@ def run_two_stage_resp(
     generate_esout: bool=False,
     save_intermediates_to: Optional[str]=None
 ) -> List[Charge]:
+    """Apply the two-stage procedure to fit RESP charges
 
+    This function takes the two "respin" files, as this is the simplest way to
+    provide information about equivalence as well as methyl and methylene groups.
+    Another interface is possible where this information is provided directly.
+
+    Parameters
+    ----------
+    esp_data : EspData
+        Data regarding atom coordinates and ESP field values at the points
+        to be used for the fitting.
+    respin1 : Respin
+        Instructions for 1st stage RESP fitting.
+    respin2 : Respin
+        Instructions for 2nd stage RESP fitting.
+    initial_charges : Optional[typing.List[Charge]], optional
+        See `run_resp` function parameter
+    generate_esout : bool, optional
+        See `run_resp` function parameter
+    save_intermediates_to : Optional[str], optional
+        See `run_resp` function parameter
+
+    Returns
+    -------
+    typing.List[Charge]
+        The fitted two-stage RESP charges.
+    """
     # Some verification of respin file compatibility should be performed.
     total_charge = respin1.charge
     molecule = respin1.molecule
@@ -150,6 +209,31 @@ def fit_with_equivalencing(
     generate_esout: bool=False,
     save_intermediates_to: Optional[str]=None
 ) -> List[Charge]:
+    """Fit charges to the provided ESP subject to equivalence relations
+
+    Parameters
+    ----------
+    esp_data : EspData
+        Data regarding atom coordinates and ESP field values at the points
+        to be used for the fitting.
+    equivalence : Equivalence
+        The chemical equivalence relations between atoms of the molecule.
+    molecule : Molecule[Atom]
+        The molecule that is having its partial charges fitted.
+    total_charge : int
+        The total charge of the molecule.
+    initial_charges : Optional[typing.List[Charge]], optional
+        See `run_resp` function parameter
+    generate_esout : bool, optional
+        See `run_resp` function parameter
+    save_intermediates_to : Optional[str], optional
+        See `run_resp` function parameter
+
+    Returns
+    -------
+    typing.List[Charge]
+        The charges fitted to the provided ESP subject to equivalence relations.
+    """
 
     respin_generator = EquivalenceOnlyRespinGenerator(equivalence)
     respin = prepare_respin(
@@ -177,6 +261,33 @@ def fit_hydrogens_only(
     generate_esout: bool=False,
     save_intermediates_to: Optional[str]=None
 ) -> List[Charge]:
+    """Fit hydrogen atom charges to the provided ESP subject to equivalence relations
+
+    Parameters
+    ----------
+    esp_data : EspData
+        Data regarding atom coordinates and ESP field values at the points
+        to be used for the fitting.
+    equivalence : Equivalence
+        The chemical equivalence relations between atoms of the molecule.
+    molecule : Molecule[Atom]
+        The molecule that is having its partial charges fitted.
+    total_charge : int
+        The total charge of the molecule.
+    initial_charges : typing.List[Charge]
+        Initial charges to be used for the fitting. Charges on atoms other than
+        hydrogen atoms will be fixed at the provided values.
+    generate_esout : bool, optional
+        See `run_resp` function parameter
+    save_intermediates_to : Optional[str], optional
+        See `run_resp` function parameter
+
+    Returns
+    -------
+    typing.List[Charge]
+        The hydrogen charges fitted to the provided ESP subject to equivalence
+        relations. Other charges have values fixed at values from `initial_charges`.
+    """
 
     respin_generator = FitHydrogensOnlyRespinGenerator(equivalence, molecule)
     respin = prepare_respin(
@@ -205,6 +316,36 @@ def fit_with_frozen_atoms(
     generate_esout: bool=False,
     save_intermediates_to: Optional[str]=None
 ) -> List[Charge]:
+    """Fit hydrogen atom charges to the provided ESP subject to equivalence relations
+
+    Parameters
+    ----------
+    esp_data : EspData
+        Data regarding atom coordinates and ESP field values at the points
+        to be used for the fitting.
+    equivalence : Equivalence
+        The chemical equivalence relations between atoms of the molecule.
+    molecule : Molecule[Atom]
+        The molecule that is having its partial charges fitted.
+    frozen_atoms : List[int]
+        List of zero-based indices of atoms in the molecule which charges should
+        not be fitted but fixed at the values provided in `initial_charges` argument.
+    total_charge : int
+        The total charge of the molecule.
+    initial_charges : typing.List[Charge]
+        Initial charges to be used for the fitting. Charges on atoms specified
+        in the `frozen_atoms` arguments will be fixed at the provided values.
+    generate_esout : bool, optional
+        See `run_resp` function parameter
+    save_intermediates_to : Optional[str], optional
+        See `run_resp` function parameter
+
+    Returns
+    -------
+    typing.List[Charge]
+        The charges fitted to the provided ESP subject to equivalence relations,
+        except where the charges were frozen at initial values.
+    """
 
     respin_generator = FrozenAtomsRespinGenerator(equivalence, frozen_atoms)
     respin = prepare_respin(
