@@ -13,14 +13,6 @@ import numpy as np
 from typing import cast, Collection, List, Optional, Tuple, TypeVar
 
 
-def _esp_from_charges_at_point(coords: Coords, molecule: Molecule[AtomWithCoordsAndCharge]) -> Esp:
-
-    return Esp(sum(
-        atom.charge/(euclidean(coords, atom.coords))
-        for atom in molecule.atoms
-    ))
-
-
 def esp_from_charges(mesh: AbstractMesh, molecule: Molecule[AtomWithCoordsAndCharge]) -> Field[Esp]:
     """Calculate ESP value at specified points due to charges on atoms
 
@@ -38,21 +30,15 @@ def esp_from_charges(mesh: AbstractMesh, molecule: Molecule[AtomWithCoordsAndCha
         The ESP field at the specified points reproduced from the partial
         charges in the given molecule.
     """
+    value_at_point = lambda coords: Esp(sum(
+        atom.charge/(euclidean(coords, atom.coords))
+        for atom in molecule.atoms
+    ))
+
     return Field(
         mesh,
-        [_esp_from_charges_at_point(coords, molecule) for coords in mesh.points]
+        [value_at_point(coords) for coords in mesh.points]
     )
-
-
-def _voronoi_at_point(coords: Coords, molecule: Molecule[AtomWithCoords]) -> Tuple[Optional[int], Dist]:
-    min_dist = Dist(float('inf'))
-    min_atom = None
-    for atom_index, atom in enumerate(molecule.atoms):
-        dist = euclidean(coords, atom.coords)
-        if dist < min_dist:
-            min_dist = dist
-            min_atom = atom_index
-    return (min_atom, min_dist)
 
 
 def voronoi(mesh: AbstractMesh, molecule: Molecule[AtomWithCoords]) -> Field[Tuple[Optional[int], Dist]]:
@@ -73,9 +59,21 @@ def voronoi(mesh: AbstractMesh, molecule: Molecule[AtomWithCoords]) -> Field[Tup
         the distance from that atom.
     """
     # Voronoi means closest-atom in molecular partitioning lingo
+
+    def value_at_point(coords: Coords) -> Tuple[Optional[int], Dist]:
+        min_dist = Dist(float('inf'))
+        min_atom = None
+        for atom_index, atom in enumerate(molecule.atoms):
+            dist = euclidean(coords, atom.coords)
+            if dist < min_dist:
+                min_dist = dist
+                min_atom = atom_index
+        return (min_atom, min_dist)
+
+
     return Field(
         mesh,
-        [_voronoi_at_point(coords, molecule) for coords in mesh.points]
+        [value_at_point(coords) for coords in mesh.points]
     )
 
 
