@@ -398,7 +398,7 @@ def parse_respin(f) -> Respin:
     Parameters
     ----------
     f : TextIO
-        The file object containing the "respin" file opened for reading.
+        File object opened in read mode containing the "respin" file.
 
     Raises
     ------

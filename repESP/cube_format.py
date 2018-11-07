@@ -129,7 +129,7 @@ def parse_cube(
     Parameters
     ----------
     f : TextIO
-        The file object representing the cube file opened for reading.
+        File object opened in read mode containing the cube file to be parsed.
     make_value : Callable[[Cube.Info, str], FieldValue]
         A function taking two parameters: the cube information and a string
         representing the field value, and parsing it into a numerical
@@ -208,7 +208,7 @@ def parse_esp_cube(f: TextIO, verify_title=True) -> Cube[Esp]:
     Parameters
     ----------
     f : TextIO
-        The file object representing the cube file opened for reading.
+        File object opened in read mode containing the cube file to be parsed.
     verify_title : bool, optional
         If this flag is set to True (default), an `InputFormatError` will
         be raised if the cube title does not start with the string
@@ -235,7 +235,7 @@ def parse_ed_cube(f: TextIO, verify_title=True) -> Cube[Ed]:
     Parameters
     ----------
     f : TextIO
-        The file object representing the cube file opened for reading.
+        File object opened in read mode containing the cube file to be parsed.
     verify_title : bool, optional
         If this flag is set to True (default), an `InputFormatError` will
         be raised if the cube title does not start with the string
@@ -257,7 +257,8 @@ def write_cube(f: TextIO, cube: Cube[Field.NumericValue]):
     Parameters
     ----------
     f : TextIO
-        The file object representing the cube file opened for writing.
+        File object to which the supplied data is to be saved. Must be opened
+        in write mode.
     cube : Cube[Field.NumericValue]
         The dataclass containing the information needed to create a cube
         file. Note that only cube files describing fields with values matching

@@ -175,8 +175,8 @@ def get_charges_from_log(
     Parameters
     ----------
     f : TextIO
-        The file object corresponding to the Gaussian `.log`/`.out` output file
-        from which the charges are to be extracted.
+        File object opened in read mode containing the Gaussian `.log`/`.out`
+        output file from which the charges are to be extracted.
     charges_section_parser : ChargesSectionParser
         Class implementing the `ChargesSectionParser` interface for the desired
         charge type, e.g. `MullikenChargeSectionParser`.

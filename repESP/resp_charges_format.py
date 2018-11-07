@@ -30,7 +30,7 @@ def parse_resp_charges(f: TextIO) -> List[Charge]:
     Parameters
     ----------
     f : TextIO
-        The file object in the ``resp`` charges format opened for reading.
+        File object opened in read mode containing charges in the ``resp`` format.
 
     Raises
     ------
@@ -61,7 +61,8 @@ def write_resp_charges(f: TextIO, charges: List[Charge]) -> None:
     Parameters
     ----------
     f : TextIO
-        The file object representing the cube file opened for writing.
+        File object to which the supplied charges is to be saved. Must be opened
+        in write mode.
     charges : typing.List[Charge]
         List of charges to be written to the file.
     """
