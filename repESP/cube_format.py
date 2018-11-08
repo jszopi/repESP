@@ -92,6 +92,10 @@ def _parse_grid_prelude(line: str) -> _GridPrelude:
 def _parse_grid(origin: Coords, lines: List[str]) -> GridMesh:
 
     def parse_axis(line: str) -> GridMesh.Axis:
+        # `cubegen` documentation, which contains the only definition of
+        # the cube format, specifies that a negative `point_count` may be used
+        # in the *input* to signify atomic units. However, this is not an
+        # option in the output of `cubegen` and values are always in atomic units.
         point_count, *vector_components = line.split()
         return GridMesh.Axis(
             Coords(vector_components),
@@ -178,6 +182,9 @@ def parse_cube(
     return Cube(
         info,
         molecule,
+        # The implicit assumption here is that the order of points in `grid`
+        # is the same as the order of `values`. This is correct, as the order
+        # of points in a GridMesh is the same as that in a cube file.
         Field(grid, values)
     )
 

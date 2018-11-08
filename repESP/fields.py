@@ -68,6 +68,8 @@ class AbstractMesh(ABC):
     def points(self) -> Iterator[Coords]:
         """Coordinates of points of which the mesh consists
 
+        The order of iteration must be defined.
+
         Yields
         ------
         Iterator[Coords]
@@ -100,6 +102,16 @@ class Mesh(AbstractMesh):
 
     @property
     def points(self) -> Iterator[Coords]:
+        """Coordinates of points of which the mesh consists
+
+        The order of iteration is the same as that of the collection provided
+        during initialization.
+
+        Yields
+        ------
+        Iterator[Coords]
+            Iterator over the point coordinates
+        """
         return iter(self._points)
 
     def __len__(self) -> int:
@@ -151,6 +163,12 @@ class GridMesh(AbstractMesh):
         vector: Coords
         point_count: int
 
+        def __post_init__(self) -> None:
+            if self.point_count < 0:
+                raise ValueError(
+                    f"Negative value of `point_count` given: {self.point_count}."
+                )
+
     Axes = NewType("Axes", Tuple[Axis, Axis, Axis])
 
     origin: Coords
@@ -180,6 +198,23 @@ class GridMesh(AbstractMesh):
 
     @property
     def points(self) -> Iterator[Coords]:
+        """Coordinates of points of which the mesh consists
+
+        The order of iteration is the same as the order of values in a Gaussian
+        "cube" file. Values of `z` are incremented first, then all values of
+        `y`, and finally all values of `x`. This is best described with the
+        following pseudocode::
+
+            for x in x_values:
+                for y in y_values:
+                    for z in z_values:
+                        yield (x, y, z)
+
+        Yields
+        ------
+        Iterator[Coords]
+            Iterator over the point coordinates
+        """
         for i in range(self.axes[0].point_count):
             for j in range(self.axes[1].point_count):
                 for k in range(self.axes[2].point_count):
