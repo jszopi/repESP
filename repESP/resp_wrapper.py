@@ -125,6 +125,8 @@ def run_resp(
         return _run_resp_in_dir(esp_data, respin, initial_charges, generate_esout, save_intermediates_to)
 
 
+# NOTE: If alternative interface is to be implemented in place of the two
+# respin files, try the `variants` library presented by Paul Ganssle.
 def run_two_stage_resp(
     esp_data: EspData,
     respin1: Respin,
@@ -200,6 +202,8 @@ def run_two_stage_resp(
     )
 
 
+# NOTE: It may be more natural (i.e. in line with this library's datastructures)
+# to use Field and Molecule[AtomWithCoords] instead of EspData.
 def fit_with_equivalencing(
     esp_data: EspData,
     equivalence: Equivalence,

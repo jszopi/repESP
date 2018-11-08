@@ -114,7 +114,9 @@ class Atom:
 
     def __post_init__(self):
         if self.atomic_number < 1 or self.atomic_number >= len(elements):
-            raise ValueError("Atomic number is not within expected bounds.")
+            raise ValueError(
+                f"Atomic number is not within expected bounds: {self.atomic_number}."
+            )
 
     @property
     def symbol(self) -> str:

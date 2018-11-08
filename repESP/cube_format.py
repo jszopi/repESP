@@ -266,7 +266,7 @@ def parse_ed_cube(f: TextIO, verify_title=True) -> Cube[Ed]:
         _parse_cube_by_title_common(" Electron density", Ed, verify_title)
     )
 
-def write_cube(f: TextIO, cube: Cube[Field.NumericValue]):
+def write_cube(f: TextIO, cube: Cube[Field.NumericValue]) -> None:
     """Write a Gaussian "cube" file described by the given input data
 
     Parameters

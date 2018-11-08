@@ -422,8 +422,10 @@ def parse_respin(f) -> Respin:
 
     get_line = lambda: f.readline().rstrip('\n')
     title = get_line()
-    while get_line() != " &cntrl":
-        pass
+
+    for line in f:
+        if line == " &cntrl\n":
+            break
 
     cntrl = _parse_cntrl(f)
 
