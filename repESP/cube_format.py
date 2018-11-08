@@ -136,12 +136,20 @@ def parse_cube(
         File object opened in read mode containing the cube file to be parsed.
     make_value : Callable[[Cube.Info, str], FieldValue]
         A function taking two parameters: the cube information and a string
-        representing the field value, and parsing it into a numerical
-        representation of the field value. The cube information is provided to
-        the function if a verification of the cube file type is required. In
-        the simplest case this could be ``lambda _, str_: float(str_)``, which
-        ignores the cube information (thus performing no verification) and
-        simply parses the string value as a float.
+        representing the field value. The function should parse the field value
+        into the desired internal representation, for example an `Esp` object.
+        The cube information is provided in case verification of the cube file
+        type is required.
+
+        Example
+        -------
+
+        In the simplest case this could be::
+
+            lambda _, str_: float(str_)
+
+        which ignores the cube information (thus performing no verification)
+        and simply parses the string value as a float.
 
     Raises
     ------

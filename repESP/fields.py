@@ -139,7 +139,9 @@ class GridMesh(AbstractMesh):
     Axes : Tuple[GridMesh.Axis, GridMesh.Axis, GridMesh.Axis]
         Type alias for a tuple of three ``Axis`` objects. Note that currently
         only axes aligned with the coordinate system axes are supported, i.e.
-        the axes' vectors are expected to be ((1, 0, 0), (0, 1, 0), (0, 0, 1)).
+        the axes' vectors are expected to be::
+
+            ((x_step, 0, 0), (0, y_step, 0), (0, 0, z_step))
     """
 
     @dataclass
@@ -149,7 +151,12 @@ class GridMesh(AbstractMesh):
         Parameters
         ----------
         vector : Coords
-            Unit vector in xyz coordinates, e.g. (1, 0, 0) for a typical x-axis.
+            Unit vector in xyz coordinates, for example::
+
+                (Dist(1), Dist(0), Dist(0))
+
+            for a typical x-axis with a point every 1 a₀.
+
         point_count : int
             The number of points that the grid places along this axis.
 

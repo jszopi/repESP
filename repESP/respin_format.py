@@ -15,8 +15,6 @@ from .types import Atom, Molecule
 from ._util import zip_exact
 
 
-
-
 @dataclass
 class Respin:
     """Dataclass describing the ``resp`` program input
@@ -348,6 +346,17 @@ def get_equivalence_from_two_stage_resp_ivary(ivary1: Respin.Ivary, ivary2: Resp
 
         respgen -i methane.ac -o methane.respin1 -f resp1
         respgen -i methane.ac -o methane.respin2 -f resp2
+
+    .. warning::
+        The correctness of this function relies on:
+
+        1. Antechamber and ``respgen`` correctly recognizing the symmetry
+           relations between atoms. Fast-exchanging atoms may not be identified.
+        2. The author's understanding of how ``respgen`` generates the "respin"
+           files for two-stage RESP fitting.
+
+        Thus it is advised to always check that the result of this function
+        agrees with the domain knowledge about the studied molecule.
     """
     # The equivalence logic is explained somewhat inconsistently in the RESP
     # papers but I've additionally re-engineered the ``resp`` program's logic
