@@ -1,0 +1,78 @@
+Extracted ESP field at CHelpG fitting points (not shown).
+=========================================================
+
+Extracted molecule from ESP file (charges are CHelpG):
+======================================================
+AtomWithCoordsAndCharge(atomic_number=6, coords=(Dist(-1.379233), Dist(2.345546), Dist(-0.19484802)), charge=Charge(-0.30235761))
+AtomWithCoordsAndCharge(atomic_number=1, coords=(Dist(-3.3008188), Dist(2.2843066), Dist(0.53676459)), charge=Charge(0.1674233))
+AtomWithCoordsAndCharge(atomic_number=1, coords=(Dist(-0.39194588), Dist(3.9953263), Dist(0.53658477)), charge=Charge(0.16691096))
+AtomWithCoordsAndCharge(atomic_number=1, coords=(Dist(-1.404506), Dist(2.3881602), Dist(-2.2518855)), charge=Charge(0.17806919))
+AtomWithCoordsAndCharge(atomic_number=6, coords=(Dist(2.7211052), Dist(0.021523794), Dist(-0.19492707)), charge=Charge(-0.26298209))
+AtomWithCoordsAndCharge(atomic_number=1, coords=(Dist(3.6296087), Dist(1.7152733), Dist(0.5381112)), charge=Charge(0.15597326))
+AtomWithCoordsAndCharge(atomic_number=1, coords=(Dist(3.6555162), Dist(-1.65922), Dist(0.53547955)), charge=Charge(0.15638074))
+AtomWithCoordsAndCharge(atomic_number=1, coords=(Dist(2.771003), Dist(0.023584335), Dist(-2.2519706)), charge=Charge(0.16925968))
+AtomWithCoordsAndCharge(atomic_number=6, coords=(Dist(-1.3419543), Dist(-2.3670883), Dist(-0.19490627)), charge=Charge(-0.30222275))
+AtomWithCoordsAndCharge(atomic_number=1, coords=(Dist(-1.3688609), Dist(-2.4087475), Dist(-2.2519591)), charge=Charge(0.17807629))
+AtomWithCoordsAndCharge(atomic_number=1, coords=(Dist(-0.32726242), Dist(-4.0010241), Dist(0.53454291)), charge=Charge(0.16656814))
+AtomWithCoordsAndCharge(atomic_number=1, coords=(Dist(-3.2634301), Dist(-2.3372788), Dist(0.5389922)), charge=Charge(0.16751167))
+AtomWithCoordsAndCharge(atomic_number=7, coords=(Dist(0.00015764081), Dist(-3.1596597e-05), Dist(0.63877926)), charge=Charge(0.052453872))
+AtomWithCoordsAndCharge(atomic_number=1, coords=(Dist(8.5236128e-05), Dist(-4.8679969e-05), Dist(2.5719733)), charge=Charge(0.30893536))
+
+Extracted NPA charges:
+======================
+-0.34662 e
+0.22545 e
+0.22546 e
+0.22134 e
+-0.34666 e
+0.22546 e
+0.22545 e
+0.22137 e
+-0.3466 e
+0.22135 e
+0.22545 e
+0.22544 e
+-0.40253 e
+0.42563 e
+
+Extracted equivalence information:
+==================================
+Atom (C) number 1
+Atom (H) number 2
+Atom (H) number 3, equivalenced to atom 2
+Atom (H) number 4, equivalenced to atom 2
+Atom (C) number 5, equivalenced to atom 1
+Atom (H) number 6, equivalenced to atom 2
+Atom (H) number 7, equivalenced to atom 2
+Atom (H) number 8, equivalenced to atom 2
+Atom (C) number 9, equivalenced to atom 1
+Atom (H) number 10, equivalenced to atom 2
+Atom (H) number 11, equivalenced to atom 2
+Atom (H) number 12, equivalenced to atom 2
+Atom (N) number 13
+Atom (H) number 14
+
+My new charges were computed:
+=============================
+-0.34662 e
+0.218454 e
+0.218454 e
+0.218454 e
+-0.34666 e
+0.218454 e
+0.218454 e
+0.218454 e
+-0.3466 e
+0.218454 e
+0.218454 e
+0.218454 e
+-0.40253 e
+0.476327 e
+
+Reproduced ESP field from my new charges (not shown).
+=====================================================
+
+Calculated fit statistics w.r.t. actual ESP field.
+==================================================
+ RMS: 0.002817 a.u.
+RRMS: 0.019550
