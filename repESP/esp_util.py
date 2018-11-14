@@ -185,7 +185,7 @@ def _parse_atom(line: str) -> AtomWithCoordsAndCharge:
 
 
 def _parse_dipole(line: str) -> DipoleMoment:
-    dipole_line_re = re.compile(" X=\s+([-0-9.D]+) Y=\s+([-0-9.D]+) Z=\s+([-0-9.D]+) Total=\s+([-0-9.D]+)")
+    dipole_line_re = re.compile(" X=\s+([-+0-9.D]+) Y=\s+([-+0-9.D]+) Z=\s+([-+0-9.D]+) Total=\s+([-+0-9.D]+)")
     dipole_line_match = dipole_line_re.match(line)
     if dipole_line_match is None:
         raise InputFormatError("Failed parsing dipole specification.")
@@ -202,7 +202,7 @@ def _parse_quadrupole(lines: List[str]) -> QuadrupoleMoment:
     line1_components = ("XX", "YY", "ZZ")
     line2_components = ("XY", "XZ", "YZ")
     get_line_re = lambda components: re.compile(
-        "   {}=\s+([-0-9.D]+)   {}=\s+([-0-9.D]+)   {}=\s+([-0-9.D]+)".format(*components)
+        "   {}=\s+([-+0-9.D]+)   {}=\s+([-+0-9.D]+)   {}=\s+([-+0-9.D]+)".format(*components)
     )
 
     line1_match = get_line_re(line1_components).match(lines[0])

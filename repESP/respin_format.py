@@ -373,7 +373,7 @@ def get_equivalence_from_two_stage_resp_ivary(ivary1: Respin.Ivary, ivary2: Resp
 
 
 def _parse_cntrl(f: TextIO) -> Respin.Cntrl:
-    line_re = re.compile(" (\w+) = ([0-9.]+)")
+    line_re = re.compile(" (\w+) =\s+([0-9.]+)")
     kwargs: Dict[str, Union[int, float]] = {}
     for line in f:
         if line.rstrip('\n') == " &end":
