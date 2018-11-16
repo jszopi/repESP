@@ -26,7 +26,7 @@ class Charge(float):
         return f"Charge({super().__repr__()})"
 
     def __str__(self) -> str:
-        return f"{super().__str__()} e"
+        return "{:+} e".format(super().__float__())
 
 
 # Could be useful as a common denominator between modules, e.g. to translate
