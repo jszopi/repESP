@@ -35,7 +35,8 @@ config = {
     'license': 'GPLv3',
     'entry_points': {
         'console_scripts': get_console_scripts(scripts_to_hooks),
-    }
+    },
+    'zip_safe': False  # required for mypy to read annotations
 }
 
 # TODO Additional files will need to be added when demo scripts are created
