@@ -1,4 +1,9 @@
-"""Creating ``resp`` program input for predefined ESP fitting types"""
+"""Creating ``resp`` program input for predefined ESP fitting types
+
+This module may be useful if you require custom instructions for the ``resp``
+program. Otherwise, the functions in the `resp_wrapper` module should be
+sufficient and more convenient.
+"""
 
 from repESP.charges import Charge
 from repESP.equivalence import Equivalence
