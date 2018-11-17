@@ -174,16 +174,16 @@ class AtomWithCoords(Atom):
     coords: Coords
 
 
-GenericAtom = TypeVar('GenericAtom', bound=Atom)
+GenericAtom_co = TypeVar('GenericAtom_co', bound=Atom, covariant=True)
 
 @dataclass
-class Molecule(Generic[GenericAtom]):
+class Molecule(Generic[GenericAtom_co]):
     """A basic dataclass representing a molecule
 
     "Basic" because no characteristics of the molecule, like bonding, are
     stored in this class in addition to the list of constituent atoms.
 
-    This class is generic in the type of `GenericAtom`, which must be a subtype
+    This class is generic in the type of `GenericAtom_co`, which must be a subtype
     of `Atom`. This allows the molecule to store `Atom` objects as well as
     other objects, e.g. `AtomWithCoords`.
 
@@ -197,4 +197,4 @@ class Molecule(Generic[GenericAtom]):
     atoms
         See initialization parameter
     """
-    atoms: List[GenericAtom]
+    atoms: List[GenericAtom_co]
