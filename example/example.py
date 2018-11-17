@@ -20,7 +20,8 @@ print()
 
 print("Extracted molecule from ESP file (charges are CHelpG):")
 print("======================================================")
-[print(atom)for atom in molecule.atoms]
+for atom in molecule.atoms:
+    print(atom)
 print()
 
 # 2. Parse NPA charges from Gaussian output:
@@ -32,7 +33,8 @@ with open("../data/NMe3H_plus/NMe3H_plus_nbo.log") as f:
 
 print("Extracted NPA charges:")
 print("======================")
-[print(charge) for charge in npa_charges]
+for charge in npa_charges:
+    print(charge)
 print()
 
 # 3. Extract equivalence information from respin files:
@@ -68,7 +70,8 @@ my_charges = fit_hydrogens_only(
 
 print("My new charges were computed:")
 print("=============================")
-[print(charge) for charge in my_charges]
+for charge in my_charges:
+    print(charge)
 print()
 
 # 5. Reproduce ESP and calculate fit statistics:
@@ -77,7 +80,7 @@ from repESP.charges import AtomWithCoordsAndCharge
 from repESP.types import Molecule
 
 molecule_with_my_charges = Molecule([
-    AtomWithCoordsAndCharge(
+    AtomWithCoordsAndCharge(  # type: ignore # (known issue with argument order)
         atom.atomic_number,
         atom.coords,
         my_charge
