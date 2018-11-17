@@ -1,10 +1,10 @@
 """Parsing and writing Gaussian .esp format describing molecular ESP field"""
 
-from .charges import AtomWithCoordsAndCharge, Charge, DipoleMoment, DipoleMomentValue
-from .charges import QuadrupoleMoment, QuadrupoleMomentValue
-from .fields import Esp, Field, Mesh
-from .exceptions import InputFormatError
-from .types import AtomWithCoords, Coords, Molecule
+from repESP.charges import AtomWithCoordsAndCharge, Charge, DipoleMoment, DipoleMomentValue
+from repESP.charges import QuadrupoleMoment, QuadrupoleMomentValue
+from repESP.fields import Esp, Field, Mesh
+from repESP.exceptions import InputFormatError
+from repESP.types import AtomWithCoords, Coords, Molecule
 
 from dataclasses import dataclass
 from fortranformat import FortranRecordWriter as FW, FortranRecordReader as FR

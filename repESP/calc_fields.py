@@ -4,9 +4,9 @@ Attributes
 ----------
 """
 
-from .fields import Esp, Field, AbstractMesh
-from .charges import AtomWithCoordsAndCharge
-from .types import AtomWithCoords, Coords, Dist, Molecule
+from repESP.fields import Esp, Field, AbstractMesh
+from repESP.charges import AtomWithCoordsAndCharge
+from repESP.types import AtomWithCoords, Coords, Dist, Molecule
 
 from scipy.spatial.distance import euclidean
 import numpy as np

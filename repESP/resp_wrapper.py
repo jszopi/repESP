@@ -1,15 +1,15 @@
 """Wrappers for performing ESP fitting with the ``resp`` program"""
 
-from .charges import Charge
-from .esp_util import EspData, write_resp_esp
-from .equivalence import Equivalence
-from .respin_generation import prepare_respin
-from .respin_generation import RespStage1RespinGenerator, RespStage2RespinGenerator
-from .respin_generation import FitHydrogensOnlyRespinGenerator, FrozenAtomsRespinGenerator
-from .respin_generation import EquivalenceOnlyRespinGenerator
-from .respin_format import Respin, write_respin
-from .resp_charges_format import write_resp_charges, parse_resp_charges
-from .types import Atom, Molecule
+from repESP.charges import Charge
+from repESP.esp_util import EspData, write_resp_esp
+from repESP.equivalence import Equivalence
+from repESP.respin_generation import prepare_respin
+from repESP.respin_generation import RespStage1RespinGenerator, RespStage2RespinGenerator
+from repESP.respin_generation import FitHydrogensOnlyRespinGenerator, FrozenAtomsRespinGenerator
+from repESP.respin_generation import EquivalenceOnlyRespinGenerator
+from repESP.respin_format import Respin, write_respin
+from repESP.resp_charges_format import write_resp_charges, parse_resp_charges
+from repESP.types import Atom, Molecule
 
 from dataclasses import dataclass
 from itertools import zip_longest

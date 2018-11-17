@@ -9,10 +9,10 @@ import re
 import sys
 from typing import Dict, List, Optional, TextIO, Tuple, TypeVar, Union
 
-from .exceptions import InputFormatError
-from .equivalence import Equivalence
-from .types import Atom, Molecule
-from ._util import zip_exact
+from repESP.exceptions import InputFormatError
+from repESP.equivalence import Equivalence
+from repESP.types import Atom, Molecule
+from repESP._util import zip_exact
 
 
 @dataclass

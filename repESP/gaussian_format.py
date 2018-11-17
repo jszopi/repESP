@@ -1,9 +1,9 @@
 """Parsing the Gaussian output format (.log or .out files)"""
 
-from .charges import Charge
-from .fields import Esp
-from .exceptions import InputFormatError
-from .types import Coords, Molecule
+from repESP.charges import Charge
+from repESP.fields import Esp
+from repESP.exceptions import InputFormatError
+from repESP.types import Coords, Molecule
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass

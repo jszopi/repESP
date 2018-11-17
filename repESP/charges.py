@@ -1,7 +1,7 @@
 """Types used to describe partial charges and higher moments"""
 
-from .types import Atom, AtomWithCoords, Coords
-# from ._util import NoValue
+from repESP.types import Atom, AtomWithCoords, Coords
+# from repESP._util import NoValue
 
 from dataclasses import dataclass
 # from enum import auto

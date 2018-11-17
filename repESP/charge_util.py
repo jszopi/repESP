@@ -1,7 +1,7 @@
 """Utility functions for working with partial charges"""
 
-from .charges import Charge
-from .equivalence import Equivalence
+from repESP.charges import Charge
+from repESP.equivalence import Equivalence
 
 import numpy as np
 from typing import Dict, List

@@ -5,7 +5,7 @@ from itertools import zip_longest
 import io
 from typing import List, Optional
 
-from .types import Atom, Molecule
+from repESP.types import Atom, Molecule
 
 
 @dataclass

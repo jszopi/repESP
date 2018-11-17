@@ -1,10 +1,10 @@
 """Creating ``resp`` program input for predefined ESP fitting types"""
 
-from .charges import Charge
-from .equivalence import Equivalence
-from .respin_format import Respin
-from .types import Atom, Molecule
-from ._util import zip_exact
+from repESP.charges import Charge
+from repESP.equivalence import Equivalence
+from repESP.respin_format import Respin
+from repESP.types import Atom, Molecule
+from repESP._util import zip_exact
 
 from abc import ABC, abstractmethod
 from typing import List, Optional

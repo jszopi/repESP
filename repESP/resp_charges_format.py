@@ -15,8 +15,8 @@ The following file describes the charges of a molecule with 14 atoms::
 
 """
 
-from .charges import Charge
-from .exceptions import InputFormatError
+from repESP.charges import Charge
+from repESP.exceptions import InputFormatError
 
 from fortranformat import FortranRecordWriter as FW, FortranRecordReader as FR
 from functools import reduce

@@ -4,7 +4,7 @@ Attributes
 ----------
 """
 
-from .types import Coords, Dist
+from repESP.types import Coords, Dist
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field, InitVar

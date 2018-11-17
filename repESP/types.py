@@ -1,7 +1,7 @@
 """Fundamental types used to describe molecules in space"""
 
-from ._util import elements, get_symbol, get_atomic_number
-from .util import angstrom_per_bohr
+from repESP._util import elements, get_symbol, get_atomic_number
+from repESP.util import angstrom_per_bohr
 
 from dataclasses import dataclass
 from typing import Any, Generic, List, Tuple, TypeVar
