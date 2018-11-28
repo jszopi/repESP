@@ -1,4 +1,4 @@
-"""Parsing and writing Gaussian .esp format describing molecular ESP field"""
+"""Parsing and writing .esp file format describing molecular ESP field"""
 
 from repESP.charges import AtomWithCoordsAndCharge, Charge, DipoleMoment, DipoleMomentValue
 from repESP.charges import QuadrupoleMoment, QuadrupoleMomentValue
@@ -23,7 +23,7 @@ class GaussianEspData:
     multiplicity : int
         The multiplicity of the molecule's electron configuration.
     molecule : Molecule[AtomWithCoordsAndCharge]
-        The molecule with positions and partial charges of constituent atoms.
+        The molecule with atom coordinates and partial charges specified.
     dipole_moment : DipoleMoment
         The dipole moment of the molecule.
     quadrupole_moment : QuadrupoleMoment

@@ -88,8 +88,8 @@ def run_resp(
     Parameters
     ----------
     esp_data : EspData
-        Data regarding atom coordinates and ESP field values at the points
-        to be used for the fitting.
+        Object containing the data normally provided in the .esp file i.e. atom
+        coordinates and ESP field values at the points to be used in the fitting.
     respin : Respin
         Instructions for the fitting in the `resp` program input format.
     initial_charges : Optional[typing.List[Charge]], optional
@@ -106,7 +106,8 @@ def run_resp(
         set the `save_intermediates_to` option, otherwise the "esout" file will
         not be accessible.
     save_intermediates_to : Optional[str], optional
-        Which directory to save the ``resp`` program output to. If the user does
+        Which directory to save the ``resp`` program output to. The directory
+        must not exist and will be created by the program. If the user does
         not require access to the files, this option should remain at the default
         of None. The calculation will then be run in the OS temporary directory.
 
@@ -139,13 +140,13 @@ def run_two_stage_resp(
 
     This function takes the two "respin" files, as this is the simplest way to
     provide information about equivalence as well as methyl and methylene groups.
-    Another interface is possible where this information is provided directly.
+    Another interface is possible where this information is provided directly
+    and may be provided in the future.
 
     Parameters
     ----------
     esp_data : EspData
-        Data regarding atom coordinates and ESP field values at the points
-        to be used for the fitting.
+        See `run_resp` function parameter
     respin1 : Respin
         Instructions for 1st stage RESP fitting.
     respin2 : Respin
@@ -218,12 +219,11 @@ def fit_with_equivalencing(
     Parameters
     ----------
     esp_data : EspData
-        Data regarding atom coordinates and ESP field values at the points
-        to be used for the fitting.
+        See `run_resp` function parameter
     equivalence : Equivalence
         The chemical equivalence relations between atoms of the molecule.
     molecule : Molecule[Atom]
-        The molecule that is having its partial charges fitted.
+        The molecule which charges are being fitted. Only atom identities are required.
     total_charge : int
         The total charge of the molecule.
     initial_charges : Optional[typing.List[Charge]], optional
@@ -270,12 +270,11 @@ def fit_hydrogens_only(
     Parameters
     ----------
     esp_data : EspData
-        Data regarding atom coordinates and ESP field values at the points
-        to be used for the fitting.
+        See `run_resp` function parameter
     equivalence : Equivalence
         The chemical equivalence relations between atoms of the molecule.
     molecule : Molecule[Atom]
-        The molecule that is having its partial charges fitted.
+        The molecule which charges are being fitted. Only atom identities are required.
     total_charge : int
         The total charge of the molecule.
     initial_charges : typing.List[Charge]
@@ -325,12 +324,11 @@ def fit_with_frozen_atoms(
     Parameters
     ----------
     esp_data : EspData
-        Data regarding atom coordinates and ESP field values at the points
-        to be used for the fitting.
+        See `run_resp` function parameter
     equivalence : Equivalence
         The chemical equivalence relations between atoms of the molecule.
     molecule : Molecule[Atom]
-        The molecule that is having its partial charges fitted.
+        The molecule which charges are being fitted. Only atom identities are required.
     frozen_atoms : List[int]
         List of zero-based indices of atoms in the molecule which charges should
         not be fitted but fixed at the values provided in `initial_charges` argument.

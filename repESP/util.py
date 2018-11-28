@@ -107,7 +107,8 @@ def mask_from_list(  # type: ignore # (defaults with generics: https://github.co
     ----------
     list\_ : typing.List[int]
         The list of indices, for which the corresponding values in the resulting
-        list are to have `value_if_present` as the value.
+        list are to have `value_if_present` as the value (and `value_if_absent`
+        otherwise).
 
         If this argument contains values outside the range of valid indices in
         the desired list, the input is not valid; no errors will be raised

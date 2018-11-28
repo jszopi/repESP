@@ -34,16 +34,15 @@ class ChargesSectionData:
 
 
 class ChargesSectionParser(ABC):
-    """Interface required for implementations of parsers for the charges section
+    """Interface required from parsers for the charges section
 
     This interface will be implemented differently for the various charge types
-    supported by Gaussian. Implementations for commonly used charges are also
-    provided.
+    supported by Gaussian. Implementations for commonly used charges are provided.
     """
 
     @abstractmethod
     def is_section_start(self, line: str) -> bool:
-        """Checks whether the given line is the start of charges section
+        """Check whether the given line is the start of charges section
 
         Parameters
         ----------
@@ -60,7 +59,7 @@ class ChargesSectionParser(ABC):
 
     @abstractmethod
     def is_section_end(self, line: str) -> bool:
-        """Checks whether the given line is the end of charges section
+        """Check whether the given line is the end of charges section
 
         Parameters
         ----------
@@ -127,7 +126,7 @@ class EspChargesSectionData(ChargesSectionData):
 
 
 class EspChargesSectionParser(ChargesSectionParser):
-    """Base class for parser with implemented methods common to all ESP charge types
+    """Base class providing parser methods common to all ESP charge types
 
     This base class implements the `is_section_end` and `parse_section` methods,
     which are common to all ESP charge types.
@@ -178,13 +177,13 @@ def get_charges_from_log(
         File object opened in read mode containing the Gaussian `.log`/`.out`
         output file from which the charges are to be extracted.
     charges_section_parser : ChargesSectionParser
-        Class implementing the `ChargesSectionParser` interface for the desired
-        charge type, e.g. `MullikenChargeSectionParser`.
+        Object of a class implementing the `ChargesSectionParser` interface for
+        the desired charge type, e.g. `MullikenChargeSectionParser()`.
     verify_against : Molecule, optional
         Molecule against which the output is to be verified. Defaults to None.
         Note that currently the verification only involves comparing the number
         of extracted charges against the number of atoms. In the future this may
-        be extended to verifying the atom identities (TODO).
+        be extended to verifying the atom identities.
     occurrence : int, optional
         Determines which charges section to use for extracting the charges.
         Defaults to -1 i.e. the last section.
@@ -192,7 +191,7 @@ def get_charges_from_log(
         On occasion, the output can contain multiple charge sections regarding
         the same charge type. AFAIR, this happens when multiple Gaussian jobs
         were processed. Thus, the sensible default is to select the final one,
-        as this is the final optimization. Other values can be specified,
+        to select the final optimization. Other values can be specified,
         starting with 0 for the first occurrence.
 
     Returns

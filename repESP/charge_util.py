@@ -10,6 +10,9 @@ from typing import Dict, List
 def average(charges: List[Charge], equivalence: Equivalence) -> List[Charge]:
     """Average values of charges on chemically equivalent atoms
 
+    This is sometimes called "*a posteriori*" averaging, especially when referring
+    to charges fitted to the ESP, where this method contrasts with "equivalencing".
+
     Parameters
     ----------
     charges : List[Charge]

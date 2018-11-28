@@ -16,7 +16,7 @@ from typing import List, Optional
 
 
 class RespinGenerator(ABC):
-    """Interface for objects required to create ``resp`` instructions
+    """Interface for creators of ``resp`` fitting instructions
 
     This interface will be implemented differently for different types of
     fitting with the ``resp`` program. This module provides implementations
@@ -43,7 +43,7 @@ class RespinGenerator(ABC):
 
 
 class RespRespinGenerator(RespinGenerator):
-    """Partial implementation with methods common to fitting RESP charges"""
+    """Base class providing "respin" creation methods for RESP charges"""
 
     def __init__(self, ivary: Respin.Ivary) -> None:
         self.ivary = ivary
@@ -99,7 +99,7 @@ class RespRespinGenerator(RespinGenerator):
 
 
 class RespStage1RespinGenerator(RespRespinGenerator):
-    """Supports creation of "respin" files for 1st stage RESP fitting
+    """Creator of "respin" files for 1st stage RESP fitting
 
     The original RESP procedure is conducted in two stages and this object
     prepares the input for the first stage. In this stage, carbon and hydrogen
@@ -110,7 +110,7 @@ class RespStage1RespinGenerator(RespRespinGenerator):
     Parameters
     ----------
     ivary : Respin.Ivary
-        The "ivary" section of a "respin" file.
+        The "ivary" section of a "respin" file for 1st stage RESP fitting.
     """
 
     def resp_type(self) -> str:
@@ -139,19 +139,19 @@ class RespStage1RespinGenerator(RespRespinGenerator):
 
 
 class RespStage2RespinGenerator(RespRespinGenerator):
-    """Supports creation of "respin" files for 2nd stage RESP fitting
+    """Creator of "respin" files for 2nd stage RESP fitting
 
     The original RESP procedure is conducted in two stages and this object
     prepares the input for the second stage. In this stage, carbon and hydrogen
     atoms in methyl and methylene groups are varied subject to equivalence
-    relations and the magnitudes of the charges are are constrained with
-    hyperbolic constraints with a weight factor of 0.001. Other atoms are
-    frozen at initial charge values, which come from 1st stage fitting.
+    relations and the magnitudes of the charges are constrained with hyperbolic
+    constraints with a weight factor of 0.001. Other atoms are frozen at
+    initial charge values, which should come from 1st stage fitting.
 
     Parameters
     ----------
     ivary : Respin.Ivary
-        The "ivary" section of a "respin" file.
+        The "ivary" section of a "respin" file for 2nd stage RESP fitting.
     """
 
     def resp_type(self) -> str:
@@ -190,8 +190,8 @@ class FitHydrogensOnlyRespinGenerator(RespinGenerator):
     ----------
     equivalence : Equivalence
         The equivalence relations between atoms of the molecule.
-    molecule : Molecule
-        The identities of atoms in the molecule being fitted.
+    molecule : Molecule[Atom]
+        The molecule which charges are being fitted. Only atom identities are required.
     """
 
     def __init__(self, equivalence: Equivalence, molecule: Molecule[Atom]) -> None:
@@ -317,7 +317,7 @@ def prepare_respin(
     total_charge : int
         The total charge of the molecule.
     molecule : Molecule[Atom]
-        The molecule with the positions of the atoms specified.
+        The molecule which charges are being fitted. Only atom identities are required.
     title : Optional[str], optional
         The title for the optimization. If set to None (default), a default
         title will be used, referencing the `repESP` library and the type of

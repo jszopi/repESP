@@ -21,14 +21,13 @@ def esp_from_charges(mesh: AbstractMesh, molecule: Molecule[AtomWithCoordsAndCha
     mesh : AbstractMesh
         The points at which the ESP values are to be calculated.
     molecule : Molecule[AtomWithCoordsAndCharge]
-        A molecule consisting of atoms for which both the coordinates and
-        partial charges are specified.
+        A molecule with atom coordinates and partial charges specified.
 
     Returns
     -------
     Field[Esp]
         The ESP field at the specified points reproduced from the partial
-        charges in the given molecule.
+        charges on atoms of the given molecule.
     """
     value_at_point = lambda coords: Esp(sum(
         atom.charge/(euclidean(coords, atom.coords))
@@ -44,6 +43,22 @@ def esp_from_charges(mesh: AbstractMesh, molecule: Molecule[AtomWithCoordsAndCha
 def voronoi(mesh: AbstractMesh, molecule: Molecule[AtomWithCoords]) -> Field[Tuple[Optional[int], Dist]]:
     """Find the atom closest to each point and its distance
 
+    Example
+    -------
+    Imagine a molecule of carbon monoxide placed along the x-axis.
+
+    >>> mesh = Mesh([Coords([0, 0, 0])])
+    >>> molecule = Molecule([
+        AtomWithCoords(6, Coords([-2, 0, 0])),
+        AtomWithCoords(8, Coords([0.13, 0, 0]))
+    ])
+    >>> print(voronoi(mesh, molecule).values)
+    [(1, 0.13)]
+
+    The result means that for the only point of the mesh (0, 0, 0), atom of
+    index 1 (i.e. the second atom, oxygen) is closer than any other atom
+    (carbon) and the distance to it is 0.13 a.u.
+
     Parameters
     ----------
     mesh : AbstractMesh
@@ -55,8 +70,8 @@ def voronoi(mesh: AbstractMesh, molecule: Molecule[AtomWithCoords]) -> Field[Tup
     -------
     Field[Tuple[Optional[int], Dist]]
         A `Field` object specifying for each point the atom to which the
-        point is nearest (represented as ordinal index into the molecule) and
-        the distance from that atom.
+        point is nearest (represented as ordinal, zero-based index into the
+        molecule) and the distance from that atom.
     """
     # Voronoi means closest-atom in molecular partitioning lingo
 
@@ -138,8 +153,8 @@ def calc_relative_rms_error(
     ----------
     values1 : Collection[NumericValue]
         One of the collections of values which are to be used for the
-        calculation. The RMS will be reported relative to the RMS value of this
-        collection.
+        calculation. The RMS error will be reported relative to the RMS value
+        of this collection.
     values2 : Collection[NumericValue]
         The other collection of values to be used for the calculation.
 

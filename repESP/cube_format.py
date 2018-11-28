@@ -21,7 +21,8 @@ class Cube(Generic[FieldValue]):
     info : Info
         Additional, less structured information about the cube file.
     molecule : Molecule[AtomWithCoordsAndCharge]
-        A molecule consisting of atoms with coordinates and charges specified.
+        The molecule which field is described by the cube file. Atoms have
+        coordinates and partial charges specified.
     field : Field[FieldValue]
         The field described by the cube file.
 
@@ -42,7 +43,7 @@ class Cube(Generic[FieldValue]):
         Parameters
         ----------
         input_line: str
-            The top line of a cube file, usually containing information
+            The top line of a cube file, typically containing information
             regarding the Gaussian input parameters used.
         title_line: str
             The second line of a cube file, containing a free-form title.
@@ -124,11 +125,11 @@ def parse_cube(
     """Parse a file in the Gaussian "cube" file format
 
     You probably mean to use `parse_ed_cube` or `parse_esp_cube` unless
-    your cube file is of neither of those types. Note that the values are
-    expected to be space separated.
+    your cube file is of neither of those types.
 
-    If your cube file comes from elsewhere than Gaussian, you should ensure that
-    the coordinates are given in bohr.
+    Note that the values are expected to be space separated. If your cube file
+    comes from elsewhere than Gaussian, you should ensure that the coordinates
+    are given in bohr.
 
     Parameters
     ----------

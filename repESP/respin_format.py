@@ -1,4 +1,4 @@
-"""Parsing and writing ``resp`` program input format ("respin" files)"""
+"""Parsing and writing ``resp`` program instruction file format ("respin")"""
 
 from dataclasses import dataclass, asdict
 from fortranformat import FortranRecordWriter as FW
@@ -17,7 +17,7 @@ from repESP._util import zip_exact
 
 @dataclass
 class Respin:
-    """Dataclass describing the ``resp`` program input
+    """Dataclass describing the ``resp`` program instructions
 
     Note that the functionality is currently limited to a single molecule and
     a single structure.
@@ -33,7 +33,7 @@ class Respin:
     charge : int
         The total charge of the molecule.
     molecule : Molecule[Atom]
-        The molecule as described by the positions of constituent atoms.
+        The molecule which charges are being fitted. Only atom identities are required.
     ivary : Ivary
         The "ivary" values for fitting the considered structure. These determine
         how the charge on each atom is allowed to vary during the fitting.
@@ -156,7 +156,7 @@ class Respin:
 
     @dataclass
     class Ivary:
-        """Dataclass representing per atom fitting instructions for ``resp``
+        """Dataclass representing per-atom fitting instructions for ``resp``
 
         The fitting instructions are represented as a list of values stored in
         the `values` attribute. The length of this list must be the same as the
@@ -337,11 +337,11 @@ def _get_equivalence_from_ivary(ivary: Respin.Ivary) -> Equivalence:
 
 
 def get_equivalence_from_two_stage_resp_ivary(ivary1: Respin.Ivary, ivary2: Respin.Ivary) -> Equivalence:
-    """Get atom equivalence from two input for two 2-stage ``resp``
+    """Get atom equivalence from input files for two 2-stage RESP
 
     Derive atom equivalence based on the data in two "respin" files
     (represented by the `Respin` objects) created for the purpose of two-stage
-    fitting with the ``resp`` program. The files can be generated with the
+    RESP fitting with the ``resp`` program. The files can be generated with the
     ``respgen`` program with the following commands::
 
         respgen -i methane.ac -o methane.respin1 -f resp1
@@ -507,10 +507,10 @@ def write_respin(f: TextIO, respin: Respin, skip_cntrl_defaults: bool=True) -> N
         must be opened for writing.
     respin : Respin
         The dataclass representing all the instructions needed by the ``resp``
-        program. Note that only single-structure fitting is currently supported.
+        program.
     skip_cntrl_defaults : bool, optional
-        When this option is set to True (default), fitting options with default
-        values will not be written to the file.
+        When this option is set to True (default), fitting options in the "cntrl"
+        section with default values will not be written to the file.
     """
 
     print(respin.title, file=f)

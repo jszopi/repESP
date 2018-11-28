@@ -129,7 +129,7 @@ class Atom:
 
         Despite not being documented, this constructor is inherited by the
         subclasses of this class. `*args` and `**kwargs` will be forwarded to
-        initializer of the subclass.
+        the initializer of the subclass.
 
         Parameters
         ----------

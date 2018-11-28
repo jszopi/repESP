@@ -15,12 +15,12 @@ class Equivalence:
     Atoms in a molecule are considered equivalent for the purpose of fitting
     partial charges when they are symmetry-related or fast-exchanging.
 
-    The equivalence information is represented as a list of values stored in
-    the `values` attribute. The length of this list must be the same as the
-    number of atoms in the molecule it describes. Consecutive values refer
-    to consecutive atoms of the molecule. Each value is either None, if the
-    described atom is not equivalenced to any other atom, or a zero-based index
-    of the atom to which the described atom is equivalenced.
+    The equivalence information is represented as a list stored in the `values`
+    attribute. The length of this list must be the same as the number of atoms
+    in the molecule it describes. Consecutive values refer to consecutive atoms
+    of the molecule. Each value is either None, if the described atom is not
+    equivalenced to any other atom, or a zero-based index of the atom to which
+    the described atom is equivalenced.
 
     Example
     -------
