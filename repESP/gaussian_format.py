@@ -133,9 +133,6 @@ class EspChargesSectionParser(ChargesSectionParser):
     """
 
     def is_section_end(self, line: str) -> bool:
-        # TODO: This will not work with IOp(6/50=1), where all I know is that
-        # the termination line starts with ' Charges' but that yields false
-        # positives, so I have to find out a more specific regex.
         return line.startswith(' Sum of ')
 
     def parse_section(self, section: List[str]) -> EspChargesSectionData:
@@ -153,7 +150,13 @@ class EspChargesSectionParser(ChargesSectionParser):
         for line in section[i+3:]:
             if self.is_section_end(line):
                 break
-            _label, _symbol, charge = line.split()
+            try:
+                _label, _symbol, charge = line.split()
+            except ValueError:
+                raise InputFormatError(
+                    f"Failed to parse the charge on atom from the following line:\n{line}"
+                )
+
             charges.append(Charge(charge))
 
         return EspChargesSectionData(
@@ -317,7 +320,6 @@ class MullikenChargeSectionParser(ChargesSectionParser):
         return line == " Mulliken charges:"
 
     def is_section_end(self, line: str) -> bool:
-        # TODO: Same as this function in EspChargesSectionParser
         return line.startswith(' Sum of ')
 
     def parse_section(self, section: List[str]) -> ChargesSectionData:
