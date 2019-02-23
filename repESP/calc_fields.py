@@ -73,8 +73,6 @@ def voronoi(mesh: AbstractMesh, molecule: Molecule[AtomWithCoords]) -> Field[Tup
         point is nearest (represented as ordinal, zero-based index into the
         molecule) and the distance from that atom.
     """
-    # Voronoi means closest-atom in molecular partitioning lingo
-
     def value_at_point(coords: Coords) -> Tuple[Optional[int], Dist]:
         min_dist = Dist(float('inf'))
         min_atom = None
@@ -136,6 +134,8 @@ def calc_rms_error(
     NumericValue
         RMS error between the two given collections of values
     """
+    # TODO: The cast wouldn't be required if subtraction was implemented to
+    # yield the correct type.
     return calc_rms_value([cast(NumericValue, value1 - value2) for value1, value2 in zip(values1, values2)])
 
 

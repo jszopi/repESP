@@ -204,7 +204,9 @@ def run_two_stage_resp(
 
 
 # NOTE: It may be more natural (i.e. in line with this library's datastructures)
-# to use Field and Molecule[AtomWithCoords] instead of EspData.
+# to use Field and Molecule[AtomWithCoords] instead of EspData. Currently,
+# the atom coordinates are hidden in EspData, making it less clear what the
+# input of the fitting is.
 def fit_with_equivalencing(
     esp_data: EspData,
     equivalence: Equivalence,

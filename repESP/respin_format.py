@@ -521,6 +521,6 @@ def write_respin(f: TextIO, respin: Respin, skip_cntrl_defaults: bool=True) -> N
     print(FW("2I5").write([respin.charge, respin.iuniq]), file=f)
     for atom, ivary in zip(respin.molecule.atoms, respin.ivary.values):
         print(FW("2I5").write([atom.atomic_number, ivary]), file=f)
-    # According to the spec a blank line is only for multi-structures but `resp`
-    # fails without it.
+    # According to the spec, a blank line is only for multi-structures but
+    # `resp` fails without it.
     print(file=f)

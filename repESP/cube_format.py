@@ -185,7 +185,6 @@ def parse_cube(
 
     # Field values
     value_ctor = lambda x: make_value(info, x)
-    # TODO: this may be unfeasible for very large cubes
     values = [value_ctor(x) for x in f.read().split()]
 
     return Cube(
