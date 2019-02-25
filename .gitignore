@@ -9,3 +9,4 @@ cover
 .coverage
 repESP.egg-info
 docs/build/
+.tox
