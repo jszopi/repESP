@@ -1,5 +1,7 @@
-# What is `repESP`?
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![Build Status](https://travis-ci.org/jszopi/repESP.svg?branch=master)](https://travis-ci.org/jszopi/repESP)
 
+# What is `repESP`?
 `repESP` is a program used in computational chemistry to investigate different methods of assigning partial charges.
 It takes the name from reproducing the (molecular) electrostatic potential (ESP) from partial charges.
 Partial charges can be extracted from the output of Gaussian 09 or provided by the user.
