@@ -1,4 +1,4 @@
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![License: GPL v3](https://img.shields.io/badge/license-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Build Status](https://travis-ci.org/jszopi/repESP.svg?branch=master)](https://travis-ci.org/jszopi/repESP)
 
 # What is `repESP`?
