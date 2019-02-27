@@ -5,3 +5,14 @@ python:
   - "3.7"
 install: pip install tox-travis
 script: tox
+deploy:
+  provider: pages
+  skip-cleanup: true
+  github-token: $repESP_PUBLIC_REPO_TOKEN
+  keep-history: true
+  on:
+    branch: master
+  local-dir:
+    docs/build/html
+  target-branch:
+    gh-pages  # default, but better be explicit
