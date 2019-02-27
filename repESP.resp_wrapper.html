@@ -1,0 +1,399 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>repESP.resp_wrapper module &mdash; repESP 0.2.0-dev documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="repESP.respin_format module" href="repESP.respin_format.html" />
+    <link rel="prev" title="repESP.resp_charges_format module" href="repESP.resp_charges_format.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> repESP
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="repESP.html">repESP package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="repESP.html#highlights">Highlights</a></li>
+<li class="toctree-l2"><a class="reference internal" href="repESP.html#example-problem">Example problem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="repESP.html#usage-caveats">Usage caveats</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="repESP.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="repESP.calc_fields.html">repESP.calc_fields module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.charge_util.html">repESP.charge_util module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.charges.html">repESP.charges module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.cube_format.html">repESP.cube_format module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.equivalence.html">repESP.equivalence module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.esp_util.html">repESP.esp_util module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.exceptions.html">repESP.exceptions module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.fields.html">repESP.fields module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.gaussian_format.html">repESP.gaussian_format module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.resp_charges_format.html">repESP.resp_charges_format module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">repESP.resp_wrapper module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.respin_format.html">repESP.respin_format module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.respin_generation.html">repESP.respin_generation module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.types.html">repESP.types module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.util.html">repESP.util module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">repESP</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="repESP.html">repESP package</a> &raquo;</li>
+        
+      <li>repESP.resp_wrapper module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/repESP.resp_wrapper.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-repESP.resp_wrapper">
+<span id="repesp-resp-wrapper-module"></span><h1>repESP.resp_wrapper module<a class="headerlink" href="#module-repESP.resp_wrapper" title="Permalink to this headline">¶</a></h1>
+<p>Wrappers for performing ESP fitting with the <code class="docutils literal notranslate"><span class="pre">resp</span></code> program</p>
+<dl class="function">
+<dt id="repESP.resp_wrapper.run_resp">
+<code class="descname">run_resp</code><span class="sig-paren">(</span><em>esp_data: repESP.esp_util.EspData</em>, <em>respin: repESP.respin_format.Respin</em>, <em>initial_charges: Optional[List[repESP.charges.Charge]] = None</em>, <em>generate_esout: bool = False</em>, <em>save_intermediates_to: Optional[str] = None</em><span class="sig-paren">)</span> &#x2192; List[repESP.charges.Charge]<a class="reference internal" href="_modules/repESP/resp_wrapper.html#run_resp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.resp_wrapper.run_resp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run the <code class="docutils literal notranslate"><span class="pre">resp</span></code> program with the given “respin” instructions</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>esp_data</strong> (<a class="reference internal" href="repESP.esp_util.html#repESP.esp_util.EspData" title="repESP.esp_util.EspData"><em>EspData</em></a>) – Object containing the data normally provided in the .esp file i.e. atom
+coordinates and ESP field values at the points to be used in the fitting.</li>
+<li><strong>respin</strong> (<a class="reference internal" href="repESP.respin_format.html#repESP.respin_format.Respin" title="repESP.respin_format.Respin"><em>Respin</em></a>) – Instructions for the fitting in the <cite>resp</cite> program input format.</li>
+<li><strong>initial_charges</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.7)"><em>typing.List</em></a><em>[</em><a class="reference internal" href="repESP.charges.html#repESP.charges.Charge" title="repESP.charges.Charge"><em>Charge</em></a><em>]</em><em>]</em><em>, </em><em>optional</em>) – Initial charges to be used for the fitting, which may be required by
+the fitting method or may simply be provided as an initial guess for
+the fitting algorithm. <cite>ValueError</cite> will be raised if the <cite>respin</cite>
+argument specifies that initial charges are expected (<cite>iqopt</cite> not equal
+to 1) but this argument is not provided. Defaults to None.</li>
+<li><strong>generate_esout</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Whether to produce an “esout” file containing the ESP field values at
+the fitting points, reproduced from the fitted charges. This can also
+be achieved with the <cite>repESP</cite> library and thus shouldn’t be necessary.
+Defaults to False. If this option is set to True, the user should also
+set the <cite>save_intermediates_to</cite> option, otherwise the “esout” file will
+not be accessible.</li>
+<li><strong>save_intermediates_to</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>]</em><em>, </em><em>optional</em>) – Which directory to save the <code class="docutils literal notranslate"><span class="pre">resp</span></code> program output to. The directory
+must not exist and will be created by the program. If the user does
+not require access to the files, this option should remain at the default
+of None. The calculation will then be run in the OS temporary directory.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The charges fitted using the <code class="docutils literal notranslate"><span class="pre">resp</span></code> program according to the “respin”
+instructions.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.7)">typing.List</a>[<a class="reference internal" href="repESP.charges.html#repESP.charges.Charge" title="repESP.charges.Charge">Charge</a>]</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="repESP.resp_wrapper.run_two_stage_resp">
+<code class="descname">run_two_stage_resp</code><span class="sig-paren">(</span><em>esp_data: repESP.esp_util.EspData</em>, <em>respin1: repESP.respin_format.Respin</em>, <em>respin2: repESP.respin_format.Respin</em>, <em>initial_charges: Optional[List[repESP.charges.Charge]] = None</em>, <em>generate_esout: bool = False</em>, <em>save_intermediates_to: Optional[str] = None</em><span class="sig-paren">)</span> &#x2192; List[repESP.charges.Charge]<a class="reference internal" href="_modules/repESP/resp_wrapper.html#run_two_stage_resp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.resp_wrapper.run_two_stage_resp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply the two-stage procedure to fit RESP charges</p>
+<p>This function takes the two “respin” files, as this is the simplest way to
+provide information about equivalence as well as methyl and methylene groups.
+Another interface is possible where this information is provided directly
+and may be provided in the future.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>esp_data</strong> (<a class="reference internal" href="repESP.esp_util.html#repESP.esp_util.EspData" title="repESP.esp_util.EspData"><em>EspData</em></a>) – See <cite>run_resp</cite> function parameter</li>
+<li><strong>respin1</strong> (<a class="reference internal" href="repESP.respin_format.html#repESP.respin_format.Respin" title="repESP.respin_format.Respin"><em>Respin</em></a>) – Instructions for 1st stage RESP fitting.</li>
+<li><strong>respin2</strong> (<a class="reference internal" href="repESP.respin_format.html#repESP.respin_format.Respin" title="repESP.respin_format.Respin"><em>Respin</em></a>) – Instructions for 2nd stage RESP fitting.</li>
+<li><strong>initial_charges</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.7)"><em>typing.List</em></a><em>[</em><a class="reference internal" href="repESP.charges.html#repESP.charges.Charge" title="repESP.charges.Charge"><em>Charge</em></a><em>]</em><em>]</em><em>, </em><em>optional</em>) – See <cite>run_resp</cite> function parameter</li>
+<li><strong>generate_esout</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – See <cite>run_resp</cite> function parameter</li>
+<li><strong>save_intermediates_to</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>]</em><em>, </em><em>optional</em>) – See <cite>run_resp</cite> function parameter</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The fitted two-stage RESP charges.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.7)">typing.List</a>[<a class="reference internal" href="repESP.charges.html#repESP.charges.Charge" title="repESP.charges.Charge">Charge</a>]</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="repESP.resp_wrapper.fit_with_equivalencing">
+<code class="descname">fit_with_equivalencing</code><span class="sig-paren">(</span><em>esp_data: repESP.esp_util.EspData, equivalence: repESP.equivalence.Equivalence, molecule: repESP.types.Molecule[repESP.types.Atom][repESP.types.Atom], total_charge: int, initial_charges: Optional[List[repESP.charges.Charge]] = None, generate_esout: bool = False, save_intermediates_to: Optional[str] = None</em><span class="sig-paren">)</span> &#x2192; List[repESP.charges.Charge]<a class="reference internal" href="_modules/repESP/resp_wrapper.html#fit_with_equivalencing"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.resp_wrapper.fit_with_equivalencing" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit charges to the provided ESP subject to equivalence relations</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>esp_data</strong> (<a class="reference internal" href="repESP.esp_util.html#repESP.esp_util.EspData" title="repESP.esp_util.EspData"><em>EspData</em></a>) – See <cite>run_resp</cite> function parameter</li>
+<li><strong>equivalence</strong> (<a class="reference internal" href="repESP.equivalence.html#repESP.equivalence.Equivalence" title="repESP.equivalence.Equivalence"><em>Equivalence</em></a>) – The chemical equivalence relations between atoms of the molecule.</li>
+<li><strong>molecule</strong> (<a class="reference internal" href="repESP.types.html#repESP.types.Molecule" title="repESP.types.Molecule"><em>Molecule</em></a><em>[</em><a class="reference internal" href="repESP.types.html#repESP.types.Atom" title="repESP.types.Atom"><em>Atom</em></a><em>]</em>) – The molecule which charges are being fitted. Only atom identities are required.</li>
+<li><strong>total_charge</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – The total charge of the molecule.</li>
+<li><strong>initial_charges</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.7)"><em>typing.List</em></a><em>[</em><a class="reference internal" href="repESP.charges.html#repESP.charges.Charge" title="repESP.charges.Charge"><em>Charge</em></a><em>]</em><em>]</em><em>, </em><em>optional</em>) – See <cite>run_resp</cite> function parameter</li>
+<li><strong>generate_esout</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – See <cite>run_resp</cite> function parameter</li>
+<li><strong>save_intermediates_to</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>]</em><em>, </em><em>optional</em>) – See <cite>run_resp</cite> function parameter</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The charges fitted to the provided ESP subject to equivalence relations.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.7)">typing.List</a>[<a class="reference internal" href="repESP.charges.html#repESP.charges.Charge" title="repESP.charges.Charge">Charge</a>]</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="repESP.resp_wrapper.fit_hydrogens_only">
+<code class="descname">fit_hydrogens_only</code><span class="sig-paren">(</span><em>esp_data: repESP.esp_util.EspData, equivalence: repESP.equivalence.Equivalence, molecule: repESP.types.Molecule[repESP.types.Atom][repESP.types.Atom], total_charge: int, initial_charges: List[repESP.charges.Charge], generate_esout: bool = False, save_intermediates_to: Optional[str] = None</em><span class="sig-paren">)</span> &#x2192; List[repESP.charges.Charge]<a class="reference internal" href="_modules/repESP/resp_wrapper.html#fit_hydrogens_only"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.resp_wrapper.fit_hydrogens_only" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit hydrogen atom charges to the provided ESP subject to equivalence relations</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>esp_data</strong> (<a class="reference internal" href="repESP.esp_util.html#repESP.esp_util.EspData" title="repESP.esp_util.EspData"><em>EspData</em></a>) – See <cite>run_resp</cite> function parameter</li>
+<li><strong>equivalence</strong> (<a class="reference internal" href="repESP.equivalence.html#repESP.equivalence.Equivalence" title="repESP.equivalence.Equivalence"><em>Equivalence</em></a>) – The chemical equivalence relations between atoms of the molecule.</li>
+<li><strong>molecule</strong> (<a class="reference internal" href="repESP.types.html#repESP.types.Molecule" title="repESP.types.Molecule"><em>Molecule</em></a><em>[</em><a class="reference internal" href="repESP.types.html#repESP.types.Atom" title="repESP.types.Atom"><em>Atom</em></a><em>]</em>) – The molecule which charges are being fitted. Only atom identities are required.</li>
+<li><strong>total_charge</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – The total charge of the molecule.</li>
+<li><strong>initial_charges</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.7)"><em>typing.List</em></a><em>[</em><a class="reference internal" href="repESP.charges.html#repESP.charges.Charge" title="repESP.charges.Charge"><em>Charge</em></a><em>]</em>) – Initial charges to be used for the fitting. Charges on atoms other than
+hydrogen atoms will be fixed at the provided values.</li>
+<li><strong>generate_esout</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – See <cite>run_resp</cite> function parameter</li>
+<li><strong>save_intermediates_to</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>]</em><em>, </em><em>optional</em>) – See <cite>run_resp</cite> function parameter</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The hydrogen charges fitted to the provided ESP subject to equivalence
+relations. Other charges have values fixed at values from <cite>initial_charges</cite>.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.7)">typing.List</a>[<a class="reference internal" href="repESP.charges.html#repESP.charges.Charge" title="repESP.charges.Charge">Charge</a>]</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="repESP.resp_wrapper.fit_with_frozen_atoms">
+<code class="descname">fit_with_frozen_atoms</code><span class="sig-paren">(</span><em>esp_data: repESP.esp_util.EspData, equivalence: repESP.equivalence.Equivalence, molecule: repESP.types.Molecule[repESP.types.Atom][repESP.types.Atom], frozen_atoms: List[int], total_charge: int, initial_charges: List[repESP.charges.Charge], generate_esout: bool = False, save_intermediates_to: Optional[str] = None</em><span class="sig-paren">)</span> &#x2192; List[repESP.charges.Charge]<a class="reference internal" href="_modules/repESP/resp_wrapper.html#fit_with_frozen_atoms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.resp_wrapper.fit_with_frozen_atoms" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit hydrogen atom charges to the provided ESP subject to equivalence relations</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>esp_data</strong> (<a class="reference internal" href="repESP.esp_util.html#repESP.esp_util.EspData" title="repESP.esp_util.EspData"><em>EspData</em></a>) – See <cite>run_resp</cite> function parameter</li>
+<li><strong>equivalence</strong> (<a class="reference internal" href="repESP.equivalence.html#repESP.equivalence.Equivalence" title="repESP.equivalence.Equivalence"><em>Equivalence</em></a>) – The chemical equivalence relations between atoms of the molecule.</li>
+<li><strong>molecule</strong> (<a class="reference internal" href="repESP.types.html#repESP.types.Molecule" title="repESP.types.Molecule"><em>Molecule</em></a><em>[</em><a class="reference internal" href="repESP.types.html#repESP.types.Atom" title="repESP.types.Atom"><em>Atom</em></a><em>]</em>) – The molecule which charges are being fitted. Only atom identities are required.</li>
+<li><strong>frozen_atoms</strong> (<em>List</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>]</em>) – List of zero-based indices of atoms in the molecule which charges should
+not be fitted but fixed at the values provided in <cite>initial_charges</cite> argument.</li>
+<li><strong>total_charge</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – The total charge of the molecule.</li>
+<li><strong>initial_charges</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.7)"><em>typing.List</em></a><em>[</em><a class="reference internal" href="repESP.charges.html#repESP.charges.Charge" title="repESP.charges.Charge"><em>Charge</em></a><em>]</em>) – Initial charges to be used for the fitting. Charges on atoms specified
+in the <cite>frozen_atoms</cite> arguments will be fixed at the provided values.</li>
+<li><strong>generate_esout</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – See <cite>run_resp</cite> function parameter</li>
+<li><strong>save_intermediates_to</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>]</em><em>, </em><em>optional</em>) – See <cite>run_resp</cite> function parameter</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The charges fitted to the provided ESP subject to equivalence relations,
+except where the charges were frozen at initial values.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.7)">typing.List</a>[<a class="reference internal" href="repESP.charges.html#repESP.charges.Charge" title="repESP.charges.Charge">Charge</a>]</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="repESP.respin_format.html" class="btn btn-neutral float-right" title="repESP.respin_format module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="repESP.resp_charges_format.html" class="btn btn-neutral float-left" title="repESP.resp_charges_format module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Jan Szopinski
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

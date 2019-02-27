@@ -1,0 +1,373 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>repESP.charges &mdash; repESP 0.2.0-dev documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> repESP
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../repESP.html">repESP package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">repESP</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>repESP.charges</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for repESP.charges</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Types used to describe partial charges and higher moments&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">repESP.types</span> <span class="k">import</span> <span class="n">Atom</span><span class="p">,</span> <span class="n">AtomWithCoords</span><span class="p">,</span> <span class="n">Coords</span>
+<span class="c1"># from repESP._util import NoValue</span>
+
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="k">import</span> <span class="n">dataclass</span>
+<span class="c1"># from enum import auto</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Collection</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Type</span>
+
+
+<div class="viewcode-block" id="Charge"><a class="viewcode-back" href="../../repESP.charges.html#repESP.charges.Charge">[docs]</a><span class="k">class</span> <span class="nc">Charge</span><span class="p">(</span><span class="nb">float</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Partial (atomic) charge in units of elementary charge (*e*)</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    value : Any</span>
+<span class="sd">        Any value convertible to float representing the value in units of *e*.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>  <span class="c1"># type: ignore # (Too many arguments for &quot;__new__&quot; of &quot;object&quot;)</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">f</span><span class="s2">&quot;Charge({super().__repr__()})&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{:+}</span><span class="s2"> e&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__float__</span><span class="p">())</span></div>
+
+
+<span class="c1"># Could be useful as a common denominator between modules, e.g. to translate</span>
+<span class="c1"># a given charge type to its corresponding ChargesSectionParser. However, this</span>
+<span class="c1"># is currently not necessary.</span>
+<span class="c1">#</span>
+<span class="c1"># class ChargeType(NoValue):</span>
+<span class="c1">#     MULLIKEN = auto()</span>
+<span class="c1">#     MK = auto()</span>
+<span class="c1">#     CHELP = auto()</span>
+<span class="c1">#     CHELPG = auto()</span>
+<span class="c1">#     HLY = auto()</span>
+<span class="c1">#     NPA = auto()</span>
+<span class="c1">#     AIM = auto()</span>
+
+
+<div class="viewcode-block" id="AtomWithCharge"><a class="viewcode-back" href="../../repESP.charges.html#repESP.charges.AtomWithCharge">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">AtomWithCharge</span><span class="p">(</span><span class="n">Atom</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Dataclass representing an atom with an associated partial charge</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    atomic_number : int</span>
+<span class="sd">        The atomic number of the element</span>
+<span class="sd">    charge: Charge</span>
+<span class="sd">        The partial charge on the atom</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    atomic_number</span>
+<span class="sd">        See initialization parameter</span>
+<span class="sd">    charge</span>
+<span class="sd">        See initialization parameter</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">charge</span><span class="p">:</span> <span class="n">Charge</span></div>
+
+
+<div class="viewcode-block" id="AtomWithCoordsAndCharge"><a class="viewcode-back" href="../../repESP.charges.html#repESP.charges.AtomWithCoordsAndCharge">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">AtomWithCoordsAndCharge</span><span class="p">(</span><span class="n">AtomWithCharge</span><span class="p">,</span> <span class="n">AtomWithCoords</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Dataclass representing an atom in space, with a partial charge</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    atomic_number : int</span>
+<span class="sd">        The atomic number of the element</span>
+<span class="sd">    coords : Coords</span>
+<span class="sd">        The coordinates of the atom in space</span>
+<span class="sd">    charge : Charge</span>
+<span class="sd">        The partial charge on the atom</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    atomic_number</span>
+<span class="sd">        See initialization parameter</span>
+<span class="sd">    coords</span>
+<span class="sd">        See initialization parameter</span>
+<span class="sd">    charge</span>
+<span class="sd">        See initialization parameter</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># NOTE: mypy incorrectly infers the argument order for __init__ to be:</span>
+    <span class="c1"># (atomic_number, charge, coords), resulting in loads of spurious errors.</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="DipoleMomentValue"><a class="viewcode-back" href="../../repESP.charges.html#repESP.charges.DipoleMomentValue">[docs]</a><span class="k">class</span> <span class="nc">DipoleMomentValue</span><span class="p">(</span><span class="nb">float</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Dipole moment value in atomic units (:math:`e\mathrm{a}_0`)</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    value : Any</span>
+<span class="sd">        Any value convertible to float representing the value in atomic units.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>  <span class="c1"># type: ignore # (Too many arguments for &quot;__new__&quot; of &quot;object&quot;)</span></div>
+
+    <span class="c1"># TODO: Add conversion to/from Debye (and printing with it).</span>
+
+
+<div class="viewcode-block" id="DipoleMoment"><a class="viewcode-back" href="../../repESP.charges.html#repESP.charges.DipoleMoment">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">DipoleMoment</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Dipole moment vector described through its three components</span>
+
+<span class="sd">    After initialization, the parameters can be accessed as attributes.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : DipoleMomentValue</span>
+<span class="sd">        The value in the *x* direction</span>
+<span class="sd">    y : DipoleMomentValue</span>
+<span class="sd">        The value in the *y* direction</span>
+<span class="sd">    z : DipoleMomentValue</span>
+<span class="sd">        The value in the *z* direction</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">x</span><span class="p">:</span> <span class="n">DipoleMomentValue</span>
+    <span class="n">y</span><span class="p">:</span> <span class="n">DipoleMomentValue</span>
+    <span class="n">z</span><span class="p">:</span> <span class="n">DipoleMomentValue</span></div>
+
+
+<div class="viewcode-block" id="QuadrupoleMomentValue"><a class="viewcode-back" href="../../repESP.charges.html#repESP.charges.QuadrupoleMomentValue">[docs]</a><span class="k">class</span> <span class="nc">QuadrupoleMomentValue</span><span class="p">(</span><span class="nb">float</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Quadrupole moment in atomic units (:math:`e\mathrm{a}_0^2`)</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    value : Any</span>
+<span class="sd">        Any value convertible to float representing the value in atomic units.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>  <span class="c1"># type: ignore # (Too many arguments for &quot;__new__&quot; of &quot;object&quot;)</span></div>
+
+    <span class="c1"># TODO: Add conversion to/from Buckingham (and printing with it).</span>
+
+<div class="viewcode-block" id="QuadrupoleMoment"><a class="viewcode-back" href="../../repESP.charges.html#repESP.charges.QuadrupoleMoment">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">QuadrupoleMoment</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Quadrupole moment tensor described through its six components</span>
+
+<span class="sd">    After initialization, the parameters can be accessed as attributes.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    xx : QuadrupoleMomentValue</span>
+<span class="sd">        The value in the *xx* direction.</span>
+<span class="sd">    yy : QuadrupoleMomentValue</span>
+<span class="sd">        The value in the *yy* direction.</span>
+<span class="sd">    zz : QuadrupoleMomentValue</span>
+<span class="sd">        The value in the *zz* direction.</span>
+<span class="sd">    xy : QuadrupoleMomentValue</span>
+<span class="sd">        The value in the *xy* direction.</span>
+<span class="sd">    xz : QuadrupoleMomentValue</span>
+<span class="sd">        The value in the *xz* direction.</span>
+<span class="sd">    yz : QuadrupoleMomentValue</span>
+<span class="sd">        The value in the *yz* direction.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">xx</span><span class="p">:</span> <span class="n">QuadrupoleMomentValue</span>
+    <span class="n">yy</span><span class="p">:</span> <span class="n">QuadrupoleMomentValue</span>
+    <span class="n">zz</span><span class="p">:</span> <span class="n">QuadrupoleMomentValue</span>
+    <span class="n">xy</span><span class="p">:</span> <span class="n">QuadrupoleMomentValue</span>
+    <span class="n">xz</span><span class="p">:</span> <span class="n">QuadrupoleMomentValue</span>
+    <span class="n">yz</span><span class="p">:</span> <span class="n">QuadrupoleMomentValue</span>
+
+    <span class="k">def</span> <span class="nf">__post__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># TODO: Only five of those are independent as the tensor is required to</span>
+        <span class="c1"># be traceless. Add this check.</span>
+        <span class="k">pass</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Jan Szopinski
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

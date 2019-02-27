@@ -1,0 +1,562 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>repESP.respin_generation module &mdash; repESP 0.2.0-dev documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="repESP.types module" href="repESP.types.html" />
+    <link rel="prev" title="repESP.respin_format module" href="repESP.respin_format.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> repESP
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="repESP.html">repESP package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="repESP.html#highlights">Highlights</a></li>
+<li class="toctree-l2"><a class="reference internal" href="repESP.html#example-problem">Example problem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="repESP.html#usage-caveats">Usage caveats</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="repESP.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="repESP.calc_fields.html">repESP.calc_fields module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.charge_util.html">repESP.charge_util module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.charges.html">repESP.charges module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.cube_format.html">repESP.cube_format module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.equivalence.html">repESP.equivalence module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.esp_util.html">repESP.esp_util module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.exceptions.html">repESP.exceptions module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.fields.html">repESP.fields module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.gaussian_format.html">repESP.gaussian_format module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.resp_charges_format.html">repESP.resp_charges_format module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.resp_wrapper.html">repESP.resp_wrapper module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.respin_format.html">repESP.respin_format module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">repESP.respin_generation module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.types.html">repESP.types module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.util.html">repESP.util module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">repESP</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="repESP.html">repESP package</a> &raquo;</li>
+        
+      <li>repESP.respin_generation module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/repESP.respin_generation.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-repESP.respin_generation">
+<span id="repesp-respin-generation-module"></span><h1>repESP.respin_generation module<a class="headerlink" href="#module-repESP.respin_generation" title="Permalink to this headline">¶</a></h1>
+<p>Creating <code class="docutils literal notranslate"><span class="pre">resp</span></code> program input for predefined ESP fitting types</p>
+<p>This module may be useful if you require custom instructions for the <code class="docutils literal notranslate"><span class="pre">resp</span></code>
+program. Otherwise, the functions in the <cite>resp_wrapper</cite> module should be
+sufficient and more convenient.</p>
+<dl class="class">
+<dt id="repESP.respin_generation.RespinGenerator">
+<em class="property">class </em><code class="descname">RespinGenerator</code><a class="reference internal" href="_modules/repESP/respin_generation.html#RespinGenerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.respin_generation.RespinGenerator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></a></p>
+<p>Interface for creators of <code class="docutils literal notranslate"><span class="pre">resp</span></code> fitting instructions</p>
+<p>This interface will be implemented differently for different types of
+fitting with the <code class="docutils literal notranslate"><span class="pre">resp</span></code> program. This module provides implementations
+for the most common fitting types.</p>
+<p>An implementation of this interface is required by the <cite>prepare_respin</cite>
+function.</p>
+<dl class="method">
+<dt id="repESP.respin_generation.RespinGenerator.resp_type">
+<code class="descname">resp_type</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="_modules/repESP/respin_generation.html#RespinGenerator.resp_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.respin_generation.RespinGenerator.resp_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the human-readable description of the type of fitting</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="repESP.respin_generation.RespinGenerator.get_ivary">
+<code class="descname">get_ivary</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; repESP.respin_format.Respin.Ivary<a class="reference internal" href="_modules/repESP/respin_generation.html#RespinGenerator.get_ivary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.respin_generation.RespinGenerator.get_ivary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the “ivary” section of the “respin” file</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="repESP.respin_generation.RespinGenerator.get_cntrl">
+<code class="descname">get_cntrl</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; repESP.respin_format.Respin.Cntrl<a class="reference internal" href="_modules/repESP/respin_generation.html#RespinGenerator.get_cntrl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.respin_generation.RespinGenerator.get_cntrl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the “cntrl” section of the “respin” file</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="repESP.respin_generation.RespRespinGenerator">
+<em class="property">class </em><code class="descname">RespRespinGenerator</code><span class="sig-paren">(</span><em>ivary: repESP.respin_format.Respin.Ivary</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/repESP/respin_generation.html#RespRespinGenerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.respin_generation.RespRespinGenerator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#repESP.respin_generation.RespinGenerator" title="repESP.respin_generation.RespinGenerator"><code class="xref py py-class docutils literal notranslate"><span class="pre">repESP.respin_generation.RespinGenerator</span></code></a></p>
+<p>Base class providing “respin” creation methods for RESP charges</p>
+<dl class="method">
+<dt id="repESP.respin_generation.RespRespinGenerator.get_ivary">
+<code class="descname">get_ivary</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; repESP.respin_format.Respin.Ivary<a class="reference internal" href="_modules/repESP/respin_generation.html#RespRespinGenerator.get_ivary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.respin_generation.RespRespinGenerator.get_ivary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the “ivary” section of the “respin” file</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="repESP.respin_generation.RespRespinGenerator.from_respin">
+<em class="property">classmethod </em><code class="descname">from_respin</code><span class="sig-paren">(</span><em>respin: repESP.respin_format.Respin</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/repESP/respin_generation.html#RespRespinGenerator.from_respin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.respin_generation.RespRespinGenerator.from_respin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alternative initialization from a “respin” file</p>
+<p>This alternative initializer expresses the fact that this object can
+be created directly from an existing “respin” file, when the contained
+“ivary” section expresses the desired per-atom fitting instructions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>respin</strong> (<a class="reference internal" href="repESP.respin_format.html#repESP.respin_format.Respin" title="repESP.respin_format.Respin"><em>Respin</em></a>) – An object representing pre-existing instructions to the <code class="docutils literal notranslate"><span class="pre">resp</span></code> program.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="repESP.respin_generation.RespRespinGenerator.from_methyl_and_methylene">
+<em class="property">classmethod </em><code class="descname">from_methyl_and_methylene</code><span class="sig-paren">(</span><em>equivalence: repESP.equivalence.Equivalence, methyl_methylene_mask: List[bool]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/repESP/respin_generation.html#RespRespinGenerator.from_methyl_and_methylene"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.respin_generation.RespRespinGenerator.from_methyl_and_methylene" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alternative initialization from chemical information</p>
+<p>The per-atom fitting instructions in the RESP charge optimization depend
+on the chemical equivalence and whether a given carbon or hydrogen atom
+belongs to a methyl or methylene group.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>equivalence</strong> (<a class="reference internal" href="repESP.equivalence.html#repESP.equivalence.Equivalence" title="repESP.equivalence.Equivalence"><em>Equivalence</em></a>) – The chemical equivalence relations between atoms in the molecule.</li>
+<li><strong>methyl_methylene_mask</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.7)"><em>typing.List</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>]</em>) – A list, in which each value describes an atom of the molecule. The
+value should be True when the atom is a carbon or hydrogen atom in
+a methyl or methylene group and False otherwise.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code></a> – Raised when the length of the <cite>values</cite> attribute of the
+<cite>equivalence</cite> argument is not equal to the length of the
+<cite>methyl_methylene_mask</cite> argument.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="repESP.respin_generation.RespStage1RespinGenerator">
+<em class="property">class </em><code class="descname">RespStage1RespinGenerator</code><span class="sig-paren">(</span><em>ivary: repESP.respin_format.Respin.Ivary</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/repESP/respin_generation.html#RespStage1RespinGenerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.respin_generation.RespStage1RespinGenerator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#repESP.respin_generation.RespRespinGenerator" title="repESP.respin_generation.RespRespinGenerator"><code class="xref py py-class docutils literal notranslate"><span class="pre">repESP.respin_generation.RespRespinGenerator</span></code></a></p>
+<p>Creator of “respin” files for 1st stage RESP fitting</p>
+<p>The original RESP procedure is conducted in two stages and this object
+prepares the input for the first stage. In this stage, carbon and hydrogen
+atoms in methyl and methylene groups vary freely, while other atoms need to
+obey chemical equivalence relations. The magnitudes of charges on all atoms
+are constrained with hyperbolic constraints with a weight factor of 0.0005.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>ivary</strong> (<a class="reference internal" href="repESP.respin_format.html#repESP.respin_format.Respin.Ivary" title="repESP.respin_format.Respin.Ivary"><em>Respin.Ivary</em></a>) – The “ivary” section of a “respin” file for 1st stage RESP fitting.</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="repESP.respin_generation.RespStage1RespinGenerator.resp_type">
+<code class="descname">resp_type</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="_modules/repESP/respin_generation.html#RespStage1RespinGenerator.resp_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.respin_generation.RespStage1RespinGenerator.resp_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the human-readable description of the type of fitting</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="repESP.respin_generation.RespStage1RespinGenerator.get_cntrl">
+<code class="descname">get_cntrl</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; repESP.respin_format.Respin.Cntrl<a class="reference internal" href="_modules/repESP/respin_generation.html#RespStage1RespinGenerator.get_cntrl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.respin_generation.RespStage1RespinGenerator.get_cntrl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the “cntrl” section of the “respin” file</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="repESP.respin_generation.RespStage1RespinGenerator.from_methyl_and_methylene">
+<em class="property">classmethod </em><code class="descname">from_methyl_and_methylene</code><span class="sig-paren">(</span><em>equivalence: repESP.equivalence.Equivalence, methyl_methylene_mask: List[bool]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/repESP/respin_generation.html#RespStage1RespinGenerator.from_methyl_and_methylene"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.respin_generation.RespStage1RespinGenerator.from_methyl_and_methylene" title="Permalink to this definition">¶</a></dt>
+<dd><p>See documentation in base class (<cite>RespRespinGenerator</cite>)</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="repESP.respin_generation.RespStage2RespinGenerator">
+<em class="property">class </em><code class="descname">RespStage2RespinGenerator</code><span class="sig-paren">(</span><em>ivary: repESP.respin_format.Respin.Ivary</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/repESP/respin_generation.html#RespStage2RespinGenerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.respin_generation.RespStage2RespinGenerator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#repESP.respin_generation.RespRespinGenerator" title="repESP.respin_generation.RespRespinGenerator"><code class="xref py py-class docutils literal notranslate"><span class="pre">repESP.respin_generation.RespRespinGenerator</span></code></a></p>
+<p>Creator of “respin” files for 2nd stage RESP fitting</p>
+<p>The original RESP procedure is conducted in two stages and this object
+prepares the input for the second stage. In this stage, carbon and hydrogen
+atoms in methyl and methylene groups are varied subject to equivalence
+relations and the magnitudes of the charges are constrained with hyperbolic
+constraints with a weight factor of 0.001. Other atoms are frozen at
+initial charge values, which should come from 1st stage fitting.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>ivary</strong> (<a class="reference internal" href="repESP.respin_format.html#repESP.respin_format.Respin.Ivary" title="repESP.respin_format.Respin.Ivary"><em>Respin.Ivary</em></a>) – The “ivary” section of a “respin” file for 2nd stage RESP fitting.</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="repESP.respin_generation.RespStage2RespinGenerator.resp_type">
+<code class="descname">resp_type</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="_modules/repESP/respin_generation.html#RespStage2RespinGenerator.resp_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.respin_generation.RespStage2RespinGenerator.resp_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the human-readable description of the type of fitting</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="repESP.respin_generation.RespStage2RespinGenerator.get_cntrl">
+<code class="descname">get_cntrl</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; repESP.respin_format.Respin.Cntrl<a class="reference internal" href="_modules/repESP/respin_generation.html#RespStage2RespinGenerator.get_cntrl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.respin_generation.RespStage2RespinGenerator.get_cntrl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the “cntrl” section of the “respin” file</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="repESP.respin_generation.RespStage2RespinGenerator.from_methyl_and_methylene">
+<em class="property">classmethod </em><code class="descname">from_methyl_and_methylene</code><span class="sig-paren">(</span><em>equivalence: repESP.equivalence.Equivalence, methyl_methylene_mask: List[bool]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/repESP/respin_generation.html#RespStage2RespinGenerator.from_methyl_and_methylene"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.respin_generation.RespStage2RespinGenerator.from_methyl_and_methylene" title="Permalink to this definition">¶</a></dt>
+<dd><p>See documentation in base class (<cite>RespRespinGenerator</cite>)</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="repESP.respin_generation.FitHydrogensOnlyRespinGenerator">
+<em class="property">class </em><code class="descname">FitHydrogensOnlyRespinGenerator</code><span class="sig-paren">(</span><em>equivalence: repESP.equivalence.Equivalence, molecule: repESP.types.Molecule[repESP.types.Atom][repESP.types.Atom]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/repESP/respin_generation.html#FitHydrogensOnlyRespinGenerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.respin_generation.FitHydrogensOnlyRespinGenerator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#repESP.respin_generation.RespinGenerator" title="repESP.respin_generation.RespinGenerator"><code class="xref py py-class docutils literal notranslate"><span class="pre">repESP.respin_generation.RespinGenerator</span></code></a></p>
+<p>Supports creation of “respin” files for fitting only hydrogen atoms</p>
+<p>The generated “respin” file instructs <code class="docutils literal notranslate"><span class="pre">resp</span></code> to perform fitting in which
+only hydrogen atoms are free to vary, subject to equivalence relations.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>equivalence</strong> (<a class="reference internal" href="repESP.equivalence.html#repESP.equivalence.Equivalence" title="repESP.equivalence.Equivalence"><em>Equivalence</em></a>) – The equivalence relations between atoms of the molecule.</li>
+<li><strong>molecule</strong> (<a class="reference internal" href="repESP.types.html#repESP.types.Molecule" title="repESP.types.Molecule"><em>Molecule</em></a><em>[</em><a class="reference internal" href="repESP.types.html#repESP.types.Atom" title="repESP.types.Atom"><em>Atom</em></a><em>]</em>) – The molecule which charges are being fitted. Only atom identities are required.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="repESP.respin_generation.FitHydrogensOnlyRespinGenerator.resp_type">
+<code class="descname">resp_type</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="_modules/repESP/respin_generation.html#FitHydrogensOnlyRespinGenerator.resp_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.respin_generation.FitHydrogensOnlyRespinGenerator.resp_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the human-readable description of the type of fitting</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="repESP.respin_generation.FitHydrogensOnlyRespinGenerator.get_ivary">
+<code class="descname">get_ivary</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; repESP.respin_format.Respin.Ivary<a class="reference internal" href="_modules/repESP/respin_generation.html#FitHydrogensOnlyRespinGenerator.get_ivary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.respin_generation.FitHydrogensOnlyRespinGenerator.get_ivary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the “ivary” section of the “respin” file</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="repESP.respin_generation.FitHydrogensOnlyRespinGenerator.get_cntrl">
+<code class="descname">get_cntrl</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; repESP.respin_format.Respin.Cntrl<a class="reference internal" href="_modules/repESP/respin_generation.html#FitHydrogensOnlyRespinGenerator.get_cntrl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.respin_generation.FitHydrogensOnlyRespinGenerator.get_cntrl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the “cntrl” section of the “respin” file</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="repESP.respin_generation.EquivalenceOnlyRespinGenerator">
+<em class="property">class </em><code class="descname">EquivalenceOnlyRespinGenerator</code><span class="sig-paren">(</span><em>equivalence: repESP.equivalence.Equivalence</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/repESP/respin_generation.html#EquivalenceOnlyRespinGenerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.respin_generation.EquivalenceOnlyRespinGenerator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#repESP.respin_generation.RespinGenerator" title="repESP.respin_generation.RespinGenerator"><code class="xref py py-class docutils literal notranslate"><span class="pre">repESP.respin_generation.RespinGenerator</span></code></a></p>
+<p>Supports creation of “respin” files with no constraints beyond equivalence</p>
+<p>The generated “respin” file instructs <code class="docutils literal notranslate"><span class="pre">resp</span></code> to perform fitting in which
+atoms are free to vary, subject only to equivalence relations.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>equivalence</strong> (<a class="reference internal" href="repESP.equivalence.html#repESP.equivalence.Equivalence" title="repESP.equivalence.Equivalence"><em>Equivalence</em></a>) – The equivalence relations between atoms of the molecule.</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="repESP.respin_generation.EquivalenceOnlyRespinGenerator.resp_type">
+<code class="descname">resp_type</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="_modules/repESP/respin_generation.html#EquivalenceOnlyRespinGenerator.resp_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.respin_generation.EquivalenceOnlyRespinGenerator.resp_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the human-readable description of the type of fitting</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="repESP.respin_generation.EquivalenceOnlyRespinGenerator.get_ivary">
+<code class="descname">get_ivary</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; repESP.respin_format.Respin.Ivary<a class="reference internal" href="_modules/repESP/respin_generation.html#EquivalenceOnlyRespinGenerator.get_ivary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.respin_generation.EquivalenceOnlyRespinGenerator.get_ivary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the “ivary” section of the “respin” file</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="repESP.respin_generation.EquivalenceOnlyRespinGenerator.get_cntrl">
+<code class="descname">get_cntrl</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; repESP.respin_format.Respin.Cntrl<a class="reference internal" href="_modules/repESP/respin_generation.html#EquivalenceOnlyRespinGenerator.get_cntrl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.respin_generation.EquivalenceOnlyRespinGenerator.get_cntrl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the “cntrl” section of the “respin” file</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="repESP.respin_generation.FrozenAtomsRespinGenerator">
+<em class="property">class </em><code class="descname">FrozenAtomsRespinGenerator</code><span class="sig-paren">(</span><em>equivalence: repESP.equivalence.Equivalence, frozen_atoms: List[int]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/repESP/respin_generation.html#FrozenAtomsRespinGenerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.respin_generation.FrozenAtomsRespinGenerator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#repESP.respin_generation.RespinGenerator" title="repESP.respin_generation.RespinGenerator"><code class="xref py py-class docutils literal notranslate"><span class="pre">repESP.respin_generation.RespinGenerator</span></code></a></p>
+<p>Supports creation of “respin” files excluding selected atoms from fitting</p>
+<p>The generated “respin” file instructs <code class="docutils literal notranslate"><span class="pre">resp</span></code> to perform fitting in which
+atoms are free to vary (subject to equivalence relations) unless they are
+explicitly excluded from the fitting by being listed in the <cite>frozen_atoms</cite>
+argument.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>equivalence</strong> (<a class="reference internal" href="repESP.equivalence.html#repESP.equivalence.Equivalence" title="repESP.equivalence.Equivalence"><em>Equivalence</em></a>) – The equivalence relations between atoms of the molecule.</li>
+<li><strong>frozen_atoms</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.7)"><em>typing.List</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>]</em>) – List of zero-based indices of atoms in the molecule which are to be
+excluded from the fitting.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="repESP.respin_generation.FrozenAtomsRespinGenerator.resp_type">
+<code class="descname">resp_type</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="_modules/repESP/respin_generation.html#FrozenAtomsRespinGenerator.resp_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.respin_generation.FrozenAtomsRespinGenerator.resp_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the human-readable description of the type of fitting</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="repESP.respin_generation.FrozenAtomsRespinGenerator.get_ivary">
+<code class="descname">get_ivary</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; repESP.respin_format.Respin.Ivary<a class="reference internal" href="_modules/repESP/respin_generation.html#FrozenAtomsRespinGenerator.get_ivary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.respin_generation.FrozenAtomsRespinGenerator.get_ivary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the “ivary” section of the “respin” file</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="repESP.respin_generation.FrozenAtomsRespinGenerator.get_cntrl">
+<code class="descname">get_cntrl</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; repESP.respin_format.Respin.Cntrl<a class="reference internal" href="_modules/repESP/respin_generation.html#FrozenAtomsRespinGenerator.get_cntrl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.respin_generation.FrozenAtomsRespinGenerator.get_cntrl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the “cntrl” section of the “respin” file</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="repESP.respin_generation.prepare_respin">
+<code class="descname">prepare_respin</code><span class="sig-paren">(</span><em>respin_generator: repESP.respin_generation.RespinGenerator, total_charge: int, molecule: repESP.types.Molecule[repESP.types.Atom][repESP.types.Atom], title: Optional[str] = None, subtitle: Optional[str] = None, read_charges: bool = False</em><span class="sig-paren">)</span> &#x2192; repESP.respin_format.Respin<a class="reference internal" href="_modules/repESP/respin_generation.html#prepare_respin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.respin_generation.prepare_respin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create <code class="docutils literal notranslate"><span class="pre">resp</span></code> program instructions based on input options</p>
+<p>This function allows to create <code class="docutils literal notranslate"><span class="pre">resp</span></code> program instructions from higher-level
+abstractions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>respin_generator</strong> (<a class="reference internal" href="#repESP.respin_generation.RespinGenerator" title="repESP.respin_generation.RespinGenerator"><em>RespinGenerator</em></a>) – An object implementing the <cite>RespinGenerator</cite> interface.
+This object expresses a given type of charge fitting through
+instructions understood by <code class="docutils literal notranslate"><span class="pre">resp</span></code>. Implementations of this interface
+for common fitting types are provided in this module.</li>
+<li><strong>total_charge</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – The total charge of the molecule.</li>
+<li><strong>molecule</strong> (<a class="reference internal" href="repESP.types.html#repESP.types.Molecule" title="repESP.types.Molecule"><em>Molecule</em></a><em>[</em><a class="reference internal" href="repESP.types.html#repESP.types.Atom" title="repESP.types.Atom"><em>Atom</em></a><em>]</em>) – The molecule which charges are being fitted. Only atom identities are required.</li>
+<li><strong>title</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>]</em><em>, </em><em>optional</em>) – The title for the optimization. If set to None (default), a default
+title will be used, referencing the <cite>repESP</cite> library and the type of
+the fitting as given by the <cite>respin_generator</cite> used.</li>
+<li><strong>subtitle</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>]</em><em>, </em><em>optional</em>) – The subttitle for the fitted structure. If set to None (default), a
+default generic subtitle will be used.</li>
+<li><strong>read_charges</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – <p>If this option is set to True, <code class="docutils literal notranslate"><span class="pre">resp</span></code> will require initial charges
+for the fitting. Defaults to False.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">It is the responsibility of the <cite>respin_generator</cite> to instruct
+<code class="docutils literal notranslate"><span class="pre">resp</span></code> to read initial charges when they affect the result of the
+optimization. This parameter should only be used when the user
+wishes to aid the optimization by supplying an initial guess.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">An object representing the fitting instructions for the <code class="docutils literal notranslate"><span class="pre">resp</span></code> program.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="repESP.respin_format.html#repESP.respin_format.Respin" title="repESP.respin_format.Respin">Respin</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="repESP.types.html" class="btn btn-neutral float-right" title="repESP.types module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="repESP.respin_format.html" class="btn btn-neutral float-left" title="repESP.respin_format module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Jan Szopinski
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

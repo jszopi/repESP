@@ -1,0 +1,447 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>repESP package &mdash; repESP 0.2.0-dev documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="repESP.calc_fields module" href="repESP.calc_fields.html" />
+    <link rel="prev" title="Welcome to repESP’s documentation!" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> repESP
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">repESP package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#highlights">Highlights</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#example-problem">Example problem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#usage-caveats">Usage caveats</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="repESP.calc_fields.html">repESP.calc_fields module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.charge_util.html">repESP.charge_util module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.charges.html">repESP.charges module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.cube_format.html">repESP.cube_format module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.equivalence.html">repESP.equivalence module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.esp_util.html">repESP.esp_util module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.exceptions.html">repESP.exceptions module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.fields.html">repESP.fields module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.gaussian_format.html">repESP.gaussian_format module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.resp_charges_format.html">repESP.resp_charges_format module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.resp_wrapper.html">repESP.resp_wrapper module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.respin_format.html">repESP.respin_format module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.respin_generation.html">repESP.respin_generation module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.types.html">repESP.types module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.util.html">repESP.util module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">repESP</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>repESP package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/repESP.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-repESP">
+<span id="repesp-package"></span><h1>repESP package<a class="headerlink" href="#module-repESP" title="Permalink to this headline">¶</a></h1>
+<p><em>Reproducing molecular ESP from partial charges and more…</em></p>
+<p>This library has been created to aid research in the area of partial charge
+assignment and molecular electrostatic potential (ESP) fields.</p>
+<div class="section" id="highlights">
+<h2>Highlights<a class="headerlink" href="#highlights" title="Permalink to this headline">¶</a></h2>
+<p>The following is a non-exhaustive list of the capabilities of this library
+alongside the relevant modules:</p>
+<ul class="simple">
+<li>Extracting charges from Gaussian output files (<cite>gaussian_format</cite> module) and
+<code class="docutils literal notranslate"><span class="pre">resp</span></code> input/output files (<cite>respin_charges_format</cite> module).</li>
+<li>Parsing and writing Gaussian “cube” files (<cite>cube_format</cite> module). The extracted
+values and the associated <cite>Mesh</cite> object (collection of points in space) are
+contained in a <cite>Field</cite> object, an instance of a class central to this library.</li>
+<li>Parsing ESP field information from the file format generated by Gaussian and
+saving it to a <code class="docutils literal notranslate"><span class="pre">resp</span></code>-compatible format (<cite>esp_util</cite> module). This is a
+convenient way of obtaining popular fitting meshes, such as MK and CHelpG.</li>
+<li>Reproducing ESP field at points of a mesh from point charges on atoms
+and calculating e.g. the difference from or RMS error with respect to the
+another ESP field (<cite>calc_fields</cite> module).</li>
+<li>Creating single-molecule, single-structure input files for the <code class="docutils literal notranslate"><span class="pre">resp</span></code> program
+(<cite>respin_format</cite> module). For common types of fitting, such as two-stage RESP
+or fitting with equivalencing, running the <code class="docutils literal notranslate"><span class="pre">resp</span></code> program is conveniently
+abstracted away (<cite>resp_wrapper</cite> module). It is also easy to implement
+customized variations of the fitting (<cite>respin_generation</cite> module).</li>
+<li>“<em>A posteriori</em>” averaging of charges according to provided chemical
+equivalence relations (<cite>charge_util</cite> module).</li>
+</ul>
+</div>
+<div class="section" id="example-problem">
+<h2>Example problem<a class="headerlink" href="#example-problem" title="Permalink to this headline">¶</a></h2>
+<p>Say that you came up with a new method of assigning partial charges. In this
+method, the charges on heavy atoms are identical to NPA charges and charges on
+hydrogen atoms are optimized to best fit the molecular ESP field. This example
+will walk you through the steps to compute the charges for a trimethylamine
+cation (NMe<sub>3</sub>H<sup>+</sup>) and evaluate fit quality with respect to
+the actual ESP field.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The full script is available alongside its expected output in the <cite>example</cite>
+directory. All necessary input data files are available in the <a class="reference external" href="https://github.com/jszopi/repESP/tree/master/data/NMe3H_plus">data/NMe3H_plus</a> directory
+of the GitHub repo. Gaussian input files are currently not available but
+the analogous input files for a methane molecule are available in the
+<a class="reference external" href="https://github.com/jszopi/repESP/tree/master/data/methane/prep">data/methane/prep</a>
+directory.</p>
+</div>
+<ol class="arabic">
+<li><p class="first">Say that you want to use the CHelpG fitting points as the sampling mesh for the
+molecular ESP field. Gaussian will generate such file when passed the
+<code class="docutils literal notranslate"><span class="pre">Pop=CHelpG</span></code> and <code class="docutils literal notranslate"><span class="pre">IOp(6/50=1)</span></code> options. The name of the .esp file must be
+given as the last line of the input file. In this example, the filename was
+“NMe3H_plus_chelpg.esp”. The code to parse the file is as follows:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">repESP.esp_util</span> <span class="k">import</span> <span class="n">parse_gaussian_esp</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;NMe3H_plus_chelpg.esp&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">gaussian_esp_data</span> <span class="o">=</span> <span class="n">parse_gaussian_esp</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+<span class="n">molecule</span> <span class="o">=</span> <span class="n">gaussian_esp_data</span><span class="o">.</span><span class="n">molecule</span>
+<span class="n">esp_field</span> <span class="o">=</span> <span class="n">gaussian_esp_data</span><span class="o">.</span><span class="n">field</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Run a Gaussian calculation with the <code class="docutils literal notranslate"><span class="pre">Pop=NPA</span></code> option. The NPA charges
+can then be parsed from the output file as follows:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">repESP.gaussian_format</span> <span class="k">import</span> <span class="n">get_charges_from_log</span><span class="p">,</span> <span class="n">NpaChargeSectionParser</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;NMe3H_plus_nbo.log&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">npa_charges</span> <span class="o">=</span> <span class="n">get_charges_from_log</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">NpaChargeSectionParser</span><span class="p">(),</span> <span class="n">molecule</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Prepare data regarding chemical equivalence relationships between atoms. An
+Antechamber file (.ac) is required to generate two “respin” files using the
+<code class="docutils literal notranslate"><span class="pre">respgen</span></code> program (available from the Antechamber program suite). To
+generate the files, run in your shell:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>antechamber -i NMe3H_plus.log -fi gout -o NMe3H_plus.ac -fo ac
+respgen -i NMe3H_plus.ac -o NMe3H_plus.respin1 -f resp1
+respgen -i NMe3H_plus.ac -o NMe3H_plus.respin2 -f resp2
+</pre></div>
+</div>
+<p>The <cite>Equivalence</cite> object can then be generated:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">repESP.respin_format</span> <span class="k">import</span> <span class="n">parse_respin</span><span class="p">,</span> <span class="n">get_equivalence_from_two_stage_resp_ivary</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;NMe3H_plus_mk.respin1&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">respin1_file</span><span class="p">:</span>
+    <span class="n">respin1</span> <span class="o">=</span> <span class="n">parse_respin</span><span class="p">(</span><span class="n">respin1_file</span><span class="p">)</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;NMe3H_plus_mk.respin2&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">respin2_file</span><span class="p">:</span>
+    <span class="n">respin2</span> <span class="o">=</span> <span class="n">parse_respin</span><span class="p">(</span><span class="n">respin2_file</span><span class="p">)</span>
+
+<span class="n">equivalence</span> <span class="o">=</span> <span class="n">get_equivalence_from_two_stage_resp_ivary</span><span class="p">(</span><span class="n">respin1</span><span class="o">.</span><span class="n">ivary</span><span class="p">,</span> <span class="n">respin2</span><span class="o">.</span><span class="n">ivary</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Alternatively, if you’re currently unable to generate the “respin” files,
+<cite>equivalence</cite> can be specified manually:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">repESP.equivalence</span> <span class="k">import</span> <span class="n">Equivalence</span>
+
+<span class="n">equivalence</span> <span class="o">=</span> <span class="n">Equivalence</span><span class="p">([</span>
+    <span class="kc">None</span><span class="p">,</span>  <span class="c1"># C0</span>
+    <span class="kc">None</span><span class="p">,</span>  <span class="c1"># H1</span>
+    <span class="mi">1</span><span class="p">,</span>     <span class="c1"># H2, equivalenced to H1</span>
+    <span class="mi">1</span><span class="p">,</span>     <span class="c1"># H3, equivalenced to H1</span>
+    <span class="mi">0</span><span class="p">,</span>     <span class="c1"># C4, equivalenced to C0</span>
+    <span class="mi">1</span><span class="p">,</span>     <span class="c1"># H5, equivalenced to H1</span>
+    <span class="mi">1</span><span class="p">,</span>     <span class="c1"># H6, equivalenced to H1</span>
+    <span class="mi">1</span><span class="p">,</span>     <span class="c1"># H7, equivalenced to H1</span>
+    <span class="mi">0</span><span class="p">,</span>     <span class="c1"># C8, equivalenced to C0</span>
+    <span class="mi">1</span><span class="p">,</span>     <span class="c1"># H9, equivalenced to H1</span>
+    <span class="mi">1</span><span class="p">,</span>     <span class="c1"># H10, equivalenced to H1</span>
+    <span class="mi">1</span><span class="p">,</span>     <span class="c1"># H11, equivalenced to H1</span>
+    <span class="kc">None</span><span class="p">,</span>  <span class="c1"># N12</span>
+    <span class="kc">None</span>   <span class="c1"># H13</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Perform fitting partial charges on hydrogen atoms. This invokes the <code class="docutils literal notranslate"><span class="pre">resp</span></code>
+program, so it has to be in your <code class="docutils literal notranslate"><span class="pre">PATH</span></code> variable:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">repESP.esp_util</span> <span class="k">import</span> <span class="n">EspData</span>
+<span class="kn">from</span> <span class="nn">repESP.resp_wrapper</span> <span class="k">import</span> <span class="n">fit_hydrogens_only</span>
+
+<span class="n">esp_data</span> <span class="o">=</span> <span class="n">EspData</span><span class="o">.</span><span class="n">from_gaussian</span><span class="p">(</span><span class="n">gaussian_esp_data</span><span class="p">)</span>
+
+<span class="n">my_charges</span> <span class="o">=</span> <span class="n">fit_hydrogens_only</span><span class="p">(</span>
+    <span class="n">esp_data</span><span class="p">,</span>
+    <span class="n">equivalence</span><span class="p">,</span>
+    <span class="n">molecule</span><span class="p">,</span>
+    <span class="n">total_charge</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>  <span class="c1"># cation, +1 total charge</span>
+    <span class="n">initial_charges</span><span class="o">=</span><span class="n">npa_charges</span>  <span class="c1"># will be used for non-hydrogen atoms</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">To reproduce the ESP from your charges, you have to first create a <cite>Molecule</cite>
+object identical to the one in the <cite>molecule</cite> variable but with your new
+charges instead of CHelpG:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">repESP.charges</span> <span class="k">import</span> <span class="n">AtomWithCoordsAndCharge</span>
+<span class="kn">from</span> <span class="nn">repESP.types</span> <span class="k">import</span> <span class="n">Molecule</span>
+
+<span class="n">molecule_with_my_charges</span> <span class="o">=</span> <span class="n">Molecule</span><span class="p">([</span>
+    <span class="n">AtomWithCoordsAndCharge</span><span class="p">(</span>
+        <span class="n">atom</span><span class="o">.</span><span class="n">atomic_number</span><span class="p">,</span>
+        <span class="n">atom</span><span class="o">.</span><span class="n">coords</span><span class="p">,</span>
+        <span class="n">my_charge</span>
+    <span class="p">)</span> <span class="k">for</span> <span class="n">atom</span><span class="p">,</span> <span class="n">my_charge</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">molecule</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span> <span class="n">my_charges</span><span class="p">)</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+<p>You can then reproduce the ESP field from your partial charges and calculate fit quality:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">repESP.calc_fields</span> <span class="k">import</span> <span class="n">esp_from_charges</span><span class="p">,</span> <span class="n">calc_rms_error</span><span class="p">,</span> <span class="n">calc_relative_rms_error</span>
+
+<span class="n">reproduced_esp</span> <span class="o">=</span> <span class="n">esp_from_charges</span><span class="p">(</span><span class="n">esp_field</span><span class="o">.</span><span class="n">mesh</span><span class="p">,</span> <span class="n">molecule_with_my_charges</span><span class="p">)</span>
+<span class="n">rms</span> <span class="o">=</span> <span class="n">calc_rms_error</span><span class="p">(</span><span class="n">esp_field</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">reproduced_esp</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+<span class="n">rrms</span> <span class="o">=</span> <span class="n">calc_relative_rms_error</span><span class="p">(</span><span class="n">esp_field</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">reproduced_esp</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>You could also evaluate the fit quality of the original CHelpG and NPA charges
+for comparison. Extending the script to do that is left as an exercise to the
+reader. You should find that the fit quality of your charges is better than
+that of NPA but poorer than that of CHelpG.</p>
+</li>
+</ol>
+</div>
+<div class="section" id="usage-caveats">
+<h2>Usage caveats<a class="headerlink" href="#usage-caveats" title="Permalink to this headline">¶</a></h2>
+<ul>
+<li><p class="first">This library uses atomic units for all physical properties. If you’re dealing with
+input in other units, you should convert as early in your program as possible.
+If you require output in other units, you should convert as late as possible.</p>
+</li>
+<li><p class="first">This library attempts to enforce consistent use of values describing physical
+properties. You shouldn’t need to use “naked” <cite>float</cite> values to represent
+physical properties and should use the provided classes instead, which are
+lightweight and inherit from <cite>float</cite>. For example, if you mean to specify a
+bond length of 0.5 a.u., you should use <code class="docutils literal notranslate"><span class="pre">types.Dist(0.5)</span></code> and if you mean
+to specify a charge of -0.1 e, you should use <code class="docutils literal notranslate"><span class="pre">charges.Charge(-0.1)</span></code>. This
+aims to ensure that you never try to subtract distance from a charge or try
+to add values in different units. This area of the library may not be
+bulletproof and some arithmetic operations may not result in the correct
+classes and will fall back onto the <cite>float</cite> type, possibly causing type
+checker errors. Note that you will be able to use the inheriting types like
+<cite>Dist</cite> in any context you can use a <cite>float</cite>.</p>
+</li>
+<li><p class="first">Programs using this library are required to use correct types for input
+arguments. The types are documented here and additionally the user should run
+a static type checker, like <code class="docutils literal notranslate"><span class="pre">mypy</span></code> on their script beforehand. To practice,
+try introducing a type error into the example script and observe the output of:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mypy</span> <span class="n">example</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+<p>Using a static type checker will save the user debugging tricky runtime
+errors which tend to occur later in the program. Even if the program execution
+is not stopped by a runtime error, the library may produce erroneous results
+if the passed-in arguments don’t follow the documented types.</p>
+</li>
+</ul>
+</div>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="repESP.calc_fields.html">repESP.calc_fields module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="repESP.charge_util.html">repESP.charge_util module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="repESP.charges.html">repESP.charges module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="repESP.cube_format.html">repESP.cube_format module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="repESP.equivalence.html">repESP.equivalence module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="repESP.esp_util.html">repESP.esp_util module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="repESP.exceptions.html">repESP.exceptions module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="repESP.fields.html">repESP.fields module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="repESP.gaussian_format.html">repESP.gaussian_format module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="repESP.resp_charges_format.html">repESP.resp_charges_format module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="repESP.resp_wrapper.html">repESP.resp_wrapper module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="repESP.respin_format.html">repESP.respin_format module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="repESP.respin_generation.html">repESP.respin_generation module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="repESP.types.html">repESP.types module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="repESP.util.html">repESP.util module</a></li>
+</ul>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="repESP.calc_fields.html" class="btn btn-neutral float-right" title="repESP.calc_fields module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to repESP’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Jan Szopinski
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

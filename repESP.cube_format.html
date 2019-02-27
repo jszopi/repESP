@@ -1,0 +1,428 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>repESP.cube_format module &mdash; repESP 0.2.0-dev documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="repESP.equivalence module" href="repESP.equivalence.html" />
+    <link rel="prev" title="repESP.charges module" href="repESP.charges.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> repESP
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="repESP.html">repESP package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="repESP.html#highlights">Highlights</a></li>
+<li class="toctree-l2"><a class="reference internal" href="repESP.html#example-problem">Example problem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="repESP.html#usage-caveats">Usage caveats</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="repESP.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="repESP.calc_fields.html">repESP.calc_fields module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.charge_util.html">repESP.charge_util module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.charges.html">repESP.charges module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">repESP.cube_format module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.equivalence.html">repESP.equivalence module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.esp_util.html">repESP.esp_util module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.exceptions.html">repESP.exceptions module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.fields.html">repESP.fields module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.gaussian_format.html">repESP.gaussian_format module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.resp_charges_format.html">repESP.resp_charges_format module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.resp_wrapper.html">repESP.resp_wrapper module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.respin_format.html">repESP.respin_format module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.respin_generation.html">repESP.respin_generation module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.types.html">repESP.types module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.util.html">repESP.util module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">repESP</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="repESP.html">repESP package</a> &raquo;</li>
+        
+      <li>repESP.cube_format module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/repESP.cube_format.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-repESP.cube_format">
+<span id="repesp-cube-format-module"></span><h1>repESP.cube_format module<a class="headerlink" href="#module-repESP.cube_format" title="Permalink to this headline">¶</a></h1>
+<p>Parsing and writing Gaussian “cube” format describing molecular fields</p>
+<dl class="class">
+<dt id="repESP.cube_format.Cube">
+<em class="property">class </em><code class="descname">Cube</code><span class="sig-paren">(</span><em>info: repESP.cube_format.Cube.Info, molecule: repESP.types.Molecule[repESP.charges.AtomWithCoordsAndCharge][repESP.charges.AtomWithCoordsAndCharge], field: repESP.fields.Field[~FieldValue][FieldValue]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/repESP/cube_format.html#Cube"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.cube_format.Cube" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Generic" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">typing.Generic</span></code></a></p>
+<p>Dataclass representing information in a Gaussian “cube” file</p>
+<p>This class is generic in the type of the values of the field described by
+the cube file. This type can be any type, as can <cite>fields.FieldValue</cite>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>info</strong> (<a class="reference internal" href="#repESP.cube_format.Cube.Info" title="repESP.cube_format.Cube.Info"><em>Info</em></a>) – Additional, less structured information about the cube file.</li>
+<li><strong>molecule</strong> (<a class="reference internal" href="repESP.types.html#repESP.types.Molecule" title="repESP.types.Molecule"><em>Molecule</em></a><em>[</em><a class="reference internal" href="repESP.charges.html#repESP.charges.AtomWithCoordsAndCharge" title="repESP.charges.AtomWithCoordsAndCharge"><em>AtomWithCoordsAndCharge</em></a><em>]</em>) – The molecule which field is described by the cube file. Atoms have
+coordinates and partial charges specified.</li>
+<li><strong>field</strong> (<a class="reference internal" href="repESP.fields.html#repESP.fields.Field" title="repESP.fields.Field"><em>Field</em></a><em>[</em><em>FieldValue</em><em>]</em>) – The field described by the cube file.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="repESP.cube_format.Cube.info">
+<code class="descname">info</code><a class="headerlink" href="#repESP.cube_format.Cube.info" title="Permalink to this definition">¶</a></dt>
+<dd><p>See initialization parameter</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="repESP.cube_format.Cube.molecule">
+<code class="descname">molecule</code><a class="headerlink" href="#repESP.cube_format.Cube.molecule" title="Permalink to this definition">¶</a></dt>
+<dd><p>See initialization parameter</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="repESP.cube_format.Cube.field">
+<code class="descname">field</code><a class="headerlink" href="#repESP.cube_format.Cube.field" title="Permalink to this definition">¶</a></dt>
+<dd><p>See initialization parameter</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="repESP.cube_format.Cube.Info">
+<em class="property">class </em><code class="descname">Info</code><span class="sig-paren">(</span><em>input_line: str</em>, <em>title_line: str</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/repESP/cube_format.html#Cube.Info"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.cube_format.Cube.Info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Additional, less structured information about the cube file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>input_line</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – The top line of a cube file, typically containing information
+regarding the Gaussian input parameters used.</li>
+<li><strong>title_line</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – The second line of a cube file, containing a free-form title.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="repESP.cube_format.Cube.Info.input_line">
+<code class="descname">input_line</code><a class="headerlink" href="#repESP.cube_format.Cube.Info.input_line" title="Permalink to this definition">¶</a></dt>
+<dd><p>See initialization parameter</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="repESP.cube_format.Cube.Info.title_line">
+<code class="descname">title_line</code><a class="headerlink" href="#repESP.cube_format.Cube.Info.title_line" title="Permalink to this definition">¶</a></dt>
+<dd><p>See initialization parameter</p>
+</dd></dl>
+
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="repESP.cube_format.parse_cube">
+<code class="descname">parse_cube</code><span class="sig-paren">(</span><em>f: TextIO, make_value: Callable[[repESP.cube_format.Cube.Info, str], FieldValue]</em><span class="sig-paren">)</span> &#x2192; repESP.cube_format.Cube[~FieldValue][FieldValue]<a class="reference internal" href="_modules/repESP/cube_format.html#parse_cube"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.cube_format.parse_cube" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse a file in the Gaussian “cube” file format</p>
+<p>You probably mean to use <cite>parse_ed_cube</cite> or <cite>parse_esp_cube</cite> unless
+your cube file is of neither of those types.</p>
+<p>Note that the values are expected to be space separated. If your cube file
+comes from elsewhere than Gaussian, you should ensure that the coordinates
+are given in bohr.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>f</strong> (<em>TextIO</em>) – File object opened in read mode containing the cube file to be parsed.</li>
+<li><strong>make_value</strong> (<em>Callable</em><em>[</em><em>[</em><a class="reference internal" href="#repESP.cube_format.Cube.Info" title="repESP.cube_format.Cube.Info"><em>Cube.Info</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>]</em><em>, </em><em>FieldValue</em><em>]</em>) – <p>A function taking two parameters: the cube information and a string
+representing the field value. The function should parse the field value
+into the desired internal representation, for example an <cite>Esp</cite> object.
+The cube information is provided in case verification of the cube file
+type is required.</p>
+<p class="rubric">Example</p>
+<p>In the simplest case this could be:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">lambda</span> <span class="n">_</span><span class="p">,</span> <span class="n">str_</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">str_</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>which ignores the cube information (thus performing no verification)
+and simply parses the string value as a float.</p>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><code class="xref py py-exc docutils literal notranslate"><span class="pre">InputFormatError</span></code> – Raised when the file does not follow the expected format.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Data from the parsed cube file.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#repESP.cube_format.Cube" title="repESP.cube_format.Cube">Cube</a>[FieldValue]</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="repESP.cube_format.parse_esp_cube">
+<code class="descname">parse_esp_cube</code><span class="sig-paren">(</span><em>f: TextIO</em>, <em>verify_title=True</em><span class="sig-paren">)</span> &#x2192; repESP.cube_format.Cube[repESP.fields.Esp][repESP.fields.Esp]<a class="reference internal" href="_modules/repESP/cube_format.html#parse_esp_cube"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.cube_format.parse_esp_cube" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse a Gaussian “cube” file describing an ESP field</p>
+<p>If your cube file comes from elsewhere than Gaussian, you should ensure
+that the coordinates are given in bohr and ESP values in atomic units.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>f</strong> (<em>TextIO</em>) – File object opened in read mode containing the cube file to be parsed.</li>
+<li><strong>verify_title</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If this flag is set to True (default), an <cite>InputFormatError</cite> will
+be raised if the cube title does not start with the string
+<code class="docutils literal notranslate"><span class="pre">&quot;</span> <span class="pre">Electrostatic</span> <span class="pre">potential&quot;</span></code>.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Data from the parsed cube file.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#repESP.cube_format.Cube" title="repESP.cube_format.Cube">Cube</a>[<a class="reference internal" href="repESP.fields.html#repESP.fields.Esp" title="repESP.fields.Esp">Esp</a>]</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="repESP.cube_format.parse_ed_cube">
+<code class="descname">parse_ed_cube</code><span class="sig-paren">(</span><em>f: TextIO</em>, <em>verify_title=True</em><span class="sig-paren">)</span> &#x2192; repESP.cube_format.Cube[repESP.fields.Ed][repESP.fields.Ed]<a class="reference internal" href="_modules/repESP/cube_format.html#parse_ed_cube"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.cube_format.parse_ed_cube" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse a Gaussian “cube” file describing electron density field</p>
+<p>If your cube file comes from elsewhere than Gaussian, you should ensure
+that the coordinates are given in bohr and electron density values in
+atomic units.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>f</strong> (<em>TextIO</em>) – File object opened in read mode containing the cube file to be parsed.</li>
+<li><strong>verify_title</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If this flag is set to True (default), an <cite>InputFormatError</cite> will
+be raised if the cube title does not start with the string
+<code class="docutils literal notranslate"><span class="pre">&quot;</span> <span class="pre">Electron</span> <span class="pre">density&quot;</span></code>.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Data from the parsed cube file.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#repESP.cube_format.Cube" title="repESP.cube_format.Cube">Cube</a>[<a class="reference internal" href="repESP.fields.html#repESP.fields.Ed" title="repESP.fields.Ed">Ed</a>]</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="repESP.cube_format.write_cube">
+<code class="descname">write_cube</code><span class="sig-paren">(</span><em>f: TextIO, cube: repESP.cube_format.Cube[~NumericValue][NumericValue]</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/repESP/cube_format.html#write_cube"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.cube_format.write_cube" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write a Gaussian “cube” file described by the given input data</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>f</strong> (<em>TextIO</em>) – File object to which the supplied data is to be saved. Must be opened
+in write mode.</li>
+<li><strong>cube</strong> (<a class="reference internal" href="#repESP.cube_format.Cube" title="repESP.cube_format.Cube"><em>Cube</em></a><em>[</em><em>Field.NumericValue</em><em>]</em>) – The dataclass containing the information needed to create a cube
+file. Note that only cube files describing fields with values matching
+<cite>Field.NumericValue</cite> are supported.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="repESP.equivalence.html" class="btn btn-neutral float-right" title="repESP.equivalence module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="repESP.charges.html" class="btn btn-neutral float-left" title="repESP.charges module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Jan Szopinski
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

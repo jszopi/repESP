@@ -1,0 +1,567 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>repESP.gaussian_format &mdash; repESP 0.2.0-dev documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> repESP
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../repESP.html">repESP package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">repESP</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>repESP.gaussian_format</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for repESP.gaussian_format</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Parsing the Gaussian output format (.log or .out files)&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">repESP.charges</span> <span class="k">import</span> <span class="n">Charge</span>
+<span class="kn">from</span> <span class="nn">repESP.fields</span> <span class="k">import</span> <span class="n">Esp</span>
+<span class="kn">from</span> <span class="nn">repESP.exceptions</span> <span class="k">import</span> <span class="n">InputFormatError</span>
+<span class="kn">from</span> <span class="nn">repESP.types</span> <span class="k">import</span> <span class="n">Coords</span><span class="p">,</span> <span class="n">Molecule</span>
+
+<span class="kn">from</span> <span class="nn">abc</span> <span class="k">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="k">import</span> <span class="n">dataclass</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">TextIO</span><span class="p">,</span> <span class="n">Tuple</span>
+
+
+<div class="viewcode-block" id="ChargesSectionData"><a class="viewcode-back" href="../../repESP.gaussian_format.html#repESP.gaussian_format.ChargesSectionData">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">ChargesSectionData</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Dataclass representing the charges section of Gaussian output</span>
+
+<span class="sd">    Currently this dataclass only supports the charges but in the future it may</span>
+<span class="sd">    contain more information that can be obtained from this section of the</span>
+<span class="sd">    Gaussian output.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    charges : typing.List[Charge]</span>
+<span class="sd">        List of charges</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    charges</span>
+<span class="sd">        See initialization parameter</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">charges</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Charge</span><span class="p">]</span></div>
+    <span class="c1"># TODO: Could be extended with Molecule[Atom]</span>
+
+
+<div class="viewcode-block" id="ChargesSectionParser"><a class="viewcode-back" href="../../repESP.gaussian_format.html#repESP.gaussian_format.ChargesSectionParser">[docs]</a><span class="k">class</span> <span class="nc">ChargesSectionParser</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Interface required from parsers for the charges section</span>
+
+<span class="sd">    This interface will be implemented differently for the various charge types</span>
+<span class="sd">    supported by Gaussian. Implementations for commonly used charges are provided.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ChargesSectionParser.is_section_start"><a class="viewcode-back" href="../../repESP.gaussian_format.html#repESP.gaussian_format.ChargesSectionParser.is_section_start">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">is_section_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Check whether the given line is the start of charges section</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        line : str</span>
+<span class="sd">            A line from Gaussian output file.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            Whether the given line is the start of the charges section for the</span>
+<span class="sd">            specific charge type.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="ChargesSectionParser.is_section_end"><a class="viewcode-back" href="../../repESP.gaussian_format.html#repESP.gaussian_format.ChargesSectionParser.is_section_end">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">is_section_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Check whether the given line is the end of charges section</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        line : str</span>
+<span class="sd">            A line from Gaussian output file.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            Whether the given line is the end of the charges section for the</span>
+<span class="sd">            specific charge type.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="ChargesSectionParser.parse_section"><a class="viewcode-back" href="../../repESP.gaussian_format.html#repESP.gaussian_format.ChargesSectionParser.parse_section">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">parse_section</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">ChargesSectionData</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Parse the charges section to obtain all information possible</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        section : typing.List[str]</span>
+<span class="sd">            The list of lines identified to be the charges section of the</span>
+<span class="sd">            Gaussian output file.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ChargesSectionData</span>
+<span class="sd">            All the data that can be parsed from the charges section.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div></div>
+
+
+<div class="viewcode-block" id="EspChargesSectionData"><a class="viewcode-back" href="../../repESP.gaussian_format.html#repESP.gaussian_format.EspChargesSectionData">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">EspChargesSectionData</span><span class="p">(</span><span class="n">ChargesSectionData</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Dataclass representing the ESP charges section of Gaussian output</span>
+
+<span class="sd">    Compared to `ChargesSectionData`, the charges section of ESP charges</span>
+<span class="sd">    additionally contains information regarding the quality of the reproduced</span>
+<span class="sd">    field (RMS and RRMS).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    charges : typing.List[Charge]</span>
+<span class="sd">        List of charges</span>
+<span class="sd">    rms : Esp</span>
+<span class="sd">        The value of RMS error of the ESP field reproduced from partial charges</span>
+<span class="sd">        with respect to the true ESP field.</span>
+<span class="sd">    rrms : float</span>
+<span class="sd">        The value of relative RMS error i.e. same as `rms` but relative to the</span>
+<span class="sd">        RMS value of the true ESP field.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    charges</span>
+<span class="sd">        See initialization parameter</span>
+<span class="sd">    rms</span>
+<span class="sd">        See initialization parameter</span>
+<span class="sd">    rrms</span>
+<span class="sd">        See initialization parameter</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">rms</span><span class="p">:</span> <span class="n">Esp</span>
+    <span class="n">rrms</span><span class="p">:</span> <span class="nb">float</span></div>
+    <span class="c1"># TODO: Could be extended with number of points</span>
+
+
+<div class="viewcode-block" id="EspChargesSectionParser"><a class="viewcode-back" href="../../repESP.gaussian_format.html#repESP.gaussian_format.EspChargesSectionParser">[docs]</a><span class="k">class</span> <span class="nc">EspChargesSectionParser</span><span class="p">(</span><span class="n">ChargesSectionParser</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Base class providing parser methods common to all ESP charge types</span>
+
+<span class="sd">    This base class implements the `is_section_end` and `parse_section` methods,</span>
+<span class="sd">    which are common to all ESP charge types.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="EspChargesSectionParser.is_section_end"><a class="viewcode-back" href="../../repESP.gaussian_format.html#repESP.gaussian_format.EspChargesSectionParser.is_section_end">[docs]</a>    <span class="k">def</span> <span class="nf">is_section_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39; Sum of &#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="EspChargesSectionParser.parse_section"><a class="viewcode-back" href="../../repESP.gaussian_format.html#repESP.gaussian_format.EspChargesSectionParser.parse_section">[docs]</a>    <span class="k">def</span> <span class="nf">parse_section</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">EspChargesSectionData</span><span class="p">:</span>
+
+        <span class="n">charges_and_stats_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">&quot; Charges from ESP fit, RMS=\s+(\d+\.\d+) RRMS=\s+(\d+\.\d+):$&quot;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">section</span><span class="p">):</span>
+            <span class="n">matched_charges_and_stats</span> <span class="o">=</span> <span class="n">charges_and_stats_re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">matched_charges_and_stats</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">rms</span> <span class="o">=</span> <span class="n">Esp</span><span class="p">(</span><span class="n">matched_charges_and_stats</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+                <span class="n">rrms</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">matched_charges_and_stats</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+                <span class="k">break</span>
+
+        <span class="n">charges</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">section</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">3</span><span class="p">:]:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_section_end</span><span class="p">(</span><span class="n">line</span><span class="p">):</span>
+                <span class="k">break</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">_label</span><span class="p">,</span> <span class="n">_symbol</span><span class="p">,</span> <span class="n">charge</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">InputFormatError</span><span class="p">(</span>
+                    <span class="n">f</span><span class="s2">&quot;Failed to parse the charge on atom from the following line:</span><span class="se">\n</span><span class="si">{line}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+
+            <span class="n">charges</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Charge</span><span class="p">(</span><span class="n">charge</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">EspChargesSectionData</span><span class="p">(</span>
+            <span class="n">charges</span><span class="p">,</span>
+            <span class="n">rms</span><span class="p">,</span>
+            <span class="n">rrms</span>
+        <span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="get_charges_from_log"><a class="viewcode-back" href="../../repESP.gaussian_format.html#repESP.gaussian_format.get_charges_from_log">[docs]</a><span class="k">def</span> <span class="nf">get_charges_from_log</span><span class="p">(</span>
+    <span class="n">f</span><span class="p">:</span> <span class="n">TextIO</span><span class="p">,</span>
+    <span class="n">charges_section_parser</span><span class="p">:</span> <span class="n">ChargesSectionParser</span><span class="p">,</span>
+    <span class="n">verify_against</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Molecule</span><span class="p">]</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">occurrence</span><span class="p">:</span> <span class="nb">int</span><span class="o">=-</span><span class="mi">1</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Charge</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Extract charges from the charges section in Gaussian output</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    f : TextIO</span>
+<span class="sd">        File object opened in read mode containing the Gaussian `.log`/`.out`</span>
+<span class="sd">        output file from which the charges are to be extracted.</span>
+<span class="sd">    charges_section_parser : ChargesSectionParser</span>
+<span class="sd">        Object of a class implementing the `ChargesSectionParser` interface for</span>
+<span class="sd">        the desired charge type, e.g. `MullikenChargeSectionParser()`.</span>
+<span class="sd">    verify_against : Molecule, optional</span>
+<span class="sd">        Molecule against which the output is to be verified. Defaults to None.</span>
+<span class="sd">        Note that currently the verification only involves comparing the number</span>
+<span class="sd">        of extracted charges against the number of atoms. In the future this may</span>
+<span class="sd">        be extended to verifying the atom identities.</span>
+<span class="sd">    occurrence : int, optional</span>
+<span class="sd">        Determines which charges section to use for extracting the charges.</span>
+<span class="sd">        Defaults to -1 i.e. the last section.</span>
+
+<span class="sd">        On occasion, the output can contain multiple charge sections regarding</span>
+<span class="sd">        the same charge type. AFAIR, this happens when multiple Gaussian jobs</span>
+<span class="sd">        were processed. Thus, the sensible default is to select the final one,</span>
+<span class="sd">        to select the final optimization. Other values can be specified,</span>
+<span class="sd">        starting with 0 for the first occurrence.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    typing.List[Charge]</span>
+<span class="sd">        List of charges in order of occurrence in output file.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    InputFormatError</span>
+<span class="sd">        Raised when the file does not follow the expected format.</span>
+<span class="sd">    IndexError</span>
+<span class="sd">        Raised when the requested occurence of the charges section cannot</span>
+<span class="sd">        be found could not be found in the output file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">charges_section</span> <span class="o">=</span> <span class="n">_get_charges_section_from_log</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">charges_section_parser</span><span class="p">,</span> <span class="n">occurrence</span><span class="p">)</span>
+    <span class="n">parsed_charges_section</span> <span class="o">=</span> <span class="n">charges_section_parser</span><span class="o">.</span><span class="n">parse_section</span><span class="p">(</span><span class="n">charges_section</span><span class="p">)</span>
+    <span class="n">_verify_charges_section</span><span class="p">(</span><span class="n">parsed_charges_section</span><span class="p">,</span> <span class="n">verify_against</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">parsed_charges_section</span><span class="o">.</span><span class="n">charges</span></div>
+
+
+<div class="viewcode-block" id="get_esp_fit_stats_from_log"><a class="viewcode-back" href="../../repESP.gaussian_format.html#repESP.gaussian_format.get_esp_fit_stats_from_log">[docs]</a><span class="k">def</span> <span class="nf">get_esp_fit_stats_from_log</span><span class="p">(</span>
+    <span class="n">f</span><span class="p">:</span> <span class="n">TextIO</span><span class="p">,</span>
+    <span class="n">charges_section_parser</span><span class="p">:</span> <span class="n">EspChargesSectionParser</span><span class="p">,</span>
+    <span class="n">verify_against</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Molecule</span><span class="p">]</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">occurrence</span><span class="p">:</span> <span class="nb">int</span><span class="o">=-</span><span class="mi">1</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Esp</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Extract ESP fit statistics from charges section in Gaussian output</span>
+
+<span class="sd">    See documentation of `get_charges_from_log` for parameters and raised exceptions.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    InputFormatError</span>
+<span class="sd">        Raised when the file does not follow the expected format.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Tuple[Esp, float]</span>
+<span class="sd">        RMS and RRMS.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">charges_section</span> <span class="o">=</span> <span class="n">_get_charges_section_from_log</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">charges_section_parser</span><span class="p">,</span> <span class="n">occurrence</span><span class="p">)</span>
+    <span class="n">parsed_charges_section</span> <span class="o">=</span> <span class="n">charges_section_parser</span><span class="o">.</span><span class="n">parse_section</span><span class="p">(</span><span class="n">charges_section</span><span class="p">)</span>
+    <span class="n">_verify_charges_section</span><span class="p">(</span><span class="n">parsed_charges_section</span><span class="p">,</span> <span class="n">verify_against</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">(</span><span class="n">parsed_charges_section</span><span class="o">.</span><span class="n">rms</span><span class="p">,</span> <span class="n">parsed_charges_section</span><span class="o">.</span><span class="n">rrms</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">_get_charges_section_from_log</span><span class="p">(</span>
+    <span class="n">f</span><span class="p">:</span> <span class="n">TextIO</span><span class="p">,</span>
+    <span class="n">charges_section_parser</span><span class="p">:</span> <span class="n">ChargesSectionParser</span><span class="p">,</span>
+    <span class="n">occurrence</span><span class="p">:</span> <span class="nb">int</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+
+    <span class="n">charges_sections</span> <span class="o">=</span> <span class="n">_get_charges_sections</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">charges_section_parser</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">selected_charges_section</span> <span class="o">=</span> <span class="n">charges_sections</span><span class="p">[</span><span class="n">occurrence</span><span class="p">]</span>
+    <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span>
+            <span class="n">f</span><span class="s2">&quot;Cannot find occurrence </span><span class="si">{occurrence}</span><span class="s2"> in a list of recognized charges &quot;</span>
+            <span class="n">f</span><span class="s2">&quot;sections in the output. Check if the program that produced the output &quot;</span>
+            <span class="n">f</span><span class="s2">&quot;finished without errors. If you&#39;re sure that the charge section &quot;</span>
+            <span class="n">f</span><span class="s2">&quot;should appear at least the specified number of times, please &quot;</span>
+            <span class="n">f</span><span class="s2">&quot;submit a bug report attaching the file that failed parsing.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">selected_charges_section</span>
+
+
+<span class="k">def</span> <span class="nf">_verify_charges_section</span><span class="p">(</span>
+    <span class="n">charges_section</span><span class="p">:</span> <span class="n">ChargesSectionData</span><span class="p">,</span>
+    <span class="n">verify_against</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Molecule</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="c1"># TODO: This could be extended to check atom identities if those get parsed</span>
+    <span class="k">if</span> <span class="n">verify_against</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">verify_against</span><span class="o">.</span><span class="n">atoms</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">charges_section</span><span class="o">.</span><span class="n">charges</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">InputFormatError</span><span class="p">(</span>
+            <span class="s2">&quot;Charges from log file failed verification against given molecule.&quot;</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span>
+
+
+<span class="k">def</span> <span class="nf">_get_charges_sections</span><span class="p">(</span>
+    <span class="n">f</span><span class="p">:</span> <span class="n">TextIO</span><span class="p">,</span>
+    <span class="n">charges_section_parser</span><span class="p">:</span> <span class="n">ChargesSectionParser</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+    <span class="sd">&quot;&quot;&quot;Extract all charges sections which *may* be of the given type</span>
+
+<span class="sd">    Further verification of charge type is necessary based on parsing the section.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">charges_sections</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">current_section</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">charges_section_parser</span><span class="o">.</span><span class="n">is_section_start</span><span class="p">(</span><span class="n">line</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">current_section</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">InputFormatError</span><span class="p">(</span>
+                    <span class="s2">&quot;Encountered start of new charge section start while &quot;</span>
+                    <span class="s2">&quot;parsing a charge section. Please submit a bug report &quot;</span>
+                    <span class="s2">&quot;attaching the input file that failed parsing.&quot;</span>
+                <span class="p">)</span>
+            <span class="n">current_section</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">if</span> <span class="n">current_section</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">current_section</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+            <span class="c1"># Section end lines are less generic, hence we&#39;re only checking for</span>
+            <span class="c1"># them when inside a section.</span>
+            <span class="k">if</span> <span class="n">charges_section_parser</span><span class="o">.</span><span class="n">is_section_end</span><span class="p">(</span><span class="n">line</span><span class="p">):</span>
+                <span class="n">charges_sections</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">current_section</span><span class="p">)</span>
+                <span class="n">current_section</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">return</span> <span class="n">charges_sections</span>
+
+
+<div class="viewcode-block" id="MullikenChargeSectionParser"><a class="viewcode-back" href="../../repESP.gaussian_format.html#repESP.gaussian_format.MullikenChargeSectionParser">[docs]</a><span class="k">class</span> <span class="nc">MullikenChargeSectionParser</span><span class="p">(</span><span class="n">ChargesSectionParser</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Mulliken charges parser for Gaussian output&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="MullikenChargeSectionParser.is_section_start"><a class="viewcode-back" href="../../repESP.gaussian_format.html#repESP.gaussian_format.MullikenChargeSectionParser.is_section_start">[docs]</a>    <span class="k">def</span> <span class="nf">is_section_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">line</span> <span class="o">==</span> <span class="s2">&quot; Mulliken charges:&quot;</span></div>
+
+<div class="viewcode-block" id="MullikenChargeSectionParser.is_section_end"><a class="viewcode-back" href="../../repESP.gaussian_format.html#repESP.gaussian_format.MullikenChargeSectionParser.is_section_end">[docs]</a>    <span class="k">def</span> <span class="nf">is_section_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39; Sum of &#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MullikenChargeSectionParser.parse_section"><a class="viewcode-back" href="../../repESP.gaussian_format.html#repESP.gaussian_format.MullikenChargeSectionParser.parse_section">[docs]</a>    <span class="k">def</span> <span class="nf">parse_section</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">ChargesSectionData</span><span class="p">:</span>
+        <span class="n">charges</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">section</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="n">_label</span><span class="p">,</span> <span class="n">_symbol</span><span class="p">,</span> <span class="n">charge</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+            <span class="n">charges</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Charge</span><span class="p">(</span><span class="n">charge</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">ChargesSectionData</span><span class="p">(</span><span class="n">charges</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="MkChargeSectionParser"><a class="viewcode-back" href="../../repESP.gaussian_format.html#repESP.gaussian_format.MkChargeSectionParser">[docs]</a><span class="k">class</span> <span class="nc">MkChargeSectionParser</span><span class="p">(</span><span class="n">EspChargesSectionParser</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;MK charges parser for Gaussian output&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="MkChargeSectionParser.is_section_start"><a class="viewcode-back" href="../../repESP.gaussian_format.html#repESP.gaussian_format.MkChargeSectionParser.is_section_start">[docs]</a>    <span class="k">def</span> <span class="nf">is_section_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">line</span> <span class="o">==</span> <span class="s2">&quot; Merz-Kollman atomic radii used.&quot;</span></div></div>
+
+
+<div class="viewcode-block" id="ChelpChargeSectionParser"><a class="viewcode-back" href="../../repESP.gaussian_format.html#repESP.gaussian_format.ChelpChargeSectionParser">[docs]</a><span class="k">class</span> <span class="nc">ChelpChargeSectionParser</span><span class="p">(</span><span class="n">EspChargesSectionParser</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;CHelp charges parser for Gaussian output&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ChelpChargeSectionParser.is_section_start"><a class="viewcode-back" href="../../repESP.gaussian_format.html#repESP.gaussian_format.ChelpChargeSectionParser.is_section_start">[docs]</a>    <span class="k">def</span> <span class="nf">is_section_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">line</span> <span class="o">==</span> <span class="s2">&quot; Francl (CHELP) atomic radii used.&quot;</span></div></div>
+
+
+<div class="viewcode-block" id="ChelpgChargeSectionParser"><a class="viewcode-back" href="../../repESP.gaussian_format.html#repESP.gaussian_format.ChelpgChargeSectionParser">[docs]</a><span class="k">class</span> <span class="nc">ChelpgChargeSectionParser</span><span class="p">(</span><span class="n">EspChargesSectionParser</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;CHelpG charges parser for Gaussian output&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ChelpgChargeSectionParser.is_section_start"><a class="viewcode-back" href="../../repESP.gaussian_format.html#repESP.gaussian_format.ChelpgChargeSectionParser.is_section_start">[docs]</a>    <span class="k">def</span> <span class="nf">is_section_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">line</span> <span class="o">==</span> <span class="s2">&quot; Breneman (CHELPG) radii used.&quot;</span></div></div>
+
+
+<div class="viewcode-block" id="HlyChargeSectionParser"><a class="viewcode-back" href="../../repESP.gaussian_format.html#repESP.gaussian_format.HlyChargeSectionParser">[docs]</a><span class="k">class</span> <span class="nc">HlyChargeSectionParser</span><span class="p">(</span><span class="n">EspChargesSectionParser</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;HLY charges parser for Gaussian output&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="HlyChargeSectionParser.is_section_start"><a class="viewcode-back" href="../../repESP.gaussian_format.html#repESP.gaussian_format.HlyChargeSectionParser.is_section_start">[docs]</a>    <span class="k">def</span> <span class="nf">is_section_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">line</span> <span class="o">==</span> <span class="s2">&quot; Generate Potential Derived Charges using the Hu-Lu-Yang model&quot;</span></div></div>
+
+
+<div class="viewcode-block" id="NpaChargeSectionParser"><a class="viewcode-back" href="../../repESP.gaussian_format.html#repESP.gaussian_format.NpaChargeSectionParser">[docs]</a><span class="k">class</span> <span class="nc">NpaChargeSectionParser</span><span class="p">(</span><span class="n">ChargesSectionParser</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;NPA charges parser for Gaussian output&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="NpaChargeSectionParser.is_section_start"><a class="viewcode-back" href="../../repESP.gaussian_format.html#repESP.gaussian_format.NpaChargeSectionParser.is_section_start">[docs]</a>    <span class="k">def</span> <span class="nf">is_section_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">line</span> <span class="o">==</span> <span class="s2">&quot; Summary of Natural Population Analysis:                  &quot;</span></div>
+
+<div class="viewcode-block" id="NpaChargeSectionParser.is_section_end"><a class="viewcode-back" href="../../repESP.gaussian_format.html#repESP.gaussian_format.NpaChargeSectionParser.is_section_end">[docs]</a>    <span class="k">def</span> <span class="nf">is_section_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39; =======&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="NpaChargeSectionParser.parse_section"><a class="viewcode-back" href="../../repESP.gaussian_format.html#repESP.gaussian_format.NpaChargeSectionParser.parse_section">[docs]</a>    <span class="k">def</span> <span class="nf">parse_section</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">ChargesSectionData</span><span class="p">:</span>
+        <span class="n">charges</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">section</span><span class="p">[</span><span class="mi">6</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="n">_symbol</span><span class="p">,</span> <span class="n">_label</span><span class="p">,</span> <span class="n">charge</span><span class="p">,</span> <span class="o">*</span><span class="n">_other</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+            <span class="n">charges</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Charge</span><span class="p">(</span><span class="n">charge</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">ChargesSectionData</span><span class="p">(</span><span class="n">charges</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Jan Szopinski
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,718 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>repESP.respin_format &mdash; repESP 0.2.0-dev documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> repESP
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../repESP.html">repESP package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">repESP</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>repESP.respin_format</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for repESP.respin_format</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Parsing and writing ``resp`` program instruction file format (&quot;respin&quot;)&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="k">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">asdict</span>
+<span class="kn">from</span> <span class="nn">fortranformat</span> <span class="k">import</span> <span class="n">FortranRecordWriter</span> <span class="k">as</span> <span class="n">FW</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="k">import</span> <span class="n">zip_longest</span>
+<span class="kn">import</span> <span class="nn">io</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">TextIO</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">from</span> <span class="nn">repESP.exceptions</span> <span class="k">import</span> <span class="n">InputFormatError</span>
+<span class="kn">from</span> <span class="nn">repESP.equivalence</span> <span class="k">import</span> <span class="n">Equivalence</span>
+<span class="kn">from</span> <span class="nn">repESP.types</span> <span class="k">import</span> <span class="n">Atom</span><span class="p">,</span> <span class="n">Molecule</span>
+<span class="kn">from</span> <span class="nn">repESP._util</span> <span class="k">import</span> <span class="n">zip_exact</span>
+
+
+<div class="viewcode-block" id="Respin"><a class="viewcode-back" href="../../repESP.respin_format.html#repESP.respin_format.Respin">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">Respin</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Dataclass describing the ``resp`` program instructions</span>
+
+<span class="sd">    Note that the functionality is currently limited to a single molecule and</span>
+<span class="sd">    a single structure.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    title : str</span>
+<span class="sd">        The title of the calculation to be performed.</span>
+<span class="sd">    cntrl : Cntrl</span>
+<span class="sd">        Dataclass representing the &quot;cntrl&quot; section of the input.</span>
+<span class="sd">    subtitle : str</span>
+<span class="sd">        Subtitle describing the considered molecular structure.</span>
+<span class="sd">    charge : int</span>
+<span class="sd">        The total charge of the molecule.</span>
+<span class="sd">    molecule : Molecule[Atom]</span>
+<span class="sd">        The molecule which charges are being fitted. Only atom identities are required.</span>
+<span class="sd">    ivary : Ivary</span>
+<span class="sd">        The &quot;ivary&quot; values for fitting the considered structure. These determine</span>
+<span class="sd">        how the charge on each atom is allowed to vary during the fitting.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    title</span>
+<span class="sd">        See initialization parameter</span>
+<span class="sd">    cntrl</span>
+<span class="sd">        See initialization parameter</span>
+<span class="sd">    subtitle</span>
+<span class="sd">        See initialization parameter</span>
+<span class="sd">    charge</span>
+<span class="sd">        See initialization parameter</span>
+<span class="sd">    molecule</span>
+<span class="sd">        See initialization parameter</span>
+<span class="sd">    ivary</span>
+<span class="sd">        See initialization parameter</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_ValueType</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;_ValueType&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_check_value</span><span class="p">(</span>
+        <span class="n">attr_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">attr_value</span><span class="p">:</span> <span class="n">_ValueType</span><span class="p">,</span>
+        <span class="n">allowed_values</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">_ValueType</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">attr_value</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">allowed_values</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="n">f</span><span class="s2">&quot;Invalid value for `</span><span class="si">{attr_name}</span><span class="s2">`: </span><span class="si">{attr_value}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+
+<div class="viewcode-block" id="Respin.Cntrl"><a class="viewcode-back" href="../../repESP.respin_format.html#repESP.respin_format.Respin.Cntrl">[docs]</a>    <span class="nd">@dataclass</span>
+    <span class="k">class</span> <span class="nc">Cntrl</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Dataclass describing the &quot;cntrl&quot; section of a &quot;respin&quot; file</span>
+
+<span class="sd">        See ``resp`` program documentation for more details.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        inopt : int, optional</span>
+<span class="sd">            If equal to 1, ``resp`` will cycle through different &quot;qwt&quot; values</span>
+<span class="sd">            from the file specified with the ``-w`` option. Defaults to 0.</span>
+<span class="sd">        ioutopt : int, optional</span>
+<span class="sd">            If equal to 1, ``resp`` will write restart info of new ESP field</span>
+<span class="sd">            to the file specified with the ``-s`` option. Defaults to 0.</span>
+<span class="sd">        iqopt : int, optional</span>
+<span class="sd">            Controls setting initial charges. If equal to 1 (default), all</span>
+<span class="sd">            initial charges will be set to zero. If equal to 2, initial charges</span>
+<span class="sd">            are read from the file specified with the ``-q`` option. If equal</span>
+<span class="sd">            to 3, charges are read as with the previous option and will</span>
+<span class="sd">            additionally be averaged according to &quot;ivary&quot; values (normally not</span>
+<span class="sd">            used).</span>
+<span class="sd">        ihfree : int, optional</span>
+<span class="sd">            If equal to 0, the charge magnitude restraint is applied to all</span>
+<span class="sd">            charges. If equal to 1 (default), the restraint does not apply to</span>
+<span class="sd">            hydrogen atoms.</span>
+<span class="sd">        irstrnt : int, optional</span>
+<span class="sd">            Controls the type of charge magnitude restraint. If equal to 0,</span>
+<span class="sd">            harmonic restraints are used (old-style). If equal to 1 (default),</span>
+<span class="sd">            hyperbolic restraints are used. If equal to 2, no charge fitting</span>
+<span class="sd">            is carried out and only analysis of input charges is performed.</span>
+<span class="sd">        qwt : float, optional</span>
+<span class="sd">            The weight of the charge magnitude restraint to be used during</span>
+<span class="sd">            the fitting. Defaults to 0.0 (no charge magnitude restraint).</span>
+
+<span class="sd">            .. warning::</span>
+<span class="sd">                The default used here is different from the default used by ``resp``.</span>
+
+<span class="sd">                That the ``resp`` documentation specifies that it uses the</span>
+<span class="sd">                Amber force field values by default. However, it is not clear how</span>
+<span class="sd">                it can determine the fitting stage. Thus, to remove the ambiguity,</span>
+<span class="sd">                this dataclass assumes a weight of zero by default.</span>
+
+<span class="sd">            .. note::</span>
+<span class="sd">                Amber force fields use values of 0.0005 and 0.001 for</span>
+<span class="sd">                stages 1 and 2, respectively. The Glycam force field is derived with</span>
+<span class="sd">                one stage fitting with a value of 0.01.</span>
+
+
+<span class="sd">        Attributes</span>
+<span class="sd">        ----------</span>
+<span class="sd">        inopt</span>
+<span class="sd">            See initialization parameter</span>
+<span class="sd">        ioutopt</span>
+<span class="sd">            See initialization parameter</span>
+<span class="sd">        iqopt</span>
+<span class="sd">            See initialization parameter</span>
+<span class="sd">        ihfree</span>
+<span class="sd">            See initialization parameter</span>
+<span class="sd">        irstrnt</span>
+<span class="sd">            See initialization parameter</span>
+<span class="sd">        qwt</span>
+<span class="sd">            See initialization parameter</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">inopt</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">ioutopt</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">iqopt</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">ihfree</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">irstrnt</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">qwt</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="nd">@property</span>
+        <span class="k">def</span> <span class="nf">nmol</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+            <span class="sd">&quot;&quot;&quot;Number of structures in a multiple structure fit.</span>
+
+<span class="sd">            With the current implementation this will always be equal to 1.</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="k">return</span> <span class="mi">1</span>
+
+        <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">Respin</span><span class="o">.</span><span class="n">_check_value</span><span class="p">(</span><span class="s2">&quot;inopt&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">inopt</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+            <span class="n">Respin</span><span class="o">.</span><span class="n">_check_value</span><span class="p">(</span><span class="s2">&quot;ioutopt&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ioutopt</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+            <span class="n">Respin</span><span class="o">.</span><span class="n">_check_value</span><span class="p">(</span><span class="s2">&quot;iqopt&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">iqopt</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+            <span class="n">Respin</span><span class="o">.</span><span class="n">_check_value</span><span class="p">(</span><span class="s2">&quot;ihfree&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ihfree</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+            <span class="n">Respin</span><span class="o">.</span><span class="n">_check_value</span><span class="p">(</span><span class="s2">&quot;irstrnt&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">irstrnt</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">qwt</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Invalid value for `qwt`: </span><span class="si">{self.qwt}</span><span class="s2">.&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Respin.Ivary"><a class="viewcode-back" href="../../repESP.respin_format.html#repESP.respin_format.Respin.Ivary">[docs]</a>    <span class="nd">@dataclass</span>
+    <span class="k">class</span> <span class="nc">Ivary</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Dataclass representing per-atom fitting instructions for ``resp``</span>
+
+<span class="sd">        The fitting instructions are represented as a list of values stored in</span>
+<span class="sd">        the `values` attribute. The length of this list must be the same as the</span>
+<span class="sd">        number of atoms in the molecule it describes. Consecutive values refer</span>
+<span class="sd">        to consecutive atoms of the molecule.</span>
+
+<span class="sd">        The values determine how the charge on the atom can vary during the</span>
+<span class="sd">        fitting and the allowed values are:</span>
+
+<span class="sd">        * -1, meaning that the atom&#39;s charge is &quot;frozen&quot; at the initial value</span>
+<span class="sd">        * 0, meaning that this atom will be varied freely</span>
+<span class="sd">        * Larger than zero, representing the 1-based index of the atom in the</span>
+<span class="sd">          molecule to which this atom is to be equivalenced.</span>
+
+<span class="sd">        Example</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        Consider fitting RESP charges in a molecule of methylamine:</span>
+
+<span class="sd">        &gt;&gt;&gt; methylamine = Molecule([Atom(atomic_number) for atomic_number in [6, 1, 1, 1, 7, 1, 1]])</span>
+
+<span class="sd">        Fitting RESP charges consists of two stages. The ivary section for the</span>
+<span class="sd">        second stage of the fitting for the methylamine molecule should be as</span>
+<span class="sd">        follows:</span>
+
+<span class="sd">        &gt;&gt;&gt; ivary = Respin.Ivary([0, 0, 2, 2, -1, -1, -1])</span>
+
+<span class="sd">        The carbon atom is free to vary during the fitting. The first of the methyl</span>
+<span class="sd">        hydrogens is equivalenced to the remaining two but they haven&#39;t been</span>
+<span class="sd">        specified yet, so it also has a value of 0. These two hydrogen atoms</span>
+<span class="sd">        are equivalenced to the first one, and thus are assigned its one-based</span>
+<span class="sd">        index in the molecule, i.e. 2 (meaning &quot;equivalenced to the second atom</span>
+<span class="sd">        of the molecule&quot;). The nitrogen atom and the two hydrogen atoms attached</span>
+<span class="sd">        to it are frozen during the second stage of the fitting and are thus</span>
+<span class="sd">        assigned values of -1.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        values : List[int]</span>
+<span class="sd">            The per-atom instructions for the ``resp`` program.</span>
+
+<span class="sd">        Attributes</span>
+<span class="sd">        ----------</span>
+<span class="sd">        values</span>
+<span class="sd">            See initialization parameter</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">values</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+
+        <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">elem</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">elem</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mi">1</span> <span class="ow">or</span> <span class="n">elem</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="n">f</span><span class="s2">&quot;Value number </span><span class="si">{i}</span><span class="s2"> passed as `ivary` with value </span><span class="si">{elem}</span><span class="s2">, &quot;</span>
+                        <span class="n">f</span><span class="s2">&quot;which is either lower than 0 or outside the list length.&quot;</span>
+                    <span class="p">)</span>
+
+<div class="viewcode-block" id="Respin.Ivary.describe"><a class="viewcode-back" href="../../repESP.respin_format.html#repESP.respin_format.Respin.Ivary.describe">[docs]</a>        <span class="k">def</span> <span class="nf">describe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">molecule</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Molecule</span><span class="p">[</span><span class="n">Atom</span><span class="p">]]</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="sd">&quot;&quot;&quot;Verbosely report the &quot;ivary&quot; actions</span>
+
+<span class="sd">            Example</span>
+<span class="sd">            -------</span>
+
+<span class="sd">            &gt;&gt;&gt; print(ivary.describe(methylamine))</span>
+<span class="sd">            Atom (C) number 1</span>
+<span class="sd">            Atom (H) number 2</span>
+<span class="sd">            Atom (H) number 3, equivalenced to atom 2</span>
+<span class="sd">            Atom (H) number 4, equivalenced to atom 2</span>
+<span class="sd">            Atom (N) number 5, frozen</span>
+<span class="sd">            Atom (H) number 6, frozen</span>
+<span class="sd">            Atom (H) number 7, frozen</span>
+
+<span class="sd">            Parameters</span>
+<span class="sd">            ----------</span>
+<span class="sd">            molecule : Optional[Molecule[Atom]], optional</span>
+<span class="sd">                The molecule to which the ivary information refers. This</span>
+<span class="sd">                argument is optional and defaults to None. If it is provided,</span>
+<span class="sd">                atom identities will be included in the output.</span>
+
+<span class="sd">            Raises</span>
+<span class="sd">            ------</span>
+<span class="sd">            ValueError</span>
+<span class="sd">                Raised when the number of atoms in the molecule does not match</span>
+<span class="sd">                the length of the list of values in this object.</span>
+
+<span class="sd">            Returns</span>
+<span class="sd">            -------</span>
+<span class="sd">            str</span>
+<span class="sd">                A verbose description of the &quot;ivary&quot; instructions.</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+
+            <span class="k">if</span> <span class="n">molecule</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">molecule</span><span class="o">.</span><span class="n">atoms</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="n">f</span><span class="s2">&quot;The number of atoms ({len(molecule.atoms)} is not the same &quot;</span>
+                    <span class="n">f</span><span class="s2">&quot;as the number of ivary values ({len(self.values)}.&quot;</span>
+                <span class="p">)</span>
+
+            <span class="n">zipped</span> <span class="o">=</span> <span class="n">zip_longest</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">molecule</span><span class="o">.</span><span class="n">atoms</span> <span class="k">if</span> <span class="n">molecule</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">[])</span>
+
+            <span class="n">f</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">ivary</span><span class="p">,</span> <span class="n">atom</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">zipped</span><span class="p">):</span>
+                <span class="n">atomic_number</span> <span class="o">=</span> <span class="n">atom</span><span class="o">.</span><span class="n">symbol</span> <span class="k">if</span> <span class="n">molecule</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
+                <span class="n">id_str</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot; (</span><span class="si">{atomic_number}</span><span class="s2">)&quot;</span> <span class="k">if</span> <span class="n">atomic_number</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+
+                <span class="k">if</span> <span class="n">ivary</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="c1"># TODO: This could also report at what value if charges are provided</span>
+                    <span class="n">ivary_str</span> <span class="o">=</span> <span class="s2">&quot;, frozen&quot;</span>
+                <span class="k">elif</span> <span class="n">ivary</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">ivary_str</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;, equivalenced to atom </span><span class="si">{ivary}</span><span class="s2">&quot;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">ivary_str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+                <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Atom</span><span class="si">{id_str}</span><span class="s2"> number {i+1}</span><span class="si">{ivary_str}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">f</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">f</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Respin.Ivary.from_equivalence"><a class="viewcode-back" href="../../repESP.respin_format.html#repESP.respin_format.Respin.Ivary.from_equivalence">[docs]</a>        <span class="nd">@classmethod</span>
+        <span class="k">def</span> <span class="nf">from_equivalence</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">equivalence</span><span class="p">:</span> <span class="n">Equivalence</span><span class="p">):</span>
+            <span class="sd">&quot;&quot;&quot;Alternative initialization from equivalence information</span>
+
+<span class="sd">            .. note:</span>
+<span class="sd">                The resulting ivary instructions will correspond to fitting</span>
+<span class="sd">                with equivalent atoms assigned identical charges. This may not</span>
+<span class="sd">                be the type of fitting that you want to perform.</span>
+
+<span class="sd">            Parameters</span>
+<span class="sd">            ----------</span>
+<span class="sd">            equivalence : Equivalence</span>
+<span class="sd">                Information about chemical equivalence of atoms in a molecule.</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="p">([</span><span class="mi">0</span> <span class="k">if</span> <span class="n">val</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">val</span> <span class="o">+</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">equivalence</span><span class="o">.</span><span class="n">values</span><span class="p">])</span></div></div>
+
+
+    <span class="n">title</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">cntrl</span><span class="p">:</span> <span class="n">Cntrl</span>
+    <span class="n">subtitle</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">charge</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">molecule</span><span class="p">:</span> <span class="n">Molecule</span><span class="p">[</span><span class="n">Atom</span><span class="p">]</span>
+    <span class="n">ivary</span><span class="p">:</span> <span class="n">Ivary</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">wtmol</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Relative weight of the structure in a multistructure fitting.</span>
+
+<span class="sd">        A value of 1.0 is always returned in the current implementation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="mf">1.0</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">iuniq</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;The number of atoms in the fitted structure&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">molecule</span><span class="o">.</span><span class="n">atoms</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">molecule</span><span class="o">.</span><span class="n">atoms</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ivary</span><span class="o">.</span><span class="n">values</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="n">f</span><span class="s2">&quot;Number of atoms ({len(self.molecule.atoms)}) does not match number &quot;</span>
+                <span class="n">f</span><span class="s2">&quot;of ivary values ({len(self.ivary.values)}).&quot;</span>
+            <span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">_get_equivalence_from_ivary</span><span class="p">(</span><span class="n">ivary</span><span class="p">:</span> <span class="n">Respin</span><span class="o">.</span><span class="n">Ivary</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Equivalence</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Get atom equivalence information from an `Respin.Ivary` object</span>
+
+<span class="sd">    This function is private as users probably mean to use the</span>
+<span class="sd">    `get_equivalence` function instead.</span>
+
+<span class="sd">    `Ivary` objects are specific to ``resp`` program input and thus may not</span>
+<span class="sd">    provide information about atom equivalence. The &quot;respin&quot; file may have been</span>
+<span class="sd">    generated to perform any custom fitting with ``resp``. Only use this</span>
+<span class="sd">    function when you&#39;re certain that the &quot;respin&quot; file contains all the</span>
+<span class="sd">    equivalence information that you need.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">Equivalence</span><span class="p">([</span>
+        <span class="kc">None</span> <span class="k">if</span> <span class="n">ivary_value</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">ivary_value</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="k">for</span> <span class="n">ivary_value</span> <span class="ow">in</span> <span class="n">ivary</span><span class="o">.</span><span class="n">values</span>
+    <span class="p">])</span>
+
+
+<div class="viewcode-block" id="get_equivalence_from_two_stage_resp_ivary"><a class="viewcode-back" href="../../repESP.respin_format.html#repESP.respin_format.get_equivalence_from_two_stage_resp_ivary">[docs]</a><span class="k">def</span> <span class="nf">get_equivalence_from_two_stage_resp_ivary</span><span class="p">(</span><span class="n">ivary1</span><span class="p">:</span> <span class="n">Respin</span><span class="o">.</span><span class="n">Ivary</span><span class="p">,</span> <span class="n">ivary2</span><span class="p">:</span> <span class="n">Respin</span><span class="o">.</span><span class="n">Ivary</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Equivalence</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Get atom equivalence from input files for two 2-stage RESP</span>
+
+<span class="sd">    Derive atom equivalence based on the data in two &quot;respin&quot; files</span>
+<span class="sd">    (represented by the `Respin` objects) created for the purpose of two-stage</span>
+<span class="sd">    RESP fitting with the ``resp`` program. The files can be generated with the</span>
+<span class="sd">    ``respgen`` program with the following commands::</span>
+
+<span class="sd">        respgen -i methane.ac -o methane.respin1 -f resp1</span>
+<span class="sd">        respgen -i methane.ac -o methane.respin2 -f resp2</span>
+
+<span class="sd">    .. warning::</span>
+<span class="sd">        The correctness of this function relies on:</span>
+
+<span class="sd">        1. Antechamber and ``respgen`` correctly recognizing the symmetry</span>
+<span class="sd">           relations between atoms. Fast-exchanging atoms may not be identified.</span>
+<span class="sd">        2. The author&#39;s understanding of how ``respgen`` generates the &quot;respin&quot;</span>
+<span class="sd">           files for two-stage RESP fitting.</span>
+
+<span class="sd">        Thus it is advised to always check that the result of this function</span>
+<span class="sd">        agrees with the domain knowledge about the studied molecule.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># The equivalence logic is explained somewhat inconsistently in the RESP</span>
+    <span class="c1"># papers but I&#39;ve additionally re-engineered the ``resp`` program&#39;s logic</span>
+    <span class="c1"># to be sure that reading both the ``respin`` files will give the desired</span>
+    <span class="c1"># behaviour. In fact, it&#39;s pretty simple. In the first stage atoms of the</span>
+    <span class="c1"># methyl and methylene groups are free, while all the others are</span>
+    <span class="c1"># equivalenced. In the second stage the former are equivalenced, while all</span>
+    <span class="c1"># the others are frozen.</span>
+
+    <span class="k">return</span> <span class="n">_get_equivalence_from_ivary</span><span class="p">(</span><span class="n">Respin</span><span class="o">.</span><span class="n">Ivary</span><span class="p">([</span>
+        <span class="nb">max</span><span class="p">(</span><span class="n">ivary1_value</span><span class="p">,</span> <span class="n">ivary2_value</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">ivary1_value</span><span class="p">,</span> <span class="n">ivary2_value</span> <span class="ow">in</span> <span class="n">zip_exact</span><span class="p">(</span><span class="n">ivary1</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">ivary2</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+    <span class="p">]))</span></div>
+
+
+<span class="k">def</span> <span class="nf">_parse_cntrl</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">TextIO</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Respin</span><span class="o">.</span><span class="n">Cntrl</span><span class="p">:</span>
+    <span class="n">line_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">&quot; (\w+) =\s+([0-9.]+)&quot;</span><span class="p">)</span>
+    <span class="n">kwargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot; &amp;end&quot;</span><span class="p">:</span>
+            <span class="k">break</span>
+        <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="k">continue</span>
+
+        <span class="n">line_match</span> <span class="o">=</span> <span class="n">line_re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">line_match</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">InputFormatError</span><span class="p">(</span>
+                <span class="n">f</span><span class="s2">&quot;Failed parsing cntrl section of respin file:</span><span class="se">\n</span><span class="si">{line}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="n">line_match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">line_match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="n">kwargs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;qwt&quot;</span> <span class="k">else</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="c1"># nmol is not a parameter of Cntrl.__init__ and must be equal to 1.</span>
+    <span class="n">nmol</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;nmol&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">nmol</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">nmol</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">InputFormatError</span><span class="p">(</span><span class="s2">&quot;Parsing multiple structures is not supported&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">Respin</span><span class="o">.</span><span class="n">Cntrl</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>  <span class="c1"># type: ignore # (not sure why not recognized)</span>
+
+
+<div class="viewcode-block" id="parse_respin"><a class="viewcode-back" href="../../repESP.respin_format.html#repESP.respin_format.parse_respin">[docs]</a><span class="k">def</span> <span class="nf">parse_respin</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Respin</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Parse a file in the &quot;respin&quot; format (input format of ``resp``)</span>
+
+<span class="sd">    Note that only files describing a single structure fit are currently supported.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    f : TextIO</span>
+<span class="sd">        File object opened in read mode containing the &quot;respin&quot; file.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    InputFormatError</span>
+<span class="sd">        Raised when the file does not follow the expected format.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Respin</span>
+<span class="sd">        Object representing the fitting instructions for the ``resp`` program.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">get_line</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="n">get_line</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">line</span> <span class="o">==</span> <span class="s2">&quot; &amp;cntrl</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">:</span>
+            <span class="k">break</span>
+
+    <span class="n">cntrl</span> <span class="o">=</span> <span class="n">_parse_cntrl</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+    <span class="n">wtmol</span> <span class="o">=</span> <span class="n">get_line</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">math</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">wtmol</span><span class="p">),</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">rel_tol</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">abs_tol</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">InputFormatError</span><span class="p">(</span>
+            <span class="n">f</span><span class="s2">&quot;Encountered value of `wtmol` different from 1.0 (</span><span class="si">{wtmol}</span><span class="s2">) but &quot;</span>
+            <span class="n">f</span><span class="s2">&quot;parsing is supported only for single-structure respin files.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">subtitle</span> <span class="o">=</span> <span class="n">get_line</span><span class="p">()</span>
+
+    <span class="n">charge_and_iuniq</span> <span class="o">=</span> <span class="n">get_line</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">charge_and_iuniq</span><span class="o">.</span><span class="n">split</span><span class="p">())</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">InputFormatError</span><span class="p">(</span>
+            <span class="n">f</span><span class="s2">&quot;Expected two ints for the line specifying charge and iuniq, found:</span><span class="se">\n</span><span class="si">{charge_and_iuniq}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">charge</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">charge_and_iuniq</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">iuniq</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">charge_and_iuniq</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="n">atoms</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Atom</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">ivary</span> <span class="o">=</span> <span class="n">Respin</span><span class="o">.</span><span class="n">Ivary</span><span class="p">([])</span>
+
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="k">break</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">())</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">InputFormatError</span><span class="p">(</span>
+                <span class="n">f</span><span class="s2">&quot;Expected two ints for the line specifying atom and ivary, found:</span><span class="se">\n</span><span class="si">{line}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">atoms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Atom</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">])))</span>
+        <span class="n">ivary_value</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="c1"># `respgen` uses a value of -99 but internally we use -1 as per resp spec.</span>
+        <span class="n">ivary</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ivary_value</span> <span class="k">if</span> <span class="n">ivary_value</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">99</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span> <span class="o">!=</span> <span class="n">iuniq</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">InputFormatError</span><span class="p">(</span>
+            <span class="n">f</span><span class="s2">&quot;The value of `iuniq` (</span><span class="si">{iuniq}</span><span class="s2">) is different from the number of&quot;</span>
+            <span class="n">f</span><span class="s2">&quot;atoms in the described molecule ({len(atoms)}).&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">Respin</span><span class="p">(</span>
+        <span class="n">title</span><span class="p">,</span>
+        <span class="n">cntrl</span><span class="p">,</span>
+        <span class="n">subtitle</span><span class="p">,</span>
+        <span class="n">charge</span><span class="p">,</span>
+        <span class="n">Molecule</span><span class="p">(</span><span class="n">atoms</span><span class="p">),</span>
+        <span class="n">ivary</span>
+    <span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">_write_cntrl</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">TextIO</span><span class="p">,</span> <span class="n">cntrl</span><span class="p">:</span> <span class="n">Respin</span><span class="o">.</span><span class="n">Cntrl</span><span class="p">,</span> <span class="n">skip_defaults</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+    <span class="n">default_cntrl</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="n">asdict</span><span class="p">(</span><span class="n">Respin</span><span class="o">.</span><span class="n">Cntrl</span><span class="p">())</span>
+    <span class="n">default_cntrl</span><span class="p">[</span><span class="s2">&quot;nmol&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="n">dict_</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="n">asdict</span><span class="p">(</span><span class="n">cntrl</span><span class="p">)</span>
+    <span class="n">dict_</span><span class="p">[</span><span class="s2">&quot;nmol&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cntrl</span><span class="o">.</span><span class="n">nmol</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot; &amp;cntrl</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">f</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">dict_</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;qwt&quot;</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot; </span><span class="si">{}</span><span class="s2"> = </span><span class="si">{:.5f}</span><span class="s2">,&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">),</span> <span class="n">file</span><span class="o">=</span><span class="n">f</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">skip_defaults</span> <span class="ow">or</span> <span class="n">value</span> <span class="o">!=</span> <span class="n">default_cntrl</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot; </span><span class="si">{}</span><span class="s2"> = </span><span class="si">{}</span><span class="s2">,&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">),</span> <span class="n">file</span><span class="o">=</span><span class="n">f</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> &amp;end&quot;</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">f</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="write_respin"><a class="viewcode-back" href="../../repESP.respin_format.html#repESP.respin_format.write_respin">[docs]</a><span class="k">def</span> <span class="nf">write_respin</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">TextIO</span><span class="p">,</span> <span class="n">respin</span><span class="p">:</span> <span class="n">Respin</span><span class="p">,</span> <span class="n">skip_cntrl_defaults</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Write a &quot;respin&quot; file described by the given input data</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    f : TextIO</span>
+<span class="sd">        The file object to which the instructions are to be saved. The file</span>
+<span class="sd">        must be opened for writing.</span>
+<span class="sd">    respin : Respin</span>
+<span class="sd">        The dataclass representing all the instructions needed by the ``resp``</span>
+<span class="sd">        program.</span>
+<span class="sd">    skip_cntrl_defaults : bool, optional</span>
+<span class="sd">        When this option is set to True (default), fitting options in the &quot;cntrl&quot;</span>
+<span class="sd">        section with default values will not be written to the file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="n">respin</span><span class="o">.</span><span class="n">title</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">f</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="n">f</span><span class="p">)</span>
+    <span class="n">_write_cntrl</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">respin</span><span class="o">.</span><span class="n">cntrl</span><span class="p">,</span> <span class="n">skip_cntrl_defaults</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">FW</span><span class="p">(</span><span class="s2">&quot;F7.1&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">write</span><span class="p">([</span><span class="n">respin</span><span class="o">.</span><span class="n">wtmol</span><span class="p">]),</span> <span class="n">file</span><span class="o">=</span><span class="n">f</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">respin</span><span class="o">.</span><span class="n">subtitle</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">f</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">FW</span><span class="p">(</span><span class="s2">&quot;2I5&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">write</span><span class="p">([</span><span class="n">respin</span><span class="o">.</span><span class="n">charge</span><span class="p">,</span> <span class="n">respin</span><span class="o">.</span><span class="n">iuniq</span><span class="p">]),</span> <span class="n">file</span><span class="o">=</span><span class="n">f</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">atom</span><span class="p">,</span> <span class="n">ivary</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">respin</span><span class="o">.</span><span class="n">molecule</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span> <span class="n">respin</span><span class="o">.</span><span class="n">ivary</span><span class="o">.</span><span class="n">values</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">FW</span><span class="p">(</span><span class="s2">&quot;2I5&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">write</span><span class="p">([</span><span class="n">atom</span><span class="o">.</span><span class="n">atomic_number</span><span class="p">,</span> <span class="n">ivary</span><span class="p">]),</span> <span class="n">file</span><span class="o">=</span><span class="n">f</span><span class="p">)</span>
+    <span class="c1"># According to the spec, a blank line is only for multi-structures but</span>
+    <span class="c1"># `resp` fails without it.</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="n">f</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Jan Szopinski
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

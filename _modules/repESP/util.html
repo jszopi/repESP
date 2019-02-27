@@ -1,0 +1,333 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>repESP.util &mdash; repESP 0.2.0-dev documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> repESP
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../repESP.html">repESP package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">repESP</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>repESP.util</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for repESP.util</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Constants and convenience functions for interacting with the library&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Attributes</span>
+<span class="sd">----------</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">angstrom_per_bohr</span> <span class="o">=</span> <span class="mf">0.5291772086</span>
+<span class="sd">&quot;&quot;&quot;float : The conversion factor from Bohr radii (a₀) to angstrom (Å)</span>
+
+<span class="sd">Value used by Gaussian 09, based on:</span>
+<span class="sd">P. J. Mohr, B. N. Taylor, and D. B. Newell, “CODATA Recommended Values of the</span>
+<span class="sd">Fundamental Physical Constants: 2006,” *Rev. Mod. Phys.*, **80** (2008)</span>
+<span class="sd">633-730. DOI: `10.1103/RevModPhys.80.633 &lt;http://dx.doi.org/10.1103/RevModPhys.80.633&gt;`_.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="n">T1</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;T1&#39;</span><span class="p">)</span>
+<span class="n">T2</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;T2&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="list_from_dict"><a class="viewcode-back" href="../../repESP.util.html#repESP.util.list_from_dict">[docs]</a><span class="k">def</span> <span class="nf">list_from_dict</span><span class="p">(</span>
+    <span class="n">dict_</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">T1</span><span class="p">],</span>
+    <span class="n">length</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">default</span><span class="p">:</span> <span class="n">T2</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">one_indexed</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">T1</span><span class="p">,</span> <span class="n">T2</span><span class="p">]]:</span>
+    <span class="sd">&quot;&quot;&quot;Convenience function for creating lists from dictionaries</span>
+
+<span class="sd">    For sparse data or certain user input it may be easier to represent</span>
+<span class="sd">    properties of a list (e.g. equivalence information for each atom in a</span>
+<span class="sd">    molecule) as a dictionary. However, many interfaces of this library expect</span>
+<span class="sd">    lists and thus this convenience function is provided for the conversion.</span>
+
+<span class="sd">    Example</span>
+<span class="sd">    -------</span>
+<span class="sd">    &gt;&gt;&gt; list_from_dict({1: &quot;foo&quot;}, 3, &quot;bar&quot;)</span>
+<span class="sd">    [&quot;bar&quot;, &quot;foo&quot;, &quot;bar&quot;]</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    dict\_ : typing.Dict[int, T1]</span>
+<span class="sd">        The dictionary mapping the index of the desired list to its property,</span>
+<span class="sd">        which is of the generic type `T1`. If this argument contains keys</span>
+<span class="sd">        outside the range of valid indices in the desired list, the input</span>
+<span class="sd">        is not valid; no errors will be raised but these keys will be ignored.</span>
+
+<span class="sd">        Valid indices are integer values of `i` that fulfil ``0 &lt;= i &lt;</span>
+<span class="sd">        length`` if `one_indexed` is False and ``0 &lt; i &lt;= length`` otherwise.</span>
+<span class="sd">    length : int</span>
+<span class="sd">        The length of the desired list.</span>
+<span class="sd">    default : T2, optional</span>
+<span class="sd">        The value to be used in the output list when the index is not included</span>
+<span class="sd">        in the `dict_` argument. The type of this value is not required to</span>
+<span class="sd">        be of the same type `T1` as the values of `dict_`. Defaults to None.</span>
+<span class="sd">    one_indexed : bool, optional</span>
+<span class="sd">        Whether the list indices in the keys of the input ``dict_`` are counting</span>
+<span class="sd">        from one. Defaults to False, meaning they are counting from zero.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    typing.List[Union[T1, T2]]</span>
+<span class="sd">        A list of items of the given `length` with values specified in `dict_`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">offset</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">one_indexed</span> <span class="k">else</span> <span class="mi">0</span>
+    <span class="k">return</span> <span class="p">[</span>
+        <span class="c1"># mypy infers the result to be a Union including None, whereas I see it</span>
+        <span class="c1"># as falling under T2.</span>
+        <span class="n">dict_</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="n">offset</span><span class="p">]</span> <span class="k">if</span> <span class="n">i</span><span class="o">+</span><span class="n">offset</span> <span class="ow">in</span> <span class="n">dict_</span> <span class="k">else</span> <span class="n">default</span>  <span class="c1"># type: ignore</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">length</span><span class="p">)</span>
+    <span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="mask_from_list"><a class="viewcode-back" href="../../repESP.util.html#repESP.util.mask_from_list">[docs]</a><span class="k">def</span> <span class="nf">mask_from_list</span><span class="p">(</span>  <span class="c1"># type: ignore # (defaults with generics: https://github.com/python/mypy/issues/3737)</span>
+    <span class="n">list_</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+    <span class="n">length</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">value_if_present</span><span class="p">:</span> <span class="n">T1</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">value_if_absent</span><span class="p">:</span> <span class="n">T2</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">one_indexed</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">T1</span><span class="p">,</span> <span class="n">T2</span><span class="p">]]:</span>
+    <span class="sd">&quot;&quot;&quot;Convenience function for creating masks from lists</span>
+
+<span class="sd">    For sparse data or certain user input it may be easier to represent</span>
+<span class="sd">    properties of a list (e.g. whether each atom belongs to a methyl or</span>
+<span class="sd">    methylene group) as a list of elements which have a certain value of the</span>
+<span class="sd">    property. However, some interfaces of this library expect complete lists</span>
+<span class="sd">    (&#39;masks&#39;) and thus this convenience function is provided for the conversion.</span>
+
+<span class="sd">    Example</span>
+<span class="sd">    -------</span>
+<span class="sd">    &gt;&gt;&gt; mask_from_list([1], 3)</span>
+<span class="sd">    [False, True, False]</span>
+
+<span class="sd">    Note that the same output can always be achieved with the `list_from_dict`</span>
+<span class="sd">    function.</span>
+
+<span class="sd">    &gt;&gt;&gt; list_from_dict({1: True}, 3, False)</span>
+<span class="sd">    [False, True, False]</span>
+
+<span class="sd">    The difference is that `list_from_dict` allows more than two values in the</span>
+<span class="sd">    output list. When only two values are needed, `mask_from_list` has a more</span>
+<span class="sd">    convenient input format.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    list\_ : typing.List[int]</span>
+<span class="sd">        The list of indices, for which the corresponding values in the resulting</span>
+<span class="sd">        list are to have `value_if_present` as the value (and `value_if_absent`</span>
+<span class="sd">        otherwise).</span>
+
+<span class="sd">        If this argument contains values outside the range of valid indices in</span>
+<span class="sd">        the desired list, the input is not valid; no errors will be raised</span>
+<span class="sd">        but these keys will be ignored.</span>
+
+<span class="sd">        Valid indices are integer values of `i` that fulfil ``0 &lt;= i &lt;</span>
+<span class="sd">        length`` if `one_indexed` is False and ``0 &lt; i &lt;= length`` otherwise.</span>
+<span class="sd">    length : int</span>
+<span class="sd">        The length of the desired list.</span>
+<span class="sd">    value_if_present : T1, optional</span>
+<span class="sd">        The value to be assigned to the element of the output list if the</span>
+<span class="sd">        corresponding argument is present in the `list_` argument. Defaults</span>
+<span class="sd">        to True.</span>
+<span class="sd">    value_if_absent : T2, optional</span>
+<span class="sd">        The value to be assigned to the element of the output list if the</span>
+<span class="sd">        corresponding argument is absent from the `list_` argument. Defaults</span>
+<span class="sd">        to False.</span>
+<span class="sd">    one_indexed : bool, optional</span>
+<span class="sd">        Whether the list indices in the keys of the input `dict_` are counting</span>
+<span class="sd">        from one. Defaults to False, meaning they are counting from zero.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    typing.List[Union[T1, T2]]</span>
+<span class="sd">        A list of length `length` with values equal to `value_if_present`</span>
+<span class="sd">        if the corresponding item is in the input `list_` and `value_if_absent`</span>
+<span class="sd">        otherwise.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">offset</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">one_indexed</span> <span class="k">else</span> <span class="mi">0</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">value_if_present</span> <span class="k">if</span> <span class="n">i</span><span class="o">+</span><span class="n">offset</span> <span class="ow">in</span> <span class="n">list_</span> <span class="k">else</span> <span class="n">value_if_absent</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">length</span><span class="p">)]</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Jan Szopinski
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

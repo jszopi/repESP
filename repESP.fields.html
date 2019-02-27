@@ -1,0 +1,504 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>repESP.fields module &mdash; repESP 0.2.0-dev documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="repESP.gaussian_format module" href="repESP.gaussian_format.html" />
+    <link rel="prev" title="repESP.exceptions module" href="repESP.exceptions.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> repESP
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="repESP.html">repESP package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="repESP.html#highlights">Highlights</a></li>
+<li class="toctree-l2"><a class="reference internal" href="repESP.html#example-problem">Example problem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="repESP.html#usage-caveats">Usage caveats</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="repESP.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="repESP.calc_fields.html">repESP.calc_fields module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.charge_util.html">repESP.charge_util module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.charges.html">repESP.charges module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.cube_format.html">repESP.cube_format module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.equivalence.html">repESP.equivalence module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.esp_util.html">repESP.esp_util module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.exceptions.html">repESP.exceptions module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">repESP.fields module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.gaussian_format.html">repESP.gaussian_format module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.resp_charges_format.html">repESP.resp_charges_format module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.resp_wrapper.html">repESP.resp_wrapper module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.respin_format.html">repESP.respin_format module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.respin_generation.html">repESP.respin_generation module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.types.html">repESP.types module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.util.html">repESP.util module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">repESP</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="repESP.html">repESP package</a> &raquo;</li>
+        
+      <li>repESP.fields module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/repESP.fields.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-repESP.fields">
+<span id="repesp-fields-module"></span><h1>repESP.fields module<a class="headerlink" href="#module-repESP.fields" title="Permalink to this headline">¶</a></h1>
+<p>Types used to describe fields as values at selected points in space</p>
+<dl class="class">
+<dt id="repESP.fields.Esp">
+<em class="property">class </em><code class="descname">Esp</code><a class="reference internal" href="_modules/repESP/fields.html#Esp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.fields.Esp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></p>
+<p>Electrostatic potential value in atomic units (<span class="math notranslate nohighlight">\(E_h/e\)</span>)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>value</strong> (<em>Any</em>) – Any value convertible to float representing the value in atomic units.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="repESP.fields.Ed">
+<em class="property">class </em><code class="descname">Ed</code><a class="reference internal" href="_modules/repESP/fields.html#Ed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.fields.Ed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></p>
+<p>Electron density value in atomic units (<span class="math notranslate nohighlight">\(e / \mathrm{a}_0^3\)</span>)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>value</strong> (<em>Any</em>) – Any value convertible to float representing the value in atomic units.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="repESP.fields.AbstractMesh">
+<em class="property">class </em><code class="descname">AbstractMesh</code><a class="reference internal" href="_modules/repESP/fields.html#AbstractMesh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.fields.AbstractMesh" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></a></p>
+<p>Abstract base class for collections of points in space</p>
+<p>Calling <code class="docutils literal notranslate"><span class="pre">len</span></code> on instances of this class will return the number of points.</p>
+<dl class="attribute">
+<dt id="repESP.fields.AbstractMesh.points">
+<code class="descname">points</code><a class="headerlink" href="#repESP.fields.AbstractMesh.points" title="Permalink to this definition">¶</a></dt>
+<dd><p>Coordinates of points of which the mesh consists</p>
+<p>The order of iteration must be defined.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Yields:</th><td class="field-body"><em>Iterator[Coords]</em> – Iterator over the point coordinates</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="repESP.fields.Mesh">
+<em class="property">class </em><code class="descname">Mesh</code><span class="sig-paren">(</span><em>points_: dataclasses.InitVar</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/repESP/fields.html#Mesh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.fields.Mesh" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#repESP.fields.AbstractMesh" title="repESP.fields.AbstractMesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">repESP.fields.AbstractMesh</span></code></a></p>
+<p>Collection of points in space without assumptions regarding structure</p>
+<p>This class stores all the points given on initialization and hence it’s
+memory footprint is linear in the number of points.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>points</strong> (<em>Collection</em><em>[</em><a class="reference internal" href="repESP.types.html#repESP.types.Coords" title="repESP.types.Coords"><em>Coords</em></a><em>]</em>) – The coordinates of points to be stored</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="repESP.fields.Mesh.points">
+<code class="descname">points</code><a class="headerlink" href="#repESP.fields.Mesh.points" title="Permalink to this definition">¶</a></dt>
+<dd><p>Coordinates of points of which the mesh consists</p>
+<p>The order of iteration is the same as that of the collection provided
+during initialization.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Yields:</th><td class="field-body"><em>Iterator[Coords]</em> – Iterator over the point coordinates</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="repESP.fields.GridMesh">
+<em class="property">class </em><code class="descname">GridMesh</code><span class="sig-paren">(</span><em>origin: repESP.types.Coords</em>, <em>axes: NewType.&lt;locals&gt;.new_type</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/repESP/fields.html#GridMesh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.fields.GridMesh" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#repESP.fields.AbstractMesh" title="repESP.fields.AbstractMesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">repESP.fields.AbstractMesh</span></code></a></p>
+<p>Collection of points in space organized in a grid</p>
+<p>This class only stores information regarding the grid which underlies the
+spatial organization of the points and thus it’s memory footprint is constant
+with respect to the number of points it describes. This a trade-off for a
+small CPU cost whenever a point is retrieved from the <code class="docutils literal notranslate"><span class="pre">points</span></code> iterator.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>origin</strong> (<a class="reference internal" href="repESP.types.html#repESP.types.Coords" title="repESP.types.Coords"><em>Coords</em></a>) – The coordinates of the coordinates system origin.</li>
+<li><strong>axes</strong> (<em>Axes</em>) – The coordinates of the coordinates axes’ origin.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="repESP.fields.GridMesh.Axes">
+<code class="descname">Axes</code><a class="headerlink" href="#repESP.fields.GridMesh.Axes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type alias for a tuple of three <code class="docutils literal notranslate"><span class="pre">Axis</span></code> objects. Note that currently
+only axes aligned with the coordinate system axes are supported, i.e.
+the axes’ vectors are expected to be:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">((</span><span class="n">x_step</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">y_step</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">z_step</span><span class="p">))</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">Tuple[<a class="reference internal" href="#repESP.fields.GridMesh.Axis" title="repESP.fields.GridMesh.Axis">GridMesh.Axis</a>, <a class="reference internal" href="#repESP.fields.GridMesh.Axis" title="repESP.fields.GridMesh.Axis">GridMesh.Axis</a>, <a class="reference internal" href="#repESP.fields.GridMesh.Axis" title="repESP.fields.GridMesh.Axis">GridMesh.Axis</a>]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="repESP.fields.GridMesh.Axis">
+<em class="property">class </em><code class="descname">Axis</code><span class="sig-paren">(</span><em>vector: repESP.types.Coords</em>, <em>point_count: int</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/repESP/fields.html#GridMesh.Axis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.fields.GridMesh.Axis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Dataclass describing a coordinate system axis</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>vector</strong> (<a class="reference internal" href="repESP.types.html#repESP.types.Coords" title="repESP.types.Coords"><em>Coords</em></a>) – <p>Unit vector in xyz coordinates, for example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">Dist</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">Dist</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">Dist</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>for a typical x-axis with a point every 1 a₀.</p>
+</li>
+<li><strong>point_count</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – The number of points that the grid places along this axis.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="repESP.fields.GridMesh.Axis.vector">
+<code class="descname">vector</code><a class="headerlink" href="#repESP.fields.GridMesh.Axis.vector" title="Permalink to this definition">¶</a></dt>
+<dd><p>See initialization parameter</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="repESP.fields.GridMesh.Axis.point_count">
+<code class="descname">point_count</code><a class="headerlink" href="#repESP.fields.GridMesh.Axis.point_count" title="Permalink to this definition">¶</a></dt>
+<dd><p>See initialization parameter</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="descname">Axes</code><span class="sig-paren">(</span><span class="sig-paren">)</span></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="repESP.fields.GridMesh.points">
+<code class="descname">points</code><a class="headerlink" href="#repESP.fields.GridMesh.points" title="Permalink to this definition">¶</a></dt>
+<dd><p>Coordinates of points of which the mesh consists</p>
+<p>The order of iteration is the same as the order of values in a Gaussian
+“cube” file. Values of <cite>z</cite> are incremented first, then all values of
+<cite>y</cite>, and finally all values of <cite>x</cite>. This is best described with the
+following pseudocode:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">x_values</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">y_values</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">z</span> <span class="ow">in</span> <span class="n">z_values</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Yields:</th><td class="field-body"><em>Iterator[Coords]</em> – Iterator over the point coordinates</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="data">
+<dt id="repESP.fields.FieldValue">
+<code class="descname">FieldValue</code><em class="property"> = ~FieldValue</em><a class="headerlink" href="#repESP.fields.FieldValue" title="Permalink to this definition">¶</a></dt>
+<dd><p>The generic type for the values of the <cite>Field</cite> class.</p>
+<p>There are no restrictions on what this type can be.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.TypeVar" title="(in Python v3.7)">typing.TypeVar</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="repESP.fields.Field">
+<em class="property">class </em><code class="descname">Field</code><span class="sig-paren">(</span><em>mesh: repESP.fields.AbstractMesh</em>, <em>values_: dataclasses.InitVar</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/repESP/fields.html#Field"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.fields.Field" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Generic" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">typing.Generic</span></code></a></p>
+<p>Dataclass representing values of a field at a “mesh” of points in space</p>
+<p>This class is generic in the type of the field value, which can be of any
+type. Classes where <cite>FieldValue</cite> matches <cite>NumericValue</cite>, additionally
+support arithmetic operations (currently only addition and subtraction).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>mesh</strong> (<a class="reference internal" href="#repESP.fields.AbstractMesh" title="repESP.fields.AbstractMesh"><em>AbstractMesh</em></a>) – A “mesh” of points in space at which the field has values</li>
+<li><strong>values_</strong> (<em>Collection</em><em>[</em><em>FieldValue</em><em>]</em>) – A collection of values corresponding to the points in space given in
+the same order as the <cite>AbstractMesh.points</cite> iterator.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="repESP.fields.Field.mesh">
+<code class="descname">mesh</code><a class="headerlink" href="#repESP.fields.Field.mesh" title="Permalink to this definition">¶</a></dt>
+<dd><p>See initialization parameter</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="repESP.fields.Field.values">
+<code class="descname">values</code><a class="headerlink" href="#repESP.fields.Field.values" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converted from the <cite>values_</cite> initialization parameter</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.7)">typing.List</a>[FieldValue]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="repESP.fields.Field.NumericValue">
+<code class="descname">NumericValue</code><a class="headerlink" href="#repESP.fields.Field.NumericValue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generic type specifying a subset of FieldValue types for which arithmetic
+operations are defined. This can be any type matching “bound=float”.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.TypeVar" title="(in Python v3.7)">typing.TypeVar</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">NumericValue</code><em class="property"> = ~NumericValue</em></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="repESP.gaussian_format.html" class="btn btn-neutral float-right" title="repESP.gaussian_format module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="repESP.exceptions.html" class="btn btn-neutral float-left" title="repESP.exceptions module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Jan Szopinski
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

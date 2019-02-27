@@ -1,0 +1,506 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>repESP.cube_format &mdash; repESP 0.2.0-dev documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> repESP
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../repESP.html">repESP package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">repESP</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>repESP.cube_format</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for repESP.cube_format</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Parsing and writing Gaussian &quot;cube&quot; format describing molecular fields&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">repESP.charges</span> <span class="k">import</span> <span class="n">AtomWithCoordsAndCharge</span><span class="p">,</span> <span class="n">Charge</span>
+<span class="kn">from</span> <span class="nn">repESP.fields</span> <span class="k">import</span> <span class="n">Ed</span><span class="p">,</span> <span class="n">Esp</span><span class="p">,</span> <span class="n">Field</span><span class="p">,</span> <span class="n">FieldValue</span><span class="p">,</span> <span class="n">GridMesh</span>
+<span class="kn">from</span> <span class="nn">repESP.exceptions</span> <span class="k">import</span> <span class="n">InputFormatError</span>
+<span class="kn">from</span> <span class="nn">repESP.types</span> <span class="k">import</span> <span class="n">Coords</span><span class="p">,</span> <span class="n">Coords</span><span class="p">,</span> <span class="n">Molecule</span>
+
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="k">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Generic</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">TextIO</span><span class="p">,</span> <span class="n">Tuple</span>
+
+
+<div class="viewcode-block" id="Cube"><a class="viewcode-back" href="../../repESP.cube_format.html#repESP.cube_format.Cube">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">Cube</span><span class="p">(</span><span class="n">Generic</span><span class="p">[</span><span class="n">FieldValue</span><span class="p">]):</span>
+    <span class="sd">&quot;&quot;&quot;Dataclass representing information in a Gaussian &quot;cube&quot; file</span>
+
+<span class="sd">    This class is generic in the type of the values of the field described by</span>
+<span class="sd">    the cube file. This type can be any type, as can `fields.FieldValue`.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    info : Info</span>
+<span class="sd">        Additional, less structured information about the cube file.</span>
+<span class="sd">    molecule : Molecule[AtomWithCoordsAndCharge]</span>
+<span class="sd">        The molecule which field is described by the cube file. Atoms have</span>
+<span class="sd">        coordinates and partial charges specified.</span>
+<span class="sd">    field : Field[FieldValue]</span>
+<span class="sd">        The field described by the cube file.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    info</span>
+<span class="sd">        See initialization parameter</span>
+<span class="sd">    molecule</span>
+<span class="sd">        See initialization parameter</span>
+<span class="sd">    field</span>
+<span class="sd">        See initialization parameter</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Cube.Info"><a class="viewcode-back" href="../../repESP.cube_format.html#repESP.cube_format.Cube.Info">[docs]</a>    <span class="nd">@dataclass</span>
+    <span class="k">class</span> <span class="nc">Info</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Additional, less structured information about the cube file.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        input_line: str</span>
+<span class="sd">            The top line of a cube file, typically containing information</span>
+<span class="sd">            regarding the Gaussian input parameters used.</span>
+<span class="sd">        title_line: str</span>
+<span class="sd">            The second line of a cube file, containing a free-form title.</span>
+
+<span class="sd">        Attributes</span>
+<span class="sd">        ----------</span>
+<span class="sd">        input_line</span>
+<span class="sd">            See initialization parameter</span>
+<span class="sd">        title_line</span>
+<span class="sd">            See initialization parameter</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">input_line</span><span class="p">:</span> <span class="nb">str</span>
+        <span class="n">title_line</span><span class="p">:</span> <span class="nb">str</span></div>
+
+    <span class="n">info</span><span class="p">:</span> <span class="n">Info</span>
+    <span class="n">molecule</span><span class="p">:</span> <span class="n">Molecule</span><span class="p">[</span><span class="n">AtomWithCoordsAndCharge</span><span class="p">]</span>
+    <span class="n">field</span><span class="p">:</span> <span class="n">Field</span><span class="p">[</span><span class="n">FieldValue</span><span class="p">]</span></div>
+
+
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">_GridPrelude</span><span class="p">:</span>
+    <span class="n">atom_count</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">origin</span><span class="p">:</span> <span class="n">Coords</span>
+    <span class="n">nval</span><span class="p">:</span> <span class="nb">float</span>
+
+
+<span class="k">def</span> <span class="nf">_parse_grid_prelude</span><span class="p">(</span><span class="n">line</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_GridPrelude</span><span class="p">:</span>
+    <span class="n">line_split</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">line_split</span><span class="p">)</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span> <span class="p">:</span>
+        <span class="n">atom_count</span><span class="p">,</span> <span class="o">*</span><span class="n">origin_coords</span> <span class="o">=</span> <span class="n">line_split</span><span class="p">[:</span><span class="mi">4</span><span class="p">]</span>
+        <span class="n">nval</span> <span class="o">=</span> <span class="n">line_split</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">line_split</span><span class="p">)</span> <span class="o">==</span> <span class="mi">5</span> <span class="k">else</span> <span class="s2">&quot;1&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">InputFormatError</span><span class="p">(</span>
+            <span class="n">f</span><span class="s2">&quot;Cube file incorrectly formatted! Expected four or five fields &quot;</span>
+            <span class="s2">&quot;(atom count, 3*origin coordinates, [NVal]) on line 3, found &quot;</span>
+            <span class="s2">&quot;{len(line_split)} fields.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">_GridPrelude</span><span class="p">(</span>
+        <span class="nb">int</span><span class="p">(</span><span class="n">atom_count</span><span class="p">),</span>
+        <span class="n">Coords</span><span class="p">(</span><span class="n">origin_coords</span><span class="p">),</span>
+        <span class="nb">float</span><span class="p">(</span><span class="n">nval</span><span class="p">)</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_parse_grid</span><span class="p">(</span><span class="n">origin</span><span class="p">:</span> <span class="n">Coords</span><span class="p">,</span> <span class="n">lines</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">GridMesh</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="nf">parse_axis</span><span class="p">(</span><span class="n">line</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GridMesh</span><span class="o">.</span><span class="n">Axis</span><span class="p">:</span>
+        <span class="c1"># `cubegen` documentation, which contains the only definition of</span>
+        <span class="c1"># the cube format, specifies that a negative `point_count` may be used</span>
+        <span class="c1"># in the *input* to signify atomic units. However, this is not an</span>
+        <span class="c1"># option in the output of `cubegen` and values are always in atomic units.</span>
+        <span class="n">point_count</span><span class="p">,</span> <span class="o">*</span><span class="n">vector_components</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">GridMesh</span><span class="o">.</span><span class="n">Axis</span><span class="p">(</span>
+            <span class="n">Coords</span><span class="p">(</span><span class="n">vector_components</span><span class="p">),</span>
+            <span class="nb">int</span><span class="p">(</span><span class="n">point_count</span><span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span>
+
+    <span class="k">return</span> <span class="n">GridMesh</span><span class="p">(</span>
+        <span class="n">origin</span><span class="p">,</span>
+        <span class="n">GridMesh</span><span class="o">.</span><span class="n">Axes</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span>  <span class="c1"># type: ignore # (asserted len is 3)</span>
+            <span class="n">parse_axis</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span>
+        <span class="p">))</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_parse_atom</span><span class="p">(</span><span class="n">line</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomWithCoordsAndCharge</span><span class="p">:</span>
+    <span class="n">atomic_number</span><span class="p">,</span> <span class="n">cube_charge</span><span class="p">,</span> <span class="o">*</span><span class="n">coords</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">AtomWithCoordsAndCharge</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">atomic_number</span><span class="p">),</span> <span class="n">Coords</span><span class="p">(</span><span class="n">coords</span><span class="p">),</span> <span class="n">Charge</span><span class="p">(</span><span class="n">cube_charge</span><span class="p">))</span>
+
+
+<div class="viewcode-block" id="parse_cube"><a class="viewcode-back" href="../../repESP.cube_format.html#repESP.cube_format.parse_cube">[docs]</a><span class="k">def</span> <span class="nf">parse_cube</span><span class="p">(</span>
+    <span class="n">f</span><span class="p">:</span> <span class="n">TextIO</span><span class="p">,</span>
+    <span class="n">make_value</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Cube</span><span class="o">.</span><span class="n">Info</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">FieldValue</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Cube</span><span class="p">[</span><span class="n">FieldValue</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Parse a file in the Gaussian &quot;cube&quot; file format</span>
+
+<span class="sd">    You probably mean to use `parse_ed_cube` or `parse_esp_cube` unless</span>
+<span class="sd">    your cube file is of neither of those types.</span>
+
+<span class="sd">    Note that the values are expected to be space separated. If your cube file</span>
+<span class="sd">    comes from elsewhere than Gaussian, you should ensure that the coordinates</span>
+<span class="sd">    are given in bohr.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    f : TextIO</span>
+<span class="sd">        File object opened in read mode containing the cube file to be parsed.</span>
+<span class="sd">    make_value : Callable[[Cube.Info, str], FieldValue]</span>
+<span class="sd">        A function taking two parameters: the cube information and a string</span>
+<span class="sd">        representing the field value. The function should parse the field value</span>
+<span class="sd">        into the desired internal representation, for example an `Esp` object.</span>
+<span class="sd">        The cube information is provided in case verification of the cube file</span>
+<span class="sd">        type is required.</span>
+
+<span class="sd">        Example</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        In the simplest case this could be::</span>
+
+<span class="sd">            lambda _, str_: float(str_)</span>
+
+<span class="sd">        which ignores the cube information (thus performing no verification)</span>
+<span class="sd">        and simply parses the string value as a float.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    InputFormatError</span>
+<span class="sd">        Raised when the file does not follow the expected format.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Cube[FieldValue]</span>
+<span class="sd">        Data from the parsed cube file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">get_line</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Lines 1-2</span>
+    <span class="n">info</span> <span class="o">=</span> <span class="n">Cube</span><span class="o">.</span><span class="n">Info</span><span class="p">(</span><span class="n">input_line</span><span class="o">=</span><span class="n">get_line</span><span class="p">(),</span> <span class="n">title_line</span><span class="o">=</span><span class="n">get_line</span><span class="p">())</span>
+
+    <span class="c1"># Line 3</span>
+    <span class="n">grid_prelude</span> <span class="o">=</span> <span class="n">_parse_grid_prelude</span><span class="p">(</span><span class="n">get_line</span><span class="p">())</span>
+
+    <span class="k">if</span> <span class="nb">float</span><span class="p">(</span><span class="n">grid_prelude</span><span class="o">.</span><span class="n">nval</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="c1"># I don&#39;t know what NVal means, haven&#39;t seen it to be different than 1.</span>
+        <span class="k">raise</span> <span class="n">InputFormatError</span><span class="p">(</span><span class="s2">&quot;NVal is different than 1.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Lines 4-6</span>
+    <span class="n">grid</span> <span class="o">=</span> <span class="n">_parse_grid</span><span class="p">(</span><span class="n">grid_prelude</span><span class="o">.</span><span class="n">origin</span><span class="p">,</span> <span class="p">[</span><span class="n">get_line</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)])</span>
+
+    <span class="c1"># Molecule</span>
+    <span class="n">molecule</span> <span class="o">=</span> <span class="n">Molecule</span><span class="p">([</span>
+        <span class="n">_parse_atom</span><span class="p">(</span><span class="n">get_line</span><span class="p">())</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">grid_prelude</span><span class="o">.</span><span class="n">atom_count</span><span class="p">)</span>
+    <span class="p">])</span>
+
+    <span class="c1"># Field values</span>
+    <span class="n">value_ctor</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">make_value</span><span class="p">(</span><span class="n">info</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="n">value_ctor</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()]</span>
+
+    <span class="k">return</span> <span class="n">Cube</span><span class="p">(</span>
+        <span class="n">info</span><span class="p">,</span>
+        <span class="n">molecule</span><span class="p">,</span>
+        <span class="c1"># The implicit assumption here is that the order of points in `grid`</span>
+        <span class="c1"># is the same as the order of `values`. This is correct, as the order</span>
+        <span class="c1"># of points in a GridMesh is the same as that in a cube file.</span>
+        <span class="n">Field</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">values</span><span class="p">)</span>
+    <span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">_parse_cube_by_title_common</span><span class="p">(</span>
+    <span class="n">expected_title_start</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">value_ctor</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="n">FieldValue</span><span class="p">],</span>
+    <span class="n">verify_title</span><span class="p">:</span> <span class="nb">bool</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Cube</span><span class="o">.</span><span class="n">Info</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">FieldValue</span><span class="p">]:</span>
+
+    <span class="k">def</span> <span class="nf">make_value</span><span class="p">(</span><span class="n">info</span><span class="p">:</span> <span class="n">Cube</span><span class="o">.</span><span class="n">Info</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FieldValue</span><span class="p">:</span>
+        <span class="n">check_title</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">title</span><span class="p">:</span> <span class="n">title</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">expected_title_start</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">verify_title</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">check_title</span><span class="p">(</span><span class="n">info</span><span class="o">.</span><span class="n">title_line</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">InputFormatError</span><span class="p">(</span>
+                <span class="n">f</span><span class="s1">&#39;Title of cube file does not start with &quot;</span><span class="si">{expected_title_start}</span><span class="s1">&quot;.&#39;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">value_ctor</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">make_value</span>
+
+
+<div class="viewcode-block" id="parse_esp_cube"><a class="viewcode-back" href="../../repESP.cube_format.html#repESP.cube_format.parse_esp_cube">[docs]</a><span class="k">def</span> <span class="nf">parse_esp_cube</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">TextIO</span><span class="p">,</span> <span class="n">verify_title</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Cube</span><span class="p">[</span><span class="n">Esp</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Parse a Gaussian &quot;cube&quot; file describing an ESP field</span>
+
+<span class="sd">    If your cube file comes from elsewhere than Gaussian, you should ensure</span>
+<span class="sd">    that the coordinates are given in bohr and ESP values in atomic units.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    f : TextIO</span>
+<span class="sd">        File object opened in read mode containing the cube file to be parsed.</span>
+<span class="sd">    verify_title : bool, optional</span>
+<span class="sd">        If this flag is set to True (default), an `InputFormatError` will</span>
+<span class="sd">        be raised if the cube title does not start with the string</span>
+<span class="sd">        ``&quot; Electrostatic potential&quot;``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Cube[Esp]</span>
+<span class="sd">        Data from the parsed cube file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">parse_cube</span><span class="p">(</span>
+        <span class="n">f</span><span class="p">,</span>
+        <span class="n">_parse_cube_by_title_common</span><span class="p">(</span><span class="s2">&quot; Electrostatic potential&quot;</span><span class="p">,</span> <span class="n">Esp</span><span class="p">,</span> <span class="n">verify_title</span><span class="p">)</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="parse_ed_cube"><a class="viewcode-back" href="../../repESP.cube_format.html#repESP.cube_format.parse_ed_cube">[docs]</a><span class="k">def</span> <span class="nf">parse_ed_cube</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">TextIO</span><span class="p">,</span> <span class="n">verify_title</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Cube</span><span class="p">[</span><span class="n">Ed</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Parse a Gaussian &quot;cube&quot; file describing electron density field</span>
+
+<span class="sd">    If your cube file comes from elsewhere than Gaussian, you should ensure</span>
+<span class="sd">    that the coordinates are given in bohr and electron density values in</span>
+<span class="sd">    atomic units.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    f : TextIO</span>
+<span class="sd">        File object opened in read mode containing the cube file to be parsed.</span>
+<span class="sd">    verify_title : bool, optional</span>
+<span class="sd">        If this flag is set to True (default), an `InputFormatError` will</span>
+<span class="sd">        be raised if the cube title does not start with the string</span>
+<span class="sd">        ``&quot; Electron density&quot;``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Cube[Ed]</span>
+<span class="sd">        Data from the parsed cube file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">parse_cube</span><span class="p">(</span>
+        <span class="n">f</span><span class="p">,</span>
+        <span class="n">_parse_cube_by_title_common</span><span class="p">(</span><span class="s2">&quot; Electron density&quot;</span><span class="p">,</span> <span class="n">Ed</span><span class="p">,</span> <span class="n">verify_title</span><span class="p">)</span>
+    <span class="p">)</span></div>
+
+<div class="viewcode-block" id="write_cube"><a class="viewcode-back" href="../../repESP.cube_format.html#repESP.cube_format.write_cube">[docs]</a><span class="k">def</span> <span class="nf">write_cube</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">TextIO</span><span class="p">,</span> <span class="n">cube</span><span class="p">:</span> <span class="n">Cube</span><span class="p">[</span><span class="n">Field</span><span class="o">.</span><span class="n">NumericValue</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Write a Gaussian &quot;cube&quot; file described by the given input data</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    f : TextIO</span>
+<span class="sd">        File object to which the supplied data is to be saved. Must be opened</span>
+<span class="sd">        in write mode.</span>
+<span class="sd">    cube : Cube[Field.NumericValue]</span>
+<span class="sd">        The dataclass containing the information needed to create a cube</span>
+<span class="sd">        file. Note that only cube files describing fields with values matching</span>
+<span class="sd">        `Field.NumericValue` are supported.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{cube.info.input_line}</span><span class="se">\n</span><span class="si">{cube.info.title_line}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cube</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">mesh</span><span class="p">,</span> <span class="n">GridMesh</span><span class="p">)</span>
+
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39; </span><span class="si">{0:4}</span><span class="s1">   </span><span class="si">{1: .6f}</span><span class="s1">   </span><span class="si">{2: .6f}</span><span class="s1">   </span><span class="si">{3: .6f}</span><span class="s1">    1</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="nb">len</span><span class="p">(</span><span class="n">cube</span><span class="o">.</span><span class="n">molecule</span><span class="o">.</span><span class="n">atoms</span><span class="p">),</span>
+        <span class="o">*</span><span class="n">cube</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">origin</span>
+    <span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">axis</span> <span class="ow">in</span> <span class="n">cube</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">axes</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39; </span><span class="si">{0:4}</span><span class="s1">   </span><span class="si">{1: .6f}</span><span class="s1">   </span><span class="si">{2: .6f}</span><span class="s1">   </span><span class="si">{3: .6f}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">axis</span><span class="o">.</span><span class="n">point_count</span><span class="p">,</span>
+            <span class="o">*</span><span class="n">axis</span><span class="o">.</span><span class="n">vector</span>
+        <span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">cube</span><span class="o">.</span><span class="n">molecule</span><span class="o">.</span><span class="n">atoms</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39; </span><span class="si">{0:4}</span><span class="s1">   </span><span class="si">{1: .6f}</span><span class="s1">   </span><span class="si">{2: .6f}</span><span class="s1">   </span><span class="si">{3: .6f}</span><span class="s1">   </span><span class="si">{4: .6f}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">atom</span><span class="o">.</span><span class="n">atomic_number</span><span class="p">,</span>
+            <span class="n">atom</span><span class="o">.</span><span class="n">charge</span><span class="p">,</span>
+            <span class="o">*</span><span class="n">atom</span><span class="o">.</span><span class="n">coords</span>
+        <span class="p">))</span>
+
+    <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">cube</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">values</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39; </span><span class="si">{0: .5E}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">i</span> <span class="o">%</span> <span class="mi">6</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">i</span> <span class="o">%</span> <span class="n">cube</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">point_count</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Jan Szopinski
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

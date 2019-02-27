@@ -1,0 +1,523 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>repESP.esp_util &mdash; repESP 0.2.0-dev documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> repESP
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../repESP.html">repESP package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">repESP</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>repESP.esp_util</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for repESP.esp_util</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Parsing and writing .esp file format describing molecular ESP field&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">repESP.charges</span> <span class="k">import</span> <span class="n">AtomWithCoordsAndCharge</span><span class="p">,</span> <span class="n">Charge</span><span class="p">,</span> <span class="n">DipoleMoment</span><span class="p">,</span> <span class="n">DipoleMomentValue</span>
+<span class="kn">from</span> <span class="nn">repESP.charges</span> <span class="k">import</span> <span class="n">QuadrupoleMoment</span><span class="p">,</span> <span class="n">QuadrupoleMomentValue</span>
+<span class="kn">from</span> <span class="nn">repESP.fields</span> <span class="k">import</span> <span class="n">Esp</span><span class="p">,</span> <span class="n">Field</span><span class="p">,</span> <span class="n">Mesh</span>
+<span class="kn">from</span> <span class="nn">repESP.exceptions</span> <span class="k">import</span> <span class="n">InputFormatError</span>
+<span class="kn">from</span> <span class="nn">repESP.types</span> <span class="k">import</span> <span class="n">AtomWithCoords</span><span class="p">,</span> <span class="n">Coords</span><span class="p">,</span> <span class="n">Molecule</span>
+
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="k">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span> <span class="nn">fortranformat</span> <span class="k">import</span> <span class="n">FortranRecordWriter</span> <span class="k">as</span> <span class="n">FW</span><span class="p">,</span> <span class="n">FortranRecordReader</span> <span class="k">as</span> <span class="n">FR</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">TextIO</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">import</span> <span class="nn">re</span>
+
+
+<div class="viewcode-block" id="GaussianEspData"><a class="viewcode-back" href="../../repESP.esp_util.html#repESP.esp_util.GaussianEspData">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">GaussianEspData</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Dataclass representing the .esp file in the Gaussian format</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    charge : int</span>
+<span class="sd">        The total charge of the molecule.</span>
+<span class="sd">    multiplicity : int</span>
+<span class="sd">        The multiplicity of the molecule&#39;s electron configuration.</span>
+<span class="sd">    molecule : Molecule[AtomWithCoordsAndCharge]</span>
+<span class="sd">        The molecule with atom coordinates and partial charges specified.</span>
+<span class="sd">    dipole_moment : DipoleMoment</span>
+<span class="sd">        The dipole moment of the molecule.</span>
+<span class="sd">    quadrupole_moment : QuadrupoleMoment</span>
+<span class="sd">        The quadrupole moment of the molecule.</span>
+<span class="sd">    field : Field</span>
+<span class="sd">        The ESP field described by the file.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    charge</span>
+<span class="sd">        See initialization parameter</span>
+<span class="sd">    multiplicity</span>
+<span class="sd">        See initialization parameter</span>
+<span class="sd">    molecule</span>
+<span class="sd">        See initialization parameter</span>
+<span class="sd">    dipole_moment</span>
+<span class="sd">        See initialization parameter</span>
+<span class="sd">    quadrupole_moment</span>
+<span class="sd">        See initialization parameter</span>
+<span class="sd">    field</span>
+<span class="sd">        See initialization parameter</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">charge</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">multiplicity</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">molecule</span><span class="p">:</span> <span class="n">Molecule</span><span class="p">[</span><span class="n">AtomWithCoordsAndCharge</span><span class="p">]</span>
+    <span class="n">dipole_moment</span><span class="p">:</span> <span class="n">DipoleMoment</span>
+    <span class="n">quadrupole_moment</span><span class="p">:</span> <span class="n">QuadrupoleMoment</span>
+    <span class="n">field</span><span class="p">:</span> <span class="n">Field</span></div>
+
+
+<div class="viewcode-block" id="EspData"><a class="viewcode-back" href="../../repESP.esp_util.html#repESP.esp_util.EspData">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">EspData</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Dataclass representing the .esp file in the ``resp`` format</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    atoms_coords : typing.List[Coords]</span>
+<span class="sd">        The positions of atoms in space. Note that the identities of the atoms</span>
+<span class="sd">        are not known and thus this member cannot be described with the `Atom` class.</span>
+<span class="sd">    field : Field</span>
+<span class="sd">        The ESP field around the molecule.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    atoms_coords</span>
+<span class="sd">        See initialization parameter</span>
+<span class="sd">    field</span>
+<span class="sd">        See initialization parameter</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">atoms_coords</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Coords</span><span class="p">]</span>
+    <span class="n">field</span><span class="p">:</span> <span class="n">Field</span>
+
+<div class="viewcode-block" id="EspData.from_gaussian"><a class="viewcode-back" href="../../repESP.esp_util.html#repESP.esp_util.EspData.from_gaussian">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_gaussian</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">gaussian_esp_data</span><span class="p">:</span> <span class="n">GaussianEspData</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Alternative initialization from .esp file in Gaussian format</span>
+
+<span class="sd">        Note that the conversion in the opposite direction is not possible as</span>
+<span class="sd">        the conversion is lossy.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        gaussian_esp_data : GaussianEspData</span>
+<span class="sd">            A dataclass representing an .esp file in the Gaussian format.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">EspData</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">atom</span><span class="o">.</span><span class="n">coords</span> <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">gaussian_esp_data</span><span class="o">.</span><span class="n">molecule</span><span class="o">.</span><span class="n">atoms</span><span class="p">],</span>
+            <span class="n">gaussian_esp_data</span><span class="o">.</span><span class="n">field</span>
+        <span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="parse_gaussian_esp"><a class="viewcode-back" href="../../repESP.esp_util.html#repESP.esp_util.parse_gaussian_esp">[docs]</a><span class="k">def</span> <span class="nf">parse_gaussian_esp</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">TextIO</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GaussianEspData</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Parse a file in the Gaussian .esp file format</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    f : TextIO</span>
+<span class="sd">        File object opened in read mode containing the .esp file to be parsed.</span>
+<span class="sd">        The file can be generated with Gaussian by specifying the ``IOp(6/50=1)``</span>
+<span class="sd">        override.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    InputFormatError</span>
+<span class="sd">        Raised when the file does not follow the expected format. Note that</span>
+<span class="sd">        this function has only been tested with the output of Gaussian 09.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    GaussianEspData</span>
+<span class="sd">        A dataclass representing the information in the given .esp file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">get_line</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="n">charge</span><span class="p">,</span> <span class="n">multiplicity</span><span class="p">,</span> <span class="n">atom_count</span> <span class="o">=</span> <span class="n">_parse_prelude</span><span class="p">([</span><span class="n">get_line</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)])</span>
+
+    <span class="n">molecule</span> <span class="o">=</span> <span class="n">Molecule</span><span class="p">([</span><span class="n">_parse_atom</span><span class="p">(</span><span class="n">get_line</span><span class="p">())</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">atom_count</span><span class="p">)])</span>
+
+    <span class="k">if</span> <span class="n">get_line</span><span class="p">()</span> <span class="o">!=</span> <span class="s2">&quot; DIPOLE MOMENT:&quot;</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">InputFormatError</span><span class="p">(</span><span class="s2">&quot;Expected dipole moment section header.&quot;</span><span class="p">)</span>
+
+    <span class="n">dipole_moment</span> <span class="o">=</span> <span class="n">_parse_dipole</span><span class="p">(</span><span class="n">get_line</span><span class="p">())</span>
+
+    <span class="k">if</span> <span class="n">get_line</span><span class="p">()</span> <span class="o">!=</span> <span class="s2">&quot; TRACELESS QUADRUPOLE MOMENT:&quot;</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">InputFormatError</span><span class="p">(</span><span class="s2">&quot;Expected quadrupole moment section header.&quot;</span><span class="p">)</span>
+
+    <span class="n">quadrupole_moment</span> <span class="o">=</span> <span class="n">_parse_quadrupole</span><span class="p">([</span><span class="n">get_line</span><span class="p">(),</span> <span class="n">get_line</span><span class="p">()])</span>
+
+    <span class="n">points_header_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">&quot; ESP VALUES AND GRID POINT COORDINATES. #POINTS =\s+([0-9]+)&quot;</span><span class="p">)</span>
+    <span class="n">points_header_match</span> <span class="o">=</span> <span class="n">points_header_re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">get_line</span><span class="p">())</span>
+
+    <span class="k">if</span> <span class="n">points_header_match</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">InputFormatError</span><span class="p">(</span><span class="s2">&quot;Expected ESP points section header.&quot;</span><span class="p">)</span>
+
+    <span class="n">point_count</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">points_header_match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+    <span class="n">field</span> <span class="o">=</span> <span class="n">_parse_esp_points</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">mesh</span><span class="p">)</span> <span class="o">!=</span> <span class="n">point_count</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">InputFormatError</span><span class="p">(</span>
+            <span class="n">f</span><span class="s2">&quot;The number of ESP points ({len(field.mesh)}) does not agree with that &quot;</span>
+            <span class="n">f</span><span class="s2">&quot;specified in section header (</span><span class="si">{point_count}</span><span class="s2">).&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">GaussianEspData</span><span class="p">(</span><span class="n">charge</span><span class="p">,</span> <span class="n">multiplicity</span><span class="p">,</span> <span class="n">molecule</span><span class="p">,</span> <span class="n">dipole_moment</span><span class="p">,</span> <span class="n">quadrupole_moment</span><span class="p">,</span> <span class="n">field</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">_parse_prelude</span><span class="p">(</span><span class="n">lines</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span>
+
+    <span class="c1"># Line 1</span>
+    <span class="k">if</span> <span class="n">lines</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot; ESP FILE - ATOMIC UNITS&quot;</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">InputFormatError</span><span class="p">(</span><span class="s2">&quot;Unexpected first line of .esp line.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Line 2</span>
+    <span class="n">charge_and_multiplicity_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">&quot; CHARGE =\s+([-0-9.]+) - MULTIPLICITY =\s+([0-9.]+)&quot;</span><span class="p">)</span>
+    <span class="n">charge_and_multiplicity</span> <span class="o">=</span> <span class="n">charge_and_multiplicity_re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">charge_and_multiplicity</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">InputFormatError</span><span class="p">(</span><span class="s2">&quot;Failed parsing line 2 (charge and multiplicity expected).&quot;</span><span class="p">)</span>
+
+    <span class="n">charge</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">charge_and_multiplicity</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+    <span class="n">multiplicity</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">charge_and_multiplicity</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+
+    <span class="c1"># Line 3</span>
+    <span class="n">atom_count_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">&quot; ATOMIC COORDINATES AND ESP CHARGES. #ATOMS =\s+([0-9.]+)&quot;</span><span class="p">)</span>
+    <span class="n">atom_count</span> <span class="o">=</span> <span class="n">atom_count_re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">atom_count</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">InputFormatError</span><span class="p">(</span><span class="s2">&quot;Failed parsing line 3 (molecule header and atom count).&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">charge</span><span class="p">,</span> <span class="n">multiplicity</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">atom_count</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">_parse_atom</span><span class="p">(</span><span class="n">line</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomWithCoordsAndCharge</span><span class="p">:</span>
+    <span class="n">line_split</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">AtomWithCoordsAndCharge</span><span class="o">.</span><span class="n">from_symbol</span><span class="p">(</span>
+        <span class="n">line_split</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">Coords</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">coord</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;D&#39;</span><span class="p">,</span> <span class="s1">&#39;E&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">coord</span> <span class="ow">in</span> <span class="n">line_split</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">])),</span>
+        <span class="n">Charge</span><span class="p">(</span><span class="n">line_split</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;D&#39;</span><span class="p">,</span> <span class="s1">&#39;E&#39;</span><span class="p">))</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_parse_dipole</span><span class="p">(</span><span class="n">line</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DipoleMoment</span><span class="p">:</span>
+    <span class="n">dipole_line_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">&quot; X=\s+([-+0-9.D]+) Y=\s+([-+0-9.D]+) Z=\s+([-+0-9.D]+) Total=\s+([-+0-9.D]+)&quot;</span><span class="p">)</span>
+    <span class="n">dipole_line_match</span> <span class="o">=</span> <span class="n">dipole_line_re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">dipole_line_match</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">InputFormatError</span><span class="p">(</span><span class="s2">&quot;Failed parsing dipole specification.&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">DipoleMoment</span><span class="p">(</span>
+        <span class="n">DipoleMomentValue</span><span class="p">(</span><span class="n">dipole_line_match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;D&#39;</span><span class="p">,</span> <span class="s1">&#39;E&#39;</span><span class="p">)),</span>
+        <span class="n">DipoleMomentValue</span><span class="p">(</span><span class="n">dipole_line_match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;D&#39;</span><span class="p">,</span> <span class="s1">&#39;E&#39;</span><span class="p">)),</span>
+        <span class="n">DipoleMomentValue</span><span class="p">(</span><span class="n">dipole_line_match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;D&#39;</span><span class="p">,</span> <span class="s1">&#39;E&#39;</span><span class="p">))</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_parse_quadrupole</span><span class="p">(</span><span class="n">lines</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">QuadrupoleMoment</span><span class="p">:</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
+
+    <span class="n">line1_components</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;XX&quot;</span><span class="p">,</span> <span class="s2">&quot;YY&quot;</span><span class="p">,</span> <span class="s2">&quot;ZZ&quot;</span><span class="p">)</span>
+    <span class="n">line2_components</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;XY&quot;</span><span class="p">,</span> <span class="s2">&quot;XZ&quot;</span><span class="p">,</span> <span class="s2">&quot;YZ&quot;</span><span class="p">)</span>
+    <span class="n">get_line_re</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">components</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span>
+        <span class="s2">&quot;   </span><span class="si">{}</span><span class="s2">=\s+([-+0-9.D]+)   </span><span class="si">{}</span><span class="s2">=\s+([-+0-9.D]+)   </span><span class="si">{}</span><span class="s2">=\s+([-+0-9.D]+)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">components</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="n">line1_match</span> <span class="o">=</span> <span class="n">get_line_re</span><span class="p">(</span><span class="n">line1_components</span><span class="p">)</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">line2_match</span> <span class="o">=</span> <span class="n">get_line_re</span><span class="p">(</span><span class="n">line2_components</span><span class="p">)</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="n">line1_match</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">line2_match</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">InputFormatError</span><span class="p">(</span><span class="s2">&quot;Failed parsing quadrupole specification.&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">QuadrupoleMoment</span><span class="p">(</span>
+        <span class="n">QuadrupoleMomentValue</span><span class="p">(</span><span class="n">line1_match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;D&#39;</span><span class="p">,</span> <span class="s1">&#39;E&#39;</span><span class="p">)),</span>
+        <span class="n">QuadrupoleMomentValue</span><span class="p">(</span><span class="n">line1_match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;D&#39;</span><span class="p">,</span> <span class="s1">&#39;E&#39;</span><span class="p">)),</span>
+        <span class="n">QuadrupoleMomentValue</span><span class="p">(</span><span class="n">line1_match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;D&#39;</span><span class="p">,</span> <span class="s1">&#39;E&#39;</span><span class="p">)),</span>
+        <span class="n">QuadrupoleMomentValue</span><span class="p">(</span><span class="n">line2_match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;D&#39;</span><span class="p">,</span> <span class="s1">&#39;E&#39;</span><span class="p">)),</span>
+        <span class="n">QuadrupoleMomentValue</span><span class="p">(</span><span class="n">line2_match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;D&#39;</span><span class="p">,</span> <span class="s1">&#39;E&#39;</span><span class="p">)),</span>
+        <span class="n">QuadrupoleMomentValue</span><span class="p">(</span><span class="n">line2_match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;D&#39;</span><span class="p">,</span> <span class="s1">&#39;E&#39;</span><span class="p">))</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_parse_esp_points</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">TextIO</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Field</span><span class="p">[</span><span class="n">Esp</span><span class="p">]:</span>
+    <span class="n">points</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">line_split</span> <span class="o">=</span> <span class="p">[</span><span class="n">val</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;D&#39;</span><span class="p">,</span> <span class="s1">&#39;E&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()]</span>
+        <span class="n">points</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Coords</span><span class="p">(</span><span class="n">line_split</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">]))</span>
+        <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Esp</span><span class="p">(</span><span class="n">line_split</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+
+    <span class="k">return</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">Mesh</span><span class="p">(</span><span class="n">points</span><span class="p">),</span>
+        <span class="n">values</span>
+    <span class="p">)</span>
+
+
+<div class="viewcode-block" id="parse_resp_esp"><a class="viewcode-back" href="../../repESP.esp_util.html#repESP.esp_util.parse_resp_esp">[docs]</a><span class="k">def</span> <span class="nf">parse_resp_esp</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">TextIO</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EspData</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Parse a file in the .esp file format defined by ``resp``</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    f : TextIO</span>
+<span class="sd">        File object opened in read mode containing the .esp file to be parsed.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    InputFormatError</span>
+<span class="sd">        Raised when the file does not follow the expected format.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    EspData</span>
+<span class="sd">        A dataclass representing the information in the given .esp file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">get_line</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="n">atom_and_point_count</span> <span class="o">=</span> <span class="n">get_line</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">atom_and_point_count</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">InputFormatError</span><span class="p">(</span>
+            <span class="s2">&quot;Expected atom and point counts on the first line of .esp file in the `resp` format&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">atom_count</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">atom_and_point_count</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">point_count</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">atom_and_point_count</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="n">atoms_coords</span> <span class="o">=</span> <span class="p">[</span><span class="n">Coords</span><span class="p">(</span><span class="n">get_line</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">())</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">atom_count</span><span class="p">)]</span>
+
+    <span class="n">mesh_coords</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Coords</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">esp_values</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Esp</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">point_count</span><span class="p">):</span>
+        <span class="n">val</span><span class="p">,</span> <span class="o">*</span><span class="n">coords</span> <span class="o">=</span> <span class="n">get_line</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="n">mesh_coords</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Coords</span><span class="p">(</span><span class="n">coords</span><span class="p">))</span>
+        <span class="n">esp_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Esp</span><span class="p">(</span><span class="n">val</span><span class="p">))</span>
+
+    <span class="n">field</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">Mesh</span><span class="p">(</span>
+            <span class="n">mesh_coords</span>
+        <span class="p">),</span>
+        <span class="n">esp_values</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">EspData</span><span class="p">(</span>
+        <span class="n">atoms_coords</span><span class="p">,</span>
+        <span class="n">field</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="write_resp_esp"><a class="viewcode-back" href="../../repESP.esp_util.html#repESP.esp_util.write_resp_esp">[docs]</a><span class="k">def</span> <span class="nf">write_resp_esp</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">TextIO</span><span class="p">,</span> <span class="n">esp_data</span><span class="p">:</span> <span class="n">EspData</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Write a ``resp`` .esp file described by the given input data</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    f : TextIO</span>
+<span class="sd">        File object to which the supplied data is to be saved. Must be opened</span>
+<span class="sd">        in write mode.</span>
+<span class="sd">    esp_data : EspData</span>
+<span class="sd">        The dataclass containing the information needed to create a .esp file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">atoms_coords</span><span class="p">,</span> <span class="n">field</span> <span class="o">=</span> <span class="n">esp_data</span><span class="o">.</span><span class="n">atoms_coords</span><span class="p">,</span> <span class="n">esp_data</span><span class="o">.</span><span class="n">field</span>
+
+    <span class="c1"># Numeric Fortran formats specified in resp input specification</span>
+    <span class="c1"># http://upjv.q4md-forcefieldtools.org/RED/resp/#other3</span>
+    <span class="n">formats</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;header&quot;</span><span class="p">:</span> <span class="s2">&quot;2I5&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;atoms&quot;</span><span class="p">:</span> <span class="s2">&quot;17X,3E16.7&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;points&quot;</span><span class="p">:</span> <span class="s2">&quot;1X,4E16.7&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+        <span class="n">FW</span><span class="p">(</span><span class="n">formats</span><span class="p">[</span><span class="s2">&quot;header&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="nb">len</span><span class="p">(</span><span class="n">atoms_coords</span><span class="p">),</span>
+                <span class="nb">len</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">mesh</span><span class="p">)</span>
+            <span class="p">]</span>
+        <span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">atom_coords</span> <span class="ow">in</span> <span class="n">atoms_coords</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">FW</span><span class="p">(</span><span class="n">formats</span><span class="p">[</span><span class="s2">&quot;atoms&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">atom_coords</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">point_coords</span><span class="p">,</span> <span class="n">esp_val</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">points</span><span class="p">,</span> <span class="n">field</span><span class="o">.</span><span class="n">values</span><span class="p">):</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+            <span class="n">FW</span><span class="p">(</span><span class="n">formats</span><span class="p">[</span><span class="s2">&quot;points&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+                <span class="p">[</span><span class="n">esp_val</span><span class="p">]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">point_coords</span><span class="p">)</span>
+            <span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Jan Szopinski
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

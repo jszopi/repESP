@@ -1,0 +1,560 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>repESP.resp_wrapper &mdash; repESP 0.2.0-dev documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> repESP
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../repESP.html">repESP package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">repESP</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>repESP.resp_wrapper</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for repESP.resp_wrapper</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Wrappers for performing ESP fitting with the ``resp`` program&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">repESP.charges</span> <span class="k">import</span> <span class="n">Charge</span>
+<span class="kn">from</span> <span class="nn">repESP.esp_util</span> <span class="k">import</span> <span class="n">EspData</span><span class="p">,</span> <span class="n">write_resp_esp</span>
+<span class="kn">from</span> <span class="nn">repESP.equivalence</span> <span class="k">import</span> <span class="n">Equivalence</span>
+<span class="kn">from</span> <span class="nn">repESP.respin_generation</span> <span class="k">import</span> <span class="n">prepare_respin</span>
+<span class="kn">from</span> <span class="nn">repESP.respin_generation</span> <span class="k">import</span> <span class="n">RespStage1RespinGenerator</span><span class="p">,</span> <span class="n">RespStage2RespinGenerator</span>
+<span class="kn">from</span> <span class="nn">repESP.respin_generation</span> <span class="k">import</span> <span class="n">FitHydrogensOnlyRespinGenerator</span><span class="p">,</span> <span class="n">FrozenAtomsRespinGenerator</span>
+<span class="kn">from</span> <span class="nn">repESP.respin_generation</span> <span class="k">import</span> <span class="n">EquivalenceOnlyRespinGenerator</span>
+<span class="kn">from</span> <span class="nn">repESP.respin_format</span> <span class="k">import</span> <span class="n">Respin</span><span class="p">,</span> <span class="n">write_respin</span>
+<span class="kn">from</span> <span class="nn">repESP.resp_charges_format</span> <span class="k">import</span> <span class="n">write_resp_charges</span><span class="p">,</span> <span class="n">parse_resp_charges</span>
+<span class="kn">from</span> <span class="nn">repESP.types</span> <span class="k">import</span> <span class="n">Atom</span><span class="p">,</span> <span class="n">Molecule</span>
+
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="k">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="k">import</span> <span class="n">zip_longest</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">import</span> <span class="nn">tempfile</span>
+
+
+<span class="k">def</span> <span class="nf">_run_resp_in_dir</span><span class="p">(</span>
+    <span class="n">esp_data</span><span class="p">:</span> <span class="n">EspData</span><span class="p">,</span>
+    <span class="n">respin</span><span class="p">:</span> <span class="n">Respin</span><span class="p">,</span>
+    <span class="n">initial_charges</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Charge</span><span class="p">]],</span>
+    <span class="n">generate_esout</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="n">calc_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Charge</span><span class="p">]:</span>
+
+    <span class="k">if</span> <span class="n">respin</span><span class="o">.</span><span class="n">cntrl</span><span class="o">.</span><span class="n">iqopt</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span> <span class="ow">and</span> <span class="n">initial_charges</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;`resp` expected initial charges (`iqopt` is not 1) but none given.&quot;</span><span class="p">)</span>
+
+    <span class="n">respin_fn</span> <span class="o">=</span> <span class="s2">&quot;input.respin&quot;</span>
+    <span class="n">qin_fn</span> <span class="o">=</span> <span class="s2">&quot;charges.qin&quot;</span>
+    <span class="n">qout_fn</span> <span class="o">=</span> <span class="s2">&quot;charges.qout&quot;</span>
+    <span class="n">espot_fn</span> <span class="o">=</span> <span class="s2">&quot;espot.esp&quot;</span>
+
+    <span class="n">get_full_path</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">fn</span><span class="p">:</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{calc_dir}</span><span class="s2">/</span><span class="si">{fn}</span><span class="s2">&quot;</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">get_full_path</span><span class="p">(</span><span class="n">respin_fn</span><span class="p">),</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">write_respin</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">respin</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">initial_charges</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">get_full_path</span><span class="p">(</span><span class="n">qin_fn</span><span class="p">),</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">write_resp_charges</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">initial_charges</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">get_full_path</span><span class="p">(</span><span class="n">espot_fn</span><span class="p">),</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">write_resp_esp</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">esp_data</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="s2">&quot;resp&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;-i&quot;</span><span class="p">,</span> <span class="s2">&quot;input.respin&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;-o&quot;</span><span class="p">,</span> <span class="s2">&quot;output.respout&quot;</span><span class="p">,</span>
+                <span class="o">*</span><span class="p">([</span><span class="s2">&quot;-q&quot;</span><span class="p">,</span> <span class="s2">&quot;charges.qin&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="n">initial_charges</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">[]),</span>
+                <span class="s2">&quot;-t&quot;</span><span class="p">,</span> <span class="s2">&quot;charges.qout&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;-e&quot;</span><span class="p">,</span> <span class="s2">&quot;espot.esp&quot;</span><span class="p">,</span>
+                <span class="o">*</span><span class="p">([</span><span class="s2">&quot;-s&quot;</span><span class="p">,</span> <span class="s2">&quot;esout.esp&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="n">generate_esout</span> <span class="k">else</span> <span class="p">[]),</span>
+            <span class="p">],</span>
+            <span class="n">cwd</span><span class="o">=</span><span class="n">calc_dir</span><span class="p">,</span>
+            <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># raises CalledProcessError</span>
+            <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+    <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+            <span class="n">f</span><span class="s2">&quot;Running `resp` failed with return code </span><span class="si">{e.returncode}</span><span class="s2"> and the following error:</span><span class="se">\n</span><span class="si">{e.stderr}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">get_full_path</span><span class="p">(</span><span class="s2">&quot;stdout.out&quot;</span><span class="p">),</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">process</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">get_full_path</span><span class="p">(</span><span class="s2">&quot;charges.qout&quot;</span><span class="p">))</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">parse_resp_charges</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="run_resp"><a class="viewcode-back" href="../../repESP.resp_wrapper.html#repESP.resp_wrapper.run_resp">[docs]</a><span class="k">def</span> <span class="nf">run_resp</span><span class="p">(</span>
+    <span class="n">esp_data</span><span class="p">:</span> <span class="n">EspData</span><span class="p">,</span>
+    <span class="n">respin</span><span class="p">:</span> <span class="n">Respin</span><span class="p">,</span>
+    <span class="n">initial_charges</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Charge</span><span class="p">]]</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">generate_esout</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">save_intermediates_to</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span><span class="o">=</span><span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Charge</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Run the ``resp`` program with the given &quot;respin&quot; instructions</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    esp_data : EspData</span>
+<span class="sd">        Object containing the data normally provided in the .esp file i.e. atom</span>
+<span class="sd">        coordinates and ESP field values at the points to be used in the fitting.</span>
+<span class="sd">    respin : Respin</span>
+<span class="sd">        Instructions for the fitting in the `resp` program input format.</span>
+<span class="sd">    initial_charges : Optional[typing.List[Charge]], optional</span>
+<span class="sd">        Initial charges to be used for the fitting, which may be required by</span>
+<span class="sd">        the fitting method or may simply be provided as an initial guess for</span>
+<span class="sd">        the fitting algorithm. `ValueError` will be raised if the `respin`</span>
+<span class="sd">        argument specifies that initial charges are expected (`iqopt` not equal</span>
+<span class="sd">        to 1) but this argument is not provided. Defaults to None.</span>
+<span class="sd">    generate_esout : bool, optional</span>
+<span class="sd">        Whether to produce an &quot;esout&quot; file containing the ESP field values at</span>
+<span class="sd">        the fitting points, reproduced from the fitted charges. This can also</span>
+<span class="sd">        be achieved with the `repESP` library and thus shouldn&#39;t be necessary.</span>
+<span class="sd">        Defaults to False. If this option is set to True, the user should also</span>
+<span class="sd">        set the `save_intermediates_to` option, otherwise the &quot;esout&quot; file will</span>
+<span class="sd">        not be accessible.</span>
+<span class="sd">    save_intermediates_to : Optional[str], optional</span>
+<span class="sd">        Which directory to save the ``resp`` program output to. The directory</span>
+<span class="sd">        must not exist and will be created by the program. If the user does</span>
+<span class="sd">        not require access to the files, this option should remain at the default</span>
+<span class="sd">        of None. The calculation will then be run in the OS temporary directory.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    typing.List[Charge]</span>
+<span class="sd">        The charges fitted using the ``resp`` program according to the &quot;respin&quot;</span>
+<span class="sd">        instructions.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">save_intermediates_to</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">()</span> <span class="k">as</span> <span class="n">temp_dir_name</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">_run_resp_in_dir</span><span class="p">(</span><span class="n">esp_data</span><span class="p">,</span> <span class="n">respin</span><span class="p">,</span> <span class="n">initial_charges</span><span class="p">,</span> <span class="n">generate_esout</span><span class="p">,</span> <span class="n">temp_dir_name</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">save_intermediates_to</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">_run_resp_in_dir</span><span class="p">(</span><span class="n">esp_data</span><span class="p">,</span> <span class="n">respin</span><span class="p">,</span> <span class="n">initial_charges</span><span class="p">,</span> <span class="n">generate_esout</span><span class="p">,</span> <span class="n">save_intermediates_to</span><span class="p">)</span></div>
+
+
+<span class="c1"># NOTE: If alternative interface is to be implemented in place of the two</span>
+<span class="c1"># respin files, try the `variants` library presented by Paul Ganssle.</span>
+<div class="viewcode-block" id="run_two_stage_resp"><a class="viewcode-back" href="../../repESP.resp_wrapper.html#repESP.resp_wrapper.run_two_stage_resp">[docs]</a><span class="k">def</span> <span class="nf">run_two_stage_resp</span><span class="p">(</span>
+    <span class="n">esp_data</span><span class="p">:</span> <span class="n">EspData</span><span class="p">,</span>
+    <span class="n">respin1</span><span class="p">:</span> <span class="n">Respin</span><span class="p">,</span>
+    <span class="n">respin2</span><span class="p">:</span> <span class="n">Respin</span><span class="p">,</span>
+    <span class="n">initial_charges</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Charge</span><span class="p">]]</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">generate_esout</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">save_intermediates_to</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span><span class="o">=</span><span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Charge</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Apply the two-stage procedure to fit RESP charges</span>
+
+<span class="sd">    This function takes the two &quot;respin&quot; files, as this is the simplest way to</span>
+<span class="sd">    provide information about equivalence as well as methyl and methylene groups.</span>
+<span class="sd">    Another interface is possible where this information is provided directly</span>
+<span class="sd">    and may be provided in the future.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    esp_data : EspData</span>
+<span class="sd">        See `run_resp` function parameter</span>
+<span class="sd">    respin1 : Respin</span>
+<span class="sd">        Instructions for 1st stage RESP fitting.</span>
+<span class="sd">    respin2 : Respin</span>
+<span class="sd">        Instructions for 2nd stage RESP fitting.</span>
+<span class="sd">    initial_charges : Optional[typing.List[Charge]], optional</span>
+<span class="sd">        See `run_resp` function parameter</span>
+<span class="sd">    generate_esout : bool, optional</span>
+<span class="sd">        See `run_resp` function parameter</span>
+<span class="sd">    save_intermediates_to : Optional[str], optional</span>
+<span class="sd">        See `run_resp` function parameter</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    typing.List[Charge]</span>
+<span class="sd">        The fitted two-stage RESP charges.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Some verification of respin file compatibility should be performed.</span>
+    <span class="n">total_charge</span> <span class="o">=</span> <span class="n">respin1</span><span class="o">.</span><span class="n">charge</span>
+    <span class="n">molecule</span> <span class="o">=</span> <span class="n">respin1</span><span class="o">.</span><span class="n">molecule</span>
+
+    <span class="n">get_calc_dir</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">stage</span><span class="p">:</span> <span class="p">(</span>
+        <span class="n">f</span><span class="s2">&quot;</span><span class="si">{save_intermediates_to}</span><span class="s2">/stage_</span><span class="si">{stage}</span><span class="s2">&quot;</span>
+        <span class="k">if</span> <span class="n">save_intermediates_to</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
+    <span class="p">)</span>
+
+    <span class="n">respin1_generated</span> <span class="o">=</span> <span class="n">prepare_respin</span><span class="p">(</span>
+        <span class="n">RespStage1RespinGenerator</span><span class="p">(</span><span class="n">respin1</span><span class="o">.</span><span class="n">ivary</span><span class="p">),</span>
+        <span class="n">total_charge</span><span class="p">,</span>
+        <span class="n">molecule</span><span class="p">,</span>
+        <span class="n">read_charges</span><span class="o">=</span><span class="n">initial_charges</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="p">)</span>
+
+    <span class="n">resp1_charges</span> <span class="o">=</span> <span class="n">run_resp</span><span class="p">(</span>
+        <span class="n">esp_data</span><span class="p">,</span>
+        <span class="n">respin1</span><span class="p">,</span>
+        <span class="n">initial_charges</span><span class="p">,</span>
+        <span class="n">generate_esout</span><span class="p">,</span>
+        <span class="n">get_calc_dir</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="n">respin2_generated</span> <span class="o">=</span> <span class="n">prepare_respin</span><span class="p">(</span>
+        <span class="n">RespStage2RespinGenerator</span><span class="p">(</span><span class="n">respin2</span><span class="o">.</span><span class="n">ivary</span><span class="p">),</span>
+        <span class="n">total_charge</span><span class="p">,</span>
+        <span class="n">molecule</span><span class="p">,</span>
+        <span class="n">read_charges</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">run_resp</span><span class="p">(</span>
+        <span class="n">esp_data</span><span class="p">,</span>
+        <span class="n">respin2</span><span class="p">,</span>
+        <span class="n">resp1_charges</span><span class="p">,</span>
+        <span class="n">generate_esout</span><span class="p">,</span>
+        <span class="n">get_calc_dir</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="p">)</span></div>
+
+
+<span class="c1"># NOTE: It may be more natural (i.e. in line with this library&#39;s datastructures)</span>
+<span class="c1"># to use Field and Molecule[AtomWithCoords] instead of EspData. Currently,</span>
+<span class="c1"># the atom coordinates are hidden in EspData, making it less clear what the</span>
+<span class="c1"># input of the fitting is.</span>
+<div class="viewcode-block" id="fit_with_equivalencing"><a class="viewcode-back" href="../../repESP.resp_wrapper.html#repESP.resp_wrapper.fit_with_equivalencing">[docs]</a><span class="k">def</span> <span class="nf">fit_with_equivalencing</span><span class="p">(</span>
+    <span class="n">esp_data</span><span class="p">:</span> <span class="n">EspData</span><span class="p">,</span>
+    <span class="n">equivalence</span><span class="p">:</span> <span class="n">Equivalence</span><span class="p">,</span>
+    <span class="n">molecule</span><span class="p">:</span> <span class="n">Molecule</span><span class="p">[</span><span class="n">Atom</span><span class="p">],</span>
+    <span class="n">total_charge</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">initial_charges</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Charge</span><span class="p">]]</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">generate_esout</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">save_intermediates_to</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span><span class="o">=</span><span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Charge</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Fit charges to the provided ESP subject to equivalence relations</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    esp_data : EspData</span>
+<span class="sd">        See `run_resp` function parameter</span>
+<span class="sd">    equivalence : Equivalence</span>
+<span class="sd">        The chemical equivalence relations between atoms of the molecule.</span>
+<span class="sd">    molecule : Molecule[Atom]</span>
+<span class="sd">        The molecule which charges are being fitted. Only atom identities are required.</span>
+<span class="sd">    total_charge : int</span>
+<span class="sd">        The total charge of the molecule.</span>
+<span class="sd">    initial_charges : Optional[typing.List[Charge]], optional</span>
+<span class="sd">        See `run_resp` function parameter</span>
+<span class="sd">    generate_esout : bool, optional</span>
+<span class="sd">        See `run_resp` function parameter</span>
+<span class="sd">    save_intermediates_to : Optional[str], optional</span>
+<span class="sd">        See `run_resp` function parameter</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    typing.List[Charge]</span>
+<span class="sd">        The charges fitted to the provided ESP subject to equivalence relations.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">respin_generator</span> <span class="o">=</span> <span class="n">EquivalenceOnlyRespinGenerator</span><span class="p">(</span><span class="n">equivalence</span><span class="p">)</span>
+    <span class="n">respin</span> <span class="o">=</span> <span class="n">prepare_respin</span><span class="p">(</span>
+        <span class="n">respin_generator</span><span class="p">,</span>
+        <span class="n">total_charge</span><span class="p">,</span>
+        <span class="n">molecule</span><span class="p">,</span>
+        <span class="n">read_charges</span><span class="o">=</span><span class="n">initial_charges</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">run_resp</span><span class="p">(</span>
+        <span class="n">esp_data</span><span class="p">,</span>
+        <span class="n">respin</span><span class="p">,</span>
+        <span class="n">initial_charges</span><span class="p">,</span>
+        <span class="n">generate_esout</span><span class="p">,</span>
+        <span class="n">save_intermediates_to</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="fit_hydrogens_only"><a class="viewcode-back" href="../../repESP.resp_wrapper.html#repESP.resp_wrapper.fit_hydrogens_only">[docs]</a><span class="k">def</span> <span class="nf">fit_hydrogens_only</span><span class="p">(</span>
+    <span class="n">esp_data</span><span class="p">:</span> <span class="n">EspData</span><span class="p">,</span>
+    <span class="n">equivalence</span><span class="p">:</span> <span class="n">Equivalence</span><span class="p">,</span>
+    <span class="n">molecule</span><span class="p">:</span> <span class="n">Molecule</span><span class="p">[</span><span class="n">Atom</span><span class="p">],</span>
+    <span class="n">total_charge</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">initial_charges</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Charge</span><span class="p">],</span>
+    <span class="n">generate_esout</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">save_intermediates_to</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span><span class="o">=</span><span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Charge</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Fit hydrogen atom charges to the provided ESP subject to equivalence relations</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    esp_data : EspData</span>
+<span class="sd">        See `run_resp` function parameter</span>
+<span class="sd">    equivalence : Equivalence</span>
+<span class="sd">        The chemical equivalence relations between atoms of the molecule.</span>
+<span class="sd">    molecule : Molecule[Atom]</span>
+<span class="sd">        The molecule which charges are being fitted. Only atom identities are required.</span>
+<span class="sd">    total_charge : int</span>
+<span class="sd">        The total charge of the molecule.</span>
+<span class="sd">    initial_charges : typing.List[Charge]</span>
+<span class="sd">        Initial charges to be used for the fitting. Charges on atoms other than</span>
+<span class="sd">        hydrogen atoms will be fixed at the provided values.</span>
+<span class="sd">    generate_esout : bool, optional</span>
+<span class="sd">        See `run_resp` function parameter</span>
+<span class="sd">    save_intermediates_to : Optional[str], optional</span>
+<span class="sd">        See `run_resp` function parameter</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    typing.List[Charge]</span>
+<span class="sd">        The hydrogen charges fitted to the provided ESP subject to equivalence</span>
+<span class="sd">        relations. Other charges have values fixed at values from `initial_charges`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">respin_generator</span> <span class="o">=</span> <span class="n">FitHydrogensOnlyRespinGenerator</span><span class="p">(</span><span class="n">equivalence</span><span class="p">,</span> <span class="n">molecule</span><span class="p">)</span>
+    <span class="n">respin</span> <span class="o">=</span> <span class="n">prepare_respin</span><span class="p">(</span>
+        <span class="n">respin_generator</span><span class="p">,</span>
+        <span class="n">total_charge</span><span class="p">,</span>
+        <span class="n">molecule</span><span class="p">,</span>
+        <span class="n">read_charges</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">run_resp</span><span class="p">(</span>
+        <span class="n">esp_data</span><span class="p">,</span>
+        <span class="n">respin</span><span class="p">,</span>
+        <span class="n">initial_charges</span><span class="p">,</span>
+        <span class="n">generate_esout</span><span class="p">,</span>
+        <span class="n">save_intermediates_to</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="fit_with_frozen_atoms"><a class="viewcode-back" href="../../repESP.resp_wrapper.html#repESP.resp_wrapper.fit_with_frozen_atoms">[docs]</a><span class="k">def</span> <span class="nf">fit_with_frozen_atoms</span><span class="p">(</span>
+    <span class="n">esp_data</span><span class="p">:</span> <span class="n">EspData</span><span class="p">,</span>
+    <span class="n">equivalence</span><span class="p">:</span> <span class="n">Equivalence</span><span class="p">,</span>
+    <span class="n">molecule</span><span class="p">:</span> <span class="n">Molecule</span><span class="p">[</span><span class="n">Atom</span><span class="p">],</span>
+    <span class="n">frozen_atoms</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+    <span class="n">total_charge</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">initial_charges</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Charge</span><span class="p">],</span>
+    <span class="n">generate_esout</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">save_intermediates_to</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span><span class="o">=</span><span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Charge</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Fit hydrogen atom charges to the provided ESP subject to equivalence relations</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    esp_data : EspData</span>
+<span class="sd">        See `run_resp` function parameter</span>
+<span class="sd">    equivalence : Equivalence</span>
+<span class="sd">        The chemical equivalence relations between atoms of the molecule.</span>
+<span class="sd">    molecule : Molecule[Atom]</span>
+<span class="sd">        The molecule which charges are being fitted. Only atom identities are required.</span>
+<span class="sd">    frozen_atoms : List[int]</span>
+<span class="sd">        List of zero-based indices of atoms in the molecule which charges should</span>
+<span class="sd">        not be fitted but fixed at the values provided in `initial_charges` argument.</span>
+<span class="sd">    total_charge : int</span>
+<span class="sd">        The total charge of the molecule.</span>
+<span class="sd">    initial_charges : typing.List[Charge]</span>
+<span class="sd">        Initial charges to be used for the fitting. Charges on atoms specified</span>
+<span class="sd">        in the `frozen_atoms` arguments will be fixed at the provided values.</span>
+<span class="sd">    generate_esout : bool, optional</span>
+<span class="sd">        See `run_resp` function parameter</span>
+<span class="sd">    save_intermediates_to : Optional[str], optional</span>
+<span class="sd">        See `run_resp` function parameter</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    typing.List[Charge]</span>
+<span class="sd">        The charges fitted to the provided ESP subject to equivalence relations,</span>
+<span class="sd">        except where the charges were frozen at initial values.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">respin_generator</span> <span class="o">=</span> <span class="n">FrozenAtomsRespinGenerator</span><span class="p">(</span><span class="n">equivalence</span><span class="p">,</span> <span class="n">frozen_atoms</span><span class="p">)</span>
+    <span class="n">respin</span> <span class="o">=</span> <span class="n">prepare_respin</span><span class="p">(</span>
+        <span class="n">respin_generator</span><span class="p">,</span>
+        <span class="n">total_charge</span><span class="p">,</span>
+        <span class="n">molecule</span><span class="p">,</span>
+        <span class="n">read_charges</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">run_resp</span><span class="p">(</span>
+        <span class="n">esp_data</span><span class="p">,</span>
+        <span class="n">respin</span><span class="p">,</span>
+        <span class="n">initial_charges</span><span class="p">,</span>
+        <span class="n">generate_esout</span><span class="p">,</span>
+        <span class="n">save_intermediates_to</span>
+    <span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Jan Szopinski
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

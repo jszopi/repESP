@@ -1,0 +1,315 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>repESP.equivalence &mdash; repESP 0.2.0-dev documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> repESP
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../repESP.html">repESP package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">repESP</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>repESP.equivalence</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for repESP.equivalence</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Chemical equivalence relations between atoms of a molecule&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="k">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">asdict</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="k">import</span> <span class="n">zip_longest</span>
+<span class="kn">import</span> <span class="nn">io</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="kn">from</span> <span class="nn">repESP.types</span> <span class="k">import</span> <span class="n">Atom</span><span class="p">,</span> <span class="n">Molecule</span>
+
+
+<div class="viewcode-block" id="Equivalence"><a class="viewcode-back" href="../../repESP.equivalence.html#repESP.equivalence.Equivalence">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">Equivalence</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Dataclass representing chemical equivalence relations between atoms</span>
+
+<span class="sd">    Atoms in a molecule are considered equivalent for the purpose of fitting</span>
+<span class="sd">    partial charges when they are symmetry-related or fast-exchanging.</span>
+
+<span class="sd">    The equivalence information is represented as a list stored in the `values`</span>
+<span class="sd">    attribute. The length of this list must be the same as the number of atoms</span>
+<span class="sd">    in the molecule it describes. Consecutive values refer to consecutive atoms</span>
+<span class="sd">    of the molecule. Each value is either None, if the described atom is not</span>
+<span class="sd">    equivalenced to any other atom, or a zero-based index of the atom to which</span>
+<span class="sd">    the described atom is equivalenced.</span>
+
+<span class="sd">    Example</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    Consider a methane molecule defined as follows:</span>
+
+<span class="sd">    &gt;&gt;&gt; methane = Molecule([Atom(atomic_number) for atomic_number in [6, 1, 1, 1, 1]])</span>
+
+<span class="sd">    The corresponding equivalence information would be:</span>
+
+<span class="sd">    &gt;&gt;&gt; equivalence = Equivalence([None, None, 1, 1, 1])</span>
+
+<span class="sd">    There are no atoms equivalent to the carbon atom, and thus its value is</span>
+<span class="sd">    None. The first hydrogen atom is equivalent to the other three but those</span>
+<span class="sd">    have not been specified yet, so its value is also None. The remaining</span>
+<span class="sd">    three hydrogen atoms are equivalent to the first hydrogen atom, which</span>
+<span class="sd">    zero-based index in the `methane.atoms` list is 1.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    values : typing.List[Optional[int]]</span>
+<span class="sd">        The list of equivalence values.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        Raised when any of the values are outside of the expected bounds. In</span>
+<span class="sd">        the future the initialization may further verify that there are no cyclic</span>
+<span class="sd">        relations.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    values</span>
+<span class="sd">        See initialization parameter</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">values</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span>
+
+    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">elem</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">elem</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="p">(</span><span class="n">elem</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">elem</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">)):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="n">f</span><span class="s2">&quot;Value number </span><span class="si">{i}</span><span class="s2"> is not valid as equivalence information &quot;</span>
+                    <span class="n">f</span><span class="s2">&quot;in a molecule of {len(self.values)}.&quot;</span>
+                <span class="p">)</span>
+
+<div class="viewcode-block" id="Equivalence.describe"><a class="viewcode-back" href="../../repESP.equivalence.html#repESP.equivalence.Equivalence.describe">[docs]</a>    <span class="k">def</span> <span class="nf">describe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">molecule</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Molecule</span><span class="p">[</span><span class="n">Atom</span><span class="p">]]</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Verbosely report the equivalence information</span>
+
+<span class="sd">        Example</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        &gt;&gt;&gt; print(equivalence.describe(methane))</span>
+<span class="sd">        Atom (C) number 1</span>
+<span class="sd">        Atom (H) number 2</span>
+<span class="sd">        Atom (H) number 3, equivalenced to atom 1</span>
+<span class="sd">        Atom (H) number 4, equivalenced to atom 2</span>
+<span class="sd">        Atom (H) number 5, equivalenced to atom 2</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        molecule : Optional[Molecule[Atom]], optional</span>
+<span class="sd">            The molecule to which the equivalence information refers. This</span>
+<span class="sd">            argument is optional and defaults to None. If it is provided, atom</span>
+<span class="sd">            identities will be included in the output.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            Raised when the number of atoms in the molecule does not match</span>
+<span class="sd">            the length of the list of values in this object.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            A verbose description of the equivalence information.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">molecule</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">molecule</span><span class="o">.</span><span class="n">atoms</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="n">f</span><span class="s2">&quot;The number of atoms ({len(molecule.atoms)} is not the same &quot;</span>
+                <span class="n">f</span><span class="s2">&quot;as the number of equivalence values ({len(self.values)}.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">zipped</span> <span class="o">=</span> <span class="n">zip_longest</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">molecule</span><span class="o">.</span><span class="n">atoms</span> <span class="k">if</span> <span class="n">molecule</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">[])</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">equivalence</span><span class="p">,</span> <span class="n">atom</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">zipped</span><span class="p">):</span>
+            <span class="n">atomic_number</span> <span class="o">=</span> <span class="n">atom</span><span class="o">.</span><span class="n">symbol</span> <span class="k">if</span> <span class="n">molecule</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
+            <span class="n">id_str</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot; (</span><span class="si">{atomic_number}</span><span class="s2">)&quot;</span> <span class="k">if</span> <span class="n">atomic_number</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+            <span class="n">equivalence_str</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;, equivalenced to atom {equivalence+1}&quot;</span> <span class="k">if</span> <span class="n">equivalence</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Atom</span><span class="si">{id_str}</span><span class="s2"> number {i+1}</span><span class="si">{equivalence_str}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">f</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">f</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span></div></div>
+
+
+<span class="k">def</span> <span class="nf">_get_equivalence_from_ac</span><span class="p">(</span><span class="n">ac</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Equivalence</span><span class="p">:</span>
+    <span class="c1"># TODO: This should wrap the two respgen calls:</span>
+    <span class="c1">#     respgen -i methane.ac -o methane.respin1 -f resp1</span>
+    <span class="c1">#     respgen -i methane.ac -o methane.respin2 -f resp2</span>
+    <span class="c1"># and call get_equivalence on them.</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Jan Szopinski
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

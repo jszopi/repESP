@@ -1,0 +1,402 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>repESP.esp_util module &mdash; repESP 0.2.0-dev documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="repESP.exceptions module" href="repESP.exceptions.html" />
+    <link rel="prev" title="repESP.equivalence module" href="repESP.equivalence.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> repESP
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="repESP.html">repESP package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="repESP.html#highlights">Highlights</a></li>
+<li class="toctree-l2"><a class="reference internal" href="repESP.html#example-problem">Example problem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="repESP.html#usage-caveats">Usage caveats</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="repESP.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="repESP.calc_fields.html">repESP.calc_fields module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.charge_util.html">repESP.charge_util module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.charges.html">repESP.charges module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.cube_format.html">repESP.cube_format module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.equivalence.html">repESP.equivalence module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">repESP.esp_util module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.exceptions.html">repESP.exceptions module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.fields.html">repESP.fields module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.gaussian_format.html">repESP.gaussian_format module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.resp_charges_format.html">repESP.resp_charges_format module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.resp_wrapper.html">repESP.resp_wrapper module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.respin_format.html">repESP.respin_format module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.respin_generation.html">repESP.respin_generation module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.types.html">repESP.types module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.util.html">repESP.util module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">repESP</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="repESP.html">repESP package</a> &raquo;</li>
+        
+      <li>repESP.esp_util module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/repESP.esp_util.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-repESP.esp_util">
+<span id="repesp-esp-util-module"></span><h1>repESP.esp_util module<a class="headerlink" href="#module-repESP.esp_util" title="Permalink to this headline">¶</a></h1>
+<p>Parsing and writing .esp file format describing molecular ESP field</p>
+<dl class="class">
+<dt id="repESP.esp_util.GaussianEspData">
+<em class="property">class </em><code class="descname">GaussianEspData</code><span class="sig-paren">(</span><em>charge: int, multiplicity: int, molecule: repESP.types.Molecule[repESP.charges.AtomWithCoordsAndCharge][repESP.charges.AtomWithCoordsAndCharge], dipole_moment: repESP.charges.DipoleMoment, quadrupole_moment: repESP.charges.QuadrupoleMoment, field: repESP.fields.Field</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/repESP/esp_util.html#GaussianEspData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.esp_util.GaussianEspData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Dataclass representing the .esp file in the Gaussian format</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>charge</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – The total charge of the molecule.</li>
+<li><strong>multiplicity</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – The multiplicity of the molecule’s electron configuration.</li>
+<li><strong>molecule</strong> (<a class="reference internal" href="repESP.types.html#repESP.types.Molecule" title="repESP.types.Molecule"><em>Molecule</em></a><em>[</em><a class="reference internal" href="repESP.charges.html#repESP.charges.AtomWithCoordsAndCharge" title="repESP.charges.AtomWithCoordsAndCharge"><em>AtomWithCoordsAndCharge</em></a><em>]</em>) – The molecule with atom coordinates and partial charges specified.</li>
+<li><strong>dipole_moment</strong> (<a class="reference internal" href="repESP.charges.html#repESP.charges.DipoleMoment" title="repESP.charges.DipoleMoment"><em>DipoleMoment</em></a>) – The dipole moment of the molecule.</li>
+<li><strong>quadrupole_moment</strong> (<a class="reference internal" href="repESP.charges.html#repESP.charges.QuadrupoleMoment" title="repESP.charges.QuadrupoleMoment"><em>QuadrupoleMoment</em></a>) – The quadrupole moment of the molecule.</li>
+<li><strong>field</strong> (<a class="reference internal" href="repESP.fields.html#repESP.fields.Field" title="repESP.fields.Field"><em>Field</em></a>) – The ESP field described by the file.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="repESP.esp_util.GaussianEspData.charge">
+<code class="descname">charge</code><a class="headerlink" href="#repESP.esp_util.GaussianEspData.charge" title="Permalink to this definition">¶</a></dt>
+<dd><p>See initialization parameter</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="repESP.esp_util.GaussianEspData.multiplicity">
+<code class="descname">multiplicity</code><a class="headerlink" href="#repESP.esp_util.GaussianEspData.multiplicity" title="Permalink to this definition">¶</a></dt>
+<dd><p>See initialization parameter</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="repESP.esp_util.GaussianEspData.molecule">
+<code class="descname">molecule</code><a class="headerlink" href="#repESP.esp_util.GaussianEspData.molecule" title="Permalink to this definition">¶</a></dt>
+<dd><p>See initialization parameter</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="repESP.esp_util.GaussianEspData.dipole_moment">
+<code class="descname">dipole_moment</code><a class="headerlink" href="#repESP.esp_util.GaussianEspData.dipole_moment" title="Permalink to this definition">¶</a></dt>
+<dd><p>See initialization parameter</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="repESP.esp_util.GaussianEspData.quadrupole_moment">
+<code class="descname">quadrupole_moment</code><a class="headerlink" href="#repESP.esp_util.GaussianEspData.quadrupole_moment" title="Permalink to this definition">¶</a></dt>
+<dd><p>See initialization parameter</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="repESP.esp_util.GaussianEspData.field">
+<code class="descname">field</code><a class="headerlink" href="#repESP.esp_util.GaussianEspData.field" title="Permalink to this definition">¶</a></dt>
+<dd><p>See initialization parameter</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="repESP.esp_util.EspData">
+<em class="property">class </em><code class="descname">EspData</code><span class="sig-paren">(</span><em>atoms_coords: List[repESP.types.Coords], field: repESP.fields.Field</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/repESP/esp_util.html#EspData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.esp_util.EspData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Dataclass representing the .esp file in the <code class="docutils literal notranslate"><span class="pre">resp</span></code> format</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>atoms_coords</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.7)"><em>typing.List</em></a><em>[</em><a class="reference internal" href="repESP.types.html#repESP.types.Coords" title="repESP.types.Coords"><em>Coords</em></a><em>]</em>) – The positions of atoms in space. Note that the identities of the atoms
+are not known and thus this member cannot be described with the <cite>Atom</cite> class.</li>
+<li><strong>field</strong> (<a class="reference internal" href="repESP.fields.html#repESP.fields.Field" title="repESP.fields.Field"><em>Field</em></a>) – The ESP field around the molecule.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="repESP.esp_util.EspData.atoms_coords">
+<code class="descname">atoms_coords</code><a class="headerlink" href="#repESP.esp_util.EspData.atoms_coords" title="Permalink to this definition">¶</a></dt>
+<dd><p>See initialization parameter</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="repESP.esp_util.EspData.field">
+<code class="descname">field</code><a class="headerlink" href="#repESP.esp_util.EspData.field" title="Permalink to this definition">¶</a></dt>
+<dd><p>See initialization parameter</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="repESP.esp_util.EspData.from_gaussian">
+<em class="property">classmethod </em><code class="descname">from_gaussian</code><span class="sig-paren">(</span><em>gaussian_esp_data: repESP.esp_util.GaussianEspData</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/repESP/esp_util.html#EspData.from_gaussian"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.esp_util.EspData.from_gaussian" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alternative initialization from .esp file in Gaussian format</p>
+<p>Note that the conversion in the opposite direction is not possible as
+the conversion is lossy.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>gaussian_esp_data</strong> (<a class="reference internal" href="#repESP.esp_util.GaussianEspData" title="repESP.esp_util.GaussianEspData"><em>GaussianEspData</em></a>) – A dataclass representing an .esp file in the Gaussian format.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="repESP.esp_util.parse_gaussian_esp">
+<code class="descname">parse_gaussian_esp</code><span class="sig-paren">(</span><em>f: TextIO</em><span class="sig-paren">)</span> &#x2192; repESP.esp_util.GaussianEspData<a class="reference internal" href="_modules/repESP/esp_util.html#parse_gaussian_esp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.esp_util.parse_gaussian_esp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse a file in the Gaussian .esp file format</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>f</strong> (<em>TextIO</em>) – File object opened in read mode containing the .esp file to be parsed.
+The file can be generated with Gaussian by specifying the <code class="docutils literal notranslate"><span class="pre">IOp(6/50=1)</span></code>
+override.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal notranslate"><span class="pre">InputFormatError</span></code> – Raised when the file does not follow the expected format. Note that
+this function has only been tested with the output of Gaussian 09.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A dataclass representing the information in the given .esp file.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#repESP.esp_util.GaussianEspData" title="repESP.esp_util.GaussianEspData">GaussianEspData</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="repESP.esp_util.parse_resp_esp">
+<code class="descname">parse_resp_esp</code><span class="sig-paren">(</span><em>f: TextIO</em><span class="sig-paren">)</span> &#x2192; repESP.esp_util.EspData<a class="reference internal" href="_modules/repESP/esp_util.html#parse_resp_esp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.esp_util.parse_resp_esp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse a file in the .esp file format defined by <code class="docutils literal notranslate"><span class="pre">resp</span></code></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>f</strong> (<em>TextIO</em>) – File object opened in read mode containing the .esp file to be parsed.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal notranslate"><span class="pre">InputFormatError</span></code> – Raised when the file does not follow the expected format.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A dataclass representing the information in the given .esp file.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#repESP.esp_util.EspData" title="repESP.esp_util.EspData">EspData</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="repESP.esp_util.write_resp_esp">
+<code class="descname">write_resp_esp</code><span class="sig-paren">(</span><em>f: TextIO</em>, <em>esp_data: repESP.esp_util.EspData</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/repESP/esp_util.html#write_resp_esp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.esp_util.write_resp_esp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write a <code class="docutils literal notranslate"><span class="pre">resp</span></code> .esp file described by the given input data</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>f</strong> (<em>TextIO</em>) – File object to which the supplied data is to be saved. Must be opened
+in write mode.</li>
+<li><strong>esp_data</strong> (<a class="reference internal" href="#repESP.esp_util.EspData" title="repESP.esp_util.EspData"><em>EspData</em></a>) – The dataclass containing the information needed to create a .esp file.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="repESP.exceptions.html" class="btn btn-neutral float-right" title="repESP.exceptions module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="repESP.equivalence.html" class="btn btn-neutral float-left" title="repESP.equivalence module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Jan Szopinski
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,358 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>repESP.calc_fields &mdash; repESP 0.2.0-dev documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> repESP
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../repESP.html">repESP package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">repESP</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>repESP.calc_fields</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for repESP.calc_fields</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Functions producing or acting on molecular fields</span>
+
+<span class="sd">Attributes</span>
+<span class="sd">----------</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">repESP.fields</span> <span class="k">import</span> <span class="n">Esp</span><span class="p">,</span> <span class="n">Field</span><span class="p">,</span> <span class="n">AbstractMesh</span>
+<span class="kn">from</span> <span class="nn">repESP.charges</span> <span class="k">import</span> <span class="n">AtomWithCoordsAndCharge</span>
+<span class="kn">from</span> <span class="nn">repESP.types</span> <span class="k">import</span> <span class="n">AtomWithCoords</span><span class="p">,</span> <span class="n">Coords</span><span class="p">,</span> <span class="n">Dist</span><span class="p">,</span> <span class="n">Molecule</span>
+
+<span class="kn">from</span> <span class="nn">scipy.spatial.distance</span> <span class="k">import</span> <span class="n">euclidean</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">cast</span><span class="p">,</span> <span class="n">Collection</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">TypeVar</span>
+
+
+<div class="viewcode-block" id="esp_from_charges"><a class="viewcode-back" href="../../repESP.calc_fields.html#repESP.calc_fields.esp_from_charges">[docs]</a><span class="k">def</span> <span class="nf">esp_from_charges</span><span class="p">(</span><span class="n">mesh</span><span class="p">:</span> <span class="n">AbstractMesh</span><span class="p">,</span> <span class="n">molecule</span><span class="p">:</span> <span class="n">Molecule</span><span class="p">[</span><span class="n">AtomWithCoordsAndCharge</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Field</span><span class="p">[</span><span class="n">Esp</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Calculate ESP value at specified points due to charges on atoms</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mesh : AbstractMesh</span>
+<span class="sd">        The points at which the ESP values are to be calculated.</span>
+<span class="sd">    molecule : Molecule[AtomWithCoordsAndCharge]</span>
+<span class="sd">        A molecule with atom coordinates and partial charges specified.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Field[Esp]</span>
+<span class="sd">        The ESP field at the specified points reproduced from the partial</span>
+<span class="sd">        charges on atoms of the given molecule.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">value_at_point</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">coords</span><span class="p">:</span> <span class="n">Esp</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span>
+        <span class="n">atom</span><span class="o">.</span><span class="n">charge</span><span class="o">/</span><span class="p">(</span><span class="n">euclidean</span><span class="p">(</span><span class="n">coords</span><span class="p">,</span> <span class="n">atom</span><span class="o">.</span><span class="n">coords</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">molecule</span><span class="o">.</span><span class="n">atoms</span>
+    <span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">mesh</span><span class="p">,</span>
+        <span class="p">[</span><span class="n">value_at_point</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span> <span class="k">for</span> <span class="n">coords</span> <span class="ow">in</span> <span class="n">mesh</span><span class="o">.</span><span class="n">points</span><span class="p">]</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="voronoi"><a class="viewcode-back" href="../../repESP.calc_fields.html#repESP.calc_fields.voronoi">[docs]</a><span class="k">def</span> <span class="nf">voronoi</span><span class="p">(</span><span class="n">mesh</span><span class="p">:</span> <span class="n">AbstractMesh</span><span class="p">,</span> <span class="n">molecule</span><span class="p">:</span> <span class="n">Molecule</span><span class="p">[</span><span class="n">AtomWithCoords</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Field</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">Dist</span><span class="p">]]:</span>
+    <span class="sd">&quot;&quot;&quot;Find the atom closest to each point and its distance</span>
+
+<span class="sd">    Example</span>
+<span class="sd">    -------</span>
+<span class="sd">    Imagine a molecule of carbon monoxide placed along the x-axis.</span>
+
+<span class="sd">    &gt;&gt;&gt; mesh = Mesh([Coords([0, 0, 0])])</span>
+<span class="sd">    &gt;&gt;&gt; molecule = Molecule([</span>
+<span class="sd">        AtomWithCoords(6, Coords([-2, 0, 0])),</span>
+<span class="sd">        AtomWithCoords(8, Coords([0.13, 0, 0]))</span>
+<span class="sd">    ])</span>
+<span class="sd">    &gt;&gt;&gt; print(voronoi(mesh, molecule).values)</span>
+<span class="sd">    [(1, 0.13)]</span>
+
+<span class="sd">    The result means that for the only point of the mesh (0, 0, 0), atom of</span>
+<span class="sd">    index 1 (i.e. the second atom, oxygen) is closer than any other atom</span>
+<span class="sd">    (carbon) and the distance to it is 0.13 a.u.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mesh : AbstractMesh</span>
+<span class="sd">        The points at which the ESP values are to be calculated.</span>
+<span class="sd">    molecule : Molecule[AtomWithCoords]</span>
+<span class="sd">        A molecule consisting of atoms with the coordinates specified.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Field[Tuple[Optional[int], Dist]]</span>
+<span class="sd">        A `Field` object specifying for each point the atom to which the</span>
+<span class="sd">        point is nearest (represented as ordinal, zero-based index into the</span>
+<span class="sd">        molecule) and the distance from that atom.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">value_at_point</span><span class="p">(</span><span class="n">coords</span><span class="p">:</span> <span class="n">Coords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">Dist</span><span class="p">]:</span>
+        <span class="n">min_dist</span> <span class="o">=</span> <span class="n">Dist</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">))</span>
+        <span class="n">min_atom</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">atom_index</span><span class="p">,</span> <span class="n">atom</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">molecule</span><span class="o">.</span><span class="n">atoms</span><span class="p">):</span>
+            <span class="n">dist</span> <span class="o">=</span> <span class="n">euclidean</span><span class="p">(</span><span class="n">coords</span><span class="p">,</span> <span class="n">atom</span><span class="o">.</span><span class="n">coords</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">dist</span> <span class="o">&lt;</span> <span class="n">min_dist</span><span class="p">:</span>
+                <span class="n">min_dist</span> <span class="o">=</span> <span class="n">dist</span>
+                <span class="n">min_atom</span> <span class="o">=</span> <span class="n">atom_index</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">min_atom</span><span class="p">,</span> <span class="n">min_dist</span><span class="p">)</span>
+
+
+    <span class="k">return</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">mesh</span><span class="p">,</span>
+        <span class="p">[</span><span class="n">value_at_point</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span> <span class="k">for</span> <span class="n">coords</span> <span class="ow">in</span> <span class="n">mesh</span><span class="o">.</span><span class="n">points</span><span class="p">]</span>
+    <span class="p">)</span></div>
+
+
+<span class="c1"># Meant to mirror fields.Field.NumericValue, and similarly the bound should be</span>
+<span class="c1"># numbers.Number but mypy throws errors.</span>
+<span class="n">NumericValue</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;NumericValue&#39;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+<span class="sd">&quot;&quot;&quot;TypeVar : Generic type for numeric values</span>
+
+<span class="sd">This type matches that of `fields.Field.NumericValue` and similarly it can be</span>
+<span class="sd">any type matching &quot;bound=float&quot;.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="calc_rms_value"><a class="viewcode-back" href="../../repESP.calc_fields.html#repESP.calc_fields.calc_rms_value">[docs]</a><span class="k">def</span> <span class="nf">calc_rms_value</span><span class="p">(</span><span class="n">values</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="n">NumericValue</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">NumericValue</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Calculate root-mean-square (RMS) value of a collection of values</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    values : Collection[NumericValue]</span>
+<span class="sd">        The values which RMS is to be calculated.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    NumericValue</span>
+<span class="sd">        RMS value fo the given values.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">values</span><span class="p">)))</span></div>
+
+
+<div class="viewcode-block" id="calc_rms_error"><a class="viewcode-back" href="../../repESP.calc_fields.html#repESP.calc_fields.calc_rms_error">[docs]</a><span class="k">def</span> <span class="nf">calc_rms_error</span><span class="p">(</span>
+    <span class="n">values1</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="n">NumericValue</span><span class="p">],</span>
+    <span class="n">values2</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="n">NumericValue</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NumericValue</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Calculate RMS error between two collections of values</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    values1 : Collection[NumericValue]</span>
+<span class="sd">        One of the collections of values to be used for the calculation.</span>
+<span class="sd">    values2 : Collection[NumericValue]</span>
+<span class="sd">        The other collection of values to be used for the calculation.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    NumericValue</span>
+<span class="sd">        RMS error between the two given collections of values</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># TODO: The cast wouldn&#39;t be required if subtraction was implemented to</span>
+    <span class="c1"># yield the correct type.</span>
+    <span class="k">return</span> <span class="n">calc_rms_value</span><span class="p">([</span><span class="n">cast</span><span class="p">(</span><span class="n">NumericValue</span><span class="p">,</span> <span class="n">value1</span> <span class="o">-</span> <span class="n">value2</span><span class="p">)</span> <span class="k">for</span> <span class="n">value1</span><span class="p">,</span> <span class="n">value2</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">values1</span><span class="p">,</span> <span class="n">values2</span><span class="p">)])</span></div>
+
+
+<div class="viewcode-block" id="calc_relative_rms_error"><a class="viewcode-back" href="../../repESP.calc_fields.html#repESP.calc_fields.calc_relative_rms_error">[docs]</a><span class="k">def</span> <span class="nf">calc_relative_rms_error</span><span class="p">(</span>
+    <span class="n">values1</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="n">NumericValue</span><span class="p">],</span>
+    <span class="n">values2</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="n">NumericValue</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Calculate relative RMS error of two collections of values</span>
+
+<span class="sd">    This is calculated as the RMS error between the two collections of values</span>
+<span class="sd">    (as given by `calc_rms_error`) divided by the RMS error of the first</span>
+<span class="sd">    collection of values.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    values1 : Collection[NumericValue]</span>
+<span class="sd">        One of the collections of values which are to be used for the</span>
+<span class="sd">        calculation. The RMS error will be reported relative to the RMS value</span>
+<span class="sd">        of this collection.</span>
+<span class="sd">    values2 : Collection[NumericValue]</span>
+<span class="sd">        The other collection of values to be used for the calculation.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        Relative RMS error of the field values.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">calc_rms_error</span><span class="p">(</span><span class="n">values1</span><span class="p">,</span> <span class="n">values2</span><span class="p">)</span><span class="o">/</span><span class="n">calc_rms_value</span><span class="p">(</span><span class="n">values1</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Jan Szopinski
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

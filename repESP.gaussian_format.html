@@ -1,0 +1,709 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>repESP.gaussian_format module &mdash; repESP 0.2.0-dev documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="repESP.resp_charges_format module" href="repESP.resp_charges_format.html" />
+    <link rel="prev" title="repESP.fields module" href="repESP.fields.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> repESP
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="repESP.html">repESP package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="repESP.html#highlights">Highlights</a></li>
+<li class="toctree-l2"><a class="reference internal" href="repESP.html#example-problem">Example problem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="repESP.html#usage-caveats">Usage caveats</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="repESP.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="repESP.calc_fields.html">repESP.calc_fields module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.charge_util.html">repESP.charge_util module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.charges.html">repESP.charges module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.cube_format.html">repESP.cube_format module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.equivalence.html">repESP.equivalence module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.esp_util.html">repESP.esp_util module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.exceptions.html">repESP.exceptions module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.fields.html">repESP.fields module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">repESP.gaussian_format module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.resp_charges_format.html">repESP.resp_charges_format module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.resp_wrapper.html">repESP.resp_wrapper module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.respin_format.html">repESP.respin_format module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.respin_generation.html">repESP.respin_generation module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.types.html">repESP.types module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.util.html">repESP.util module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">repESP</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="repESP.html">repESP package</a> &raquo;</li>
+        
+      <li>repESP.gaussian_format module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/repESP.gaussian_format.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-repESP.gaussian_format">
+<span id="repesp-gaussian-format-module"></span><h1>repESP.gaussian_format module<a class="headerlink" href="#module-repESP.gaussian_format" title="Permalink to this headline">¶</a></h1>
+<p>Parsing the Gaussian output format (.log or .out files)</p>
+<dl class="class">
+<dt id="repESP.gaussian_format.ChargesSectionData">
+<em class="property">class </em><code class="descname">ChargesSectionData</code><span class="sig-paren">(</span><em>charges: List[repESP.charges.Charge]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/repESP/gaussian_format.html#ChargesSectionData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.gaussian_format.ChargesSectionData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Dataclass representing the charges section of Gaussian output</p>
+<p>Currently this dataclass only supports the charges but in the future it may
+contain more information that can be obtained from this section of the
+Gaussian output.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>charges</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.7)"><em>typing.List</em></a><em>[</em><a class="reference internal" href="repESP.charges.html#repESP.charges.Charge" title="repESP.charges.Charge"><em>Charge</em></a><em>]</em>) – List of charges</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="repESP.gaussian_format.ChargesSectionData.charges">
+<code class="descname">charges</code><a class="headerlink" href="#repESP.gaussian_format.ChargesSectionData.charges" title="Permalink to this definition">¶</a></dt>
+<dd><p>See initialization parameter</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="repESP.gaussian_format.ChargesSectionParser">
+<em class="property">class </em><code class="descname">ChargesSectionParser</code><a class="reference internal" href="_modules/repESP/gaussian_format.html#ChargesSectionParser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.gaussian_format.ChargesSectionParser" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></a></p>
+<p>Interface required from parsers for the charges section</p>
+<p>This interface will be implemented differently for the various charge types
+supported by Gaussian. Implementations for commonly used charges are provided.</p>
+<dl class="method">
+<dt id="repESP.gaussian_format.ChargesSectionParser.is_section_start">
+<code class="descname">is_section_start</code><span class="sig-paren">(</span><em>line: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/repESP/gaussian_format.html#ChargesSectionParser.is_section_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.gaussian_format.ChargesSectionParser.is_section_start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check whether the given line is the start of charges section</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>line</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – A line from Gaussian output file.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Whether the given line is the start of the charges section for the
+specific charge type.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)">bool</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="repESP.gaussian_format.ChargesSectionParser.is_section_end">
+<code class="descname">is_section_end</code><span class="sig-paren">(</span><em>line: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/repESP/gaussian_format.html#ChargesSectionParser.is_section_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.gaussian_format.ChargesSectionParser.is_section_end" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check whether the given line is the end of charges section</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>line</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – A line from Gaussian output file.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Whether the given line is the end of the charges section for the
+specific charge type.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)">bool</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="repESP.gaussian_format.ChargesSectionParser.parse_section">
+<code class="descname">parse_section</code><span class="sig-paren">(</span><em>section: List[str]</em><span class="sig-paren">)</span> &#x2192; repESP.gaussian_format.ChargesSectionData<a class="reference internal" href="_modules/repESP/gaussian_format.html#ChargesSectionParser.parse_section"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.gaussian_format.ChargesSectionParser.parse_section" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse the charges section to obtain all information possible</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>section</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.7)"><em>typing.List</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>]</em>) – The list of lines identified to be the charges section of the
+Gaussian output file.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">All the data that can be parsed from the charges section.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#repESP.gaussian_format.ChargesSectionData" title="repESP.gaussian_format.ChargesSectionData">ChargesSectionData</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="repESP.gaussian_format.EspChargesSectionData">
+<em class="property">class </em><code class="descname">EspChargesSectionData</code><span class="sig-paren">(</span><em>charges: List[repESP.charges.Charge], rms: repESP.fields.Esp, rrms: float</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/repESP/gaussian_format.html#EspChargesSectionData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.gaussian_format.EspChargesSectionData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#repESP.gaussian_format.ChargesSectionData" title="repESP.gaussian_format.ChargesSectionData"><code class="xref py py-class docutils literal notranslate"><span class="pre">repESP.gaussian_format.ChargesSectionData</span></code></a></p>
+<p>Dataclass representing the ESP charges section of Gaussian output</p>
+<p>Compared to <cite>ChargesSectionData</cite>, the charges section of ESP charges
+additionally contains information regarding the quality of the reproduced
+field (RMS and RRMS).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>charges</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.7)"><em>typing.List</em></a><em>[</em><a class="reference internal" href="repESP.charges.html#repESP.charges.Charge" title="repESP.charges.Charge"><em>Charge</em></a><em>]</em>) – List of charges</li>
+<li><strong>rms</strong> (<a class="reference internal" href="repESP.fields.html#repESP.fields.Esp" title="repESP.fields.Esp"><em>Esp</em></a>) – The value of RMS error of the ESP field reproduced from partial charges
+with respect to the true ESP field.</li>
+<li><strong>rrms</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – The value of relative RMS error i.e. same as <cite>rms</cite> but relative to the
+RMS value of the true ESP field.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="repESP.gaussian_format.EspChargesSectionData.charges">
+<code class="descname">charges</code><a class="headerlink" href="#repESP.gaussian_format.EspChargesSectionData.charges" title="Permalink to this definition">¶</a></dt>
+<dd><p>See initialization parameter</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="repESP.gaussian_format.EspChargesSectionData.rms">
+<code class="descname">rms</code><a class="headerlink" href="#repESP.gaussian_format.EspChargesSectionData.rms" title="Permalink to this definition">¶</a></dt>
+<dd><p>See initialization parameter</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="repESP.gaussian_format.EspChargesSectionData.rrms">
+<code class="descname">rrms</code><a class="headerlink" href="#repESP.gaussian_format.EspChargesSectionData.rrms" title="Permalink to this definition">¶</a></dt>
+<dd><p>See initialization parameter</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="repESP.gaussian_format.EspChargesSectionParser">
+<em class="property">class </em><code class="descname">EspChargesSectionParser</code><a class="reference internal" href="_modules/repESP/gaussian_format.html#EspChargesSectionParser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.gaussian_format.EspChargesSectionParser" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#repESP.gaussian_format.ChargesSectionParser" title="repESP.gaussian_format.ChargesSectionParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">repESP.gaussian_format.ChargesSectionParser</span></code></a></p>
+<p>Base class providing parser methods common to all ESP charge types</p>
+<p>This base class implements the <cite>is_section_end</cite> and <cite>parse_section</cite> methods,
+which are common to all ESP charge types.</p>
+<dl class="method">
+<dt id="repESP.gaussian_format.EspChargesSectionParser.is_section_end">
+<code class="descname">is_section_end</code><span class="sig-paren">(</span><em>line: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/repESP/gaussian_format.html#EspChargesSectionParser.is_section_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.gaussian_format.EspChargesSectionParser.is_section_end" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check whether the given line is the end of charges section</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>line</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – A line from Gaussian output file.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Whether the given line is the end of the charges section for the
+specific charge type.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)">bool</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="repESP.gaussian_format.EspChargesSectionParser.parse_section">
+<code class="descname">parse_section</code><span class="sig-paren">(</span><em>section: List[str]</em><span class="sig-paren">)</span> &#x2192; repESP.gaussian_format.EspChargesSectionData<a class="reference internal" href="_modules/repESP/gaussian_format.html#EspChargesSectionParser.parse_section"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.gaussian_format.EspChargesSectionParser.parse_section" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse the charges section to obtain all information possible</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>section</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.7)"><em>typing.List</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>]</em>) – The list of lines identified to be the charges section of the
+Gaussian output file.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">All the data that can be parsed from the charges section.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#repESP.gaussian_format.ChargesSectionData" title="repESP.gaussian_format.ChargesSectionData">ChargesSectionData</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="repESP.gaussian_format.get_charges_from_log">
+<code class="descname">get_charges_from_log</code><span class="sig-paren">(</span><em>f: TextIO</em>, <em>charges_section_parser: repESP.gaussian_format.ChargesSectionParser</em>, <em>verify_against: Optional[repESP.types.Molecule] = None</em>, <em>occurrence: int = -1</em><span class="sig-paren">)</span> &#x2192; List[repESP.charges.Charge]<a class="reference internal" href="_modules/repESP/gaussian_format.html#get_charges_from_log"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.gaussian_format.get_charges_from_log" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extract charges from the charges section in Gaussian output</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>f</strong> (<em>TextIO</em>) – File object opened in read mode containing the Gaussian <cite>.log</cite>/<cite>.out</cite>
+output file from which the charges are to be extracted.</li>
+<li><strong>charges_section_parser</strong> (<a class="reference internal" href="#repESP.gaussian_format.ChargesSectionParser" title="repESP.gaussian_format.ChargesSectionParser"><em>ChargesSectionParser</em></a>) – Object of a class implementing the <cite>ChargesSectionParser</cite> interface for
+the desired charge type, e.g. <cite>MullikenChargeSectionParser()</cite>.</li>
+<li><strong>verify_against</strong> (<a class="reference internal" href="repESP.types.html#repESP.types.Molecule" title="repESP.types.Molecule"><em>Molecule</em></a><em>, </em><em>optional</em>) – Molecule against which the output is to be verified. Defaults to None.
+Note that currently the verification only involves comparing the number
+of extracted charges against the number of atoms. In the future this may
+be extended to verifying the atom identities.</li>
+<li><strong>occurrence</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – <p>Determines which charges section to use for extracting the charges.
+Defaults to -1 i.e. the last section.</p>
+<p>On occasion, the output can contain multiple charge sections regarding
+the same charge type. AFAIR, this happens when multiple Gaussian jobs
+were processed. Thus, the sensible default is to select the final one,
+to select the final optimization. Other values can be specified,
+starting with 0 for the first occurrence.</p>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">List of charges in order of occurrence in output file.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.7)">typing.List</a>[<a class="reference internal" href="repESP.charges.html#repESP.charges.Charge" title="repESP.charges.Charge">Charge</a>]</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><code class="xref py py-exc docutils literal notranslate"><span class="pre">InputFormatError</span></code> – Raised when the file does not follow the expected format.</li>
+<li><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#IndexError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">IndexError</span></code></a> – Raised when the requested occurence of the charges section cannot
+be found could not be found in the output file.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="repESP.gaussian_format.get_esp_fit_stats_from_log">
+<code class="descname">get_esp_fit_stats_from_log</code><span class="sig-paren">(</span><em>f: TextIO</em>, <em>charges_section_parser: repESP.gaussian_format.EspChargesSectionParser</em>, <em>verify_against: Optional[repESP.types.Molecule] = None</em>, <em>occurrence: int = -1</em><span class="sig-paren">)</span> &#x2192; Tuple[repESP.fields.Esp, float]<a class="reference internal" href="_modules/repESP/gaussian_format.html#get_esp_fit_stats_from_log"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.gaussian_format.get_esp_fit_stats_from_log" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extract ESP fit statistics from charges section in Gaussian output</p>
+<p>See documentation of <cite>get_charges_from_log</cite> for parameters and raised exceptions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal notranslate"><span class="pre">InputFormatError</span></code> – Raised when the file does not follow the expected format.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">RMS and RRMS.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">Tuple[<a class="reference internal" href="repESP.fields.html#repESP.fields.Esp" title="repESP.fields.Esp">Esp</a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a>]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="repESP.gaussian_format.MullikenChargeSectionParser">
+<em class="property">class </em><code class="descname">MullikenChargeSectionParser</code><a class="reference internal" href="_modules/repESP/gaussian_format.html#MullikenChargeSectionParser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.gaussian_format.MullikenChargeSectionParser" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#repESP.gaussian_format.ChargesSectionParser" title="repESP.gaussian_format.ChargesSectionParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">repESP.gaussian_format.ChargesSectionParser</span></code></a></p>
+<p>Mulliken charges parser for Gaussian output</p>
+<dl class="method">
+<dt id="repESP.gaussian_format.MullikenChargeSectionParser.is_section_start">
+<code class="descname">is_section_start</code><span class="sig-paren">(</span><em>line: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/repESP/gaussian_format.html#MullikenChargeSectionParser.is_section_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.gaussian_format.MullikenChargeSectionParser.is_section_start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check whether the given line is the start of charges section</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>line</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – A line from Gaussian output file.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Whether the given line is the start of the charges section for the
+specific charge type.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)">bool</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="repESP.gaussian_format.MullikenChargeSectionParser.is_section_end">
+<code class="descname">is_section_end</code><span class="sig-paren">(</span><em>line: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/repESP/gaussian_format.html#MullikenChargeSectionParser.is_section_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.gaussian_format.MullikenChargeSectionParser.is_section_end" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check whether the given line is the end of charges section</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>line</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – A line from Gaussian output file.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Whether the given line is the end of the charges section for the
+specific charge type.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)">bool</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="repESP.gaussian_format.MullikenChargeSectionParser.parse_section">
+<code class="descname">parse_section</code><span class="sig-paren">(</span><em>section: List[str]</em><span class="sig-paren">)</span> &#x2192; repESP.gaussian_format.ChargesSectionData<a class="reference internal" href="_modules/repESP/gaussian_format.html#MullikenChargeSectionParser.parse_section"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.gaussian_format.MullikenChargeSectionParser.parse_section" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse the charges section to obtain all information possible</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>section</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.7)"><em>typing.List</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>]</em>) – The list of lines identified to be the charges section of the
+Gaussian output file.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">All the data that can be parsed from the charges section.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#repESP.gaussian_format.ChargesSectionData" title="repESP.gaussian_format.ChargesSectionData">ChargesSectionData</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="repESP.gaussian_format.MkChargeSectionParser">
+<em class="property">class </em><code class="descname">MkChargeSectionParser</code><a class="reference internal" href="_modules/repESP/gaussian_format.html#MkChargeSectionParser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.gaussian_format.MkChargeSectionParser" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#repESP.gaussian_format.EspChargesSectionParser" title="repESP.gaussian_format.EspChargesSectionParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">repESP.gaussian_format.EspChargesSectionParser</span></code></a></p>
+<p>MK charges parser for Gaussian output</p>
+<dl class="method">
+<dt id="repESP.gaussian_format.MkChargeSectionParser.is_section_start">
+<code class="descname">is_section_start</code><span class="sig-paren">(</span><em>line: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/repESP/gaussian_format.html#MkChargeSectionParser.is_section_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.gaussian_format.MkChargeSectionParser.is_section_start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check whether the given line is the start of charges section</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>line</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – A line from Gaussian output file.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Whether the given line is the start of the charges section for the
+specific charge type.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)">bool</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="repESP.gaussian_format.ChelpChargeSectionParser">
+<em class="property">class </em><code class="descname">ChelpChargeSectionParser</code><a class="reference internal" href="_modules/repESP/gaussian_format.html#ChelpChargeSectionParser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.gaussian_format.ChelpChargeSectionParser" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#repESP.gaussian_format.EspChargesSectionParser" title="repESP.gaussian_format.EspChargesSectionParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">repESP.gaussian_format.EspChargesSectionParser</span></code></a></p>
+<p>CHelp charges parser for Gaussian output</p>
+<dl class="method">
+<dt id="repESP.gaussian_format.ChelpChargeSectionParser.is_section_start">
+<code class="descname">is_section_start</code><span class="sig-paren">(</span><em>line: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/repESP/gaussian_format.html#ChelpChargeSectionParser.is_section_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.gaussian_format.ChelpChargeSectionParser.is_section_start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check whether the given line is the start of charges section</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>line</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – A line from Gaussian output file.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Whether the given line is the start of the charges section for the
+specific charge type.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)">bool</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="repESP.gaussian_format.ChelpgChargeSectionParser">
+<em class="property">class </em><code class="descname">ChelpgChargeSectionParser</code><a class="reference internal" href="_modules/repESP/gaussian_format.html#ChelpgChargeSectionParser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.gaussian_format.ChelpgChargeSectionParser" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#repESP.gaussian_format.EspChargesSectionParser" title="repESP.gaussian_format.EspChargesSectionParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">repESP.gaussian_format.EspChargesSectionParser</span></code></a></p>
+<p>CHelpG charges parser for Gaussian output</p>
+<dl class="method">
+<dt id="repESP.gaussian_format.ChelpgChargeSectionParser.is_section_start">
+<code class="descname">is_section_start</code><span class="sig-paren">(</span><em>line: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/repESP/gaussian_format.html#ChelpgChargeSectionParser.is_section_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.gaussian_format.ChelpgChargeSectionParser.is_section_start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check whether the given line is the start of charges section</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>line</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – A line from Gaussian output file.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Whether the given line is the start of the charges section for the
+specific charge type.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)">bool</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="repESP.gaussian_format.HlyChargeSectionParser">
+<em class="property">class </em><code class="descname">HlyChargeSectionParser</code><a class="reference internal" href="_modules/repESP/gaussian_format.html#HlyChargeSectionParser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.gaussian_format.HlyChargeSectionParser" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#repESP.gaussian_format.EspChargesSectionParser" title="repESP.gaussian_format.EspChargesSectionParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">repESP.gaussian_format.EspChargesSectionParser</span></code></a></p>
+<p>HLY charges parser for Gaussian output</p>
+<dl class="method">
+<dt id="repESP.gaussian_format.HlyChargeSectionParser.is_section_start">
+<code class="descname">is_section_start</code><span class="sig-paren">(</span><em>line: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/repESP/gaussian_format.html#HlyChargeSectionParser.is_section_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.gaussian_format.HlyChargeSectionParser.is_section_start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check whether the given line is the start of charges section</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>line</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – A line from Gaussian output file.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Whether the given line is the start of the charges section for the
+specific charge type.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)">bool</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="repESP.gaussian_format.NpaChargeSectionParser">
+<em class="property">class </em><code class="descname">NpaChargeSectionParser</code><a class="reference internal" href="_modules/repESP/gaussian_format.html#NpaChargeSectionParser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.gaussian_format.NpaChargeSectionParser" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#repESP.gaussian_format.ChargesSectionParser" title="repESP.gaussian_format.ChargesSectionParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">repESP.gaussian_format.ChargesSectionParser</span></code></a></p>
+<p>NPA charges parser for Gaussian output</p>
+<dl class="method">
+<dt id="repESP.gaussian_format.NpaChargeSectionParser.is_section_start">
+<code class="descname">is_section_start</code><span class="sig-paren">(</span><em>line: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/repESP/gaussian_format.html#NpaChargeSectionParser.is_section_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.gaussian_format.NpaChargeSectionParser.is_section_start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check whether the given line is the start of charges section</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>line</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – A line from Gaussian output file.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Whether the given line is the start of the charges section for the
+specific charge type.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)">bool</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="repESP.gaussian_format.NpaChargeSectionParser.is_section_end">
+<code class="descname">is_section_end</code><span class="sig-paren">(</span><em>line: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/repESP/gaussian_format.html#NpaChargeSectionParser.is_section_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.gaussian_format.NpaChargeSectionParser.is_section_end" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check whether the given line is the end of charges section</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>line</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – A line from Gaussian output file.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Whether the given line is the end of the charges section for the
+specific charge type.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)">bool</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="repESP.gaussian_format.NpaChargeSectionParser.parse_section">
+<code class="descname">parse_section</code><span class="sig-paren">(</span><em>section: List[str]</em><span class="sig-paren">)</span> &#x2192; repESP.gaussian_format.ChargesSectionData<a class="reference internal" href="_modules/repESP/gaussian_format.html#NpaChargeSectionParser.parse_section"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.gaussian_format.NpaChargeSectionParser.parse_section" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse the charges section to obtain all information possible</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>section</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.7)"><em>typing.List</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>]</em>) – The list of lines identified to be the charges section of the
+Gaussian output file.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">All the data that can be parsed from the charges section.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#repESP.gaussian_format.ChargesSectionData" title="repESP.gaussian_format.ChargesSectionData">ChargesSectionData</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="repESP.resp_charges_format.html" class="btn btn-neutral float-right" title="repESP.resp_charges_format module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="repESP.fields.html" class="btn btn-neutral float-left" title="repESP.fields module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Jan Szopinski
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

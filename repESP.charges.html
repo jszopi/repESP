@@ -1,0 +1,392 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>repESP.charges module &mdash; repESP 0.2.0-dev documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="repESP.cube_format module" href="repESP.cube_format.html" />
+    <link rel="prev" title="repESP.charge_util module" href="repESP.charge_util.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> repESP
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="repESP.html">repESP package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="repESP.html#highlights">Highlights</a></li>
+<li class="toctree-l2"><a class="reference internal" href="repESP.html#example-problem">Example problem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="repESP.html#usage-caveats">Usage caveats</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="repESP.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="repESP.calc_fields.html">repESP.calc_fields module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.charge_util.html">repESP.charge_util module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">repESP.charges module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.cube_format.html">repESP.cube_format module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.equivalence.html">repESP.equivalence module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.esp_util.html">repESP.esp_util module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.exceptions.html">repESP.exceptions module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.fields.html">repESP.fields module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.gaussian_format.html">repESP.gaussian_format module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.resp_charges_format.html">repESP.resp_charges_format module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.resp_wrapper.html">repESP.resp_wrapper module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.respin_format.html">repESP.respin_format module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.respin_generation.html">repESP.respin_generation module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.types.html">repESP.types module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.util.html">repESP.util module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">repESP</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="repESP.html">repESP package</a> &raquo;</li>
+        
+      <li>repESP.charges module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/repESP.charges.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-repESP.charges">
+<span id="repesp-charges-module"></span><h1>repESP.charges module<a class="headerlink" href="#module-repESP.charges" title="Permalink to this headline">¶</a></h1>
+<p>Types used to describe partial charges and higher moments</p>
+<dl class="class">
+<dt id="repESP.charges.Charge">
+<em class="property">class </em><code class="descname">Charge</code><a class="reference internal" href="_modules/repESP/charges.html#Charge"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.charges.Charge" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></p>
+<p>Partial (atomic) charge in units of elementary charge (<em>e</em>)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>value</strong> (<em>Any</em>) – Any value convertible to float representing the value in units of <em>e</em>.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="repESP.charges.AtomWithCharge">
+<em class="property">class </em><code class="descname">AtomWithCharge</code><span class="sig-paren">(</span><em>atomic_number: int</em>, <em>charge: repESP.charges.Charge</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/repESP/charges.html#AtomWithCharge"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.charges.AtomWithCharge" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="repESP.types.html#repESP.types.Atom" title="repESP.types.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">repESP.types.Atom</span></code></a></p>
+<p>Dataclass representing an atom with an associated partial charge</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>atomic_number</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – The atomic number of the element</li>
+<li><strong>charge</strong> (<a class="reference internal" href="#repESP.charges.Charge" title="repESP.charges.Charge"><em>Charge</em></a>) – The partial charge on the atom</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="repESP.charges.AtomWithCharge.atomic_number">
+<code class="descname">atomic_number</code><a class="headerlink" href="#repESP.charges.AtomWithCharge.atomic_number" title="Permalink to this definition">¶</a></dt>
+<dd><p>See initialization parameter</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="repESP.charges.AtomWithCharge.charge">
+<code class="descname">charge</code><a class="headerlink" href="#repESP.charges.AtomWithCharge.charge" title="Permalink to this definition">¶</a></dt>
+<dd><p>See initialization parameter</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="repESP.charges.AtomWithCoordsAndCharge">
+<em class="property">class </em><code class="descname">AtomWithCoordsAndCharge</code><span class="sig-paren">(</span><em>atomic_number: int</em>, <em>coords: repESP.types.Coords</em>, <em>charge: repESP.charges.Charge</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/repESP/charges.html#AtomWithCoordsAndCharge"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.charges.AtomWithCoordsAndCharge" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#repESP.charges.AtomWithCharge" title="repESP.charges.AtomWithCharge"><code class="xref py py-class docutils literal notranslate"><span class="pre">repESP.charges.AtomWithCharge</span></code></a>, <a class="reference internal" href="repESP.types.html#repESP.types.AtomWithCoords" title="repESP.types.AtomWithCoords"><code class="xref py py-class docutils literal notranslate"><span class="pre">repESP.types.AtomWithCoords</span></code></a></p>
+<p>Dataclass representing an atom in space, with a partial charge</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>atomic_number</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – The atomic number of the element</li>
+<li><strong>coords</strong> (<a class="reference internal" href="repESP.types.html#repESP.types.Coords" title="repESP.types.Coords"><em>Coords</em></a>) – The coordinates of the atom in space</li>
+<li><strong>charge</strong> (<a class="reference internal" href="#repESP.charges.Charge" title="repESP.charges.Charge"><em>Charge</em></a>) – The partial charge on the atom</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="repESP.charges.AtomWithCoordsAndCharge.atomic_number">
+<code class="descname">atomic_number</code><a class="headerlink" href="#repESP.charges.AtomWithCoordsAndCharge.atomic_number" title="Permalink to this definition">¶</a></dt>
+<dd><p>See initialization parameter</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="repESP.charges.AtomWithCoordsAndCharge.coords">
+<code class="descname">coords</code><a class="headerlink" href="#repESP.charges.AtomWithCoordsAndCharge.coords" title="Permalink to this definition">¶</a></dt>
+<dd><p>See initialization parameter</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="repESP.charges.AtomWithCoordsAndCharge.charge">
+<code class="descname">charge</code><a class="headerlink" href="#repESP.charges.AtomWithCoordsAndCharge.charge" title="Permalink to this definition">¶</a></dt>
+<dd><p>See initialization parameter</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="repESP.charges.DipoleMomentValue">
+<em class="property">class </em><code class="descname">DipoleMomentValue</code><a class="reference internal" href="_modules/repESP/charges.html#DipoleMomentValue"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.charges.DipoleMomentValue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></p>
+<p>Dipole moment value in atomic units (<span class="math notranslate nohighlight">\(e\mathrm{a}_0\)</span>)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>value</strong> (<em>Any</em>) – Any value convertible to float representing the value in atomic units.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="repESP.charges.DipoleMoment">
+<em class="property">class </em><code class="descname">DipoleMoment</code><span class="sig-paren">(</span><em>x: repESP.charges.DipoleMomentValue</em>, <em>y: repESP.charges.DipoleMomentValue</em>, <em>z: repESP.charges.DipoleMomentValue</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/repESP/charges.html#DipoleMoment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.charges.DipoleMoment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Dipole moment vector described through its three components</p>
+<p>After initialization, the parameters can be accessed as attributes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>x</strong> (<a class="reference internal" href="#repESP.charges.DipoleMomentValue" title="repESP.charges.DipoleMomentValue"><em>DipoleMomentValue</em></a>) – The value in the <em>x</em> direction</li>
+<li><strong>y</strong> (<a class="reference internal" href="#repESP.charges.DipoleMomentValue" title="repESP.charges.DipoleMomentValue"><em>DipoleMomentValue</em></a>) – The value in the <em>y</em> direction</li>
+<li><strong>z</strong> (<a class="reference internal" href="#repESP.charges.DipoleMomentValue" title="repESP.charges.DipoleMomentValue"><em>DipoleMomentValue</em></a>) – The value in the <em>z</em> direction</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="repESP.charges.QuadrupoleMomentValue">
+<em class="property">class </em><code class="descname">QuadrupoleMomentValue</code><a class="reference internal" href="_modules/repESP/charges.html#QuadrupoleMomentValue"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.charges.QuadrupoleMomentValue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></p>
+<p>Quadrupole moment in atomic units (<span class="math notranslate nohighlight">\(e\mathrm{a}_0^2\)</span>)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>value</strong> (<em>Any</em>) – Any value convertible to float representing the value in atomic units.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="repESP.charges.QuadrupoleMoment">
+<em class="property">class </em><code class="descname">QuadrupoleMoment</code><span class="sig-paren">(</span><em>xx: repESP.charges.QuadrupoleMomentValue</em>, <em>yy: repESP.charges.QuadrupoleMomentValue</em>, <em>zz: repESP.charges.QuadrupoleMomentValue</em>, <em>xy: repESP.charges.QuadrupoleMomentValue</em>, <em>xz: repESP.charges.QuadrupoleMomentValue</em>, <em>yz: repESP.charges.QuadrupoleMomentValue</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/repESP/charges.html#QuadrupoleMoment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.charges.QuadrupoleMoment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Quadrupole moment tensor described through its six components</p>
+<p>After initialization, the parameters can be accessed as attributes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>xx</strong> (<a class="reference internal" href="#repESP.charges.QuadrupoleMomentValue" title="repESP.charges.QuadrupoleMomentValue"><em>QuadrupoleMomentValue</em></a>) – The value in the <em>xx</em> direction.</li>
+<li><strong>yy</strong> (<a class="reference internal" href="#repESP.charges.QuadrupoleMomentValue" title="repESP.charges.QuadrupoleMomentValue"><em>QuadrupoleMomentValue</em></a>) – The value in the <em>yy</em> direction.</li>
+<li><strong>zz</strong> (<a class="reference internal" href="#repESP.charges.QuadrupoleMomentValue" title="repESP.charges.QuadrupoleMomentValue"><em>QuadrupoleMomentValue</em></a>) – The value in the <em>zz</em> direction.</li>
+<li><strong>xy</strong> (<a class="reference internal" href="#repESP.charges.QuadrupoleMomentValue" title="repESP.charges.QuadrupoleMomentValue"><em>QuadrupoleMomentValue</em></a>) – The value in the <em>xy</em> direction.</li>
+<li><strong>xz</strong> (<a class="reference internal" href="#repESP.charges.QuadrupoleMomentValue" title="repESP.charges.QuadrupoleMomentValue"><em>QuadrupoleMomentValue</em></a>) – The value in the <em>xz</em> direction.</li>
+<li><strong>yz</strong> (<a class="reference internal" href="#repESP.charges.QuadrupoleMomentValue" title="repESP.charges.QuadrupoleMomentValue"><em>QuadrupoleMomentValue</em></a>) – The value in the <em>yz</em> direction.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="repESP.cube_format.html" class="btn btn-neutral float-right" title="repESP.cube_format module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="repESP.charge_util.html" class="btn btn-neutral float-left" title="repESP.charge_util module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Jan Szopinski
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

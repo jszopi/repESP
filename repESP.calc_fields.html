@@ -1,0 +1,385 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>repESP.calc_fields module &mdash; repESP 0.2.0-dev documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="repESP.charge_util module" href="repESP.charge_util.html" />
+    <link rel="prev" title="repESP package" href="repESP.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> repESP
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="repESP.html">repESP package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="repESP.html#highlights">Highlights</a></li>
+<li class="toctree-l2"><a class="reference internal" href="repESP.html#example-problem">Example problem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="repESP.html#usage-caveats">Usage caveats</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="repESP.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">repESP.calc_fields module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.charge_util.html">repESP.charge_util module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.charges.html">repESP.charges module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.cube_format.html">repESP.cube_format module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.equivalence.html">repESP.equivalence module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.esp_util.html">repESP.esp_util module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.exceptions.html">repESP.exceptions module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.fields.html">repESP.fields module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.gaussian_format.html">repESP.gaussian_format module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.resp_charges_format.html">repESP.resp_charges_format module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.resp_wrapper.html">repESP.resp_wrapper module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.respin_format.html">repESP.respin_format module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.respin_generation.html">repESP.respin_generation module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.types.html">repESP.types module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repESP.util.html">repESP.util module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">repESP</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="repESP.html">repESP package</a> &raquo;</li>
+        
+      <li>repESP.calc_fields module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/repESP.calc_fields.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-repESP.calc_fields">
+<span id="repesp-calc-fields-module"></span><h1>repESP.calc_fields module<a class="headerlink" href="#module-repESP.calc_fields" title="Permalink to this headline">¶</a></h1>
+<p>Functions producing or acting on molecular fields</p>
+<dl class="function">
+<dt id="repESP.calc_fields.esp_from_charges">
+<code class="descname">esp_from_charges</code><span class="sig-paren">(</span><em>mesh: repESP.fields.AbstractMesh, molecule: repESP.types.Molecule[repESP.charges.AtomWithCoordsAndCharge][repESP.charges.AtomWithCoordsAndCharge]</em><span class="sig-paren">)</span> &#x2192; repESP.fields.Field[repESP.fields.Esp][repESP.fields.Esp]<a class="reference internal" href="_modules/repESP/calc_fields.html#esp_from_charges"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.calc_fields.esp_from_charges" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate ESP value at specified points due to charges on atoms</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>mesh</strong> (<a class="reference internal" href="repESP.fields.html#repESP.fields.AbstractMesh" title="repESP.fields.AbstractMesh"><em>AbstractMesh</em></a>) – The points at which the ESP values are to be calculated.</li>
+<li><strong>molecule</strong> (<a class="reference internal" href="repESP.types.html#repESP.types.Molecule" title="repESP.types.Molecule"><em>Molecule</em></a><em>[</em><a class="reference internal" href="repESP.charges.html#repESP.charges.AtomWithCoordsAndCharge" title="repESP.charges.AtomWithCoordsAndCharge"><em>AtomWithCoordsAndCharge</em></a><em>]</em>) – A molecule with atom coordinates and partial charges specified.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The ESP field at the specified points reproduced from the partial
+charges on atoms of the given molecule.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="repESP.fields.html#repESP.fields.Field" title="repESP.fields.Field">Field</a>[<a class="reference internal" href="repESP.fields.html#repESP.fields.Esp" title="repESP.fields.Esp">Esp</a>]</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="repESP.calc_fields.voronoi">
+<code class="descname">voronoi</code><span class="sig-paren">(</span><em>mesh: repESP.fields.AbstractMesh, molecule: repESP.types.Molecule[repESP.types.AtomWithCoords][repESP.types.AtomWithCoords]</em><span class="sig-paren">)</span> &#x2192; repESP.fields.Field[typing.Tuple[typing.Union[int, NoneType], repESP.types.Dist]][Tuple[Optional[int], repESP.types.Dist]]<a class="reference internal" href="_modules/repESP/calc_fields.html#voronoi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.calc_fields.voronoi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find the atom closest to each point and its distance</p>
+<p class="rubric">Example</p>
+<p>Imagine a molecule of carbon monoxide placed along the x-axis.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">mesh</span> <span class="o">=</span> <span class="n">Mesh</span><span class="p">([</span><span class="n">Coords</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">molecule</span> <span class="o">=</span> <span class="n">Molecule</span><span class="p">([</span>
+<span class="go">    AtomWithCoords(6, Coords([-2, 0, 0])),</span>
+<span class="go">    AtomWithCoords(8, Coords([0.13, 0, 0]))</span>
+<span class="go">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">voronoi</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">molecule</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+<span class="go">[(1, 0.13)]</span>
+</pre></div>
+</div>
+<p>The result means that for the only point of the mesh (0, 0, 0), atom of
+index 1 (i.e. the second atom, oxygen) is closer than any other atom
+(carbon) and the distance to it is 0.13 a.u.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>mesh</strong> (<a class="reference internal" href="repESP.fields.html#repESP.fields.AbstractMesh" title="repESP.fields.AbstractMesh"><em>AbstractMesh</em></a>) – The points at which the ESP values are to be calculated.</li>
+<li><strong>molecule</strong> (<a class="reference internal" href="repESP.types.html#repESP.types.Molecule" title="repESP.types.Molecule"><em>Molecule</em></a><em>[</em><a class="reference internal" href="repESP.types.html#repESP.types.AtomWithCoords" title="repESP.types.AtomWithCoords"><em>AtomWithCoords</em></a><em>]</em>) – A molecule consisting of atoms with the coordinates specified.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A <cite>Field</cite> object specifying for each point the atom to which the
+point is nearest (represented as ordinal, zero-based index into the
+molecule) and the distance from that atom.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="repESP.fields.html#repESP.fields.Field" title="repESP.fields.Field">Field</a>[Tuple[Optional[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)">int</a>], <a class="reference internal" href="repESP.types.html#repESP.types.Dist" title="repESP.types.Dist">Dist</a>]]</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="data">
+<dt id="repESP.calc_fields.NumericValue">
+<code class="descname">NumericValue</code><em class="property"> = ~NumericValue</em><a class="headerlink" href="#repESP.calc_fields.NumericValue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generic type for numeric values</p>
+<p>This type matches that of <cite>fields.Field.NumericValue</cite> and similarly it can be
+any type matching “bound=float”.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">TypeVar</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="repESP.calc_fields.calc_rms_value">
+<code class="descname">calc_rms_value</code><span class="sig-paren">(</span><em>values: Collection[NumericValue]</em><span class="sig-paren">)</span> &#x2192; NumericValue<a class="reference internal" href="_modules/repESP/calc_fields.html#calc_rms_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.calc_fields.calc_rms_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate root-mean-square (RMS) value of a collection of values</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>values</strong> (<em>Collection</em><em>[</em><em>NumericValue</em><em>]</em>) – The values which RMS is to be calculated.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">RMS value fo the given values.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">NumericValue</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="repESP.calc_fields.calc_rms_error">
+<code class="descname">calc_rms_error</code><span class="sig-paren">(</span><em>values1: Collection[NumericValue], values2: Collection[NumericValue]</em><span class="sig-paren">)</span> &#x2192; NumericValue<a class="reference internal" href="_modules/repESP/calc_fields.html#calc_rms_error"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.calc_fields.calc_rms_error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate RMS error between two collections of values</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>values1</strong> (<em>Collection</em><em>[</em><em>NumericValue</em><em>]</em>) – One of the collections of values to be used for the calculation.</li>
+<li><strong>values2</strong> (<em>Collection</em><em>[</em><em>NumericValue</em><em>]</em>) – The other collection of values to be used for the calculation.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">RMS error between the two given collections of values</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">NumericValue</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="repESP.calc_fields.calc_relative_rms_error">
+<code class="descname">calc_relative_rms_error</code><span class="sig-paren">(</span><em>values1: Collection[NumericValue], values2: Collection[NumericValue]</em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="_modules/repESP/calc_fields.html#calc_relative_rms_error"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.calc_fields.calc_relative_rms_error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate relative RMS error of two collections of values</p>
+<p>This is calculated as the RMS error between the two collections of values
+(as given by <cite>calc_rms_error</cite>) divided by the RMS error of the first
+collection of values.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>values1</strong> (<em>Collection</em><em>[</em><em>NumericValue</em><em>]</em>) – One of the collections of values which are to be used for the
+calculation. The RMS error will be reported relative to the RMS value
+of this collection.</li>
+<li><strong>values2</strong> (<em>Collection</em><em>[</em><em>NumericValue</em><em>]</em>) – The other collection of values to be used for the calculation.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Relative RMS error of the field values.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="repESP.charge_util.html" class="btn btn-neutral float-right" title="repESP.charge_util module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="repESP.html" class="btn btn-neutral float-left" title="repESP package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Jan Szopinski
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
