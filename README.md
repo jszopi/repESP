@@ -33,25 +33,7 @@ When the out-of-the-box functionalities are not sufficient or flexible enough, u
 
 ## Documentation
 
-### Scripts
-
-The overview of the available scripts can be found [here](scripts/README.md) and the command line interface help can be found [here](scripts/detailed.md).
-
-### Library
-
-> **Note:** Work on the library is currently ongoing and documentation will be filled in over the coming week or two, leading to a release of version 0.2.0.
-> Missing functionalities will be prioritized and added in subsequent revisions.
-
-Documentation for the library isn't currently hosted and must be generated locally by the user:
-After installing `repESP`, run the following commands from the `docs` directory:
-
-```sh
-sphinx-apidoc -fMe -o source ../repESP
-make html
-```
-
-The documentation can then be found in the `build/html` subdirectory.
-You can open the `index.html` or `modules.html` file in any browser and navigate from there.
+The overview of the available scripts can be found [here](scripts/README.md) and the command line interface help can be found [here](scripts/detailed.md). Library documentation is hosted at http://jszopi.github.io/repESP.
 
 # Run `repESP`
 
