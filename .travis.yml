@@ -9,7 +9,6 @@ matrix:
       osx_image: xcode10.1
       language: generic
       env:
-        - TOXENV=py37
         - TRAVIS_PYTHON_VERSION="3.7"
 install: pip3 install tox-travis python-coveralls
 script:
