@@ -70,7 +70,7 @@ class TestMolecule(TestCase):
 
         Molecule(
             [
-                AtomWithCoordsAndCharge(1, Charge(0.6), Coords((1, 1, 2))),
-                AtomWithCoordsAndCharge(2, Charge(-0.2), Coords((2, 0, 2))),
+                AtomWithCoordsAndCharge(1, Coords((1, 1, 2)), Charge(0.6)),
+                AtomWithCoordsAndCharge(2, Coords((2, 0, 2)), Charge(-0.2)),
             ]
         )
