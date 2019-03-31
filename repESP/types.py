@@ -4,7 +4,7 @@ from repESP._util import elements, get_symbol, get_atomic_number
 from repESP.util import angstrom_per_bohr
 
 from dataclasses import dataclass
-from typing import Any, Generic, List, Tuple, TypeVar
+from typing import Any, Generic, List, Iterable, Tuple, TypeVar
 
 
 # NewType had many limitations: not supported in sphinx, not possible to
@@ -70,20 +70,21 @@ class Coords(tuple):
 
     Parameters
     ----------
-    values : Tuple[Any, Any, Any]
-        Tuple of three values of any type convertible to float representing the
-        coordinates in units of Bohr radii. The values will be converted to `Dist`.
+    values : Iterable[Any]
+        An iterable yielding three values of any type convertible to float
+        representing the coordinates in units of Bohr radii. The values will be
+        converted to `Dist`.
     """
 
     __slots__ = ()
 
-    # A constructor from individual distances would be more convenient but that
-    # was causing issues due to libraries and built-ins assuming the same
-    # interface as `tuple`.
-    def __new__(cls, values: Tuple[Any, Any, Any]):
-        # To allow generators (required by `dataclasses.astuple`)
-        values = tuple(values)  # type: ignore # (`values` is now a variadic-size tuple)
-        return super().__new__(cls, tuple((Dist(values[0]), Dist(values[1]), Dist(values[2]))))
+    # A constructor requiring the element type to be Dist would be more strict
+    # but less convenient, to be discussed in a future library revision.
+    def __new__(cls, values: Iterable[Any]):
+        self_to_be = super().__new__(cls, (Dist(value) for value in values))
+        if len(self_to_be) != 3:
+            raise ValueError("Coords constructor expected an iterable yielding three elements.")
+        return self_to_be
 
     # TODO: Implement __str__ to avoid falling back on Dist.__repr__
 
