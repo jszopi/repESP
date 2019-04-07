@@ -110,4 +110,3 @@ First, have a look at GitHub's ["How to contribute"](https://guides.github.com/a
 
 This program needs some work to get [where it wants to be](#where-is-repesp-going).
 If you want to help out, please coordinate with the maintainer.
-Developer instructions can be found [here](dev/README.md).
