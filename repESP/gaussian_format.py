@@ -3,7 +3,7 @@
 from repESP.charges import Charge
 from repESP.fields import Esp
 from repESP.exceptions import InputFormatError
-from repESP.types import Coords, Molecule
+from repESP.types import Atom, Coords, Molecule
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
@@ -169,7 +169,7 @@ class EspChargesSectionParser(ChargesSectionParser):
 def get_charges_from_log(
     f: TextIO,
     charges_section_parser: ChargesSectionParser,
-    verify_against: Optional[Molecule]=None,
+    verify_against: Optional[Molecule[Atom]]=None,
     occurrence: int=-1
 ) -> List[Charge]:
     """Extract charges from the charges section in Gaussian output
@@ -182,7 +182,7 @@ def get_charges_from_log(
     charges_section_parser : ChargesSectionParser
         Object of a class implementing the `ChargesSectionParser` interface for
         the desired charge type, e.g. `MullikenChargeSectionParser()`.
-    verify_against : Molecule, optional
+    verify_against : Molecule[Atom], optional
         Molecule against which the output is to be verified. Defaults to None.
         Note that currently the verification only involves comparing the number
         of extracted charges against the number of atoms. In the future this may
@@ -220,7 +220,7 @@ def get_charges_from_log(
 def get_esp_fit_stats_from_log(
     f: TextIO,
     charges_section_parser: EspChargesSectionParser,
-    verify_against: Optional[Molecule]=None,
+    verify_against: Optional[Molecule[Atom]]=None,
     occurrence: int=-1
 ) -> Tuple[Esp, float]:
     """Extract ESP fit statistics from charges section in Gaussian output
@@ -268,7 +268,7 @@ def _get_charges_section_from_log(
 
 def _verify_charges_section(
     charges_section: ChargesSectionData,
-    verify_against: Optional[Molecule]
+    verify_against: Optional[Molecule[Atom]]
 ) -> None:
     # TODO: This could be extended to check atom identities if those get parsed
     if verify_against is None:

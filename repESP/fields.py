@@ -8,13 +8,14 @@ from repESP.types import Coords, Dist
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field, InitVar
-from typing import Any, cast, Collection, Generic, Iterator, List, NewType, Tuple, TypeVar
+from typing import Any, cast, Collection, Generic, Iterator, List, NewType, Tuple, Type, TypeVar
 
 import functools
 import math
 import operator
 
 
+EspT = TypeVar('EspT', bound='Esp')
 class Esp(float):
     """Electrostatic potential value in atomic units (:math:`E_h/e`)
 
@@ -26,7 +27,7 @@ class Esp(float):
 
     __slots__ = ()
 
-    def __new__(cls, value: Any):
+    def __new__(cls: Type[EspT], value: Any) -> EspT:
         return super().__new__(cls, float(value))  # type: ignore # (Too many arguments for "__new__" of "object")
 
     def __repr__(self) -> str:
@@ -36,6 +37,7 @@ class Esp(float):
         return f"{super().__str__()} a.u."
 
 
+EdT = TypeVar('EdT', bound='Ed')
 class Ed(float):
     """Electron density value in atomic units (\ :math:`e / \mathrm{a}_0^3`\ )
 
@@ -47,7 +49,7 @@ class Ed(float):
 
     __slots__ = ()
 
-    def __new__(cls, value: Any):
+    def __new__(cls: Type[EdT], value: Any) -> EdT:
         return super().__new__(cls, float(value))  # type: ignore # (Too many arguments for "__new__" of "object")
 
     def __repr__(self) -> str:
@@ -97,7 +99,7 @@ class Mesh(AbstractMesh):
     points_: InitVar[Collection[Coords]]
     _points: List[Coords] = field(init=False)
 
-    def __post_init__(self, points_) -> None:
+    def __post_init__(self, points_: Collection[Coords]) -> None:
         self._points = list(points_)
 
     @property
@@ -275,7 +277,7 @@ class Field(Generic[FieldValue]):
     values_: InitVar[Collection[FieldValue]]
     values: List[FieldValue] = field(init=False)
 
-    def __post_init__(self, values_) -> None:
+    def __post_init__(self, values_: Collection[FieldValue]) -> None:
 
         if len(values_) != len(self.mesh):
             raise ValueError(

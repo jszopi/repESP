@@ -7,13 +7,15 @@ import io
 import math
 import re
 import sys
-from typing import Dict, List, Optional, TextIO, Tuple, TypeVar, Union
+from typing import Dict, List, Optional, TextIO, Tuple, Type, TypeVar, Union
 
 from repESP.exceptions import InputFormatError
 from repESP.equivalence import Equivalence
 from repESP.types import Atom, Molecule
-from repESP._util import zip_exact
+from repESP._util import get_line, zip_exact
 
+
+IvaryT = TypeVar('IvaryT', bound='Respin.Ivary')
 
 @dataclass
 class Respin:
@@ -206,7 +208,7 @@ class Respin:
 
         values: List[int]
 
-        def __post_init__(self):
+        def __post_init__(self) -> None:
             for i, elem in enumerate(self.values):
                 if elem < -1 or elem > len(self.values):
                     raise ValueError(
@@ -274,7 +276,7 @@ class Respin:
             return f.getvalue()
 
         @classmethod
-        def from_equivalence(cls, equivalence: Equivalence):
+        def from_equivalence(cls: Type[IvaryT], equivalence: Equivalence) -> IvaryT:
             """Alternative initialization from equivalence information
 
             .. note:
@@ -393,13 +395,13 @@ def _parse_cntrl(f: TextIO) -> Respin.Cntrl:
 
     # nmol is not a parameter of Cntrl.__init__ and must be equal to 1.
     nmol = kwargs.pop("nmol", None)
-    if nmol is not None and nmol != 1:
+    if nmol is not None and nmol != 1:  # type: ignore # (similar to https://github.com/python/mypy/issues/6168)
         raise InputFormatError("Parsing multiple structures is not supported")
 
     return Respin.Cntrl(**kwargs)  # type: ignore # (not sure why not recognized)
 
 
-def parse_respin(f) -> Respin:
+def parse_respin(f: TextIO) -> Respin:
     """Parse a file in the "respin" format (input format of ``resp``)
 
     Note that only files describing a single structure fit are currently supported.
@@ -420,8 +422,7 @@ def parse_respin(f) -> Respin:
         Object representing the fitting instructions for the ``resp`` program.
     """
 
-    get_line = lambda: f.readline().rstrip('\n')
-    title = get_line()
+    title = get_line(f)
 
     for line in f:
         if line == " &cntrl\n":
@@ -429,16 +430,16 @@ def parse_respin(f) -> Respin:
 
     cntrl = _parse_cntrl(f)
 
-    wtmol = get_line().strip()
+    wtmol = get_line(f).strip()
     if not math.isclose(float(wtmol), 1.0, rel_tol=0, abs_tol=1e-6):
         raise InputFormatError(
             f"Encountered value of `wtmol` different from 1.0 ({wtmol}) but "
             f"parsing is supported only for single-structure respin files."
         )
 
-    subtitle = get_line()
+    subtitle = get_line(f)
 
-    charge_and_iuniq = get_line()
+    charge_and_iuniq = get_line(f)
     if len(charge_and_iuniq.split()) != 2:
         raise InputFormatError(
             f"Expected two ints for the line specifying charge and iuniq, found:\n{charge_and_iuniq}"

@@ -8,9 +8,9 @@ from repESP.fields import Esp, Field, AbstractMesh
 from repESP.charges import AtomWithCoordsAndCharge
 from repESP.types import AtomWithCoords, Coords, Dist, Molecule
 
-from scipy.spatial.distance import euclidean
+from scipy.spatial.distance import euclidean  # type: ignore
 import numpy as np
-from typing import cast, Collection, List, Optional, Tuple, TypeVar
+from typing import Callable, cast, Collection, List, Optional, Tuple, TypeVar
 
 
 def esp_from_charges(mesh: AbstractMesh, molecule: Molecule[AtomWithCoordsAndCharge]) -> Field[Esp]:
@@ -29,7 +29,7 @@ def esp_from_charges(mesh: AbstractMesh, molecule: Molecule[AtomWithCoordsAndCha
         The ESP field at the specified points reproduced from the partial
         charges on atoms of the given molecule.
     """
-    value_at_point = lambda coords: Esp(sum(
+    value_at_point: Callable[[Coords], Esp] = lambda coords: Esp(sum(
         atom.charge/(euclidean(coords, atom.coords))
         for atom in molecule.atoms
     ))
@@ -113,7 +113,7 @@ def calc_rms_value(values: Collection[NumericValue]) -> NumericValue:
     NumericValue
         RMS value fo the given values.
     """
-    return np.sqrt(np.mean(np.square(values)))
+    return cast(NumericValue, np.sqrt(np.mean(np.square(values))))
 
 
 def calc_rms_error(

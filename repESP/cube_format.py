@@ -4,6 +4,7 @@ from repESP.charges import AtomWithCoordsAndCharge, Charge
 from repESP.fields import Ed, Esp, Field, FieldValue, GridMesh
 from repESP.exceptions import InputFormatError
 from repESP.types import Coords, Coords, Molecule
+from repESP._util import get_line
 
 from dataclasses import dataclass
 from typing import Callable, Generic, List, TextIO, Tuple
@@ -68,7 +69,7 @@ class Cube(Generic[FieldValue]):
 class _GridPrelude:
     atom_count: int
     origin: Coords
-    nval: float
+    nval: int
 
 
 def _parse_grid_prelude(line: str) -> _GridPrelude:
@@ -86,7 +87,7 @@ def _parse_grid_prelude(line: str) -> _GridPrelude:
     return _GridPrelude(
         int(atom_count),
         Coords(origin_coords),
-        float(nval)
+        int(nval)
     )
 
 
@@ -163,28 +164,25 @@ def parse_cube(
         Data from the parsed cube file.
     """
 
-    get_line = lambda: f.readline().rstrip('\n')
-
     # Lines 1-2
-    info = Cube.Info(input_line=get_line(), title_line=get_line())
+    info = Cube.Info(input_line=get_line(f), title_line=get_line(f))
 
     # Line 3
-    grid_prelude = _parse_grid_prelude(get_line())
+    grid_prelude = _parse_grid_prelude(get_line(f))
 
-    if float(grid_prelude.nval) != 1:
-        # I don't know what NVal means, haven't seen it to be different than 1.
-        raise InputFormatError("NVal is different than 1.")
+    if grid_prelude.nval != 1:
+        raise InputFormatError("Number of values per point (NVal) is different than 1, which isn't currently supported.")
 
     # Lines 4-6
-    grid = _parse_grid(grid_prelude.origin, [get_line() for i in range(3)])
+    grid = _parse_grid(grid_prelude.origin, [get_line(f) for i in range(3)])
 
     # Molecule
     molecule = Molecule([
-        _parse_atom(get_line()) for i in range(grid_prelude.atom_count)
+        _parse_atom(get_line(f)) for i in range(grid_prelude.atom_count)
     ])
 
     # Field values
-    value_ctor = lambda x: make_value(info, x)
+    value_ctor: Callable[[str], FieldValue] = lambda x: make_value(info, x)
     values = [value_ctor(x) for x in f.read().split()]
 
     return Cube(
@@ -204,7 +202,7 @@ def _parse_cube_by_title_common(
 ) -> Callable[[Cube.Info, str], FieldValue]:
 
     def make_value(info: Cube.Info, value: str) -> FieldValue:
-        check_title = lambda title: title.startswith(expected_title_start)
+        check_title: Callable[[str], bool] = lambda title: title.startswith(expected_title_start)
         if verify_title and not check_title(info.title_line):
             raise InputFormatError(
                 f'Title of cube file does not start with "{expected_title_start}".'
@@ -214,7 +212,7 @@ def _parse_cube_by_title_common(
     return make_value
 
 
-def parse_esp_cube(f: TextIO, verify_title=True) -> Cube[Esp]:
+def parse_esp_cube(f: TextIO, verify_title: bool=True) -> Cube[Esp]:
     """Parse a Gaussian "cube" file describing an ESP field
 
     If your cube file comes from elsewhere than Gaussian, you should ensure
@@ -240,7 +238,7 @@ def parse_esp_cube(f: TextIO, verify_title=True) -> Cube[Esp]:
     )
 
 
-def parse_ed_cube(f: TextIO, verify_title=True) -> Cube[Ed]:
+def parse_ed_cube(f: TextIO, verify_title: bool=True) -> Cube[Ed]:
     """Parse a Gaussian "cube" file describing electron density field
 
     If your cube file comes from elsewhere than Gaussian, you should ensure

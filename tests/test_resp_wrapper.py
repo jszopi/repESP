@@ -122,16 +122,17 @@ class TestFittingWithFrozenAtoms(TestResp):
         with self.assertRaises(ValueError):
             kwargs = deepcopy(self.kwargs)
             kwargs["frozen_atoms"] = [0, -1, 4]
-            fit_with_frozen_atoms(**kwargs)
+            fit_with_frozen_atoms(**kwargs)  # type: ignore # (contents of dict can't be checked before runtime)
+
 
         with self.assertRaises(ValueError):
             kwargs = deepcopy(self.kwargs)
             kwargs["frozen_atoms"] = [0, 5, 4]
-            fit_with_frozen_atoms(**kwargs)
+            fit_with_frozen_atoms(**kwargs)  # type: ignore # (contents of dict can't be checked before runtime)
 
     def test_fitting_with_frozen_atoms(self) -> None:
 
-        charges = fit_with_frozen_atoms(**self.kwargs)
+        charges = fit_with_frozen_atoms(**self.kwargs)  # type: ignore # (contents of dict can't be checked before runtime)
 
         self.assertListsAlmostEqual(
             charges,

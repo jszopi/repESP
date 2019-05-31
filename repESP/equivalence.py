@@ -3,7 +3,7 @@
 from dataclasses import dataclass, asdict
 from itertools import zip_longest
 import io
-from typing import List, Optional
+from typing import List, no_type_check, Optional
 
 from repESP.types import Atom, Molecule
 
@@ -115,6 +115,7 @@ class Equivalence:
         return f.getvalue()
 
 
+@no_type_check
 def _get_equivalence_from_ac(ac) -> Equivalence:
     # TODO: This should wrap the two respgen calls:
     #     respgen -i methane.ac -o methane.respin1 -f resp1

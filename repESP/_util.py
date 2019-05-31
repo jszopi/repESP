@@ -1,10 +1,10 @@
 from enum import Enum
-from typing import Collection, Iterable, Tuple, TypeVar
+from typing import Collection, Iterable, TextIO, Tuple, TypeVar
 
 
 # As per Python docs
 class NoValue(Enum):
-    def __repr__(self):
+    def __repr__(self) -> str:
         return '<%s.%s>' % (self.__class__.__name__, self.name)
 
 
@@ -52,3 +52,6 @@ def zip_exact(first: Collection[T], second: Collection[U]) -> Iterable[Tuple[T, 
         )
 
     return zip(first, second)
+
+def get_line(f: TextIO) -> str:
+    return f.readline().rstrip('\n')

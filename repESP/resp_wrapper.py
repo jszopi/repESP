@@ -16,7 +16,7 @@ from itertools import zip_longest
 import os
 import subprocess
 import sys
-from typing import List, Optional
+from typing import Callable, List, Optional
 import tempfile
 
 
@@ -36,7 +36,7 @@ def _run_resp_in_dir(
     qout_fn = "charges.qout"
     espot_fn = "espot.esp"
 
-    get_full_path = lambda fn: f"{calc_dir}/{fn}"
+    get_full_path: Callable[[str], str] = lambda fn: f"{calc_dir}/{fn}"
 
     with open(get_full_path(respin_fn), "w") as f:
         write_respin(f, respin)
@@ -167,7 +167,7 @@ def run_two_stage_resp(
     total_charge = respin1.charge
     molecule = respin1.molecule
 
-    get_calc_dir = lambda stage: (
+    get_calc_dir: Callable[[int], Optional[str]] = lambda stage: (
         f"{save_intermediates_to}/stage_{stage}"
         if save_intermediates_to is not None else None
     )

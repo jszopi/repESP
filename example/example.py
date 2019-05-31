@@ -80,7 +80,7 @@ from repESP.charges import AtomWithCoordsAndCharge
 from repESP.types import Molecule
 
 molecule_with_my_charges = Molecule([
-    AtomWithCoordsAndCharge(  # type: ignore # (known issue with argument order)
+    AtomWithCoordsAndCharge(
         atom.atomic_number,
         atom.coords,
         my_charge

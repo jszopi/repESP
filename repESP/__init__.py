@@ -181,7 +181,7 @@ Usage caveats
   a static type checker, like ``mypy`` on their script beforehand. To practice,
   try introducing a type error into the example script and observe the output of::
 
-      mypy example.py
+      mypy --strict example.py
 
   Using a static type checker will save the user debugging tricky runtime
   errors which tend to occur later in the program. Even if the program execution

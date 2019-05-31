@@ -5,9 +5,10 @@ from repESP.types import Atom, AtomWithCoords, Coords
 
 from dataclasses import dataclass
 # from enum import auto
-from typing import Any, List, Collection, Tuple, Type
+from typing import Any, List, Collection, Tuple, Type, TypeVar
 
 
+ChargeT = TypeVar('ChargeT', bound='Charge')
 class Charge(float):
     """Partial (atomic) charge in units of elementary charge (*e*)
 
@@ -19,7 +20,7 @@ class Charge(float):
 
     __slots__ = ()
 
-    def __new__(cls, value: Any):
+    def __new__(cls: Type[ChargeT], value: Any) -> ChargeT:
         return super().__new__(cls, float(value))  # type: ignore # (Too many arguments for "__new__" of "object")
 
     def __repr__(self) -> str:
@@ -92,6 +93,7 @@ class AtomWithCoordsAndCharge(AtomWithCharge, AtomWithCoords):
     pass
 
 
+DipoleMomentValueT = TypeVar('DipoleMomentValueT', bound='DipoleMomentValue')
 class DipoleMomentValue(float):
     """Dipole moment value in atomic units (:math:`e\mathrm{a}_0`)
 
@@ -103,7 +105,7 @@ class DipoleMomentValue(float):
 
     __slots__ = ()
 
-    def __new__(cls, value: Any):
+    def __new__(cls: Type[DipoleMomentValueT], value: Any) -> DipoleMomentValueT:
         return super().__new__(cls, float(value))  # type: ignore # (Too many arguments for "__new__" of "object")
 
     # TODO: Add conversion to/from Debye (and printing with it).
@@ -130,6 +132,7 @@ class DipoleMoment:
     z: DipoleMomentValue
 
 
+QuadrupoleMomentValueT = TypeVar('QuadrupoleMomentValueT', bound='QuadrupoleMomentValue')
 class QuadrupoleMomentValue(float):
     """Quadrupole moment in atomic units (:math:`e\mathrm{a}_0^2`)
 
@@ -141,7 +144,7 @@ class QuadrupoleMomentValue(float):
 
     __slots__ = ()
 
-    def __new__(cls, value: Any):
+    def __new__(cls: Type[QuadrupoleMomentValueT], value: Any) -> QuadrupoleMomentValueT:
         return super().__new__(cls, float(value))  # type: ignore # (Too many arguments for "__new__" of "object")
 
     # TODO: Add conversion to/from Buckingham (and printing with it).
@@ -175,7 +178,7 @@ class QuadrupoleMoment:
     xz: QuadrupoleMomentValue
     yz: QuadrupoleMomentValue
 
-    def __post__init__(self):
+    def __post__init__(self) -> None:
         # TODO: Only five of those are independent as the tensor is required to
         # be traceless. Add this check.
         pass

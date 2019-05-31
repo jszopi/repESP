@@ -5,10 +5,11 @@ from repESP.charges import QuadrupoleMoment, QuadrupoleMomentValue
 from repESP.fields import Esp, Field, Mesh
 from repESP.exceptions import InputFormatError
 from repESP.types import AtomWithCoords, Coords, Molecule
+from repESP._util import get_line
 
 from dataclasses import dataclass
 from fortranformat import FortranRecordWriter as FW, FortranRecordReader as FR
-from typing import List, TextIO, Tuple
+from typing import Callable, cast, List, Pattern, TextIO, Tuple, Type, TypeVar
 import re
 
 
@@ -28,7 +29,7 @@ class GaussianEspData:
         The dipole moment of the molecule.
     quadrupole_moment : QuadrupoleMoment
         The quadrupole moment of the molecule.
-    field : Field
+    field : Field[Esp]
         The ESP field described by the file.
 
     Attributes
@@ -51,9 +52,10 @@ class GaussianEspData:
     molecule: Molecule[AtomWithCoordsAndCharge]
     dipole_moment: DipoleMoment
     quadrupole_moment: QuadrupoleMoment
-    field: Field
+    field: Field[Esp]
 
 
+EspDataT = TypeVar('EspDataT', bound='EspData')
 @dataclass
 class EspData:
     """Dataclass representing the .esp file in the ``resp`` format
@@ -63,7 +65,7 @@ class EspData:
     atoms_coords : typing.List[Coords]
         The positions of atoms in space. Note that the identities of the atoms
         are not known and thus this member cannot be described with the `Atom` class.
-    field : Field
+    field : Field[Esp]
         The ESP field around the molecule.
 
     Attributes
@@ -74,10 +76,10 @@ class EspData:
         See initialization parameter
     """
     atoms_coords: List[Coords]
-    field: Field
+    field: Field[Esp]
 
     @classmethod
-    def from_gaussian(cls, gaussian_esp_data: GaussianEspData):
+    def from_gaussian(cls: Type[EspDataT], gaussian_esp_data: GaussianEspData) -> EspDataT:
         """Alternative initialization from .esp file in Gaussian format
 
         Note that the conversion in the opposite direction is not possible as
@@ -88,7 +90,7 @@ class EspData:
         gaussian_esp_data : GaussianEspData
             A dataclass representing an .esp file in the Gaussian format.
         """
-        return EspData(
+        return cls(
             [atom.coords for atom in gaussian_esp_data.molecule.atoms],
             gaussian_esp_data.field
         )
@@ -116,24 +118,22 @@ def parse_gaussian_esp(f: TextIO) -> GaussianEspData:
         A dataclass representing the information in the given .esp file.
     """
 
-    get_line = lambda: f.readline().rstrip('\n')
+    charge, multiplicity, atom_count = _parse_prelude([get_line(f) for i in range(3)])
 
-    charge, multiplicity, atom_count = _parse_prelude([get_line() for i in range(3)])
+    molecule = Molecule([_parse_atom(get_line(f)) for _ in range(atom_count)])
 
-    molecule = Molecule([_parse_atom(get_line()) for _ in range(atom_count)])
-
-    if get_line() != " DIPOLE MOMENT:":
+    if get_line(f) != " DIPOLE MOMENT:":
         raise InputFormatError("Expected dipole moment section header.")
 
-    dipole_moment = _parse_dipole(get_line())
+    dipole_moment = _parse_dipole(get_line(f))
 
-    if get_line() != " TRACELESS QUADRUPOLE MOMENT:":
+    if get_line(f) != " TRACELESS QUADRUPOLE MOMENT:":
         raise InputFormatError("Expected quadrupole moment section header.")
 
-    quadrupole_moment = _parse_quadrupole([get_line(), get_line()])
+    quadrupole_moment = _parse_quadrupole([get_line(f), get_line(f)])
 
     points_header_re = re.compile(" ESP VALUES AND GRID POINT COORDINATES. #POINTS =\s+([0-9]+)")
-    points_header_match = points_header_re.match(get_line())
+    points_header_match = points_header_re.match(get_line(f))
 
     if points_header_match is None:
         raise InputFormatError("Expected ESP points section header.")
@@ -201,7 +201,7 @@ def _parse_quadrupole(lines: List[str]) -> QuadrupoleMoment:
 
     line1_components = ("XX", "YY", "ZZ")
     line2_components = ("XY", "XZ", "YZ")
-    get_line_re = lambda components: re.compile(
+    get_line_re: Callable[[Tuple[str, str, str]], Pattern[str]] = lambda components: re.compile(
         "   {}=\s+([-+0-9.D]+)   {}=\s+([-+0-9.D]+)   {}=\s+([-+0-9.D]+)".format(*components)
     )
 
@@ -254,9 +254,7 @@ def parse_resp_esp(f: TextIO) -> EspData:
         A dataclass representing the information in the given .esp file.
     """
 
-    get_line = lambda: f.readline().rstrip('\n')
-
-    atom_and_point_count = get_line().split()
+    atom_and_point_count = get_line(f).split()
 
     if len(atom_and_point_count) != 2:
         raise InputFormatError(
@@ -266,13 +264,13 @@ def parse_resp_esp(f: TextIO) -> EspData:
     atom_count = int(atom_and_point_count[0])
     point_count = int(atom_and_point_count[1])
 
-    atoms_coords = [Coords(get_line().split()) for _ in range(atom_count)]
+    atoms_coords = [Coords(get_line(f).split()) for _ in range(atom_count)]
 
     mesh_coords: List[Coords] = []
     esp_values: List[Esp] = []
 
     for _ in range(point_count):
-        val, *coords = get_line().split()
+        val, *coords = get_line(f).split()
         mesh_coords.append(Coords(coords))
         esp_values.append(Esp(val))
 
@@ -289,7 +287,7 @@ def parse_resp_esp(f: TextIO) -> EspData:
     )
 
 
-def write_resp_esp(f: TextIO, esp_data: EspData):
+def write_resp_esp(f: TextIO, esp_data: EspData) -> None:
     """Write a ``resp`` .esp file described by the given input data
 
     Parameters
@@ -326,6 +324,6 @@ def write_resp_esp(f: TextIO, esp_data: EspData):
     for point_coords, esp_val in zip(field.mesh.points, field.values):
         f.write(
             FW(formats["points"]).write(
-                [esp_val] + list(point_coords)
+                cast(List[float], [esp_val]) + list(point_coords)
             ) + "\n"
         )

@@ -12,7 +12,7 @@ from repESP.types import Atom, Molecule
 from repESP._util import zip_exact
 
 from abc import ABC, abstractmethod
-from typing import List, Optional
+from typing import List, Optional, Type, TypeVar
 
 
 class RespinGenerator(ABC):
@@ -42,6 +42,7 @@ class RespinGenerator(ABC):
         pass
 
 
+RespRespinGeneratorT = TypeVar('RespRespinGeneratorT', bound='RespRespinGenerator')
 class RespRespinGenerator(RespinGenerator):
     """Base class providing "respin" creation methods for RESP charges"""
 
@@ -52,7 +53,7 @@ class RespRespinGenerator(RespinGenerator):
         return self.ivary
 
     @classmethod
-    def from_respin(cls, respin: Respin):
+    def from_respin(cls: Type[RespRespinGeneratorT], respin: Respin) -> RespRespinGeneratorT:
         """Alternative initialization from a "respin" file
 
         This alternative initializer expresses the fact that this object can
@@ -69,10 +70,10 @@ class RespRespinGenerator(RespinGenerator):
     @classmethod
     @abstractmethod
     def from_methyl_and_methylene(
-        cls,
+        cls: Type[RespRespinGeneratorT],
         equivalence: Equivalence,
         methyl_methylene_mask: List[bool]
-    ):
+    ) -> RespRespinGeneratorT:
         """Alternative initialization from chemical information
 
         The per-atom fitting instructions in the RESP charge optimization depend
@@ -98,6 +99,7 @@ class RespRespinGenerator(RespinGenerator):
         pass
 
 
+RespStage1RespinGeneratorT = TypeVar('RespStage1RespinGeneratorT', bound='RespStage1RespinGenerator')
 class RespStage1RespinGenerator(RespRespinGenerator):
     """Creator of "respin" files for 1st stage RESP fitting
 
@@ -123,10 +125,10 @@ class RespStage1RespinGenerator(RespRespinGenerator):
 
     @classmethod
     def from_methyl_and_methylene(
-        cls,
+        cls: Type[RespStage1RespinGeneratorT],
         equivalence: Equivalence,
         methyl_methylene_mask: List[bool]
-    ):
+    ) -> RespStage1RespinGeneratorT:
         """See documentation in base class (`RespRespinGenerator`)"""
         return cls(Respin.Ivary([
             0 if is_methyl_or_methylene else ivary_from_equivalence_value
@@ -138,6 +140,7 @@ class RespStage1RespinGenerator(RespRespinGenerator):
         ]))
 
 
+RespStage2RespinGeneratorT = TypeVar('RespStage2RespinGeneratorT', bound='RespStage2RespinGenerator')
 class RespStage2RespinGenerator(RespRespinGenerator):
     """Creator of "respin" files for 2nd stage RESP fitting
 
@@ -165,10 +168,10 @@ class RespStage2RespinGenerator(RespRespinGenerator):
 
     @classmethod
     def from_methyl_and_methylene(
-        cls,
+        cls: Type[RespStage2RespinGeneratorT],
         equivalence: Equivalence,
         methyl_methylene_mask: List[bool]
-    ):
+    ) -> RespStage2RespinGeneratorT:
         """See documentation in base class (`RespRespinGenerator`)"""
         return cls(Respin.Ivary([
             ivary_from_equivalence_value if is_methyl_or_methylene else -1

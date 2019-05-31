@@ -4,12 +4,13 @@ from repESP._util import elements, get_symbol, get_atomic_number
 from repESP.util import angstrom_per_bohr
 
 from dataclasses import dataclass
-from typing import Any, Generic, List, Iterable, Tuple, TypeVar
+from typing import Any, Generic, List, Iterable, Tuple, Type, TypeVar
 
 
 # NewType had many limitations: not supported in sphinx, not possible to
 # override __repr__, and requirement for standalone helper constructors, like:
 # https://github.com/python/typing/issues/415#issuecomment-297401553
+DistT = TypeVar('DistT', bound='Dist')
 class Dist(float):
     """Distance in atomic units i.e. Bohr radii (a\ :sub:`0`\ )
 
@@ -32,11 +33,11 @@ class Dist(float):
 
     __slots__ = ()
 
-    def __new__(cls, x: Any):
+    def __new__(cls: Type[DistT], x: Any) -> DistT:
         return super().__new__(cls, float(x))  # type: ignore # (Too many arguments for "__new__" of "object")
 
     @classmethod
-    def from_angstrom(cls, value: Any):
+    def from_angstrom(cls: Type[DistT], value: Any) -> DistT:
         """Alternative initialization from value in angstrom (Å)
 
         Parameters
@@ -65,7 +66,8 @@ class Dist(float):
         return str_.format(self.angstrom())
 
 
-class Coords(tuple):
+CoordsT = TypeVar('CoordsT', bound='Coords')
+class Coords(Tuple[Dist, Dist, Dist]):
     """Three-dimensional coordinates of a point in space, in atomic units
 
     Parameters
@@ -80,7 +82,7 @@ class Coords(tuple):
 
     # A constructor requiring the element type to be Dist would be more strict
     # but less convenient, to be discussed in a future library revision.
-    def __new__(cls, values: Iterable[Any]):
+    def __new__(cls: Type[CoordsT], values: Iterable[Any]) -> CoordsT:
         self_to_be = super().__new__(cls, (Dist(value) for value in values))
         if len(self_to_be) != 3:
             raise ValueError("Coords constructor expected an iterable yielding three elements.")
@@ -89,6 +91,7 @@ class Coords(tuple):
     # TODO: Implement __str__ to avoid falling back on Dist.__repr__
 
 
+AtomT = TypeVar('AtomT', bound='Atom')
 @dataclass
 class Atom:
     """Dataclass representing an atom of a certain element
@@ -113,7 +116,7 @@ class Atom:
     """
     atomic_number: int
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         if self.atomic_number < 1 or self.atomic_number >= len(elements):
             raise ValueError(
                 f"Atomic number is not within expected bounds: {self.atomic_number}."
@@ -125,7 +128,7 @@ class Atom:
         return get_symbol(self.atomic_number)
 
     @classmethod
-    def from_symbol(cls, symbol: str, *args, **kwargs):
+    def from_symbol(cls: Type[AtomT], symbol: str, *args: Any, **kwargs: Any) -> AtomT:
         """Alternative initialization from chemical symbol
 
         Despite not being documented, this constructor is inherited by the
@@ -142,10 +145,6 @@ class Atom:
         ValueError
             Raised in case the given chemical symbol is not recognized
         """
-        # Generic type annotations as per:
-        # https://github.com/python/typing/issues/58#issuecomment-326240794)
-        # don't seem to be working for a dataclass, and that's even before
-        # getting them to work with args and kwargs.
         return cls(get_atomic_number(symbol), *args, **kwargs)  # type: ignore # (args, kwargs)
 
 

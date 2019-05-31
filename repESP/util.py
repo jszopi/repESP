@@ -21,7 +21,7 @@ T1 = TypeVar('T1')
 T2 = TypeVar('T2')
 
 
-def list_from_dict(
+def list_from_dict(  # type: ignore # (defaults with generics: https://github.com/python/mypy/issues/3737)
     dict_: Dict[int, T1],
     length: int,
     default: T2=None,
@@ -68,7 +68,7 @@ def list_from_dict(
     return [
         # mypy infers the result to be a Union including None, whereas I see it
         # as falling under T2.
-        dict_[i+offset] if i+offset in dict_ else default  # type: ignore
+        dict_[i+offset] if i+offset in dict_ else default
         for i in range(length)
     ]
 
