@@ -8,7 +8,7 @@ from repESP.types import Coords, Dist
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field, InitVar
-from typing import Any, cast, Collection, Generic, Iterator, List, NewType, Tuple, Type, TypeVar
+from typing import Any, cast, Collection, Generic, Iterable, Iterator, List, NewType, Tuple, Type, TypeVar
 
 import functools
 import math
@@ -178,7 +178,13 @@ class GridMesh(AbstractMesh):
                     f"Negative value of `point_count` given: {self.point_count}."
                 )
 
-    Axes = NewType("Axes", Tuple[Axis, Axis, Axis])
+    _AxesT = TypeVar('_AxesT', bound='Axes')
+    class Axes(Tuple[Axis, Axis, Axis]):
+        def __new__(cls: Type["GridMesh._AxesT"], values: Iterable["GridMesh.Axis"]) -> "GridMesh._AxesT":
+            self_to_be = super().__new__(cls, values)
+            if len(self_to_be) != 3:
+                raise ValueError("Axes constructor expected an iterable yielding three elements.")
+            return self_to_be
 
     origin: Coords
     axes: Axes

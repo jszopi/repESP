@@ -108,7 +108,7 @@ def _parse_grid(origin: Coords, lines: List[str]) -> GridMesh:
 
     return GridMesh(
         origin,
-        GridMesh.Axes(tuple(  # type: ignore # (asserted len is 3)
+        GridMesh.Axes(tuple(
             parse_axis(line) for line in lines
         ))
     )
