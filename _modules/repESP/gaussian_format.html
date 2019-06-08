@@ -84,7 +84,10 @@
             
             
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../repESP.html">repESP package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../repESP_intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../repESP_tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../repESP_usage.html">Usage notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../repESP_modules.html">Modules</a></li>
 </ul>
 
             
@@ -153,7 +156,7 @@
 <span class="kn">from</span> <span class="nn">repESP.charges</span> <span class="k">import</span> <span class="n">Charge</span>
 <span class="kn">from</span> <span class="nn">repESP.fields</span> <span class="k">import</span> <span class="n">Esp</span>
 <span class="kn">from</span> <span class="nn">repESP.exceptions</span> <span class="k">import</span> <span class="n">InputFormatError</span>
-<span class="kn">from</span> <span class="nn">repESP.types</span> <span class="k">import</span> <span class="n">Coords</span><span class="p">,</span> <span class="n">Molecule</span>
+<span class="kn">from</span> <span class="nn">repESP.types</span> <span class="k">import</span> <span class="n">Atom</span><span class="p">,</span> <span class="n">Coords</span><span class="p">,</span> <span class="n">Molecule</span>
 
 <span class="kn">from</span> <span class="nn">abc</span> <span class="k">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="k">import</span> <span class="n">dataclass</span>
@@ -319,7 +322,7 @@
 <div class="viewcode-block" id="get_charges_from_log"><a class="viewcode-back" href="../../repESP.gaussian_format.html#repESP.gaussian_format.get_charges_from_log">[docs]</a><span class="k">def</span> <span class="nf">get_charges_from_log</span><span class="p">(</span>
     <span class="n">f</span><span class="p">:</span> <span class="n">TextIO</span><span class="p">,</span>
     <span class="n">charges_section_parser</span><span class="p">:</span> <span class="n">ChargesSectionParser</span><span class="p">,</span>
-    <span class="n">verify_against</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Molecule</span><span class="p">]</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">verify_against</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Molecule</span><span class="p">[</span><span class="n">Atom</span><span class="p">]]</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">occurrence</span><span class="p">:</span> <span class="nb">int</span><span class="o">=-</span><span class="mi">1</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Charge</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Extract charges from the charges section in Gaussian output</span>
@@ -332,7 +335,7 @@
 <span class="sd">    charges_section_parser : ChargesSectionParser</span>
 <span class="sd">        Object of a class implementing the `ChargesSectionParser` interface for</span>
 <span class="sd">        the desired charge type, e.g. `MullikenChargeSectionParser()`.</span>
-<span class="sd">    verify_against : Molecule, optional</span>
+<span class="sd">    verify_against : Molecule[Atom], optional</span>
 <span class="sd">        Molecule against which the output is to be verified. Defaults to None.</span>
 <span class="sd">        Note that currently the verification only involves comparing the number</span>
 <span class="sd">        of extracted charges against the number of atoms. In the future this may</span>
@@ -370,7 +373,7 @@
 <div class="viewcode-block" id="get_esp_fit_stats_from_log"><a class="viewcode-back" href="../../repESP.gaussian_format.html#repESP.gaussian_format.get_esp_fit_stats_from_log">[docs]</a><span class="k">def</span> <span class="nf">get_esp_fit_stats_from_log</span><span class="p">(</span>
     <span class="n">f</span><span class="p">:</span> <span class="n">TextIO</span><span class="p">,</span>
     <span class="n">charges_section_parser</span><span class="p">:</span> <span class="n">EspChargesSectionParser</span><span class="p">,</span>
-    <span class="n">verify_against</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Molecule</span><span class="p">]</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">verify_against</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Molecule</span><span class="p">[</span><span class="n">Atom</span><span class="p">]]</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">occurrence</span><span class="p">:</span> <span class="nb">int</span><span class="o">=-</span><span class="mi">1</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Esp</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Extract ESP fit statistics from charges section in Gaussian output</span>
@@ -418,7 +421,7 @@
 
 <span class="k">def</span> <span class="nf">_verify_charges_section</span><span class="p">(</span>
     <span class="n">charges_section</span><span class="p">:</span> <span class="n">ChargesSectionData</span><span class="p">,</span>
-    <span class="n">verify_against</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Molecule</span><span class="p">]</span>
+    <span class="n">verify_against</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Molecule</span><span class="p">[</span><span class="n">Atom</span><span class="p">]]</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="c1"># TODO: This could be extended to check atom identities if those get parsed</span>
     <span class="k">if</span> <span class="n">verify_against</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>

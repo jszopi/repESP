@@ -84,7 +84,10 @@
             
             
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../repESP.html">repESP package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../repESP_intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../repESP_tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../repESP_usage.html">Usage notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../repESP_modules.html">Modules</a></li>
 </ul>
 
             
@@ -154,12 +157,13 @@
 <span class="kn">from</span> <span class="nn">repESP.util</span> <span class="k">import</span> <span class="n">angstrom_per_bohr</span>
 
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="k">import</span> <span class="n">dataclass</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Generic</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">TypeVar</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Generic</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">TypeVar</span>
 
 
 <span class="c1"># NewType had many limitations: not supported in sphinx, not possible to</span>
 <span class="c1"># override __repr__, and requirement for standalone helper constructors, like:</span>
 <span class="c1"># https://github.com/python/typing/issues/415#issuecomment-297401553</span>
+<span class="n">DistT</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;DistT&#39;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="s1">&#39;Dist&#39;</span><span class="p">)</span>
 <div class="viewcode-block" id="Dist"><a class="viewcode-back" href="../../repESP.types.html#repESP.types.Dist">[docs]</a><span class="k">class</span> <span class="nc">Dist</span><span class="p">(</span><span class="nb">float</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Distance in atomic units i.e. Bohr radii (a\ :sub:`0`\ )</span>
 
@@ -182,11 +186,11 @@
 
     <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">DistT</span><span class="p">],</span> <span class="n">x</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DistT</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>  <span class="c1"># type: ignore # (Too many arguments for &quot;__new__&quot; of &quot;object&quot;)</span>
 
 <div class="viewcode-block" id="Dist.from_angstrom"><a class="viewcode-back" href="../../repESP.types.html#repESP.types.Dist.from_angstrom">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">from_angstrom</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">from_angstrom</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">DistT</span><span class="p">],</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DistT</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Alternative initialization from value in angstrom (Å)</span>
 
 <span class="sd">        Parameters</span>
@@ -215,29 +219,32 @@
         <span class="k">return</span> <span class="n">str_</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">angstrom</span><span class="p">())</span></div>
 
 
-<div class="viewcode-block" id="Coords"><a class="viewcode-back" href="../../repESP.types.html#repESP.types.Coords">[docs]</a><span class="k">class</span> <span class="nc">Coords</span><span class="p">(</span><span class="nb">tuple</span><span class="p">):</span>
+<span class="n">CoordsT</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;CoordsT&#39;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="s1">&#39;Coords&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="Coords"><a class="viewcode-back" href="../../repESP.types.html#repESP.types.Coords">[docs]</a><span class="k">class</span> <span class="nc">Coords</span><span class="p">(</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Dist</span><span class="p">,</span> <span class="n">Dist</span><span class="p">,</span> <span class="n">Dist</span><span class="p">]):</span>
     <span class="sd">&quot;&quot;&quot;Three-dimensional coordinates of a point in space, in atomic units</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    values : Tuple[Any, Any, Any]</span>
-<span class="sd">        Tuple of three values of any type convertible to float representing the</span>
-<span class="sd">        coordinates in units of Bohr radii. The values will be converted to `Dist`.</span>
+<span class="sd">    values : Iterable[Any]</span>
+<span class="sd">        An iterable yielding three values of any type convertible to float</span>
+<span class="sd">        representing the coordinates in units of Bohr radii. The values will be</span>
+<span class="sd">        converted to `Dist`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">()</span>
 
-    <span class="c1"># A constructor from individual distances would be more convenient but that</span>
-    <span class="c1"># was causing issues due to libraries and built-ins assuming the same</span>
-    <span class="c1"># interface as `tuple`.</span>
-    <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">values</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]):</span>
-        <span class="c1"># To allow generators (required by `dataclasses.astuple`)</span>
-        <span class="n">values</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>  <span class="c1"># type: ignore # (`values` is now a variadic-size tuple)</span>
-        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">((</span><span class="n">Dist</span><span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">Dist</span><span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">Dist</span><span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="mi">2</span><span class="p">]))))</span></div>
+    <span class="c1"># A constructor requiring the element type to be Dist would be more strict</span>
+    <span class="c1"># but less convenient, to be discussed in a future library revision.</span>
+    <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">CoordsT</span><span class="p">],</span> <span class="n">values</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">CoordsT</span><span class="p">:</span>
+        <span class="n">self_to_be</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="p">(</span><span class="n">Dist</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">values</span><span class="p">))</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">self_to_be</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Coords constructor expected an iterable yielding three elements.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">self_to_be</span></div>
 
     <span class="c1"># TODO: Implement __str__ to avoid falling back on Dist.__repr__</span>
 
 
+<span class="n">AtomT</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;AtomT&#39;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="s1">&#39;Atom&#39;</span><span class="p">)</span>
 <div class="viewcode-block" id="Atom"><a class="viewcode-back" href="../../repESP.types.html#repESP.types.Atom">[docs]</a><span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">Atom</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Dataclass representing an atom of a certain element</span>
@@ -262,7 +269,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">atomic_number</span><span class="p">:</span> <span class="nb">int</span>
 
-    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">atomic_number</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">atomic_number</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">elements</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="n">f</span><span class="s2">&quot;Atomic number is not within expected bounds: </span><span class="si">{self.atomic_number}</span><span class="s2">.&quot;</span>
@@ -274,7 +281,7 @@
         <span class="k">return</span> <span class="n">get_symbol</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atomic_number</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Atom.from_symbol"><a class="viewcode-back" href="../../repESP.types.html#repESP.types.Atom.from_symbol">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">from_symbol</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">symbol</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">from_symbol</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">AtomT</span><span class="p">],</span> <span class="n">symbol</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomT</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Alternative initialization from chemical symbol</span>
 
 <span class="sd">        Despite not being documented, this constructor is inherited by the</span>
@@ -291,10 +298,6 @@
 <span class="sd">        ValueError</span>
 <span class="sd">            Raised in case the given chemical symbol is not recognized</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># Generic type annotations as per:</span>
-        <span class="c1"># https://github.com/python/typing/issues/58#issuecomment-326240794)</span>
-        <span class="c1"># don&#39;t seem to be working for a dataclass, and that&#39;s even before</span>
-        <span class="c1"># getting them to work with args and kwargs.</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">get_atomic_number</span><span class="p">(</span><span class="n">symbol</span><span class="p">),</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>  <span class="c1"># type: ignore # (args, kwargs)</span></div></div>
 
 

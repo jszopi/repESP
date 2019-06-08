@@ -84,7 +84,10 @@
             
             
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../repESP.html">repESP package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../repESP_intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../repESP_tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../repESP_usage.html">Usage notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../repESP_modules.html">Modules</a></li>
 </ul>
 
             
@@ -155,9 +158,10 @@
 
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="k">import</span> <span class="n">dataclass</span>
 <span class="c1"># from enum import auto</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Collection</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Type</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Collection</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">TypeVar</span>
 
 
+<span class="n">ChargeT</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;ChargeT&#39;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="s1">&#39;Charge&#39;</span><span class="p">)</span>
 <div class="viewcode-block" id="Charge"><a class="viewcode-back" href="../../repESP.charges.html#repESP.charges.Charge">[docs]</a><span class="k">class</span> <span class="nc">Charge</span><span class="p">(</span><span class="nb">float</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Partial (atomic) charge in units of elementary charge (*e*)</span>
 
@@ -169,7 +173,7 @@
 
     <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">ChargeT</span><span class="p">],</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ChargeT</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>  <span class="c1"># type: ignore # (Too many arguments for &quot;__new__&quot; of &quot;object&quot;)</span>
 
     <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -242,6 +246,7 @@
     <span class="k">pass</span></div>
 
 
+<span class="n">DipoleMomentValueT</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;DipoleMomentValueT&#39;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="s1">&#39;DipoleMomentValue&#39;</span><span class="p">)</span>
 <div class="viewcode-block" id="DipoleMomentValue"><a class="viewcode-back" href="../../repESP.charges.html#repESP.charges.DipoleMomentValue">[docs]</a><span class="k">class</span> <span class="nc">DipoleMomentValue</span><span class="p">(</span><span class="nb">float</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Dipole moment value in atomic units (:math:`e\mathrm{a}_0`)</span>
 
@@ -253,7 +258,7 @@
 
     <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">DipoleMomentValueT</span><span class="p">],</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DipoleMomentValueT</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>  <span class="c1"># type: ignore # (Too many arguments for &quot;__new__&quot; of &quot;object&quot;)</span></div>
 
     <span class="c1"># TODO: Add conversion to/from Debye (and printing with it).</span>
@@ -280,6 +285,7 @@
     <span class="n">z</span><span class="p">:</span> <span class="n">DipoleMomentValue</span></div>
 
 
+<span class="n">QuadrupoleMomentValueT</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;QuadrupoleMomentValueT&#39;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="s1">&#39;QuadrupoleMomentValue&#39;</span><span class="p">)</span>
 <div class="viewcode-block" id="QuadrupoleMomentValue"><a class="viewcode-back" href="../../repESP.charges.html#repESP.charges.QuadrupoleMomentValue">[docs]</a><span class="k">class</span> <span class="nc">QuadrupoleMomentValue</span><span class="p">(</span><span class="nb">float</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Quadrupole moment in atomic units (:math:`e\mathrm{a}_0^2`)</span>
 
@@ -291,7 +297,7 @@
 
     <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">QuadrupoleMomentValueT</span><span class="p">],</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QuadrupoleMomentValueT</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>  <span class="c1"># type: ignore # (Too many arguments for &quot;__new__&quot; of &quot;object&quot;)</span></div>
 
     <span class="c1"># TODO: Add conversion to/from Buckingham (and printing with it).</span>
@@ -325,7 +331,7 @@
     <span class="n">xz</span><span class="p">:</span> <span class="n">QuadrupoleMomentValue</span>
     <span class="n">yz</span><span class="p">:</span> <span class="n">QuadrupoleMomentValue</span>
 
-    <span class="k">def</span> <span class="nf">__post__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__post__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="c1"># TODO: Only five of those are independent as the tensor is required to</span>
         <span class="c1"># be traceless. Add this check.</span>
         <span class="k">pass</span></div>

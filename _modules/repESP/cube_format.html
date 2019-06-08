@@ -84,7 +84,10 @@
             
             
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../repESP.html">repESP package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../repESP_intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../repESP_tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../repESP_usage.html">Usage notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../repESP_modules.html">Modules</a></li>
 </ul>
 
             
@@ -154,6 +157,7 @@
 <span class="kn">from</span> <span class="nn">repESP.fields</span> <span class="k">import</span> <span class="n">Ed</span><span class="p">,</span> <span class="n">Esp</span><span class="p">,</span> <span class="n">Field</span><span class="p">,</span> <span class="n">FieldValue</span><span class="p">,</span> <span class="n">GridMesh</span>
 <span class="kn">from</span> <span class="nn">repESP.exceptions</span> <span class="k">import</span> <span class="n">InputFormatError</span>
 <span class="kn">from</span> <span class="nn">repESP.types</span> <span class="k">import</span> <span class="n">Coords</span><span class="p">,</span> <span class="n">Coords</span><span class="p">,</span> <span class="n">Molecule</span>
+<span class="kn">from</span> <span class="nn">repESP._util</span> <span class="k">import</span> <span class="n">get_line</span>
 
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="k">import</span> <span class="n">dataclass</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Generic</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">TextIO</span><span class="p">,</span> <span class="n">Tuple</span>
@@ -218,7 +222,7 @@
 <span class="k">class</span> <span class="nc">_GridPrelude</span><span class="p">:</span>
     <span class="n">atom_count</span><span class="p">:</span> <span class="nb">int</span>
     <span class="n">origin</span><span class="p">:</span> <span class="n">Coords</span>
-    <span class="n">nval</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">nval</span><span class="p">:</span> <span class="nb">int</span>
 
 
 <span class="k">def</span> <span class="nf">_parse_grid_prelude</span><span class="p">(</span><span class="n">line</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_GridPrelude</span><span class="p">:</span>
@@ -236,7 +240,7 @@
     <span class="k">return</span> <span class="n">_GridPrelude</span><span class="p">(</span>
         <span class="nb">int</span><span class="p">(</span><span class="n">atom_count</span><span class="p">),</span>
         <span class="n">Coords</span><span class="p">(</span><span class="n">origin_coords</span><span class="p">),</span>
-        <span class="nb">float</span><span class="p">(</span><span class="n">nval</span><span class="p">)</span>
+        <span class="nb">int</span><span class="p">(</span><span class="n">nval</span><span class="p">)</span>
     <span class="p">)</span>
 
 
@@ -257,7 +261,7 @@
 
     <span class="k">return</span> <span class="n">GridMesh</span><span class="p">(</span>
         <span class="n">origin</span><span class="p">,</span>
-        <span class="n">GridMesh</span><span class="o">.</span><span class="n">Axes</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span>  <span class="c1"># type: ignore # (asserted len is 3)</span>
+        <span class="n">GridMesh</span><span class="o">.</span><span class="n">Axes</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span>
             <span class="n">parse_axis</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span>
         <span class="p">))</span>
     <span class="p">)</span>
@@ -313,28 +317,25 @@
 <span class="sd">        Data from the parsed cube file.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">get_line</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
-
     <span class="c1"># Lines 1-2</span>
-    <span class="n">info</span> <span class="o">=</span> <span class="n">Cube</span><span class="o">.</span><span class="n">Info</span><span class="p">(</span><span class="n">input_line</span><span class="o">=</span><span class="n">get_line</span><span class="p">(),</span> <span class="n">title_line</span><span class="o">=</span><span class="n">get_line</span><span class="p">())</span>
+    <span class="n">info</span> <span class="o">=</span> <span class="n">Cube</span><span class="o">.</span><span class="n">Info</span><span class="p">(</span><span class="n">input_line</span><span class="o">=</span><span class="n">get_line</span><span class="p">(</span><span class="n">f</span><span class="p">),</span> <span class="n">title_line</span><span class="o">=</span><span class="n">get_line</span><span class="p">(</span><span class="n">f</span><span class="p">))</span>
 
     <span class="c1"># Line 3</span>
-    <span class="n">grid_prelude</span> <span class="o">=</span> <span class="n">_parse_grid_prelude</span><span class="p">(</span><span class="n">get_line</span><span class="p">())</span>
+    <span class="n">grid_prelude</span> <span class="o">=</span> <span class="n">_parse_grid_prelude</span><span class="p">(</span><span class="n">get_line</span><span class="p">(</span><span class="n">f</span><span class="p">))</span>
 
-    <span class="k">if</span> <span class="nb">float</span><span class="p">(</span><span class="n">grid_prelude</span><span class="o">.</span><span class="n">nval</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="c1"># I don&#39;t know what NVal means, haven&#39;t seen it to be different than 1.</span>
-        <span class="k">raise</span> <span class="n">InputFormatError</span><span class="p">(</span><span class="s2">&quot;NVal is different than 1.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">grid_prelude</span><span class="o">.</span><span class="n">nval</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">InputFormatError</span><span class="p">(</span><span class="s2">&quot;Number of values per point (NVal) is different than 1, which isn&#39;t currently supported.&quot;</span><span class="p">)</span>
 
     <span class="c1"># Lines 4-6</span>
-    <span class="n">grid</span> <span class="o">=</span> <span class="n">_parse_grid</span><span class="p">(</span><span class="n">grid_prelude</span><span class="o">.</span><span class="n">origin</span><span class="p">,</span> <span class="p">[</span><span class="n">get_line</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)])</span>
+    <span class="n">grid</span> <span class="o">=</span> <span class="n">_parse_grid</span><span class="p">(</span><span class="n">grid_prelude</span><span class="o">.</span><span class="n">origin</span><span class="p">,</span> <span class="p">[</span><span class="n">get_line</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)])</span>
 
     <span class="c1"># Molecule</span>
     <span class="n">molecule</span> <span class="o">=</span> <span class="n">Molecule</span><span class="p">([</span>
-        <span class="n">_parse_atom</span><span class="p">(</span><span class="n">get_line</span><span class="p">())</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">grid_prelude</span><span class="o">.</span><span class="n">atom_count</span><span class="p">)</span>
+        <span class="n">_parse_atom</span><span class="p">(</span><span class="n">get_line</span><span class="p">(</span><span class="n">f</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">grid_prelude</span><span class="o">.</span><span class="n">atom_count</span><span class="p">)</span>
     <span class="p">])</span>
 
     <span class="c1"># Field values</span>
-    <span class="n">value_ctor</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">make_value</span><span class="p">(</span><span class="n">info</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+    <span class="n">value_ctor</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="n">FieldValue</span><span class="p">]</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">make_value</span><span class="p">(</span><span class="n">info</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
     <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="n">value_ctor</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()]</span>
 
     <span class="k">return</span> <span class="n">Cube</span><span class="p">(</span>
@@ -354,7 +355,7 @@
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Cube</span><span class="o">.</span><span class="n">Info</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">FieldValue</span><span class="p">]:</span>
 
     <span class="k">def</span> <span class="nf">make_value</span><span class="p">(</span><span class="n">info</span><span class="p">:</span> <span class="n">Cube</span><span class="o">.</span><span class="n">Info</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FieldValue</span><span class="p">:</span>
-        <span class="n">check_title</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">title</span><span class="p">:</span> <span class="n">title</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">expected_title_start</span><span class="p">)</span>
+        <span class="n">check_title</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">title</span><span class="p">:</span> <span class="n">title</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">expected_title_start</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">verify_title</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">check_title</span><span class="p">(</span><span class="n">info</span><span class="o">.</span><span class="n">title_line</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">InputFormatError</span><span class="p">(</span>
                 <span class="n">f</span><span class="s1">&#39;Title of cube file does not start with &quot;</span><span class="si">{expected_title_start}</span><span class="s1">&quot;.&#39;</span>
@@ -364,7 +365,7 @@
     <span class="k">return</span> <span class="n">make_value</span>
 
 
-<div class="viewcode-block" id="parse_esp_cube"><a class="viewcode-back" href="../../repESP.cube_format.html#repESP.cube_format.parse_esp_cube">[docs]</a><span class="k">def</span> <span class="nf">parse_esp_cube</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">TextIO</span><span class="p">,</span> <span class="n">verify_title</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Cube</span><span class="p">[</span><span class="n">Esp</span><span class="p">]:</span>
+<div class="viewcode-block" id="parse_esp_cube"><a class="viewcode-back" href="../../repESP.cube_format.html#repESP.cube_format.parse_esp_cube">[docs]</a><span class="k">def</span> <span class="nf">parse_esp_cube</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">TextIO</span><span class="p">,</span> <span class="n">verify_title</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Cube</span><span class="p">[</span><span class="n">Esp</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Parse a Gaussian &quot;cube&quot; file describing an ESP field</span>
 
 <span class="sd">    If your cube file comes from elsewhere than Gaussian, you should ensure</span>
@@ -390,7 +391,7 @@
     <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="parse_ed_cube"><a class="viewcode-back" href="../../repESP.cube_format.html#repESP.cube_format.parse_ed_cube">[docs]</a><span class="k">def</span> <span class="nf">parse_ed_cube</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">TextIO</span><span class="p">,</span> <span class="n">verify_title</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Cube</span><span class="p">[</span><span class="n">Ed</span><span class="p">]:</span>
+<div class="viewcode-block" id="parse_ed_cube"><a class="viewcode-back" href="../../repESP.cube_format.html#repESP.cube_format.parse_ed_cube">[docs]</a><span class="k">def</span> <span class="nf">parse_ed_cube</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">TextIO</span><span class="p">,</span> <span class="n">verify_title</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Cube</span><span class="p">[</span><span class="n">Ed</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Parse a Gaussian &quot;cube&quot; file describing electron density field</span>
 
 <span class="sd">    If your cube file comes from elsewhere than Gaussian, you should ensure</span>

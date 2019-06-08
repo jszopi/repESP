@@ -84,7 +84,10 @@
             
             
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../repESP.html">repESP package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../repESP_intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../repESP_tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../repESP_usage.html">Usage notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../repESP_modules.html">Modules</a></li>
 </ul>
 
             
@@ -155,10 +158,11 @@
 <span class="kn">from</span> <span class="nn">repESP.fields</span> <span class="k">import</span> <span class="n">Esp</span><span class="p">,</span> <span class="n">Field</span><span class="p">,</span> <span class="n">Mesh</span>
 <span class="kn">from</span> <span class="nn">repESP.exceptions</span> <span class="k">import</span> <span class="n">InputFormatError</span>
 <span class="kn">from</span> <span class="nn">repESP.types</span> <span class="k">import</span> <span class="n">AtomWithCoords</span><span class="p">,</span> <span class="n">Coords</span><span class="p">,</span> <span class="n">Molecule</span>
+<span class="kn">from</span> <span class="nn">repESP._util</span> <span class="k">import</span> <span class="n">get_line</span>
 
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="k">import</span> <span class="n">dataclass</span>
 <span class="kn">from</span> <span class="nn">fortranformat</span> <span class="k">import</span> <span class="n">FortranRecordWriter</span> <span class="k">as</span> <span class="n">FW</span><span class="p">,</span> <span class="n">FortranRecordReader</span> <span class="k">as</span> <span class="n">FR</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">TextIO</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">cast</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Pattern</span><span class="p">,</span> <span class="n">TextIO</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">TypeVar</span>
 <span class="kn">import</span> <span class="nn">re</span>
 
 
@@ -178,7 +182,7 @@
 <span class="sd">        The dipole moment of the molecule.</span>
 <span class="sd">    quadrupole_moment : QuadrupoleMoment</span>
 <span class="sd">        The quadrupole moment of the molecule.</span>
-<span class="sd">    field : Field</span>
+<span class="sd">    field : Field[Esp]</span>
 <span class="sd">        The ESP field described by the file.</span>
 
 <span class="sd">    Attributes</span>
@@ -201,9 +205,10 @@
     <span class="n">molecule</span><span class="p">:</span> <span class="n">Molecule</span><span class="p">[</span><span class="n">AtomWithCoordsAndCharge</span><span class="p">]</span>
     <span class="n">dipole_moment</span><span class="p">:</span> <span class="n">DipoleMoment</span>
     <span class="n">quadrupole_moment</span><span class="p">:</span> <span class="n">QuadrupoleMoment</span>
-    <span class="n">field</span><span class="p">:</span> <span class="n">Field</span></div>
+    <span class="n">field</span><span class="p">:</span> <span class="n">Field</span><span class="p">[</span><span class="n">Esp</span><span class="p">]</span></div>
 
 
+<span class="n">EspDataT</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;EspDataT&#39;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="s1">&#39;EspData&#39;</span><span class="p">)</span>
 <div class="viewcode-block" id="EspData"><a class="viewcode-back" href="../../repESP.esp_util.html#repESP.esp_util.EspData">[docs]</a><span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">EspData</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Dataclass representing the .esp file in the ``resp`` format</span>
@@ -213,7 +218,7 @@
 <span class="sd">    atoms_coords : typing.List[Coords]</span>
 <span class="sd">        The positions of atoms in space. Note that the identities of the atoms</span>
 <span class="sd">        are not known and thus this member cannot be described with the `Atom` class.</span>
-<span class="sd">    field : Field</span>
+<span class="sd">    field : Field[Esp]</span>
 <span class="sd">        The ESP field around the molecule.</span>
 
 <span class="sd">    Attributes</span>
@@ -224,10 +229,10 @@
 <span class="sd">        See initialization parameter</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">atoms_coords</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Coords</span><span class="p">]</span>
-    <span class="n">field</span><span class="p">:</span> <span class="n">Field</span>
+    <span class="n">field</span><span class="p">:</span> <span class="n">Field</span><span class="p">[</span><span class="n">Esp</span><span class="p">]</span>
 
 <div class="viewcode-block" id="EspData.from_gaussian"><a class="viewcode-back" href="../../repESP.esp_util.html#repESP.esp_util.EspData.from_gaussian">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">from_gaussian</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">gaussian_esp_data</span><span class="p">:</span> <span class="n">GaussianEspData</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">from_gaussian</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">EspDataT</span><span class="p">],</span> <span class="n">gaussian_esp_data</span><span class="p">:</span> <span class="n">GaussianEspData</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EspDataT</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Alternative initialization from .esp file in Gaussian format</span>
 
 <span class="sd">        Note that the conversion in the opposite direction is not possible as</span>
@@ -238,7 +243,7 @@
 <span class="sd">        gaussian_esp_data : GaussianEspData</span>
 <span class="sd">            A dataclass representing an .esp file in the Gaussian format.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">EspData</span><span class="p">(</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
             <span class="p">[</span><span class="n">atom</span><span class="o">.</span><span class="n">coords</span> <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">gaussian_esp_data</span><span class="o">.</span><span class="n">molecule</span><span class="o">.</span><span class="n">atoms</span><span class="p">],</span>
             <span class="n">gaussian_esp_data</span><span class="o">.</span><span class="n">field</span>
         <span class="p">)</span></div></div>
@@ -266,24 +271,22 @@
 <span class="sd">        A dataclass representing the information in the given .esp file.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">get_line</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">charge</span><span class="p">,</span> <span class="n">multiplicity</span><span class="p">,</span> <span class="n">atom_count</span> <span class="o">=</span> <span class="n">_parse_prelude</span><span class="p">([</span><span class="n">get_line</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)])</span>
 
-    <span class="n">charge</span><span class="p">,</span> <span class="n">multiplicity</span><span class="p">,</span> <span class="n">atom_count</span> <span class="o">=</span> <span class="n">_parse_prelude</span><span class="p">([</span><span class="n">get_line</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)])</span>
+    <span class="n">molecule</span> <span class="o">=</span> <span class="n">Molecule</span><span class="p">([</span><span class="n">_parse_atom</span><span class="p">(</span><span class="n">get_line</span><span class="p">(</span><span class="n">f</span><span class="p">))</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">atom_count</span><span class="p">)])</span>
 
-    <span class="n">molecule</span> <span class="o">=</span> <span class="n">Molecule</span><span class="p">([</span><span class="n">_parse_atom</span><span class="p">(</span><span class="n">get_line</span><span class="p">())</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">atom_count</span><span class="p">)])</span>
-
-    <span class="k">if</span> <span class="n">get_line</span><span class="p">()</span> <span class="o">!=</span> <span class="s2">&quot; DIPOLE MOMENT:&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">get_line</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="o">!=</span> <span class="s2">&quot; DIPOLE MOMENT:&quot;</span><span class="p">:</span>
         <span class="k">raise</span> <span class="n">InputFormatError</span><span class="p">(</span><span class="s2">&quot;Expected dipole moment section header.&quot;</span><span class="p">)</span>
 
-    <span class="n">dipole_moment</span> <span class="o">=</span> <span class="n">_parse_dipole</span><span class="p">(</span><span class="n">get_line</span><span class="p">())</span>
+    <span class="n">dipole_moment</span> <span class="o">=</span> <span class="n">_parse_dipole</span><span class="p">(</span><span class="n">get_line</span><span class="p">(</span><span class="n">f</span><span class="p">))</span>
 
-    <span class="k">if</span> <span class="n">get_line</span><span class="p">()</span> <span class="o">!=</span> <span class="s2">&quot; TRACELESS QUADRUPOLE MOMENT:&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">get_line</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="o">!=</span> <span class="s2">&quot; TRACELESS QUADRUPOLE MOMENT:&quot;</span><span class="p">:</span>
         <span class="k">raise</span> <span class="n">InputFormatError</span><span class="p">(</span><span class="s2">&quot;Expected quadrupole moment section header.&quot;</span><span class="p">)</span>
 
-    <span class="n">quadrupole_moment</span> <span class="o">=</span> <span class="n">_parse_quadrupole</span><span class="p">([</span><span class="n">get_line</span><span class="p">(),</span> <span class="n">get_line</span><span class="p">()])</span>
+    <span class="n">quadrupole_moment</span> <span class="o">=</span> <span class="n">_parse_quadrupole</span><span class="p">([</span><span class="n">get_line</span><span class="p">(</span><span class="n">f</span><span class="p">),</span> <span class="n">get_line</span><span class="p">(</span><span class="n">f</span><span class="p">)])</span>
 
     <span class="n">points_header_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">&quot; ESP VALUES AND GRID POINT COORDINATES. #POINTS =\s+([0-9]+)&quot;</span><span class="p">)</span>
-    <span class="n">points_header_match</span> <span class="o">=</span> <span class="n">points_header_re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">get_line</span><span class="p">())</span>
+    <span class="n">points_header_match</span> <span class="o">=</span> <span class="n">points_header_re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">get_line</span><span class="p">(</span><span class="n">f</span><span class="p">))</span>
 
     <span class="k">if</span> <span class="n">points_header_match</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">raise</span> <span class="n">InputFormatError</span><span class="p">(</span><span class="s2">&quot;Expected ESP points section header.&quot;</span><span class="p">)</span>
@@ -351,7 +354,7 @@
 
     <span class="n">line1_components</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;XX&quot;</span><span class="p">,</span> <span class="s2">&quot;YY&quot;</span><span class="p">,</span> <span class="s2">&quot;ZZ&quot;</span><span class="p">)</span>
     <span class="n">line2_components</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;XY&quot;</span><span class="p">,</span> <span class="s2">&quot;XZ&quot;</span><span class="p">,</span> <span class="s2">&quot;YZ&quot;</span><span class="p">)</span>
-    <span class="n">get_line_re</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">components</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span>
+    <span class="n">get_line_re</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span> <span class="n">Pattern</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">components</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span>
         <span class="s2">&quot;   </span><span class="si">{}</span><span class="s2">=\s+([-+0-9.D]+)   </span><span class="si">{}</span><span class="s2">=\s+([-+0-9.D]+)   </span><span class="si">{}</span><span class="s2">=\s+([-+0-9.D]+)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">components</span><span class="p">)</span>
     <span class="p">)</span>
 
@@ -404,9 +407,7 @@
 <span class="sd">        A dataclass representing the information in the given .esp file.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">get_line</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
-
-    <span class="n">atom_and_point_count</span> <span class="o">=</span> <span class="n">get_line</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+    <span class="n">atom_and_point_count</span> <span class="o">=</span> <span class="n">get_line</span><span class="p">(</span><span class="n">f</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
 
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">atom_and_point_count</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
         <span class="k">raise</span> <span class="n">InputFormatError</span><span class="p">(</span>
@@ -416,13 +417,13 @@
     <span class="n">atom_count</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">atom_and_point_count</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
     <span class="n">point_count</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">atom_and_point_count</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 
-    <span class="n">atoms_coords</span> <span class="o">=</span> <span class="p">[</span><span class="n">Coords</span><span class="p">(</span><span class="n">get_line</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">())</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">atom_count</span><span class="p">)]</span>
+    <span class="n">atoms_coords</span> <span class="o">=</span> <span class="p">[</span><span class="n">Coords</span><span class="p">(</span><span class="n">get_line</span><span class="p">(</span><span class="n">f</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">())</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">atom_count</span><span class="p">)]</span>
 
     <span class="n">mesh_coords</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Coords</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">esp_values</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Esp</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">point_count</span><span class="p">):</span>
-        <span class="n">val</span><span class="p">,</span> <span class="o">*</span><span class="n">coords</span> <span class="o">=</span> <span class="n">get_line</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="n">val</span><span class="p">,</span> <span class="o">*</span><span class="n">coords</span> <span class="o">=</span> <span class="n">get_line</span><span class="p">(</span><span class="n">f</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
         <span class="n">mesh_coords</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Coords</span><span class="p">(</span><span class="n">coords</span><span class="p">))</span>
         <span class="n">esp_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Esp</span><span class="p">(</span><span class="n">val</span><span class="p">))</span>
 
@@ -439,7 +440,7 @@
     <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="write_resp_esp"><a class="viewcode-back" href="../../repESP.esp_util.html#repESP.esp_util.write_resp_esp">[docs]</a><span class="k">def</span> <span class="nf">write_resp_esp</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">TextIO</span><span class="p">,</span> <span class="n">esp_data</span><span class="p">:</span> <span class="n">EspData</span><span class="p">):</span>
+<div class="viewcode-block" id="write_resp_esp"><a class="viewcode-back" href="../../repESP.esp_util.html#repESP.esp_util.write_resp_esp">[docs]</a><span class="k">def</span> <span class="nf">write_resp_esp</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">TextIO</span><span class="p">,</span> <span class="n">esp_data</span><span class="p">:</span> <span class="n">EspData</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Write a ``resp`` .esp file described by the given input data</span>
 
 <span class="sd">    Parameters</span>
@@ -476,7 +477,7 @@
     <span class="k">for</span> <span class="n">point_coords</span><span class="p">,</span> <span class="n">esp_val</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">points</span><span class="p">,</span> <span class="n">field</span><span class="o">.</span><span class="n">values</span><span class="p">):</span>
         <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
             <span class="n">FW</span><span class="p">(</span><span class="n">formats</span><span class="p">[</span><span class="s2">&quot;points&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
-                <span class="p">[</span><span class="n">esp_val</span><span class="p">]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">point_coords</span><span class="p">)</span>
+                <span class="n">cast</span><span class="p">(</span><span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="p">[</span><span class="n">esp_val</span><span class="p">])</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">point_coords</span><span class="p">)</span>
             <span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="p">)</span></div>
 </pre></div>

@@ -84,7 +84,10 @@
             
             
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../repESP.html">repESP package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../repESP_intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../repESP_tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../repESP_usage.html">Usage notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../repESP_modules.html">Modules</a></li>
 </ul>
 
             
@@ -158,13 +161,14 @@
 
 <span class="kn">from</span> <span class="nn">abc</span> <span class="k">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="k">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">InitVar</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">cast</span><span class="p">,</span> <span class="n">Collection</span><span class="p">,</span> <span class="n">Generic</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">NewType</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">TypeVar</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">cast</span><span class="p">,</span> <span class="n">Collection</span><span class="p">,</span> <span class="n">Generic</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">NewType</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">TypeVar</span>
 
 <span class="kn">import</span> <span class="nn">functools</span>
 <span class="kn">import</span> <span class="nn">math</span>
 <span class="kn">import</span> <span class="nn">operator</span>
 
 
+<span class="n">EspT</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;EspT&#39;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="s1">&#39;Esp&#39;</span><span class="p">)</span>
 <div class="viewcode-block" id="Esp"><a class="viewcode-back" href="../../repESP.fields.html#repESP.fields.Esp">[docs]</a><span class="k">class</span> <span class="nc">Esp</span><span class="p">(</span><span class="nb">float</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Electrostatic potential value in atomic units (:math:`E_h/e`)</span>
 
@@ -176,7 +180,7 @@
 
     <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">EspT</span><span class="p">],</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EspT</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>  <span class="c1"># type: ignore # (Too many arguments for &quot;__new__&quot; of &quot;object&quot;)</span>
 
     <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -186,6 +190,7 @@
         <span class="k">return</span> <span class="n">f</span><span class="s2">&quot;{super().__str__()} a.u.&quot;</span></div>
 
 
+<span class="n">EdT</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;EdT&#39;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="s1">&#39;Ed&#39;</span><span class="p">)</span>
 <div class="viewcode-block" id="Ed"><a class="viewcode-back" href="../../repESP.fields.html#repESP.fields.Ed">[docs]</a><span class="k">class</span> <span class="nc">Ed</span><span class="p">(</span><span class="nb">float</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Electron density value in atomic units (\ :math:`e / \mathrm{a}_0^3`\ )</span>
 
@@ -197,7 +202,7 @@
 
     <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">EdT</span><span class="p">],</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EdT</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>  <span class="c1"># type: ignore # (Too many arguments for &quot;__new__&quot; of &quot;object&quot;)</span>
 
     <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -247,7 +252,7 @@
     <span class="n">points_</span><span class="p">:</span> <span class="n">InitVar</span><span class="p">[</span><span class="n">Collection</span><span class="p">[</span><span class="n">Coords</span><span class="p">]]</span>
     <span class="n">_points</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Coords</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">points_</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">points_</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="n">Coords</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_points</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">points_</span><span class="p">)</span>
 
     <span class="nd">@property</span>
@@ -326,7 +331,13 @@
                     <span class="n">f</span><span class="s2">&quot;Negative value of `point_count` given: </span><span class="si">{self.point_count}</span><span class="s2">.&quot;</span>
                 <span class="p">)</span></div>
 
-    <span class="n">Axes</span> <span class="o">=</span> <span class="n">NewType</span><span class="p">(</span><span class="s2">&quot;Axes&quot;</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Axis</span><span class="p">,</span> <span class="n">Axis</span><span class="p">,</span> <span class="n">Axis</span><span class="p">])</span>
+    <span class="n">_AxesT</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;_AxesT&#39;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="s1">&#39;Axes&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="GridMesh.Axes"><a class="viewcode-back" href="../../repESP.fields.html#repESP.fields.GridMesh.Axes">[docs]</a>    <span class="k">class</span> <span class="nc">Axes</span><span class="p">(</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Axis</span><span class="p">,</span> <span class="n">Axis</span><span class="p">,</span> <span class="n">Axis</span><span class="p">]):</span>
+        <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="s2">&quot;GridMesh._AxesT&quot;</span><span class="p">],</span> <span class="n">values</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="s2">&quot;GridMesh.Axis&quot;</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s2">&quot;GridMesh._AxesT&quot;</span><span class="p">:</span>
+            <span class="n">self_to_be</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">values</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">self_to_be</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Axes constructor expected an iterable yielding three elements.&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">self_to_be</span></div>
 
     <span class="n">origin</span><span class="p">:</span> <span class="n">Coords</span>
     <span class="n">axes</span><span class="p">:</span> <span class="n">Axes</span>
@@ -425,7 +436,7 @@
     <span class="n">values_</span><span class="p">:</span> <span class="n">InitVar</span><span class="p">[</span><span class="n">Collection</span><span class="p">[</span><span class="n">FieldValue</span><span class="p">]]</span>
     <span class="n">values</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">FieldValue</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values_</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values_</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="n">FieldValue</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">values_</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mesh</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>

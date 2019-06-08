@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>repESP.charge_util module &mdash; repESP 0.2.0-dev documentation</title>
+  <title>Modules &mdash; repESP 0.2.0-dev documentation</title>
   
 
   
@@ -36,8 +36,8 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="repESP.charges module" href="repESP.charges.html" />
-    <link rel="prev" title="repESP.calc_fields module" href="repESP.calc_fields.html" /> 
+    <link rel="next" title="repESP.calc_fields module" href="repESP.calc_fields.html" />
+    <link rel="prev" title="Usage notes" href="repESP_usage.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -89,9 +89,9 @@
 <li class="toctree-l1"><a class="reference internal" href="repESP_intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="repESP_tutorial.html">Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="repESP_usage.html">Usage notes</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="repESP_modules.html">Modules</a><ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Modules</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="repESP.calc_fields.html">repESP.calc_fields module</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">repESP.charge_util module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="repESP.charge_util.html">repESP.charge_util module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="repESP.charges.html">repESP.charges module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="repESP.cube_format.html">repESP.cube_format module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="repESP.equivalence.html">repESP.equivalence module</a></li>
@@ -152,15 +152,13 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-          <li><a href="repESP_modules.html">Modules</a> &raquo;</li>
-        
-      <li>repESP.charge_util module</li>
+      <li>Modules</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="_sources/repESP.charge_util.rst.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/repESP_modules.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -173,36 +171,27 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="module-repESP.charge_util">
-<span id="repesp-charge-util-module"></span><h1>repESP.charge_util module<a class="headerlink" href="#module-repESP.charge_util" title="Permalink to this headline">¶</a></h1>
-<p>Utility functions for working with partial charges</p>
-<dl class="function">
-<dt id="repESP.charge_util.average">
-<code class="descname">average</code><span class="sig-paren">(</span><em>charges: List[repESP.charges.Charge], equivalence: repESP.equivalence.Equivalence</em><span class="sig-paren">)</span> &#x2192; List[repESP.charges.Charge]<a class="reference internal" href="_modules/repESP/charge_util.html#average"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.charge_util.average" title="Permalink to this definition">¶</a></dt>
-<dd><p>Average values of charges on chemically equivalent atoms</p>
-<p>This is sometimes called “<em>a posteriori</em>” averaging, especially when referring
-to charges fitted to the ESP, where this method contrasts with “equivalencing”.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>charges</strong> (<em>List</em><em>[</em><a class="reference internal" href="repESP.charges.html#repESP.charges.Charge" title="repESP.charges.Charge"><em>Charge</em></a><em>]</em>) – The charges to be averaged.</li>
-<li><strong>equivalence</strong> (<a class="reference internal" href="repESP.equivalence.html#repESP.equivalence.Equivalence" title="repESP.equivalence.Equivalence"><em>Equivalence</em></a>) – Information about the chemical equivalence of atoms (symmetry-related
-and fast-exchanging atoms).</li>
+  <div class="section" id="modules">
+<h1>Modules<a class="headerlink" href="#modules" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="repESP.calc_fields.html">repESP.calc_fields module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="repESP.charge_util.html">repESP.charge_util module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="repESP.charges.html">repESP.charges module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="repESP.cube_format.html">repESP.cube_format module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="repESP.equivalence.html">repESP.equivalence module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="repESP.esp_util.html">repESP.esp_util module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="repESP.exceptions.html">repESP.exceptions module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="repESP.fields.html">repESP.fields module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="repESP.gaussian_format.html">repESP.gaussian_format module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="repESP.resp_charges_format.html">repESP.resp_charges_format module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="repESP.resp_wrapper.html">repESP.resp_wrapper module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="repESP.respin_format.html">repESP.respin_format module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="repESP.respin_generation.html">repESP.respin_generation module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="repESP.types.html">repESP.types module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="repESP.util.html">repESP.util module</a></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The list of averaged charges.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">List[<a class="reference internal" href="repESP.charges.html#repESP.charges.Charge" title="repESP.charges.Charge">Charge</a>]</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
+</div>
 </div>
 
 
@@ -213,10 +202,10 @@ and fast-exchanging atoms).</li>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="repESP.charges.html" class="btn btn-neutral float-right" title="repESP.charges module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="repESP.calc_fields.html" class="btn btn-neutral float-right" title="repESP.calc_fields module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="repESP.calc_fields.html" class="btn btn-neutral float-left" title="repESP.calc_fields module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="repESP_usage.html" class="btn btn-neutral float-left" title="Usage notes" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

@@ -84,7 +84,10 @@
             
             
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../repESP.html">repESP package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../repESP_intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../repESP_tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../repESP_usage.html">Usage notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../repESP_modules.html">Modules</a></li>
 </ul>
 
             
@@ -171,7 +174,7 @@
 <span class="n">T2</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;T2&#39;</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="list_from_dict"><a class="viewcode-back" href="../../repESP.util.html#repESP.util.list_from_dict">[docs]</a><span class="k">def</span> <span class="nf">list_from_dict</span><span class="p">(</span>
+<div class="viewcode-block" id="list_from_dict"><a class="viewcode-back" href="../../repESP.util.html#repESP.util.list_from_dict">[docs]</a><span class="k">def</span> <span class="nf">list_from_dict</span><span class="p">(</span>  <span class="c1"># type: ignore # (defaults with generics: https://github.com/python/mypy/issues/3737)</span>
     <span class="n">dict_</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">T1</span><span class="p">],</span>
     <span class="n">length</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">default</span><span class="p">:</span> <span class="n">T2</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -218,7 +221,7 @@
     <span class="k">return</span> <span class="p">[</span>
         <span class="c1"># mypy infers the result to be a Union including None, whereas I see it</span>
         <span class="c1"># as falling under T2.</span>
-        <span class="n">dict_</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="n">offset</span><span class="p">]</span> <span class="k">if</span> <span class="n">i</span><span class="o">+</span><span class="n">offset</span> <span class="ow">in</span> <span class="n">dict_</span> <span class="k">else</span> <span class="n">default</span>  <span class="c1"># type: ignore</span>
+        <span class="n">dict_</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="n">offset</span><span class="p">]</span> <span class="k">if</span> <span class="n">i</span><span class="o">+</span><span class="n">offset</span> <span class="ow">in</span> <span class="n">dict_</span> <span class="k">else</span> <span class="n">default</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">length</span><span class="p">)</span>
     <span class="p">]</span></div>
 
