@@ -1,13 +1,5 @@
-repESP package
-==============
-
-.. automodule:: repESP
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Submodules
-----------
+Modules
+=======
 
 .. toctree::
 
