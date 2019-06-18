@@ -118,6 +118,6 @@ For example, the construction of an `Atom` will fail if the provided atomic numb
 
 
 .. _`Issues tab on GitHub`: https://github.com/jszopi/repESP/issues
-.. _`Prerequisites section`: https://github.com/jszopi/repESP#prerequisites
+.. _`Prerequisites section`: https://github.com/jszopi/repESP#user-content-prerequisites
 .. _`Issue #48`: https://github.com/jszopi/repESP/issues/48
 .. _`Issue #49`: https://github.com/jszopi/repESP/issues/49
