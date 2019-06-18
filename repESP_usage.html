@@ -89,7 +89,22 @@
 <li class="toctree-l1"><a class="reference internal" href="repESP_intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="repESP_tutorial.html">Tutorial</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Usage notes</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#caveats">Caveats</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#external-dependencies">External dependencies</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#runtime-dependency">Runtime dependency</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#input-data-sources">Input data sources</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#units-of-measurement">Units of measurement</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#caveats">Caveats</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#user-code-correctness">User code correctness</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#precondition-checking-in-python">Precondition checking in Python</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#motivation-for-static-typing">Motivation for static typing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#type-checking-user-code">Type checking user code</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#dataclasses">Dataclasses</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="repESP_modules.html">Modules</a></li>
@@ -159,39 +174,104 @@
             
   <div class="section" id="usage-notes">
 <h1>Usage notes<a class="headerlink" href="#usage-notes" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="caveats">
-<h2>Caveats<a class="headerlink" href="#caveats" title="Permalink to this headline">¶</a></h2>
-<ul>
-<li><p class="first">This library uses atomic units for all physical properties. If you’re dealing with
-input in other units, you should convert as early in your program as possible.
+<p>The library is ready for use, but its API is not yet stable and there is room for improvement in some areas.
+Known issues and considered enhancements are listed in the <a class="reference external" href="https://github.com/jszopi/repESP/issues">Issues tab on GitHub</a>; that is also the best place to ask questions about unexpected behaviour, unintuitive interfaces, unclear documentation, as well as put aspects of the library up for discussion.</p>
+<div class="section" id="external-dependencies">
+<h2>External dependencies<a class="headerlink" href="#external-dependencies" title="Permalink to this headline">¶</a></h2>
+<p>The library has a runtime dependency on the <cite>resp</cite> program and it operates on data produced by other programs.
+See the <a class="reference external" href="https://github.com/jszopi/repESP#user-content-prerequisites">Prerequisites section</a> of the main GitHub page for information regarding obtaining and using these programs.</p>
+<div class="section" id="runtime-dependency">
+<h3>Runtime dependency<a class="headerlink" href="#runtime-dependency" title="Permalink to this headline">¶</a></h3>
+<p>Functions performing charge fitting, which are currently completely contained in the <cite>resp_wrapper</cite> module, invoke the <cite>resp</cite> program, so the program must be located in a directory listed in your <cite>PATH</cite> variable.
+Functions in other modules operate on the output of the <cite>resp</cite> program.</p>
+</div>
+<div class="section" id="input-data-sources">
+<h3>Input data sources<a class="headerlink" href="#input-data-sources" title="Permalink to this headline">¶</a></h3>
+<p>Functions which infer equivalence for use by the <cite>resp</cite> program require the output of the <cite>antechamber</cite> and <cite>respgen</cite> programs from the AmberTools suite of programs.
+The Gaussian program is required to produce the ESP mesh and field, as well as the NPA charges.
+These programs are not currently invoked by any of the library functions, so they do not need to be discoverable by your Python interpreter.</p>
+</div>
+</div>
+<div class="section" id="units-of-measurement">
+<h2>Units of measurement<a class="headerlink" href="#units-of-measurement" title="Permalink to this headline">¶</a></h2>
+<p>This library uses atomic units for all physical properties.
+If input to your program is in other units, you should convert as early in your code as possible.
 If you require output in other units, you should convert as late as possible.</p>
-</li>
-<li><p class="first">This library attempts to enforce consistent use of values describing physical
-properties. You shouldn’t need to use “naked” <cite>float</cite> values to represent
-physical properties and should use the provided classes instead, which are
-lightweight and inherit from <cite>float</cite>. For example, if you mean to specify a
-bond length of 0.5 a.u., you should use <code class="docutils literal notranslate"><span class="pre">types.Dist(0.5)</span></code> and if you mean
-to specify a charge of -0.1 e, you should use <code class="docutils literal notranslate"><span class="pre">charges.Charge(-0.1)</span></code>. This
-aims to ensure that you never try to subtract distance from a charge or try
-to add values in different units. This area of the library may not be
-bulletproof and some arithmetic operations may not result in the correct
-classes and will fall back onto the <cite>float</cite> type, possibly causing type
-checker errors. Note that you will be able to use the inheriting types like
-<cite>Dist</cite> in any context you can use a <cite>float</cite>.</p>
-</li>
-<li><p class="first">Programs using this library are required to use correct types for input
-arguments. The types are documented here and additionally the user should run
-a static type checker, like <code class="docutils literal notranslate"><span class="pre">mypy</span></code> on their script beforehand. To practice,
-try introducing a type error into the example script and observe the output of:</p>
+<p>If your existing code already uses different units or uses libraries that operate on units other than atomic, you must carefully alternate and convert between units.
+It is easy for a mix-up to happen, resulting in difficult-to-spot numerical errors.
+This library aims to prevent such a class of errors by requiring the units to be expressed explicitly in the code.
+Instead of passing “naked” <cite>float</cite> values to this library, you should use the provided classes to represent physical properties.
+For example, if you mean to specify a bond length of 0.5 a.u., use <code class="docutils literal notranslate"><span class="pre">types.Dist(0.5)</span></code> and if you mean to specify a charge of -0.1 e, use <code class="docutils literal notranslate"><span class="pre">charges.Charge(-0.1)</span></code>.</p>
+<p>The correct use of physical properties can then be enforced by the means of static type checking (see section <a class="reference internal" href="#type-checking-user-code">Type checking user code</a> below).
+The type checker will complain if you try to pass a naked <cite>float</cite> or a <cite>Dist</cite> object into a library function expecting a charge:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">AtomWithCharge</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)</span>
+<span class="c1"># error: Argument 2 to &quot;AtomWithCharge&quot; has incompatible type &quot;float&quot;; expected &quot;Charge&quot;</span>
+<span class="n">AtomWithCharge</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="n">Dist</span><span class="p">(</span><span class="mf">0.5</span><span class="p">))</span>
+<span class="c1"># error: Argument 2 to &quot;AtomWithCharge&quot; has incompatible type &quot;Dist&quot;; expected &quot;Charge&quot;</span>
+</pre></div>
+</div>
+<p>The types representing physical properties inherit from <cite>float</cite>, meaning that you will be able to use them in any context you can use a <cite>float</cite>.
+Thus, the above <cite>AtomWithCharge</cite> construction executes just fine despite the type errors.
+The types can also be passed into any other function accepting a <cite>float</cite>, for example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">numpy</span><span class="o">.</span><span class="n">mean</span><span class="p">([</span><span class="n">Dist</span><span class="p">(</span><span class="mf">0.2</span><span class="p">),</span> <span class="n">Dist</span><span class="p">(</span><span class="mf">1.2</span><span class="p">)])</span>
+<span class="go">0.7</span>
+</pre></div>
+</div>
+<div class="section" id="caveats">
+<h3>Caveats<a class="headerlink" href="#caveats" title="Permalink to this headline">¶</a></h3>
+<p>The type system for values representing physical properties can be considered an experiment and the implementation is a work in progress.
+Some arithmetic operations may not result in the correct object type and will fall back onto the <cite>float</cite> type:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Dist</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span> <span class="o">+</span> <span class="n">Charge</span><span class="p">(</span><span class="mf">0.3</span><span class="p">)</span>
+<span class="c1"># No type checking error, addition is implemented for `float`s.</span>
+</pre></div>
+</div>
+<p>The fallback onto float may also result in false positives:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">c</span> <span class="o">=</span> <span class="n">Charge</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span> <span class="o">-</span> <span class="n">Charge</span><span class="p">(</span><span class="mf">0.2</span><span class="p">)</span>
+<span class="n">reveal_type</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>  <span class="c1"># (this is a `mypy` command, it would be a runtime error)</span>
+<span class="c1"># error: Revealed type is &#39;builtins.float&#39;</span>
+<span class="n">AtomWithCharge</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span>
+<span class="c1"># error: Argument 2 to &quot;AtomWithCharge&quot; has incompatible type &quot;float&quot;; expected &quot;Charge&quot;</span>
+</pre></div>
+</div>
+<p><a class="reference external" href="https://github.com/jszopi/repESP/issues/49">Issue #49</a> tracks the shortcomings in the type system for physical properties.</p>
+</div>
+</div>
+<div class="section" id="user-code-correctness">
+<h2>User code correctness<a class="headerlink" href="#user-code-correctness" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="precondition-checking-in-python">
+<h3>Precondition checking in Python<a class="headerlink" href="#precondition-checking-in-python" title="Permalink to this headline">¶</a></h3>
+<p>Python is a language with a dynamic type system, where type checks tend to be limited to “duck typing”.
+The language allows to pass arguments of any type to a library function without providing any feedback at the point of making the function call.
+One approach to ensuring correct use of libraries is for authors to write unambiguous and thorough documentation and for library users to abide by it perfectly.</p>
+<p>Runtime precondition checks are another common approach, but implementing them at the API level is tedious.
+Usually, precondition violations will manifests themselves deeper down the call stack, resulting in errors that are more difficult to interpret by library users.</p>
+</div>
+<div class="section" id="motivation-for-static-typing">
+<h3>Motivation for static typing<a class="headerlink" href="#motivation-for-static-typing" title="Permalink to this headline">¶</a></h3>
+<p>Statically-typed languages eliminate the need for a large class of precondition checks.
+In Python, this approach can be realized with type annotations, which are typically checked before running user code.</p>
+<p>The types expected and produced by this library can be found on every function call in the API documentation.
+The library carries out no runtime checks of preconditions already expressed by the types; rather, the library may produce erroneous results if the input arguments do not follow the documented types.</p>
+</div>
+<div class="section" id="type-checking-user-code">
+<h3>Type checking user code<a class="headerlink" href="#type-checking-user-code" title="Permalink to this headline">¶</a></h3>
+<p>To avoid passing incorrect types, users are advised to check their code for type errors with a static type checker, like <code class="docutils literal notranslate"><span class="pre">mypy</span></code>.
+As an exercise, try introducing a type error into the example script and observe the output of:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mypy</span> <span class="o">--</span><span class="n">strict</span> <span class="n">example</span><span class="o">.</span><span class="n">py</span>
 </pre></div>
 </div>
-<p>Using a static type checker will save the user debugging tricky runtime
-errors which tend to occur later in the program. Even if the program execution
-is not stopped by a runtime error, the library may produce erroneous results
-if the passed-in arguments don’t follow the documented types.</p>
-</li>
-</ul>
+<p>Ideally, you would use the <code class="docutils literal notranslate"><span class="pre">--strict</span></code> flag when checking your own code too.
+However, if your code grows beyond a simple demo and you start creating functions, the <code class="docutils literal notranslate"><span class="pre">--strict</span></code> flag will report errors unless you also add type annotations to your code.
+This requirement may be impractical for many library users, so in the future the library will offer checking the types at runtime instead, see <a class="reference external" href="https://github.com/jszopi/repESP/issues/48">Issue #48</a>.</p>
+</div>
+</div>
+<div class="section" id="dataclasses">
+<h2>Dataclasses<a class="headerlink" href="#dataclasses" title="Permalink to this headline">¶</a></h2>
+<p>In any programming language, complex preconditions can be expressed with a custom data type.
+This library makes heavy use of dataclasses, which are a Python construct to aggregate related pieces of data.
+Generally, aggregate data types do not have any hidden state.
+This is also the case for dataclasses used in this library with one crucial exception — successful construction of an object asserts that the provided combination of input data is valid.
+For example, the construction of an <cite>Atom</cite> will fail if the provided atomic number is 0 or 200.</p>
 </div>
 </div>
 
