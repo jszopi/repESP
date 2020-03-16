@@ -10,7 +10,7 @@ matrix:
       language: generic
       env:
         - TRAVIS_PYTHON_VERSION="3.7"
-install: pip3 install tox-travis python-coveralls
+install: pip3 install tox-travis coveralls
 script:
   tox && if [[ "$TRAVIS_OS_NAME" != "osx" ]]; then coveralls; fi
 deploy:

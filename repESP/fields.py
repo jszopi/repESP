@@ -181,7 +181,7 @@ class GridMesh(AbstractMesh):
     _AxesT = TypeVar('_AxesT', bound='Axes')
     class Axes(Tuple[Axis, Axis, Axis]):
         def __new__(cls: Type["GridMesh._AxesT"], values: Iterable["GridMesh.Axis"]) -> "GridMesh._AxesT":
-            self_to_be = super().__new__(cls, values)
+            self_to_be = super().__new__(cls, values)  # type: ignore # https://github.com/python/mypy/issues/8541
             if len(self_to_be) != 3:
                 raise ValueError("Axes constructor expected an iterable yielding three elements.")
             return self_to_be

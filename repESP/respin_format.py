@@ -395,7 +395,7 @@ def _parse_cntrl(f: TextIO) -> Respin.Cntrl:
 
     # nmol is not a parameter of Cntrl.__init__ and must be equal to 1.
     nmol = kwargs.pop("nmol", None)
-    if nmol is not None and nmol != 1:  # type: ignore # (similar to https://github.com/python/mypy/issues/6168)
+    if nmol is not None and nmol != 1:
         raise InputFormatError("Parsing multiple structures is not supported")
 
     return Respin.Cntrl(**kwargs)  # type: ignore # (not sure why not recognized)

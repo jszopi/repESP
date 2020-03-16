@@ -21,10 +21,10 @@ T1 = TypeVar('T1')
 T2 = TypeVar('T2')
 
 
-def list_from_dict(  # type: ignore # (defaults with generics: https://github.com/python/mypy/issues/3737)
+def list_from_dict(
     dict_: Dict[int, T1],
     length: int,
-    default: T2=None,
+    default: T2=None,  # type: ignore # (defaults with generics: https://github.com/python/mypy/issues/3737)
     one_indexed: bool=False
 ) -> List[Union[T1, T2]]:
     """Convenience function for creating lists from dictionaries
@@ -73,11 +73,11 @@ def list_from_dict(  # type: ignore # (defaults with generics: https://github.co
     ]
 
 
-def mask_from_list(  # type: ignore # (defaults with generics: https://github.com/python/mypy/issues/3737)
+def mask_from_list(
     list_: List[int],
     length: int,
-    value_if_present: T1=True,
-    value_if_absent: T2=False,
+    value_if_present: T1=True,  # type: ignore # (defaults with generics: https://github.com/python/mypy/issues/3737)
+    value_if_absent: T2=False,  # type: ignore # (defaults with generics: https://github.com/python/mypy/issues/3737)
     one_indexed: bool=False
 ) -> List[Union[T1, T2]]:
     """Convenience function for creating masks from lists

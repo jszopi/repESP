@@ -83,7 +83,7 @@ class Coords(Tuple[Dist, Dist, Dist]):
     # A constructor requiring the element type to be Dist would be more strict
     # but less convenient, to be discussed in a future library revision.
     def __new__(cls: Type[CoordsT], values: Iterable[Any]) -> CoordsT:
-        self_to_be = super().__new__(cls, (Dist(value) for value in values))
+        self_to_be = super().__new__(cls, (Dist(value) for value in values))  # type: ignore # https://github.com/python/mypy/issues/8541
         if len(self_to_be) != 3:
             raise ValueError("Coords constructor expected an iterable yielding three elements.")
         return self_to_be
