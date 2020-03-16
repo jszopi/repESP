@@ -153,11 +153,11 @@
   <h1>Source code for repESP.charge_util</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Utility functions for working with partial charges&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">repESP.charges</span> <span class="k">import</span> <span class="n">Charge</span>
-<span class="kn">from</span> <span class="nn">repESP.equivalence</span> <span class="k">import</span> <span class="n">Equivalence</span>
+<span class="kn">from</span> <span class="nn">repESP.charges</span> <span class="kn">import</span> <span class="n">Charge</span>
+<span class="kn">from</span> <span class="nn">repESP.equivalence</span> <span class="kn">import</span> <span class="n">Equivalence</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>
 
 
 <div class="viewcode-block" id="average"><a class="viewcode-back" href="../../repESP.charge_util.html#repESP.charge_util.average">[docs]</a><span class="k">def</span> <span class="nf">average</span><span class="p">(</span><span class="n">charges</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Charge</span><span class="p">],</span> <span class="n">equivalence</span><span class="p">:</span> <span class="n">Equivalence</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Charge</span><span class="p">]:</span>
@@ -182,8 +182,8 @@
 
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">charges</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">equivalence</span><span class="o">.</span><span class="n">values</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="n">f</span><span class="s2">&quot;Mismatched lengths of charges ({len(charges)}) and equivalence &quot;</span>
-            <span class="n">f</span><span class="s2">&quot;({len(equivalence.values)}) arguments.&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Mismatched lengths of charges (</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">charges</span><span class="p">)</span><span class="si">}</span><span class="s2">) and equivalence &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">equivalence</span><span class="o">.</span><span class="n">values</span><span class="p">)</span><span class="si">}</span><span class="s2">) arguments.&quot;</span>
         <span class="p">)</span>
 
     <span class="n">equivalent_groups</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>

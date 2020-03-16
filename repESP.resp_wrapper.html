@@ -188,18 +188,18 @@
 <li><strong>esp_data</strong> (<a class="reference internal" href="repESP.esp_util.html#repESP.esp_util.EspData" title="repESP.esp_util.EspData"><em>EspData</em></a>) – Object containing the data normally provided in the .esp file i.e. atom
 coordinates and ESP field values at the points to be used in the fitting.</li>
 <li><strong>respin</strong> (<a class="reference internal" href="repESP.respin_format.html#repESP.respin_format.Respin" title="repESP.respin_format.Respin"><em>Respin</em></a>) – Instructions for the fitting in the <cite>resp</cite> program input format.</li>
-<li><strong>initial_charges</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.7)"><em>typing.List</em></a><em>[</em><a class="reference internal" href="repESP.charges.html#repESP.charges.Charge" title="repESP.charges.Charge"><em>Charge</em></a><em>]</em><em>]</em><em>, </em><em>optional</em>) – Initial charges to be used for the fitting, which may be required by
+<li><strong>initial_charges</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.8)"><em>typing.List</em></a><em>[</em><a class="reference internal" href="repESP.charges.html#repESP.charges.Charge" title="repESP.charges.Charge"><em>Charge</em></a><em>]</em><em>]</em><em>, </em><em>optional</em>) – Initial charges to be used for the fitting, which may be required by
 the fitting method or may simply be provided as an initial guess for
 the fitting algorithm. <cite>ValueError</cite> will be raised if the <cite>respin</cite>
 argument specifies that initial charges are expected (<cite>iqopt</cite> not equal
 to 1) but this argument is not provided. Defaults to None.</li>
-<li><strong>generate_esout</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Whether to produce an “esout” file containing the ESP field values at
+<li><strong>generate_esout</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em>, </em><em>optional</em>) – Whether to produce an “esout” file containing the ESP field values at
 the fitting points, reproduced from the fitted charges. This can also
 be achieved with the <cite>repESP</cite> library and thus shouldn’t be necessary.
 Defaults to False. If this option is set to True, the user should also
 set the <cite>save_intermediates_to</cite> option, otherwise the “esout” file will
 not be accessible.</li>
-<li><strong>save_intermediates_to</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>]</em><em>, </em><em>optional</em>) – Which directory to save the <code class="docutils literal notranslate"><span class="pre">resp</span></code> program output to. The directory
+<li><strong>save_intermediates_to</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em>]</em><em>, </em><em>optional</em>) – Which directory to save the <code class="docutils literal notranslate"><span class="pre">resp</span></code> program output to. The directory
 must not exist and will be created by the program. If the user does
 not require access to the files, this option should remain at the default
 of None. The calculation will then be run in the OS temporary directory.</li>
@@ -210,7 +210,7 @@ of None. The calculation will then be run in the OS temporary directory.</li>
 instructions.</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.7)">typing.List</a>[<a class="reference internal" href="repESP.charges.html#repESP.charges.Charge" title="repESP.charges.Charge">Charge</a>]</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.8)">typing.List</a>[<a class="reference internal" href="repESP.charges.html#repESP.charges.Charge" title="repESP.charges.Charge">Charge</a>]</p>
 </td>
 </tr>
 </tbody>
@@ -233,16 +233,16 @@ and may be provided in the future.</p>
 <li><strong>esp_data</strong> (<a class="reference internal" href="repESP.esp_util.html#repESP.esp_util.EspData" title="repESP.esp_util.EspData"><em>EspData</em></a>) – See <cite>run_resp</cite> function parameter</li>
 <li><strong>respin1</strong> (<a class="reference internal" href="repESP.respin_format.html#repESP.respin_format.Respin" title="repESP.respin_format.Respin"><em>Respin</em></a>) – Instructions for 1st stage RESP fitting.</li>
 <li><strong>respin2</strong> (<a class="reference internal" href="repESP.respin_format.html#repESP.respin_format.Respin" title="repESP.respin_format.Respin"><em>Respin</em></a>) – Instructions for 2nd stage RESP fitting.</li>
-<li><strong>initial_charges</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.7)"><em>typing.List</em></a><em>[</em><a class="reference internal" href="repESP.charges.html#repESP.charges.Charge" title="repESP.charges.Charge"><em>Charge</em></a><em>]</em><em>]</em><em>, </em><em>optional</em>) – See <cite>run_resp</cite> function parameter</li>
-<li><strong>generate_esout</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – See <cite>run_resp</cite> function parameter</li>
-<li><strong>save_intermediates_to</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>]</em><em>, </em><em>optional</em>) – See <cite>run_resp</cite> function parameter</li>
+<li><strong>initial_charges</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.8)"><em>typing.List</em></a><em>[</em><a class="reference internal" href="repESP.charges.html#repESP.charges.Charge" title="repESP.charges.Charge"><em>Charge</em></a><em>]</em><em>]</em><em>, </em><em>optional</em>) – See <cite>run_resp</cite> function parameter</li>
+<li><strong>generate_esout</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em>, </em><em>optional</em>) – See <cite>run_resp</cite> function parameter</li>
+<li><strong>save_intermediates_to</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em>]</em><em>, </em><em>optional</em>) – See <cite>run_resp</cite> function parameter</li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The fitted two-stage RESP charges.</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.7)">typing.List</a>[<a class="reference internal" href="repESP.charges.html#repESP.charges.Charge" title="repESP.charges.Charge">Charge</a>]</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.8)">typing.List</a>[<a class="reference internal" href="repESP.charges.html#repESP.charges.Charge" title="repESP.charges.Charge">Charge</a>]</p>
 </td>
 </tr>
 </tbody>
@@ -261,17 +261,17 @@ and may be provided in the future.</p>
 <li><strong>esp_data</strong> (<a class="reference internal" href="repESP.esp_util.html#repESP.esp_util.EspData" title="repESP.esp_util.EspData"><em>EspData</em></a>) – See <cite>run_resp</cite> function parameter</li>
 <li><strong>equivalence</strong> (<a class="reference internal" href="repESP.equivalence.html#repESP.equivalence.Equivalence" title="repESP.equivalence.Equivalence"><em>Equivalence</em></a>) – The chemical equivalence relations between atoms of the molecule.</li>
 <li><strong>molecule</strong> (<a class="reference internal" href="repESP.types.html#repESP.types.Molecule" title="repESP.types.Molecule"><em>Molecule</em></a><em>[</em><a class="reference internal" href="repESP.types.html#repESP.types.Atom" title="repESP.types.Atom"><em>Atom</em></a><em>]</em>) – The molecule which charges are being fitted. Only atom identities are required.</li>
-<li><strong>total_charge</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – The total charge of the molecule.</li>
-<li><strong>initial_charges</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.7)"><em>typing.List</em></a><em>[</em><a class="reference internal" href="repESP.charges.html#repESP.charges.Charge" title="repESP.charges.Charge"><em>Charge</em></a><em>]</em><em>]</em><em>, </em><em>optional</em>) – See <cite>run_resp</cite> function parameter</li>
-<li><strong>generate_esout</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – See <cite>run_resp</cite> function parameter</li>
-<li><strong>save_intermediates_to</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>]</em><em>, </em><em>optional</em>) – See <cite>run_resp</cite> function parameter</li>
+<li><strong>total_charge</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – The total charge of the molecule.</li>
+<li><strong>initial_charges</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.8)"><em>typing.List</em></a><em>[</em><a class="reference internal" href="repESP.charges.html#repESP.charges.Charge" title="repESP.charges.Charge"><em>Charge</em></a><em>]</em><em>]</em><em>, </em><em>optional</em>) – See <cite>run_resp</cite> function parameter</li>
+<li><strong>generate_esout</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em>, </em><em>optional</em>) – See <cite>run_resp</cite> function parameter</li>
+<li><strong>save_intermediates_to</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em>]</em><em>, </em><em>optional</em>) – See <cite>run_resp</cite> function parameter</li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The charges fitted to the provided ESP subject to equivalence relations.</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.7)">typing.List</a>[<a class="reference internal" href="repESP.charges.html#repESP.charges.Charge" title="repESP.charges.Charge">Charge</a>]</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.8)">typing.List</a>[<a class="reference internal" href="repESP.charges.html#repESP.charges.Charge" title="repESP.charges.Charge">Charge</a>]</p>
 </td>
 </tr>
 </tbody>
@@ -290,11 +290,11 @@ and may be provided in the future.</p>
 <li><strong>esp_data</strong> (<a class="reference internal" href="repESP.esp_util.html#repESP.esp_util.EspData" title="repESP.esp_util.EspData"><em>EspData</em></a>) – See <cite>run_resp</cite> function parameter</li>
 <li><strong>equivalence</strong> (<a class="reference internal" href="repESP.equivalence.html#repESP.equivalence.Equivalence" title="repESP.equivalence.Equivalence"><em>Equivalence</em></a>) – The chemical equivalence relations between atoms of the molecule.</li>
 <li><strong>molecule</strong> (<a class="reference internal" href="repESP.types.html#repESP.types.Molecule" title="repESP.types.Molecule"><em>Molecule</em></a><em>[</em><a class="reference internal" href="repESP.types.html#repESP.types.Atom" title="repESP.types.Atom"><em>Atom</em></a><em>]</em>) – The molecule which charges are being fitted. Only atom identities are required.</li>
-<li><strong>total_charge</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – The total charge of the molecule.</li>
-<li><strong>initial_charges</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.7)"><em>typing.List</em></a><em>[</em><a class="reference internal" href="repESP.charges.html#repESP.charges.Charge" title="repESP.charges.Charge"><em>Charge</em></a><em>]</em>) – Initial charges to be used for the fitting. Charges on atoms other than
+<li><strong>total_charge</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – The total charge of the molecule.</li>
+<li><strong>initial_charges</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.8)"><em>typing.List</em></a><em>[</em><a class="reference internal" href="repESP.charges.html#repESP.charges.Charge" title="repESP.charges.Charge"><em>Charge</em></a><em>]</em>) – Initial charges to be used for the fitting. Charges on atoms other than
 hydrogen atoms will be fixed at the provided values.</li>
-<li><strong>generate_esout</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – See <cite>run_resp</cite> function parameter</li>
-<li><strong>save_intermediates_to</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>]</em><em>, </em><em>optional</em>) – See <cite>run_resp</cite> function parameter</li>
+<li><strong>generate_esout</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em>, </em><em>optional</em>) – See <cite>run_resp</cite> function parameter</li>
+<li><strong>save_intermediates_to</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em>]</em><em>, </em><em>optional</em>) – See <cite>run_resp</cite> function parameter</li>
 </ul>
 </td>
 </tr>
@@ -302,7 +302,7 @@ hydrogen atoms will be fixed at the provided values.</li>
 relations. Other charges have values fixed at values from <cite>initial_charges</cite>.</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.7)">typing.List</a>[<a class="reference internal" href="repESP.charges.html#repESP.charges.Charge" title="repESP.charges.Charge">Charge</a>]</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.8)">typing.List</a>[<a class="reference internal" href="repESP.charges.html#repESP.charges.Charge" title="repESP.charges.Charge">Charge</a>]</p>
 </td>
 </tr>
 </tbody>
@@ -321,13 +321,13 @@ relations. Other charges have values fixed at values from <cite>initial_charges<
 <li><strong>esp_data</strong> (<a class="reference internal" href="repESP.esp_util.html#repESP.esp_util.EspData" title="repESP.esp_util.EspData"><em>EspData</em></a>) – See <cite>run_resp</cite> function parameter</li>
 <li><strong>equivalence</strong> (<a class="reference internal" href="repESP.equivalence.html#repESP.equivalence.Equivalence" title="repESP.equivalence.Equivalence"><em>Equivalence</em></a>) – The chemical equivalence relations between atoms of the molecule.</li>
 <li><strong>molecule</strong> (<a class="reference internal" href="repESP.types.html#repESP.types.Molecule" title="repESP.types.Molecule"><em>Molecule</em></a><em>[</em><a class="reference internal" href="repESP.types.html#repESP.types.Atom" title="repESP.types.Atom"><em>Atom</em></a><em>]</em>) – The molecule which charges are being fitted. Only atom identities are required.</li>
-<li><strong>frozen_atoms</strong> (<em>List</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>]</em>) – List of zero-based indices of atoms in the molecule which charges should
+<li><strong>frozen_atoms</strong> (<em>List</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>]</em>) – List of zero-based indices of atoms in the molecule which charges should
 not be fitted but fixed at the values provided in <cite>initial_charges</cite> argument.</li>
-<li><strong>total_charge</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – The total charge of the molecule.</li>
-<li><strong>initial_charges</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.7)"><em>typing.List</em></a><em>[</em><a class="reference internal" href="repESP.charges.html#repESP.charges.Charge" title="repESP.charges.Charge"><em>Charge</em></a><em>]</em>) – Initial charges to be used for the fitting. Charges on atoms specified
+<li><strong>total_charge</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – The total charge of the molecule.</li>
+<li><strong>initial_charges</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.8)"><em>typing.List</em></a><em>[</em><a class="reference internal" href="repESP.charges.html#repESP.charges.Charge" title="repESP.charges.Charge"><em>Charge</em></a><em>]</em>) – Initial charges to be used for the fitting. Charges on atoms specified
 in the <cite>frozen_atoms</cite> arguments will be fixed at the provided values.</li>
-<li><strong>generate_esout</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – See <cite>run_resp</cite> function parameter</li>
-<li><strong>save_intermediates_to</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>]</em><em>, </em><em>optional</em>) – See <cite>run_resp</cite> function parameter</li>
+<li><strong>generate_esout</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em>, </em><em>optional</em>) – See <cite>run_resp</cite> function parameter</li>
+<li><strong>save_intermediates_to</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em>]</em><em>, </em><em>optional</em>) – See <cite>run_resp</cite> function parameter</li>
 </ul>
 </td>
 </tr>
@@ -335,7 +335,7 @@ in the <cite>frozen_atoms</cite> arguments will be fixed at the provided values.
 except where the charges were frozen at initial values.</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.7)">typing.List</a>[<a class="reference internal" href="repESP.charges.html#repESP.charges.Charge" title="repESP.charges.Charge">Charge</a>]</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.8)">typing.List</a>[<a class="reference internal" href="repESP.charges.html#repESP.charges.Charge" title="repESP.charges.Charge">Charge</a>]</p>
 </td>
 </tr>
 </tbody>

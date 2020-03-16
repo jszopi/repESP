@@ -171,7 +171,7 @@ Gaussian will generate such file when passed the <code class="docutils literal n
 The name of the .esp file must be given as the last line of the input file.
 In this example, the filename was “NMe3H_plus_chelpg.esp”.
 The code to parse the file is as follows:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">repESP.esp_util</span> <span class="k">import</span> <span class="n">parse_gaussian_esp</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">repESP.esp_util</span> <span class="kn">import</span> <span class="n">parse_gaussian_esp</span>
 
 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;NMe3H_plus_chelpg.esp&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
     <span class="n">gaussian_esp_data</span> <span class="o">=</span> <span class="n">parse_gaussian_esp</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
@@ -183,7 +183,7 @@ The code to parse the file is as follows:</p>
 </li>
 <li><p class="first">Run a Gaussian calculation with the <code class="docutils literal notranslate"><span class="pre">Pop=NPA</span></code> option.
 The NPA charges can then be parsed from the output file as follows:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">repESP.gaussian_format</span> <span class="k">import</span> <span class="n">get_charges_from_log</span><span class="p">,</span> <span class="n">NpaChargeSectionParser</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">repESP.gaussian_format</span> <span class="kn">import</span> <span class="n">get_charges_from_log</span><span class="p">,</span> <span class="n">NpaChargeSectionParser</span>
 
 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;NMe3H_plus_nbo.log&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
     <span class="n">npa_charges</span> <span class="o">=</span> <span class="n">get_charges_from_log</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">NpaChargeSectionParser</span><span class="p">(),</span> <span class="n">molecule</span><span class="p">)</span>
@@ -199,7 +199,7 @@ respgen -i NMe3H_plus.ac -o NMe3H_plus.respin2 -f resp2
 </pre></div>
 </div>
 <p>The <cite>Equivalence</cite> object can then be generated:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">repESP.respin_format</span> <span class="k">import</span> <span class="n">parse_respin</span><span class="p">,</span> <span class="n">get_equivalence_from_two_stage_resp_ivary</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">repESP.respin_format</span> <span class="kn">import</span> <span class="n">parse_respin</span><span class="p">,</span> <span class="n">get_equivalence_from_two_stage_resp_ivary</span>
 
 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;NMe3H_plus_mk.respin1&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">respin1_file</span><span class="p">:</span>
     <span class="n">respin1</span> <span class="o">=</span> <span class="n">parse_respin</span><span class="p">(</span><span class="n">respin1_file</span><span class="p">)</span>
@@ -211,7 +211,7 @@ respgen -i NMe3H_plus.ac -o NMe3H_plus.respin2 -f resp2
 </pre></div>
 </div>
 <p>Alternatively, if you’re currently unable to generate the “respin” files, <cite>equivalence</cite> can be specified manually:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">repESP.equivalence</span> <span class="k">import</span> <span class="n">Equivalence</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">repESP.equivalence</span> <span class="kn">import</span> <span class="n">Equivalence</span>
 
 <span class="n">equivalence</span> <span class="o">=</span> <span class="n">Equivalence</span><span class="p">([</span>
     <span class="kc">None</span><span class="p">,</span>  <span class="c1"># C0</span>
@@ -234,8 +234,8 @@ respgen -i NMe3H_plus.ac -o NMe3H_plus.respin2 -f resp2
 </li>
 <li><p class="first">Perform fitting partial charges on hydrogen atoms.
 This invokes the <code class="docutils literal notranslate"><span class="pre">resp</span></code> program, so it has to be in your <code class="docutils literal notranslate"><span class="pre">PATH</span></code> variable:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">repESP.esp_util</span> <span class="k">import</span> <span class="n">EspData</span>
-<span class="kn">from</span> <span class="nn">repESP.resp_wrapper</span> <span class="k">import</span> <span class="n">fit_hydrogens_only</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">repESP.esp_util</span> <span class="kn">import</span> <span class="n">EspData</span>
+<span class="kn">from</span> <span class="nn">repESP.resp_wrapper</span> <span class="kn">import</span> <span class="n">fit_hydrogens_only</span>
 
 <span class="n">esp_data</span> <span class="o">=</span> <span class="n">EspData</span><span class="o">.</span><span class="n">from_gaussian</span><span class="p">(</span><span class="n">gaussian_esp_data</span><span class="p">)</span>
 
@@ -250,8 +250,8 @@ This invokes the <code class="docutils literal notranslate"><span class="pre">re
 </div>
 </li>
 <li><p class="first">To reproduce the ESP from your charges, you have to first create a <cite>Molecule</cite> object identical to the one in the <cite>molecule</cite> variable but with your new charges instead of CHelpG:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">repESP.charges</span> <span class="k">import</span> <span class="n">AtomWithCoordsAndCharge</span>
-<span class="kn">from</span> <span class="nn">repESP.types</span> <span class="k">import</span> <span class="n">Molecule</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">repESP.charges</span> <span class="kn">import</span> <span class="n">AtomWithCoordsAndCharge</span>
+<span class="kn">from</span> <span class="nn">repESP.types</span> <span class="kn">import</span> <span class="n">Molecule</span>
 
 <span class="n">molecule_with_my_charges</span> <span class="o">=</span> <span class="n">Molecule</span><span class="p">([</span>
     <span class="n">AtomWithCoordsAndCharge</span><span class="p">(</span>
@@ -263,7 +263,7 @@ This invokes the <code class="docutils literal notranslate"><span class="pre">re
 </pre></div>
 </div>
 <p>You can then reproduce the ESP field from your partial charges and calculate fit quality:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">repESP.calc_fields</span> <span class="k">import</span> <span class="n">esp_from_charges</span><span class="p">,</span> <span class="n">calc_rms_error</span><span class="p">,</span> <span class="n">calc_relative_rms_error</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">repESP.calc_fields</span> <span class="kn">import</span> <span class="n">esp_from_charges</span><span class="p">,</span> <span class="n">calc_rms_error</span><span class="p">,</span> <span class="n">calc_relative_rms_error</span>
 
 <span class="n">reproduced_esp</span> <span class="o">=</span> <span class="n">esp_from_charges</span><span class="p">(</span><span class="n">esp_field</span><span class="o">.</span><span class="n">mesh</span><span class="p">,</span> <span class="n">molecule_with_my_charges</span><span class="p">)</span>
 <span class="n">rms</span> <span class="o">=</span> <span class="n">calc_rms_error</span><span class="p">(</span><span class="n">esp_field</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">reproduced_esp</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>

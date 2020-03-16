@@ -158,14 +158,14 @@
 <span class="sd">sufficient and more convenient.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">repESP.charges</span> <span class="k">import</span> <span class="n">Charge</span>
-<span class="kn">from</span> <span class="nn">repESP.equivalence</span> <span class="k">import</span> <span class="n">Equivalence</span>
-<span class="kn">from</span> <span class="nn">repESP.respin_format</span> <span class="k">import</span> <span class="n">Respin</span>
-<span class="kn">from</span> <span class="nn">repESP.types</span> <span class="k">import</span> <span class="n">Atom</span><span class="p">,</span> <span class="n">Molecule</span>
-<span class="kn">from</span> <span class="nn">repESP._util</span> <span class="k">import</span> <span class="n">zip_exact</span>
+<span class="kn">from</span> <span class="nn">repESP.charges</span> <span class="kn">import</span> <span class="n">Charge</span>
+<span class="kn">from</span> <span class="nn">repESP.equivalence</span> <span class="kn">import</span> <span class="n">Equivalence</span>
+<span class="kn">from</span> <span class="nn">repESP.respin_format</span> <span class="kn">import</span> <span class="n">Respin</span>
+<span class="kn">from</span> <span class="nn">repESP.types</span> <span class="kn">import</span> <span class="n">Atom</span><span class="p">,</span> <span class="n">Molecule</span>
+<span class="kn">from</span> <span class="nn">repESP._util</span> <span class="kn">import</span> <span class="n">zip_exact</span>
 
-<span class="kn">from</span> <span class="nn">abc</span> <span class="k">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">TypeVar</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">TypeVar</span>
 
 
 <div class="viewcode-block" id="RespinGenerator"><a class="viewcode-back" href="../../repESP.respin_generation.html#repESP.respin_generation.RespinGenerator">[docs]</a><span class="k">class</span> <span class="nc">RespinGenerator</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
@@ -199,7 +199,7 @@
 <div class="viewcode-block" id="RespRespinGenerator"><a class="viewcode-back" href="../../repESP.respin_generation.html#repESP.respin_generation.RespRespinGenerator">[docs]</a><span class="k">class</span> <span class="nc">RespRespinGenerator</span><span class="p">(</span><span class="n">RespinGenerator</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Base class providing &quot;respin&quot; creation methods for RESP charges&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ivary</span><span class="p">:</span> <span class="n">Respin</span><span class="o">.</span><span class="n">Ivary</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ivary</span><span class="p">:</span> <span class="n">Respin</span><span class="o">.</span><span class="n">Ivary</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ivary</span> <span class="o">=</span> <span class="n">ivary</span>
 
 <div class="viewcode-block" id="RespRespinGenerator.get_ivary"><a class="viewcode-back" href="../../repESP.respin_generation.html#repESP.respin_generation.RespRespinGenerator.get_ivary">[docs]</a>    <span class="k">def</span> <span class="nf">get_ivary</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Respin</span><span class="o">.</span><span class="n">Ivary</span><span class="p">:</span>
@@ -350,7 +350,7 @@
 <span class="sd">        The molecule which charges are being fitted. Only atom identities are required.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">equivalence</span><span class="p">:</span> <span class="n">Equivalence</span><span class="p">,</span> <span class="n">molecule</span><span class="p">:</span> <span class="n">Molecule</span><span class="p">[</span><span class="n">Atom</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">equivalence</span><span class="p">:</span> <span class="n">Equivalence</span><span class="p">,</span> <span class="n">molecule</span><span class="p">:</span> <span class="n">Molecule</span><span class="p">[</span><span class="n">Atom</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">equivalence</span> <span class="o">=</span> <span class="n">equivalence</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">molecule</span> <span class="o">=</span> <span class="n">molecule</span>
 
@@ -386,7 +386,7 @@
 <span class="sd">        The equivalence relations between atoms of the molecule.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">equivalence</span><span class="p">:</span> <span class="n">Equivalence</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">equivalence</span><span class="p">:</span> <span class="n">Equivalence</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">equivalence</span> <span class="o">=</span> <span class="n">equivalence</span>
 
 <div class="viewcode-block" id="EquivalenceOnlyRespinGenerator.resp_type"><a class="viewcode-back" href="../../repESP.respin_generation.html#repESP.respin_generation.EquivalenceOnlyRespinGenerator.resp_type">[docs]</a>    <span class="k">def</span> <span class="nf">resp_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -419,13 +419,13 @@
 <span class="sd">        excluded from the fitting.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">equivalence</span><span class="p">:</span> <span class="n">Equivalence</span><span class="p">,</span> <span class="n">frozen_atoms</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">equivalence</span><span class="p">:</span> <span class="n">Equivalence</span><span class="p">,</span> <span class="n">frozen_atoms</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 
         <span class="k">for</span> <span class="n">atom_label</span> <span class="ow">in</span> <span class="n">frozen_atoms</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">atom_label</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">atom_label</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">equivalence</span><span class="o">.</span><span class="n">values</span><span class="p">):</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="n">f</span><span class="s2">&quot;Label of atom to be frozen (</span><span class="si">{atom_label}</span><span class="s2">) is outside of &quot;</span>
-                    <span class="n">f</span><span class="s2">&quot;expected range i.e. [0, {len(equivalence.values)}).&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;Label of atom to be frozen (</span><span class="si">{</span><span class="n">atom_label</span><span class="si">}</span><span class="s2">) is outside of &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;expected range i.e. [0, </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">equivalence</span><span class="o">.</span><span class="n">values</span><span class="p">)</span><span class="si">}</span><span class="s2">).&quot;</span>
                 <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">equivalence</span> <span class="o">=</span> <span class="n">equivalence</span>
@@ -505,7 +505,7 @@
     <span class="k">if</span> <span class="n">read_charges</span><span class="p">:</span>
         <span class="n">cntrl</span><span class="o">.</span><span class="n">iqopt</span> <span class="o">=</span> <span class="mi">2</span>
 
-    <span class="n">default_title</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;Respin file prepared by `repESP` to perform {respin_generator.resp_type()}.&quot;</span>
+    <span class="n">default_title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Respin file prepared by `repESP` to perform </span><span class="si">{</span><span class="n">respin_generator</span><span class="o">.</span><span class="n">resp_type</span><span class="p">()</span><span class="si">}</span><span class="s2">.&quot;</span>
     <span class="n">default_subtitle</span> <span class="o">=</span> <span class="s2">&quot;Resp charges for organic molecule&quot;</span>
 
     <span class="k">return</span> <span class="n">Respin</span><span class="p">(</span>

@@ -153,7 +153,7 @@
   <h1>Source code for repESP.util</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Constants and convenience functions for interacting with the library&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Attributes</span>
@@ -174,10 +174,10 @@
 <span class="n">T2</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;T2&#39;</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="list_from_dict"><a class="viewcode-back" href="../../repESP.util.html#repESP.util.list_from_dict">[docs]</a><span class="k">def</span> <span class="nf">list_from_dict</span><span class="p">(</span>  <span class="c1"># type: ignore # (defaults with generics: https://github.com/python/mypy/issues/3737)</span>
+<div class="viewcode-block" id="list_from_dict"><a class="viewcode-back" href="../../repESP.util.html#repESP.util.list_from_dict">[docs]</a><span class="k">def</span> <span class="nf">list_from_dict</span><span class="p">(</span>
     <span class="n">dict_</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">T1</span><span class="p">],</span>
     <span class="n">length</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-    <span class="n">default</span><span class="p">:</span> <span class="n">T2</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">default</span><span class="p">:</span> <span class="n">T2</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># type: ignore # (defaults with generics: https://github.com/python/mypy/issues/3737)</span>
     <span class="n">one_indexed</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">T1</span><span class="p">,</span> <span class="n">T2</span><span class="p">]]:</span>
     <span class="sd">&quot;&quot;&quot;Convenience function for creating lists from dictionaries</span>
@@ -226,11 +226,11 @@
     <span class="p">]</span></div>
 
 
-<div class="viewcode-block" id="mask_from_list"><a class="viewcode-back" href="../../repESP.util.html#repESP.util.mask_from_list">[docs]</a><span class="k">def</span> <span class="nf">mask_from_list</span><span class="p">(</span>  <span class="c1"># type: ignore # (defaults with generics: https://github.com/python/mypy/issues/3737)</span>
+<div class="viewcode-block" id="mask_from_list"><a class="viewcode-back" href="../../repESP.util.html#repESP.util.mask_from_list">[docs]</a><span class="k">def</span> <span class="nf">mask_from_list</span><span class="p">(</span>
     <span class="n">list_</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
     <span class="n">length</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-    <span class="n">value_if_present</span><span class="p">:</span> <span class="n">T1</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">value_if_absent</span><span class="p">:</span> <span class="n">T2</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">value_if_present</span><span class="p">:</span> <span class="n">T1</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># type: ignore # (defaults with generics: https://github.com/python/mypy/issues/3737)</span>
+    <span class="n">value_if_absent</span><span class="p">:</span> <span class="n">T2</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>  <span class="c1"># type: ignore # (defaults with generics: https://github.com/python/mypy/issues/3737)</span>
     <span class="n">one_indexed</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">T1</span><span class="p">,</span> <span class="n">T2</span><span class="p">]]:</span>
     <span class="sd">&quot;&quot;&quot;Convenience function for creating masks from lists</span>

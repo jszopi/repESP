@@ -153,11 +153,11 @@
   <h1>Source code for repESP.types</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Fundamental types used to describe molecules in space&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">repESP._util</span> <span class="k">import</span> <span class="n">elements</span><span class="p">,</span> <span class="n">get_symbol</span><span class="p">,</span> <span class="n">get_atomic_number</span>
-<span class="kn">from</span> <span class="nn">repESP.util</span> <span class="k">import</span> <span class="n">angstrom_per_bohr</span>
+<span class="kn">from</span> <span class="nn">repESP._util</span> <span class="kn">import</span> <span class="n">elements</span><span class="p">,</span> <span class="n">get_symbol</span><span class="p">,</span> <span class="n">get_atomic_number</span>
+<span class="kn">from</span> <span class="nn">repESP.util</span> <span class="kn">import</span> <span class="n">angstrom_per_bohr</span>
 
-<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="k">import</span> <span class="n">dataclass</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Generic</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">TypeVar</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Generic</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">TypeVar</span>
 
 
 <span class="c1"># NewType had many limitations: not supported in sphinx, not possible to</span>
@@ -186,7 +186,7 @@
 
     <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">DistT</span><span class="p">],</span> <span class="n">x</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DistT</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">DistT</span><span class="p">],</span> <span class="n">x</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DistT</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>  <span class="c1"># type: ignore # (Too many arguments for &quot;__new__&quot; of &quot;object&quot;)</span>
 
 <div class="viewcode-block" id="Dist.from_angstrom"><a class="viewcode-back" href="../../repESP.types.html#repESP.types.Dist.from_angstrom">[docs]</a>    <span class="nd">@classmethod</span>
@@ -205,17 +205,17 @@
         <span class="sd">&quot;&quot;&quot;Value in angstrom (Å)&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">angstrom_per_bohr</span><span class="o">*</span><span class="bp">self</span></div>
 
-    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">f</span><span class="s2">&quot;Dist({super().__repr__()})&quot;</span>
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Dist(</span><span class="si">{</span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span><span class="si">}</span><span class="s2">)&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 
         <span class="k">def</span> <span class="nf">get_decimals_in_str</span><span class="p">(</span><span class="n">str_</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
             <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">str_</span><span class="p">)</span> <span class="o">-</span> <span class="n">str_</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
 
         <span class="c1"># Angstroms are displayed with the same decimal precision as a.u. value</span>
-        <span class="n">angstrom_format</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;{{:.{get_decimals_in_str(super().__str__())}f}}&quot;</span>
-        <span class="n">str_</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;{super().__str__()} a₀ (</span><span class="si">{angstrom_format}</span><span class="s2"> Å)&quot;</span>
+        <span class="n">angstrom_format</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">{{</span><span class="s2">:.</span><span class="si">{</span><span class="n">get_decimals_in_str</span><span class="p">(</span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__str__</span><span class="p">())</span><span class="si">}</span><span class="s2">f</span><span class="se">}}</span><span class="s2">&quot;</span>
+        <span class="n">str_</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span><span class="si">}</span><span class="s2"> a₀ (</span><span class="si">{</span><span class="n">angstrom_format</span><span class="si">}</span><span class="s2"> Å)&quot;</span>
         <span class="k">return</span> <span class="n">str_</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">angstrom</span><span class="p">())</span></div>
 
 
@@ -235,8 +235,8 @@
 
     <span class="c1"># A constructor requiring the element type to be Dist would be more strict</span>
     <span class="c1"># but less convenient, to be discussed in a future library revision.</span>
-    <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">CoordsT</span><span class="p">],</span> <span class="n">values</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">CoordsT</span><span class="p">:</span>
-        <span class="n">self_to_be</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="p">(</span><span class="n">Dist</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">values</span><span class="p">))</span>
+    <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">CoordsT</span><span class="p">],</span> <span class="n">values</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">CoordsT</span><span class="p">:</span>
+        <span class="n">self_to_be</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="p">(</span><span class="n">Dist</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">values</span><span class="p">))</span>  <span class="c1"># type: ignore # https://github.com/python/mypy/issues/8541</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">self_to_be</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Coords constructor expected an iterable yielding three elements.&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">self_to_be</span></div>
@@ -272,7 +272,7 @@
     <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">atomic_number</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">atomic_number</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">elements</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="n">f</span><span class="s2">&quot;Atomic number is not within expected bounds: </span><span class="si">{self.atomic_number}</span><span class="s2">.&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Atomic number is not within expected bounds: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">atomic_number</span><span class="si">}</span><span class="s2">.&quot;</span>
             <span class="p">)</span>
 
     <span class="nd">@property</span>

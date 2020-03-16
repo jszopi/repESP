@@ -168,13 +168,13 @@
 
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">repESP.charges</span> <span class="k">import</span> <span class="n">Charge</span>
-<span class="kn">from</span> <span class="nn">repESP.exceptions</span> <span class="k">import</span> <span class="n">InputFormatError</span>
+<span class="kn">from</span> <span class="nn">repESP.charges</span> <span class="kn">import</span> <span class="n">Charge</span>
+<span class="kn">from</span> <span class="nn">repESP.exceptions</span> <span class="kn">import</span> <span class="n">InputFormatError</span>
 
-<span class="kn">from</span> <span class="nn">fortranformat</span> <span class="k">import</span> <span class="n">FortranRecordWriter</span> <span class="k">as</span> <span class="n">FW</span><span class="p">,</span> <span class="n">FortranRecordReader</span> <span class="k">as</span> <span class="n">FR</span>
-<span class="kn">from</span> <span class="nn">functools</span> <span class="k">import</span> <span class="n">reduce</span>
-<span class="kn">from</span> <span class="nn">operator</span> <span class="k">import</span> <span class="n">add</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">TextIO</span>
+<span class="kn">from</span> <span class="nn">fortranformat</span> <span class="kn">import</span> <span class="n">FortranRecordWriter</span> <span class="k">as</span> <span class="n">FW</span><span class="p">,</span> <span class="n">FortranRecordReader</span> <span class="k">as</span> <span class="n">FR</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">reduce</span>
+<span class="kn">from</span> <span class="nn">operator</span> <span class="kn">import</span> <span class="n">add</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">TextIO</span>
 
 
 <div class="viewcode-block" id="parse_resp_charges"><a class="viewcode-back" href="../../repESP.resp_charges_format.html#repESP.resp_charges_format.parse_resp_charges">[docs]</a><span class="k">def</span> <span class="nf">parse_resp_charges</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">TextIO</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Charge</span><span class="p">]:</span>

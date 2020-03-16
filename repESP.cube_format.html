@@ -179,7 +179,7 @@
 <dl class="class">
 <dt id="repESP.cube_format.Cube">
 <em class="property">class </em><code class="descname">Cube</code><span class="sig-paren">(</span><em>info: repESP.cube_format.Cube.Info, molecule: repESP.types.Molecule[repESP.charges.AtomWithCoordsAndCharge][repESP.charges.AtomWithCoordsAndCharge], field: repESP.fields.Field[~FieldValue][FieldValue]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/repESP/cube_format.html#Cube"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.cube_format.Cube" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Generic" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">typing.Generic</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Generic" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">typing.Generic</span></code></a></p>
 <p>Dataclass representing information in a Gaussian “cube” file</p>
 <p>This class is generic in the type of the values of the field described by
 the cube file. This type can be any type, as can <cite>fields.FieldValue</cite>.</p>
@@ -218,16 +218,16 @@ coordinates and partial charges specified.</li>
 <dl class="class">
 <dt id="repESP.cube_format.Cube.Info">
 <em class="property">class </em><code class="descname">Info</code><span class="sig-paren">(</span><em>input_line: str</em>, <em>title_line: str</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/repESP/cube_format.html#Cube.Info"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.cube_format.Cube.Info" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Additional, less structured information about the cube file.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>input_line</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – The top line of a cube file, typically containing information
+<li><strong>input_line</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – The top line of a cube file, typically containing information
 regarding the Gaussian input parameters used.</li>
-<li><strong>title_line</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – The second line of a cube file, containing a free-form title.</li>
+<li><strong>title_line</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – The second line of a cube file, containing a free-form title.</li>
 </ul>
 </td>
 </tr>
@@ -264,7 +264,7 @@ are given in bohr.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>f</strong> (<em>TextIO</em>) – File object opened in read mode containing the cube file to be parsed.</li>
-<li><strong>make_value</strong> (<em>Callable</em><em>[</em><em>[</em><a class="reference internal" href="#repESP.cube_format.Cube.Info" title="repESP.cube_format.Cube.Info"><em>Cube.Info</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>]</em><em>, </em><em>FieldValue</em><em>]</em>) – <p>A function taking two parameters: the cube information and a string
+<li><strong>make_value</strong> (<em>Callable</em><em>[</em><em>[</em><a class="reference internal" href="#repESP.cube_format.Cube.Info" title="repESP.cube_format.Cube.Info"><em>Cube.Info</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em>]</em><em>, </em><em>FieldValue</em><em>]</em>) – <p>A function taking two parameters: the cube information and a string
 representing the field value. The function should parse the field value
 into the desired internal representation, for example an <cite>Esp</cite> object.
 The cube information is provided in case verification of the cube file
@@ -305,7 +305,7 @@ that the coordinates are given in bohr and ESP values in atomic units.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>f</strong> (<em>TextIO</em>) – File object opened in read mode containing the cube file to be parsed.</li>
-<li><strong>verify_title</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If this flag is set to True (default), an <cite>InputFormatError</cite> will
+<li><strong>verify_title</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em>, </em><em>optional</em>) – If this flag is set to True (default), an <cite>InputFormatError</cite> will
 be raised if the cube title does not start with the string
 <code class="docutils literal notranslate"><span class="pre">&quot;</span> <span class="pre">Electrostatic</span> <span class="pre">potential&quot;</span></code>.</li>
 </ul>
@@ -334,7 +334,7 @@ atomic units.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>f</strong> (<em>TextIO</em>) – File object opened in read mode containing the cube file to be parsed.</li>
-<li><strong>verify_title</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If this flag is set to True (default), an <cite>InputFormatError</cite> will
+<li><strong>verify_title</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em>, </em><em>optional</em>) – If this flag is set to True (default), an <cite>InputFormatError</cite> will
 be raised if the cube title does not start with the string
 <code class="docutils literal notranslate"><span class="pre">&quot;</span> <span class="pre">Electron</span> <span class="pre">density&quot;</span></code>.</li>
 </ul>

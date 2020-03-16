@@ -179,15 +179,15 @@
 <dl class="class">
 <dt id="repESP.esp_util.GaussianEspData">
 <em class="property">class </em><code class="descname">GaussianEspData</code><span class="sig-paren">(</span><em>charge: int, multiplicity: int, molecule: repESP.types.Molecule[repESP.charges.AtomWithCoordsAndCharge][repESP.charges.AtomWithCoordsAndCharge], dipole_moment: repESP.charges.DipoleMoment, quadrupole_moment: repESP.charges.QuadrupoleMoment, field: repESP.fields.Field[repESP.fields.Esp][repESP.fields.Esp]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/repESP/esp_util.html#GaussianEspData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.esp_util.GaussianEspData" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Dataclass representing the .esp file in the Gaussian format</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>charge</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – The total charge of the molecule.</li>
-<li><strong>multiplicity</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – The multiplicity of the molecule’s electron configuration.</li>
+<li><strong>charge</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – The total charge of the molecule.</li>
+<li><strong>multiplicity</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – The multiplicity of the molecule’s electron configuration.</li>
 <li><strong>molecule</strong> (<a class="reference internal" href="repESP.types.html#repESP.types.Molecule" title="repESP.types.Molecule"><em>Molecule</em></a><em>[</em><a class="reference internal" href="repESP.charges.html#repESP.charges.AtomWithCoordsAndCharge" title="repESP.charges.AtomWithCoordsAndCharge"><em>AtomWithCoordsAndCharge</em></a><em>]</em>) – The molecule with atom coordinates and partial charges specified.</li>
 <li><strong>dipole_moment</strong> (<a class="reference internal" href="repESP.charges.html#repESP.charges.DipoleMoment" title="repESP.charges.DipoleMoment"><em>DipoleMoment</em></a>) – The dipole moment of the molecule.</li>
 <li><strong>quadrupole_moment</strong> (<a class="reference internal" href="repESP.charges.html#repESP.charges.QuadrupoleMoment" title="repESP.charges.QuadrupoleMoment"><em>QuadrupoleMoment</em></a>) – The quadrupole moment of the molecule.</li>
@@ -238,14 +238,14 @@
 <dl class="class">
 <dt id="repESP.esp_util.EspData">
 <em class="property">class </em><code class="descname">EspData</code><span class="sig-paren">(</span><em>atoms_coords: List[repESP.types.Coords], field: repESP.fields.Field[repESP.fields.Esp][repESP.fields.Esp]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/repESP/esp_util.html#EspData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.esp_util.EspData" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Dataclass representing the .esp file in the <code class="docutils literal notranslate"><span class="pre">resp</span></code> format</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>atoms_coords</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.7)"><em>typing.List</em></a><em>[</em><a class="reference internal" href="repESP.types.html#repESP.types.Coords" title="repESP.types.Coords"><em>Coords</em></a><em>]</em>) – The positions of atoms in space. Note that the identities of the atoms
+<li><strong>atoms_coords</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.8)"><em>typing.List</em></a><em>[</em><a class="reference internal" href="repESP.types.html#repESP.types.Coords" title="repESP.types.Coords"><em>Coords</em></a><em>]</em>) – The positions of atoms in space. Note that the identities of the atoms
 are not known and thus this member cannot be described with the <cite>Atom</cite> class.</li>
 <li><strong>field</strong> (<a class="reference internal" href="repESP.fields.html#repESP.fields.Field" title="repESP.fields.Field"><em>Field</em></a><em>[</em><a class="reference internal" href="repESP.fields.html#repESP.fields.Esp" title="repESP.fields.Esp"><em>Esp</em></a><em>]</em>) – The ESP field around the molecule.</li>
 </ul>

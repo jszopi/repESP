@@ -153,23 +153,23 @@
   <h1>Source code for repESP.resp_wrapper</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Wrappers for performing ESP fitting with the ``resp`` program&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">repESP.charges</span> <span class="k">import</span> <span class="n">Charge</span>
-<span class="kn">from</span> <span class="nn">repESP.esp_util</span> <span class="k">import</span> <span class="n">EspData</span><span class="p">,</span> <span class="n">write_resp_esp</span>
-<span class="kn">from</span> <span class="nn">repESP.equivalence</span> <span class="k">import</span> <span class="n">Equivalence</span>
-<span class="kn">from</span> <span class="nn">repESP.respin_generation</span> <span class="k">import</span> <span class="n">prepare_respin</span>
-<span class="kn">from</span> <span class="nn">repESP.respin_generation</span> <span class="k">import</span> <span class="n">RespStage1RespinGenerator</span><span class="p">,</span> <span class="n">RespStage2RespinGenerator</span>
-<span class="kn">from</span> <span class="nn">repESP.respin_generation</span> <span class="k">import</span> <span class="n">FitHydrogensOnlyRespinGenerator</span><span class="p">,</span> <span class="n">FrozenAtomsRespinGenerator</span>
-<span class="kn">from</span> <span class="nn">repESP.respin_generation</span> <span class="k">import</span> <span class="n">EquivalenceOnlyRespinGenerator</span>
-<span class="kn">from</span> <span class="nn">repESP.respin_format</span> <span class="k">import</span> <span class="n">Respin</span><span class="p">,</span> <span class="n">write_respin</span>
-<span class="kn">from</span> <span class="nn">repESP.resp_charges_format</span> <span class="k">import</span> <span class="n">write_resp_charges</span><span class="p">,</span> <span class="n">parse_resp_charges</span>
-<span class="kn">from</span> <span class="nn">repESP.types</span> <span class="k">import</span> <span class="n">Atom</span><span class="p">,</span> <span class="n">Molecule</span>
+<span class="kn">from</span> <span class="nn">repESP.charges</span> <span class="kn">import</span> <span class="n">Charge</span>
+<span class="kn">from</span> <span class="nn">repESP.esp_util</span> <span class="kn">import</span> <span class="n">EspData</span><span class="p">,</span> <span class="n">write_resp_esp</span>
+<span class="kn">from</span> <span class="nn">repESP.equivalence</span> <span class="kn">import</span> <span class="n">Equivalence</span>
+<span class="kn">from</span> <span class="nn">repESP.respin_generation</span> <span class="kn">import</span> <span class="n">prepare_respin</span>
+<span class="kn">from</span> <span class="nn">repESP.respin_generation</span> <span class="kn">import</span> <span class="n">RespStage1RespinGenerator</span><span class="p">,</span> <span class="n">RespStage2RespinGenerator</span>
+<span class="kn">from</span> <span class="nn">repESP.respin_generation</span> <span class="kn">import</span> <span class="n">FitHydrogensOnlyRespinGenerator</span><span class="p">,</span> <span class="n">FrozenAtomsRespinGenerator</span>
+<span class="kn">from</span> <span class="nn">repESP.respin_generation</span> <span class="kn">import</span> <span class="n">EquivalenceOnlyRespinGenerator</span>
+<span class="kn">from</span> <span class="nn">repESP.respin_format</span> <span class="kn">import</span> <span class="n">Respin</span><span class="p">,</span> <span class="n">write_respin</span>
+<span class="kn">from</span> <span class="nn">repESP.resp_charges_format</span> <span class="kn">import</span> <span class="n">write_resp_charges</span><span class="p">,</span> <span class="n">parse_resp_charges</span>
+<span class="kn">from</span> <span class="nn">repESP.types</span> <span class="kn">import</span> <span class="n">Atom</span><span class="p">,</span> <span class="n">Molecule</span>
 
-<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="k">import</span> <span class="n">dataclass</span>
-<span class="kn">from</span> <span class="nn">itertools</span> <span class="k">import</span> <span class="n">zip_longest</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">zip_longest</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
 <span class="kn">import</span> <span class="nn">tempfile</span>
 
 
@@ -189,7 +189,7 @@
     <span class="n">qout_fn</span> <span class="o">=</span> <span class="s2">&quot;charges.qout&quot;</span>
     <span class="n">espot_fn</span> <span class="o">=</span> <span class="s2">&quot;espot.esp&quot;</span>
 
-    <span class="n">get_full_path</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">fn</span><span class="p">:</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{calc_dir}</span><span class="s2">/</span><span class="si">{fn}</span><span class="s2">&quot;</span>
+    <span class="n">get_full_path</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">fn</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">calc_dir</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">fn</span><span class="si">}</span><span class="s2">&quot;</span>
 
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">get_full_path</span><span class="p">(</span><span class="n">respin_fn</span><span class="p">),</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="n">write_respin</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">respin</span><span class="p">)</span>
@@ -219,7 +219,7 @@
         <span class="p">)</span>
     <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-            <span class="n">f</span><span class="s2">&quot;Running `resp` failed with return code </span><span class="si">{e.returncode}</span><span class="s2"> and the following error:</span><span class="se">\n</span><span class="si">{e.stderr}</span><span class="s2">.&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Running `resp` failed with return code </span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">returncode</span><span class="si">}</span><span class="s2"> and the following error:</span><span class="se">\n</span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">stderr</span><span class="si">}</span><span class="s2">.&quot;</span>
         <span class="p">)</span>
 
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">get_full_path</span><span class="p">(</span><span class="s2">&quot;stdout.out&quot;</span><span class="p">),</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
@@ -321,7 +321,7 @@
     <span class="n">molecule</span> <span class="o">=</span> <span class="n">respin1</span><span class="o">.</span><span class="n">molecule</span>
 
     <span class="n">get_calc_dir</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">int</span><span class="p">],</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">stage</span><span class="p">:</span> <span class="p">(</span>
-        <span class="n">f</span><span class="s2">&quot;</span><span class="si">{save_intermediates_to}</span><span class="s2">/stage_</span><span class="si">{stage}</span><span class="s2">&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">save_intermediates_to</span><span class="si">}</span><span class="s2">/stage_</span><span class="si">{</span><span class="n">stage</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="k">if</span> <span class="n">save_intermediates_to</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
     <span class="p">)</span>
 
