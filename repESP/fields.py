@@ -125,7 +125,7 @@ class GridMesh(AbstractMesh):
     """Collection of points in space organized in a grid
 
     This class only stores information regarding the grid which underlies the
-    spatial organization of the points and thus it's memory footprint is constant
+    spatial organization of the points and thus its memory footprint is constant
     with respect to the number of points it describes. This a trade-off for a
     small CPU cost whenever a point is retrieved from the ``points`` iterator.
 

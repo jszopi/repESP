@@ -106,9 +106,9 @@ class Respin:
             .. warning::
                 The default used here is different from the default used by ``resp``.
 
-                That the ``resp`` documentation specifies that it uses the
-                Amber force field values by default. However, it is not clear how
-                it can determine the fitting stage. Thus, to remove the ambiguity,
+                The ``resp`` documentation specifies that it uses the Amber
+                force field values by default. However, it is not clear how it
+                can determine the fitting stage. Thus, to remove the ambiguity,
                 this dataclass assumes a weight of zero by default.
 
             .. note::
@@ -398,7 +398,7 @@ def _parse_cntrl(f: TextIO) -> Respin.Cntrl:
     if nmol is not None and nmol != 1:
         raise InputFormatError("Parsing multiple structures is not supported")
 
-    return Respin.Cntrl(**kwargs)  # type: ignore # (not sure why not recognized)
+    return Respin.Cntrl(**kwargs)  # type: ignore # (Union[int, float] is broader than the narrowest parameter type, int)
 
 
 def parse_respin(f: TextIO) -> Respin:

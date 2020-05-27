@@ -118,12 +118,14 @@ def run_resp(
         instructions.
     """
 
+    run: Callable[[str], List[Charge]] = lambda dir_name: _run_resp_in_dir(esp_data, respin, initial_charges, generate_esout, dir_name)
+
     if save_intermediates_to is None:
         with tempfile.TemporaryDirectory() as temp_dir_name:
-            return _run_resp_in_dir(esp_data, respin, initial_charges, generate_esout, temp_dir_name)
+            return run(temp_dir_name)
     else:
         os.mkdir(save_intermediates_to)
-        return _run_resp_in_dir(esp_data, respin, initial_charges, generate_esout, save_intermediates_to)
+        return run(save_intermediates_to)
 
 
 # NOTE: If alternative interface is to be implemented in place of the two

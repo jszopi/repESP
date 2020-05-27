@@ -88,7 +88,10 @@ class Coords(Tuple[Dist, Dist, Dist]):
             raise ValueError("Coords constructor expected an iterable yielding three elements.")
         return self_to_be
 
-    # TODO: Implement __str__ to avoid falling back on Dist.__repr__
+    # TODO: Consider implementing __str__ to avoid falling back on Dist.__repr__.
+    # Needs to be tackled more broadly than just this type, but I'm not sure
+    # what to do about dataclasses, which would require overriding the whole
+    # __str__ even if only one member has an interesting __str__ implementation.
 
 
 AtomT = TypeVar('AtomT', bound='Atom')

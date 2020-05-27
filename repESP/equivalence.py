@@ -115,9 +115,10 @@ class Equivalence:
         return f.getvalue()
 
 
+# Not sure if implementing this is worthwhile
 @no_type_check
 def _get_equivalence_from_ac(ac) -> Equivalence:
-    # TODO: This should wrap the two respgen calls:
+    # TODO: This would wrap the two respgen calls:
     #     respgen -i methane.ac -o methane.respin1 -f resp1
     #     respgen -i methane.ac -o methane.respin2 -f resp2
     # and call get_equivalence on them.

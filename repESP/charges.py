@@ -21,7 +21,7 @@ class Charge(float):
     __slots__ = ()
 
     def __new__(cls: Type[ChargeT], value: Any) -> ChargeT:
-        return super().__new__(cls, float(value))  # type: ignore # (Too many arguments for "__new__" of "object")
+        return super().__new__(cls, float(value))  # type: ignore # (https://github.com/python/typeshed/issues/2686)
 
     def __repr__(self) -> str:
         return f"Charge({super().__repr__()})"

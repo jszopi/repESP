@@ -10,8 +10,10 @@ parser.add_argument("--respin_location",
                     help="""The directory with the location of the *two* respin
                     files. Their names are expected to end with '.respin1' and
                     '.respin2'. They can be generated using the 'respgen'
-                    program (see 'instructions.md').""",
+                    program (see https://github.com/jszopi/repESP#prerequisites).""",
                     default='.', metavar="DIRECTORY")
+# instructions.md doesn't exist in the repo. I've deemed it obsolete, so I now
+# need to review if it really is where to refer the users to instead.
 
 esp_file_help = """The name of the 'esp' file with ESP fitting points.
     This file must be in the same directory as the 'respin' files. The file can
