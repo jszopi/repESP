@@ -182,7 +182,7 @@
 <dl class="class">
 <dt id="repESP.respin_format.Respin">
 <em class="property">class </em><code class="descname">Respin</code><span class="sig-paren">(</span><em>title: str, cntrl: repESP.respin_format.Respin.Cntrl, subtitle: str, charge: int, molecule: repESP.types.Molecule[repESP.types.Atom][repESP.types.Atom], ivary: repESP.respin_format.Respin.Ivary</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/repESP/respin_format.html#Respin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.respin_format.Respin" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Dataclass describing the <code class="docutils literal notranslate"><span class="pre">resp</span></code> program instructions</p>
 <p>Note that the functionality is currently limited to a single molecule and
 a single structure.</p>
@@ -191,10 +191,10 @@ a single structure.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>title</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – The title of the calculation to be performed.</li>
+<li><strong>title</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – The title of the calculation to be performed.</li>
 <li><strong>cntrl</strong> (<a class="reference internal" href="#repESP.respin_format.Respin.Cntrl" title="repESP.respin_format.Respin.Cntrl"><em>Cntrl</em></a>) – Dataclass representing the “cntrl” section of the input.</li>
-<li><strong>subtitle</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – Subtitle describing the considered molecular structure.</li>
-<li><strong>charge</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – The total charge of the molecule.</li>
+<li><strong>subtitle</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Subtitle describing the considered molecular structure.</li>
+<li><strong>charge</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – The total charge of the molecule.</li>
 <li><strong>molecule</strong> (<a class="reference internal" href="repESP.types.html#repESP.types.Molecule" title="repESP.types.Molecule"><em>Molecule</em></a><em>[</em><a class="reference internal" href="repESP.types.html#repESP.types.Atom" title="repESP.types.Atom"><em>Atom</em></a><em>]</em>) – The molecule which charges are being fitted. Only atom identities are required.</li>
 <li><strong>ivary</strong> (<a class="reference internal" href="#repESP.respin_format.Respin.Ivary" title="repESP.respin_format.Respin.Ivary"><em>Ivary</em></a>) – The “ivary” values for fitting the considered structure. These determine
 how the charge on each atom is allowed to vary during the fitting.</li>
@@ -242,7 +242,7 @@ how the charge on each atom is allowed to vary during the fitting.</li>
 <dl class="class">
 <dt id="repESP.respin_format.Respin.Cntrl">
 <em class="property">class </em><code class="descname">Cntrl</code><span class="sig-paren">(</span><em>inopt: int = 0</em>, <em>ioutopt: int = 0</em>, <em>iqopt: int = 1</em>, <em>ihfree: int = 1</em>, <em>irstrnt: int = 1</em>, <em>qwt: float = 0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/repESP/respin_format.html#Respin.Cntrl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.respin_format.Respin.Cntrl" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Dataclass describing the “cntrl” section of a “respin” file</p>
 <p>See <code class="docutils literal notranslate"><span class="pre">resp</span></code> program documentation for more details.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -250,24 +250,24 @@ how the charge on each atom is allowed to vary during the fitting.</li>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>inopt</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>, </em><em>optional</em>) – If equal to 1, <code class="docutils literal notranslate"><span class="pre">resp</span></code> will cycle through different “qwt” values
+<li><strong>inopt</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – If equal to 1, <code class="docutils literal notranslate"><span class="pre">resp</span></code> will cycle through different “qwt” values
 from the file specified with the <code class="docutils literal notranslate"><span class="pre">-w</span></code> option. Defaults to 0.</li>
-<li><strong>ioutopt</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>, </em><em>optional</em>) – If equal to 1, <code class="docutils literal notranslate"><span class="pre">resp</span></code> will write restart info of new ESP field
+<li><strong>ioutopt</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – If equal to 1, <code class="docutils literal notranslate"><span class="pre">resp</span></code> will write restart info of new ESP field
 to the file specified with the <code class="docutils literal notranslate"><span class="pre">-s</span></code> option. Defaults to 0.</li>
-<li><strong>iqopt</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>, </em><em>optional</em>) – Controls setting initial charges. If equal to 1 (default), all
+<li><strong>iqopt</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – Controls setting initial charges. If equal to 1 (default), all
 initial charges will be set to zero. If equal to 2, initial charges
 are read from the file specified with the <code class="docutils literal notranslate"><span class="pre">-q</span></code> option. If equal
 to 3, charges are read as with the previous option and will
 additionally be averaged according to “ivary” values (normally not
 used).</li>
-<li><strong>ihfree</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>, </em><em>optional</em>) – If equal to 0, the charge magnitude restraint is applied to all
+<li><strong>ihfree</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – If equal to 0, the charge magnitude restraint is applied to all
 charges. If equal to 1 (default), the restraint does not apply to
 hydrogen atoms.</li>
-<li><strong>irstrnt</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>, </em><em>optional</em>) – Controls the type of charge magnitude restraint. If equal to 0,
+<li><strong>irstrnt</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – Controls the type of charge magnitude restraint. If equal to 0,
 harmonic restraints are used (old-style). If equal to 1 (default),
 hyperbolic restraints are used. If equal to 2, no charge fitting
 is carried out and only analysis of input charges is performed.</li>
-<li><strong>qwt</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a><em>, </em><em>optional</em>) – <p>The weight of the charge magnitude restraint to be used during
+<li><strong>qwt</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a><em>, </em><em>optional</em>) – <p>The weight of the charge magnitude restraint to be used during
 the fitting. Defaults to 0.0 (no charge magnitude restraint).</p>
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
@@ -337,7 +337,7 @@ one stage fitting with a value of 0.01.</p>
 <dl class="class">
 <dt id="repESP.respin_format.Respin.Ivary">
 <em class="property">class </em><code class="descname">Ivary</code><span class="sig-paren">(</span><em>values: List[int]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/repESP/respin_format.html#Respin.Ivary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.respin_format.Respin.Ivary" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Dataclass representing per-atom fitting instructions for <code class="docutils literal notranslate"><span class="pre">resp</span></code></p>
 <p>The fitting instructions are represented as a list of values stored in
 the <cite>values</cite> attribute. The length of this list must be the same as the
@@ -374,7 +374,7 @@ assigned values of -1.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>values</strong> (<em>List</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>]</em>) – The per-atom instructions for the <code class="docutils literal notranslate"><span class="pre">resp</span></code> program.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>values</strong> (<em>List</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>]</em>) – The per-atom instructions for the <code class="docutils literal notranslate"><span class="pre">resp</span></code> program.</td>
 </tr>
 </tbody>
 </table>
@@ -407,12 +407,12 @@ assigned values of -1.</p>
 argument is optional and defaults to None. If it is provided,
 atom identities will be included in the output.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.8)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code></a> – Raised when the number of atoms in the molecule does not match
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.9)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code></a> – Raised when the number of atoms in the molecule does not match
 the length of the list of values in this object.</td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A verbose description of the “ivary” instructions.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)">str</a></td>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></td>
 </tr>
 </tbody>
 </table>
@@ -509,7 +509,7 @@ agrees with the domain knowledge about the studied molecule.</p>
 must be opened for writing.</li>
 <li><strong>respin</strong> (<a class="reference internal" href="#repESP.respin_format.Respin" title="repESP.respin_format.Respin"><em>Respin</em></a>) – The dataclass representing all the instructions needed by the <code class="docutils literal notranslate"><span class="pre">resp</span></code>
 program.</li>
-<li><strong>skip_cntrl_defaults</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em>, </em><em>optional</em>) – When this option is set to True (default), fitting options in the “cntrl”
+<li><strong>skip_cntrl_defaults</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em>, </em><em>optional</em>) – When this option is set to True (default), fitting options in the “cntrl”
 section with default values will not be written to the file.</li>
 </ul>
 </td>

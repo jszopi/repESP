@@ -185,7 +185,7 @@ sufficient and more convenient.</p>
 <dl class="class">
 <dt id="repESP.respin_generation.RespinGenerator">
 <em class="property">class </em><code class="descname">RespinGenerator</code><a class="reference internal" href="_modules/repESP/respin_generation.html#RespinGenerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.respin_generation.RespinGenerator" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></a></p>
 <p>Interface for creators of <code class="docutils literal notranslate"><span class="pre">resp</span></code> fitting instructions</p>
 <p>This interface will be implemented differently for different types of
 fitting with the <code class="docutils literal notranslate"><span class="pre">resp</span></code> program. This module provides implementations
@@ -253,13 +253,13 @@ belongs to a methyl or methylene group.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>equivalence</strong> (<a class="reference internal" href="repESP.equivalence.html#repESP.equivalence.Equivalence" title="repESP.equivalence.Equivalence"><em>Equivalence</em></a>) – The chemical equivalence relations between atoms in the molecule.</li>
-<li><strong>methyl_methylene_mask</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.8)"><em>typing.List</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em>]</em>) – A list, in which each value describes an atom of the molecule. The
+<li><strong>methyl_methylene_mask</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.9)"><em>typing.List</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em>]</em>) – A list, in which each value describes an atom of the molecule. The
 value should be True when the atom is a carbon or hydrogen atom in
 a methyl or methylene group and False otherwise.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.8)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code></a> – Raised when the length of the <cite>values</cite> attribute of the
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.9)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code></a> – Raised when the length of the <cite>values</cite> attribute of the
 <cite>equivalence</cite> argument is not equal to the length of the
 <cite>methyl_methylene_mask</cite> argument.</p>
 </td>
@@ -436,7 +436,7 @@ argument.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>equivalence</strong> (<a class="reference internal" href="repESP.equivalence.html#repESP.equivalence.Equivalence" title="repESP.equivalence.Equivalence"><em>Equivalence</em></a>) – The equivalence relations between atoms of the molecule.</li>
-<li><strong>frozen_atoms</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.8)"><em>typing.List</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>]</em>) – List of zero-based indices of atoms in the molecule which are to be
+<li><strong>frozen_atoms</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.9)"><em>typing.List</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>]</em>) – List of zero-based indices of atoms in the molecule which are to be
 excluded from the fitting.</li>
 </ul>
 </td>
@@ -478,14 +478,14 @@ abstractions.</p>
 This object expresses a given type of charge fitting through
 instructions understood by <code class="docutils literal notranslate"><span class="pre">resp</span></code>. Implementations of this interface
 for common fitting types are provided in this module.</li>
-<li><strong>total_charge</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – The total charge of the molecule.</li>
+<li><strong>total_charge</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – The total charge of the molecule.</li>
 <li><strong>molecule</strong> (<a class="reference internal" href="repESP.types.html#repESP.types.Molecule" title="repESP.types.Molecule"><em>Molecule</em></a><em>[</em><a class="reference internal" href="repESP.types.html#repESP.types.Atom" title="repESP.types.Atom"><em>Atom</em></a><em>]</em>) – The molecule which charges are being fitted. Only atom identities are required.</li>
-<li><strong>title</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em>]</em><em>, </em><em>optional</em>) – The title for the optimization. If set to None (default), a default
+<li><strong>title</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>]</em><em>, </em><em>optional</em>) – The title for the optimization. If set to None (default), a default
 title will be used, referencing the <cite>repESP</cite> library and the type of
 the fitting as given by the <cite>respin_generator</cite> used.</li>
-<li><strong>subtitle</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em>]</em><em>, </em><em>optional</em>) – The subttitle for the fitted structure. If set to None (default), a
+<li><strong>subtitle</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>]</em><em>, </em><em>optional</em>) – The subttitle for the fitted structure. If set to None (default), a
 default generic subtitle will be used.</li>
-<li><strong>read_charges</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em>, </em><em>optional</em>) – <p>If this option is set to True, <code class="docutils literal notranslate"><span class="pre">resp</span></code> will require initial charges
+<li><strong>read_charges</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em>, </em><em>optional</em>) – <p>If this option is set to True, <code class="docutils literal notranslate"><span class="pre">resp</span></code> will require initial charges
 for the fitting. Defaults to False.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>

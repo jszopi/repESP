@@ -182,7 +182,7 @@
 <dl class="class">
 <dt id="repESP.types.Dist">
 <em class="property">class </em><code class="descname">Dist</code><a class="reference internal" href="_modules/repESP/types.html#Dist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.types.Dist" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></p>
 <p>Distance in atomic units i.e. Bohr radii (a<sub>0</sub>)</p>
 <p>Bohr radius is the measure of length in atomic units and angstrom is a unit
 commonly used in computational chemistry. The string representations are
@@ -229,7 +229,7 @@ angstrom.</td>
 <dl class="class">
 <dt id="repESP.types.Coords">
 <em class="property">class </em><code class="descname">Coords</code><a class="reference internal" href="_modules/repESP/types.html#Coords"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.types.Coords" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Generic" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">typing.Generic</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Generic" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">typing.Generic</span></code></a></p>
 <p>Three-dimensional coordinates of a point in space, in atomic units</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -246,7 +246,7 @@ converted to <cite>Dist</cite>.</td>
 <dl class="class">
 <dt id="repESP.types.Atom">
 <em class="property">class </em><code class="descname">Atom</code><span class="sig-paren">(</span><em>atomic_number: int</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/repESP/types.html#Atom"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.types.Atom" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Dataclass representing an atom of a certain element</p>
 <p>If more information should be associated with an atom, it’s easy to inherit
 from this class.</p>
@@ -254,9 +254,9 @@ from this class.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>atomic_number</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – The atomic number of the element</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>atomic_number</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – The atomic number of the element</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.8)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code></a> – Raised in case the given atomic number is not recognized</td>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.9)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code></a> – Raised in case the given atomic number is not recognized</td>
 </tr>
 </tbody>
 </table>
@@ -283,9 +283,9 @@ the initializer of the subclass.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>symbol</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – The chemical symbol of the element, e.g. “Be”.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>symbol</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – The chemical symbol of the element, e.g. “Be”.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.8)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code></a> – Raised in case the given chemical symbol is not recognized</td>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.9)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code></a> – Raised in case the given chemical symbol is not recognized</td>
 </tr>
 </tbody>
 </table>
@@ -303,12 +303,12 @@ the initializer of the subclass.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>atomic_number</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – The atomic number of the element</li>
+<li><strong>atomic_number</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – The atomic number of the element</li>
 <li><strong>coords</strong> (<a class="reference internal" href="#repESP.types.Coords" title="repESP.types.Coords"><em>Coords</em></a>) – The coordinates of the atom in space</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.8)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code></a> – Raised in case the given atomic number is not recognized</p>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.9)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code></a> – Raised in case the given atomic number is not recognized</p>
 </td>
 </tr>
 </tbody>
@@ -330,7 +330,7 @@ the initializer of the subclass.</p>
 <dl class="class">
 <dt id="repESP.types.Molecule">
 <em class="property">class </em><code class="descname">Molecule</code><span class="sig-paren">(</span><em>atoms: List[GenericAtom_co]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/repESP/types.html#Molecule"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#repESP.types.Molecule" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Generic" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">typing.Generic</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Generic" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">typing.Generic</span></code></a></p>
 <p>A basic dataclass representing a molecule</p>
 <p>“Basic” because no characteristics of the molecule, like bonding, are
 stored in this class in addition to the list of constituent atoms.</p>
@@ -341,7 +341,7 @@ other objects, e.g. <cite>AtomWithCoords</cite>.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>atoms</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.8)"><em>typing.List</em></a><em>[</em><a class="reference internal" href="#repESP.types.Atom" title="repESP.types.Atom"><em>Atom</em></a><em>]</em>) – The constituent atoms of the molecule. Any <cite>Atom</cite> subtype is valid.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>atoms</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.9)"><em>typing.List</em></a><em>[</em><a class="reference internal" href="#repESP.types.Atom" title="repESP.types.Atom"><em>Atom</em></a><em>]</em>) – The constituent atoms of the molecule. Any <cite>Atom</cite> subtype is valid.</td>
 </tr>
 </tbody>
 </table>
